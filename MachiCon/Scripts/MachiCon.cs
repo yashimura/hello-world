@@ -19,7 +19,6 @@ namespace Mix2App.MachiCon{
 		[SerializeField] private GameObject EventTitleText;					// たまキュンパーティーカウントダウン時間
 		[SerializeField] private GameObject[] CharaTamago;					// たまごっち
 		[SerializeField] private GameObject[] fukidashi;					// 吹き出し
-		[SerializeField] private Text[]	fukidashiMes;						// 吹き出しメッセージ
 		[SerializeField] private GameObject EventPhase;						// 幕間
 		[SerializeField] private GameObject EventPhaseRing;					// 幕間ナンバーリング
 		[SerializeField] private GameObject EventPhasePTStar;				// 幕間ナンバーエフェクト
@@ -32,15 +31,16 @@ namespace Mix2App.MachiCon{
 		[SerializeField] private GameObject EventSoudanTamagoNameOld;		// 旧たまごっちネーム
 		[SerializeField] private GameObject EventSoudanAvaterNameNew;		// 新アバターネーム
 		[SerializeField] private GameObject EventSoudanTamagoNameNew;		// 新たまごっちネーム
-		[SerializeField] private GameObject EventSoudanAvaterNameText;		// アバターネームテキスト
-		[SerializeField] private GameObject EventSoudanTamagoNameText;		// たまごっちネームテキスト
 		[SerializeField] private GameObject	EventSoudanYesOld;				// 旧Yesボタン
 		[SerializeField] private GameObject	EventSoudanNoOld;				// 旧Noボタン
 		[SerializeField] private GameObject	EventSoudanYesNew;				// 新Yesボタン
 		[SerializeField] private GameObject	EventSoudanNoNew;				// 新Noボタン
 		[SerializeField] private GameObject EventSoudanKumo;				// 雲
 		[SerializeField] private GameObject EventAppeal;					// アピールタイム
-		[SerializeField] private GameObject EventKokuhaku;					// 
+		[SerializeField] private GameObject EventKokuhaku;					// 告白タイム
+		[SerializeField] private GameObject EventWaitStop;					// ちょっとまった！！
+		[SerializeField] private GameObject EventResult;					// 告白結果
+
 
 
 		private object[]		mparam;
@@ -53,7 +53,9 @@ namespace Mix2App.MachiCon{
 		private bool btnYesNo = false;					// Yes:true No:false
 		private int sceneNumber = 0;					// シーンナンバー
 
-		private CharaBehaviour[] tamagoChara = new CharaBehaviour[8];
+		private bool kokuhakuTimeEndFlag = true;
+
+		private CharaBehaviour[] cbTamagoChara = new CharaBehaviour[8];
 
 
 		// 相性度（０〜１００）（男の子、女の子）
@@ -113,6 +115,41 @@ namespace Mix2App.MachiCon{
 			machiconJobCount400,
 		}
 
+		private statusKokuhakuCount kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount000;
+		private enum statusKokuhakuCount{
+			kokuhakuCount000,
+			kokuhakuCount010,
+			kokuhakuCount020,
+			kokuhakuCount030,
+			kokuhakuCount040,
+			kokuhakuCount050,
+			kokuhakuCount060,
+			kokuhakuCount070,
+			kokuhakuCount080,
+			kokuhakuCount090,
+			kokuhakuCount100,
+			kokuhakuCount110,
+			kokuhakuCount120,
+			kokuhakuCount130,
+			kokuhakuCount140,
+			kokuhakuCount150,
+			kokuhakuCount160,
+			kokuhakuCount170,
+			kokuhakuCount180,
+			kokuhakuCount190,
+			kokuhakuCount200,
+			kokuhakuCount210,
+			kokuhakuCount220,
+			kokuhakuCount230,
+			kokuhakuCount240,
+			kokuhakuCount250,
+			kokuhakuCount260,
+			kokuhakuCount270,
+			kokuhakuCount280,
+			kokuhakuCount290,
+			kokuhakuCount300,
+		};
+
 
 		void Awake(){
 			Debug.Log ("MachiCon Awake");
@@ -129,7 +166,7 @@ namespace Mix2App.MachiCon{
 
 		}
 			
-		void Start(){
+		IEnumerator Start(){
 			Debug.Log ("MachiCon start");
 
 			for (int i = 0; i < 4; i++) {
@@ -142,6 +179,7 @@ namespace Mix2App.MachiCon{
 			for (int i = 0; i < 9; i++) {
 				fukidashi [i].SetActive (false);
 			}
+			FukidashiPositionInit ();
 
 			playerNumber = Random.Range(0,8);
 
@@ -151,16 +189,16 @@ namespace Mix2App.MachiCon{
 			jobCount = statusJobCount.machiconJobCount000;
 
 			for (int i = 0; i < 8; i++) {
-				tamagoChara [i] = CharaTamago [i].GetComponent<CharaBehaviour> ();
+				cbTamagoChara [i] = CharaTamago [i].GetComponent<CharaBehaviour> ();
 			}
-			tamagoChara[0].init (new TamaChara (16));
-			tamagoChara[1].init (new TamaChara (17));
-			tamagoChara[2].init (new TamaChara (16));
-			tamagoChara[3].init (new TamaChara (17));
-			tamagoChara[4].init (new TamaChara (18));
-			tamagoChara[5].init (new TamaChara (19));
-			tamagoChara[6].init (new TamaChara (18));
-			tamagoChara[7].init (new TamaChara (19));
+			yield return cbTamagoChara[0].init (new TamaChara (16));
+			yield return cbTamagoChara[1].init (new TamaChara (17));
+			yield return cbTamagoChara[2].init (new TamaChara (16));
+			yield return cbTamagoChara[3].init (new TamaChara (17));
+			yield return cbTamagoChara[4].init (new TamaChara (18));
+			yield return cbTamagoChara[5].init (new TamaChara (19));
+			yield return cbTamagoChara[6].init (new TamaChara (18));
+			yield return cbTamagoChara[7].init (new TamaChara (19));
 
 
 
@@ -240,7 +278,7 @@ namespace Mix2App.MachiCon{
 					FlameInMessageDisp ();					// 実況開始
 					FlameInDirectionSet ();					// 入場時の向きを設定
 
-					tamagoChara [posNumber].gotoAndPlay ("walk");
+					cbTamagoChara [posNumber].gotoAndPlay ("walk");
 					jobCount = statusJobCount.machiconJobCount050;
 					break;
 				}
@@ -250,7 +288,7 @@ namespace Mix2App.MachiCon{
 					if (pos >= 1.0f) {
 						jobCount = statusJobCount.machiconJobCount060;
 						waitTime = 11;
-						tamagoChara [posNumber].gotoAndPlay ("idle");
+						cbTamagoChara [posNumber].gotoAndPlay ("idle");
 					}
 					break;
 				}
@@ -275,7 +313,7 @@ namespace Mix2App.MachiCon{
 
 						waitTime = 40;
 
-						tamagoChara [posNumber].gotoAndPlay ("walk");
+						cbTamagoChara [posNumber].gotoAndPlay ("walk");
 					}
 					break;
 				}
@@ -289,7 +327,7 @@ namespace Mix2App.MachiCon{
 				}
 			case	statusJobCount.machiconJobCount090:
 				{	// 整列位置に停止
-					tamagoChara [posNumber].gotoAndPlay ("idle");
+					cbTamagoChara [posNumber].gotoAndPlay ("idle");
 					AlignmentPositionChangeFinish ();
 					posNumber++;
 					if (posNumber == 8) {
@@ -312,6 +350,7 @@ namespace Mix2App.MachiCon{
 						EventPhase.SetActive (true);
 						EventPhasePTStar.SetActive (true);
 						EventPhaseCount.GetComponent<Image> ().sprite = EventPhaseSprite [sceneNumber];
+//						EventPhase.transform.Find("phase_count").gameObject.GetComponent<Image>().sprite = EventPhaseSprite[sceneNumber];
 						waitTime = 60;
 
 						TargetRandomSet ();		// 相談相手の決定
@@ -358,6 +397,10 @@ namespace Mix2App.MachiCon{
 						EventSoudanNameSet ();			// 相談する時の相手の名前などを登録する
 						EventSoudanOldDispOff ();
 
+						for (int i = 0; i < 8; i++) {
+							cbTamagoChara [i].gotoAndPlay ("idle");
+						}
+
 						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp07);
 					}
 					break;
@@ -402,6 +445,7 @@ namespace Mix2App.MachiCon{
 						jobCount = statusJobCount.machiconJobCount180;
 						CharaTamago [playerNumber].GetComponent<SpriteRenderer> ().sortingLayerName = "Default";	// 優先順位をデフォルトに戻す
 						AppealPositionChangeInit ();							// アピールタイム初期表示位置設定
+						TamagochiFukidashiOff ();
 						waitTime = 90;
 					}
 					break;
@@ -425,7 +469,7 @@ namespace Mix2App.MachiCon{
 							fukidashi [i + 1].SetActive (true);
 						}
 					}
-					waitTime = 60;
+					waitTime = 120;
 					break;
 				}
 			case	statusJobCount.machiconJobCount200:
@@ -438,6 +482,7 @@ namespace Mix2App.MachiCon{
 						}
 						waitTime = 600;
 					}
+/////					AppealPositionChangeLoop ();
 					break;
 				}
 			case	statusJobCount.machiconJobCount210:
@@ -452,8 +497,10 @@ namespace Mix2App.MachiCon{
 						} else {
 							jobCount = statusJobCount.machiconJobCount220;
 						}
+
+						TamagochiFukidashiOff ();
 					}
-					AppealPositionChangeLoop ();			// アピールタイムのキャラ移動
+					ApplealPositionChangeMain ();			// アピールタイムのキャラ移動
 
 					// 一定時間で実況表示を変える
 					if ((waitTime == 200) || (waitTime == 400)) {
@@ -482,6 +529,7 @@ namespace Mix2App.MachiCon{
 						waitTime = 60;
 
 						KokuhakuPositionInit ();
+						KokuhakuTimeInit ();
 					}
 					break;
 				}
@@ -499,11 +547,16 @@ namespace Mix2App.MachiCon{
 						jobCount = statusJobCount.machiconJobCount260;
 						EventKokuhaku.SetActive (false);
 						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp10);
+						kokuhakuTimeEndFlag = false;
 					}
 					break;
 				}
 			case	statusJobCount.machiconJobCount260:
 				{
+					if (kokuhakuTimeEndFlag) {
+						jobCount = statusJobCount.machiconJobCount270;
+					}
+					KokuhakuTimeMain ();
 					break;
 				}
 			case	statusJobCount.machiconJobCount270:
@@ -578,6 +631,29 @@ namespace Mix2App.MachiCon{
 			return false;
 		}
 
+
+		private void FukidashiPositionInit(){
+			Vector2[] pos = new Vector2[9] {
+				new Vector2 (   0.0f,  120.0f),		// 入場時の吹き出し
+				new Vector2 (-105.0f,   60.0f),		// アピールタイムの男の子１の吹き出し
+				new Vector2 ( 285.0f,   60.0f),		// アピールタイムの男の子２の吹き出し
+				new Vector2 (-215.0f, -150.0f),		// アピールタイムの男の子３の吹き出し
+				new Vector2 ( 410.0f, -150.0f),		// アピールタイムの男の子４の吹き出し
+				new Vector2 (-280.0f,   60.0f),		// アピールタイムの女の子１の吹き出し
+				new Vector2 ( 105.0f,   60.0f),		// アピールタイムの女の子２の吹き出し
+				new Vector2 (-400.0f, -150.0f),		// アピールタイムの女の子３の吹き出し
+				new Vector2 ( 220.0f, -150.0f),		// アピールタイムの女の子４の吹き出し
+			};
+
+			for(int i = 0;i < 9;i++){
+				Vector3 pos2 = fukidashi [i].transform.localPosition;
+				pos2.x = pos [i].x;
+				pos2.y = pos [i].y;
+				fukidashi [i].transform.localPosition = pos2;
+			}
+		}
+
+
 		// 入場時のたまごっちの吹き出しメッセージ登録
 		private void FukidashiMessageSet(){
 			string mesAvater = "";
@@ -635,7 +711,55 @@ namespace Mix2App.MachiCon{
 				}
 			}
 
-			fukidashiMes [0].text = mesAvater + mesRet + mesTamago + mesRet;
+			fukidashi [0].transform.Find ("text").gameObject.GetComponent<Text> ().text = mesAvater + mesRet + mesTamago + mesRet;
+		}
+		private void FukidashiMessageSetKokuhaku(int num,int targetNum){
+			float[,] fukidashiPos = new float[4, 2] {
+				{ 125.0f,  125.0f },
+				{ 155.0f,   35.0f },
+				{ 185.0f,  -65.0f },
+				{ 215.0f, -155.0f }
+			};
+
+			string mesAvater = "";
+			string mesTamago = "";
+			string mesRet = "\n";
+			string mesNo = "の";
+			string mesTo = "さん";
+
+			switch (targetNum) {
+			case	4:
+				{
+					mesAvater = "アバターネーム５";
+					mesTamago = "たまごっちネーム";
+					break;
+				}
+			case	5:
+				{
+					mesAvater = "アバターネーム６";
+					mesTamago = "たまごっちネーム";
+					break;
+				}
+			case	6:
+				{
+					mesAvater = "アバターネーム７";
+					mesTamago = "たまごっちネーム";
+					break;
+				}
+			case	7:
+				{
+					mesAvater = "アバターネーム８";
+					mesTamago = "たまごっちネーム";
+					break;
+				}
+			}
+
+			fukidashi [0].transform.Find ("text").gameObject.GetComponent<Text> ().text = mesAvater + mesNo + mesRet + mesTamago + mesTo + mesRet;
+
+			Vector3 pos = fukidashi [0].transform.localPosition;
+			pos.x = fukidashiPos [num, 0];
+			pos.y = fukidashiPos [num, 1];
+			fukidashi [0].transform.localPosition = pos;
 		}
 
 		// たまごっちが画面下から入場する時の移動
@@ -910,10 +1034,23 @@ namespace Mix2App.MachiCon{
 
 				posTamago [i].x = pos [appealPosCharaTable [i], 0];
 				posTamago [i].y = pos [appealPosCharaTable [i], 1];
+
+				cbTamagoChara [i].gotoAndPlay ("idle");
 			}
+
+			CharaTamago [0].GetComponent<SpriteRenderer> ().sortingOrder = 4;
+			CharaTamago [1].GetComponent<SpriteRenderer> ().sortingOrder = 3;
+			CharaTamago [2].GetComponent<SpriteRenderer> ().sortingOrder = 2;
+			CharaTamago [3].GetComponent<SpriteRenderer> ().sortingOrder = 1;
+			CharaTamago [4].GetComponent<SpriteRenderer> ().sortingOrder = 4;
+			CharaTamago [5].GetComponent<SpriteRenderer> ().sortingOrder = 3;
+			CharaTamago [6].GetComponent<SpriteRenderer> ().sortingOrder = 2;
+			CharaTamago [7].GetComponent<SpriteRenderer> ().sortingOrder = 1;
+
+			appealTimeCounter = 0;
 		}
 			
-		// アピールタイムのキャラ移動
+		// アピールタイムのキャラ移動（そわそわ）
 		private void AppealPositionChangeLoop(){
 			for (int i = 0; i < 8; i++) {
 				posTamago [i].x += Random.Range (-0.005f, 0.005f);
@@ -921,28 +1058,132 @@ namespace Mix2App.MachiCon{
 			}
 		}
 
+		private int	appealTimeCounter = 0;
+		private float [] posTamagoSpeedX = new float[8]{
+			0.02f,0.02f,0.02f,0.02f,0.02f,0.02f,0.02f,0.02f
+		};
+		private float [] posTamagoSpeedY = new float[8]{
+			0.02f,0.02f,0.02f,0.02f,0.02f,0.02f,0.02f,0.02f
+		};
+		private bool [] posTamagoIdouXFlag = new bool[8]{
+			true,true,true,true,true,true,true,true
+		};
+		private bool [] posTamagoIdouYFlag = new bool[8]{
+			true,true,true,true,true,true,true,true
+		};
 
-
+		private int [] fukidashiTamagoWait = new int[8] {
+			60,60,60,60,60,60,60,60
+		};
 		// 作業中（自動移動をどのよういするかを思案中）
 		private void ApplealPositionChangeMain(){
-		
-		
-		
+			if (appealTimeCounter == 0) {
+				for (int i = 0; i < 8; i++) {
+					posTamagoSpeedX [i] = Random.Range (0.01f, 0.03f);
+					posTamagoSpeedY [i] = Random.Range (0.01f, 0.03f);
+					if (i < 4) {
+						posTamagoIdouXFlag [i] = true;
+					} else {
+						posTamagoIdouXFlag [i] = false;
+					}
+					if (Random.Range (0, 2) == 0) {
+						posTamagoIdouYFlag [i] = true;
+					} else {
+						posTamagoIdouYFlag [i] = false;
+					}
+
+					fukidashiTamagoWait [i] = Random.Range (60, 100);
+				}
+			}
+			AppealPositionChangeLoop ();
+			// １→２、２↓４、３↑１、４←３
+
+			for (int i = 0; i < 8; i++) {
+				fukidashiTamagoWait [i]--;
+				if (fukidashiTamagoWait [i] == 0) {
+					fukidashiTamagoWait [i] = Random.Range (60, 100);
+					switch (Random.Range (0, 8)) {
+					case	0:
+						{
+							CharaTamago [i].transform.Find ("fukidashi/cake").gameObject.SetActive (true);
+							CharaTamago [i].transform.Find ("fukidashi/heart").gameObject.SetActive (false);
+							break;
+						}
+					case	1:
+						{
+							CharaTamago [i].transform.Find ("fukidashi/cake").gameObject.SetActive (false);
+							CharaTamago [i].transform.Find ("fukidashi/heart").gameObject.SetActive (true);
+							break;
+						}
+					default:
+						{
+							CharaTamago [i].transform.Find ("fukidashi/cake").gameObject.SetActive (false);
+							CharaTamago [i].transform.Find ("fukidashi/heart").gameObject.SetActive (false);
+							break;
+						}
+					}
+				}
+			}
+
+#if false
+			for (int i = 0; i < 8; i++) {
+				if (appealTimeCounter == 80) {
+					tamagoChara [i].gotoAndPlay ("walk");
+				}
+
+
+				if (posTamagoIdouXFlag [i]) {
+					posTamago [i].x += posTamagoSpeedX [i];
+					CharaTamago [i].GetComponent<SpriteRenderer> ().flipX = posTamagoIdouXFlag [i];
+					if (posTamago [i].x >= 7.0f) {
+						posTamagoIdouXFlag [i] = false;
+						posTamagoSpeedX [i] = Random.Range (0.01f, 0.03f);
+					}
+				} else {
+					posTamago [i].x -= posTamagoSpeedX [i];
+					CharaTamago [i].GetComponent<SpriteRenderer> ().flipX = posTamagoIdouXFlag [i];
+					if (posTamago [i].x <= -7.0f) {
+						posTamagoIdouXFlag [i] = true;
+						posTamagoSpeedX [i] = Random.Range (0.01f, 0.03f);
+					}
+				}
+
+				if (posTamagoIdouYFlag [i]) {
+					posTamago [i].y += posTamagoSpeedY [i];
+					if (posTamago [i].y >= 1.0f) {
+						posTamagoIdouYFlag [i] = false;
+						posTamagoSpeedY [i] = Random.Range (0.01f, 0.03f);
+					}
+				} else {
+					posTamago [i].y -= posTamagoSpeedY [i];
+					if (posTamago [i].y <= -3.5f) {
+						posTamagoIdouYFlag [i] = true;
+						posTamagoSpeedY [i] = Random.Range (0.01f, 0.03f);
+					}
+				}
+			}
+#endif
+			appealTimeCounter++;
 		}
 
-
+		private void TamagochiFukidashiOff(){
+			for (int i = 0; i < 8; i++) {
+				CharaTamago [i].transform.Find ("fukidashi/cake").gameObject.SetActive (false);
+				CharaTamago [i].transform.Find ("fukidashi/heart").gameObject.SetActive (false);
+			}
+		}
 
 		// 告白タイムの初期配置
 		private void KokuhakuPositionInit(){
 			float[,] pos = new float[8, 2] {
+				{  4.0f,  1.0f },
+				{  4.5f, -0.5f },
+				{  5.0f, -2.0f },
 				{  5.5f, -3.5f },
-				{  4.5f, -2.0f },
-				{  3.5f, -0.5f },
-				{  2.5f,  1.0f },
+				{ -4.0f,  1.0f },
+				{ -4.5f, -0.5f },
+				{ -5.0f, -2.0f },
 				{ -5.5f, -3.5f },
-				{ -4.5f, -2.0f },
-				{ -3.5f, -0.5f },
-				{ -2.5f,  1.0f },
 			};
 
 			bool flag = true;
@@ -970,7 +1211,18 @@ namespace Mix2App.MachiCon{
 
 				posTamago [i].x = pos [i, 0];
 				posTamago [i].y = pos [i, 1];
+
+				cbTamagoChara [i].gotoAndPlay ("idle");
 			}
+
+			CharaTamago [0].GetComponent<SpriteRenderer> ().sortingOrder = 1;
+			CharaTamago [1].GetComponent<SpriteRenderer> ().sortingOrder = 2;
+			CharaTamago [2].GetComponent<SpriteRenderer> ().sortingOrder = 3;
+			CharaTamago [3].GetComponent<SpriteRenderer> ().sortingOrder = 4;
+			CharaTamago [4].GetComponent<SpriteRenderer> ().sortingOrder = 1;
+			CharaTamago [5].GetComponent<SpriteRenderer> ().sortingOrder = 2;
+			CharaTamago [6].GetComponent<SpriteRenderer> ().sortingOrder = 3;
+			CharaTamago [7].GetComponent<SpriteRenderer> ().sortingOrder = 4;
 		}
 	
 		// カーテンのY座標を上下させる
@@ -1025,57 +1277,610 @@ namespace Mix2App.MachiCon{
 		}
 
 		private void EventSoudanNameSet (){
+			string avaterMes = "";
+			string tamagoMes = "";
+
 			switch (targetNumber) {
 			case	0:
 				{
-					EventSoudanAvaterNameText.GetComponent<Text> ().text = "アバターネーム１";
-					EventSoudanTamagoNameText.GetComponent<Text> ().text = "たまごっちネーム";
+					avaterMes = "アバターネーム１";
+					tamagoMes = "たまごっちネーム";
 					break;
 				}
 			case	1:
 				{
-					EventSoudanAvaterNameText.GetComponent<Text> ().text = "アバターネーム２";
-					EventSoudanTamagoNameText.GetComponent<Text> ().text = "たまごっちネーム";
+					avaterMes = "アバターネーム２";
+					tamagoMes = "たまごっちネーム";
 					break;
 				}
 			case	2:
 				{
-					EventSoudanAvaterNameText.GetComponent<Text> ().text = "アバターネーム３";
-					EventSoudanTamagoNameText.GetComponent<Text> ().text = "たまごっちネーム";
+					avaterMes = "アバターネーム３";
+					tamagoMes = "たまごっちネーム";
 					break;
 				}
 			case	3:
 				{
-					EventSoudanAvaterNameText.GetComponent<Text> ().text = "アバターネーム４";
-					EventSoudanTamagoNameText.GetComponent<Text> ().text = "たまごっちネーム";
+					avaterMes = "アバターネーム４";
+					tamagoMes = "たまごっちネーム";
 					break;
 				}
 			case	4:
 				{
-					EventSoudanAvaterNameText.GetComponent<Text> ().text = "アバターネーム５";
-					EventSoudanTamagoNameText.GetComponent<Text> ().text = "たまごっちネーム";
+					avaterMes = "アバターネーム５";
+					tamagoMes = "たまごっちネーム";
 					break;
 				}
 			case	5:
 				{
-					EventSoudanAvaterNameText.GetComponent<Text> ().text = "アバターネーム６";
-					EventSoudanTamagoNameText.GetComponent<Text> ().text = "たまごっちネーム";
+					avaterMes = "アバターネーム６";
+					tamagoMes = "たまごっちネーム";
 					break;
 				}
 			case	6:
 				{
-					EventSoudanAvaterNameText.GetComponent<Text> ().text = "アバターネーム７";
-					EventSoudanTamagoNameText.GetComponent<Text> ().text = "たまごっちネーム";
+					avaterMes = "アバターネーム７";
+					tamagoMes = "たまごっちネーム";
 					break;
 				}
 			case	7:
 				{
-					EventSoudanAvaterNameText.GetComponent<Text> ().text = "アバターネーム８";
-					EventSoudanTamagoNameText.GetComponent<Text> ().text = "たまごっちネーム";
+					avaterMes = "アバターネーム８";
+					tamagoMes = "たまごっちネーム";
+					break;
+				}
+			}
+
+			EventSoudanAvaterNameNew.transform.Find ("text").gameObject.GetComponent<Text> ().text = avaterMes;
+			EventSoudanTamagoNameNew.transform.Find ("text").gameObject.GetComponent<Text> ().text = tamagoMes;
+		}
+
+
+
+
+
+		private int [] KokuhakuManToWomanTable = new int[4] {
+			0,1,2,3
+		};
+
+		private void KokuhakuTimeInit(){
+			KokuhakuManToWomanTable[0] = KokuhakuTimeObjectSelect (0);
+			KokuhakuManToWomanTable[1] = KokuhakuTimeObjectSelect (1);
+			KokuhakuManToWomanTable[2] = KokuhakuTimeObjectSelect (2);
+			KokuhakuManToWomanTable[3] = KokuhakuTimeObjectSelect (3);
+
+			kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount000;
+		}
+
+		private int kokuhakuWaitTime = 0;
+		private int[] kokuhakuManTable = new int[4]{ 0, 1, 2, 3 };
+		private int kokuhakuManNumber = 0;
+		private int kokuhakuRivalNumber = 0;
+
+		private void KokuhakuTimeMain(){
+			switch (kokuhakuTimeLoopCount) {
+			case	statusKokuhakuCount.kokuhakuCount000:
+				{
+					kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount010;
+					kokuhakuManTable [0] = 0;
+					kokuhakuManTable [1] = 1;
+					kokuhakuManTable [2] = 2;
+					kokuhakuManTable [3] = 3;
+					kokuhakuManNumber = 0;
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount010:
+				{
+					if (kokuhakuManTable [kokuhakuManNumber] == 255) {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount260;
+						break;
+					}
+
+					if (KokuhakuTimeIdou1 (kokuhakuManTable[kokuhakuManNumber])) {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount020;
+						tamagochiPatanChenge (0, kokuhakuManTable[kokuhakuManNumber]);
+						FukidashiMessageSetKokuhaku (kokuhakuManTable[kokuhakuManNumber], KokuhakuManToWomanTable [kokuhakuManTable[kokuhakuManNumber]] + 4);
+						fukidashi [0].SetActive (true);
+						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp11);
+						kokuhakuWaitTime = 120;
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount020:
+				{
+					if (KokuhakuWaitTimeSubLoop ()) {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount030;
+						fukidashi [0].SetActive (false);
+						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount030:
+				{
+					if (KokuhakuTimeIdou1 (KokuhakuManToWomanTable [kokuhakuManTable[kokuhakuManNumber]] + 4)) {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount040;
+						tamagochiPatanChenge (1, KokuhakuManToWomanTable [kokuhakuManTable[kokuhakuManNumber]] + 4);
+						kokuhakuWaitTime = 120;
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount040:
+				{
+					if (KokuhakuWaitTimeSubLoop ()) {
+						kokuhakuRivalNumber = KokuhakuRivalCheck ();
+						if (kokuhakuRivalNumber == 0) {
+							// ライバル出現なし
+							kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount140;
+						} else {
+							// ライバル出現あり
+							kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount050;
+							cbTamagoChara [kokuhakuManNumber].gotoAndPlay ("shock");
+						}
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount050:
+				{
+					if ((kokuhakuRivalNumber & 16) != 0) {
+						KokuhakuRivalWaitStop (1, true);
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount060;
+					} else {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount080;
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount060:
+				{
+					KokuhakuRivalWaitStop (1, false);
+					if (KokuhakuWaitTimeSubLoop ()) {
+						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
+						EventWaitStop.SetActive (false);
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount070;
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount070:
+				{
+					if (KokuhakuTimeIdou1 (1)) {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount080;
+						tamagochiPatanChenge (0, 1);
+					}		
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount080:
+				{
+					if ((kokuhakuRivalNumber & 32) != 0) {
+						KokuhakuRivalWaitStop (2, true);
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount090;
+						if ((kokuhakuRivalNumber & 16) != 0) {
+							cbTamagoChara [1].gotoAndPlay ("shock");
+						}
+					} else {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount110;
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount090:
+				{
+					KokuhakuRivalWaitStop (2, false);
+					if (KokuhakuWaitTimeSubLoop ()) {
+						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
+						EventWaitStop.SetActive (false);
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount100;
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount100:
+				{
+					if (KokuhakuTimeIdou1 (2)) {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount110;
+						tamagochiPatanChenge (0, 2);
+					}		
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount110:
+				{
+					if ((kokuhakuRivalNumber & 64) != 0) {
+						KokuhakuRivalWaitStop (3, true);
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount120;
+						if ((kokuhakuRivalNumber & 16) != 0) {
+							cbTamagoChara [1].gotoAndPlay ("shock");
+						}
+						if ((kokuhakuRivalNumber & 32) != 0) {
+							cbTamagoChara [2].gotoAndPlay ("shock");
+						}
+					} else {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount140;
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount120:
+				{
+					KokuhakuRivalWaitStop (3, false);
+					if (KokuhakuWaitTimeSubLoop ()) {
+						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
+						EventWaitStop.SetActive (false);
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount130;
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount130:
+				{
+					if (KokuhakuTimeIdou1 (3)) {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount140;
+						tamagochiPatanChenge (0, 3);
+					}		
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount140:
+				{
+					if (KokuhakuTimeIdou2 (kokuhakuManTable[kokuhakuManNumber])) {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount150;
+						tamagochiPatanChenge (0, kokuhakuManTable[kokuhakuManNumber]);
+						CharaTamago [kokuhakuManTable[kokuhakuManNumber]].transform.Find ("fukidashi/heart").gameObject.SetActive (true);
+						kokuhakuWaitTime = 60;
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount150:
+				{
+					if (KokuhakuWaitTimeSubLoop ()) {
+						CharaTamago [kokuhakuManTable [kokuhakuManNumber]].transform.Find ("fukidashi/heart").gameObject.SetActive (false);
+						if (kokuhakuRivalNumber != 0) {
+							// ライバル出現あり
+							kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount160;
+						} else {
+							// ライバル出現なし
+							kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount250;
+						}
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount160:
+				{
+					if ((kokuhakuRivalNumber & 16) != 0) {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount170;
+					} else {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount190;
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount170:
+				{
+					if (KokuhakuTimeIdou2 (1)) {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount180;
+						tamagochiPatanChenge (0, 1);
+						CharaTamago [1].transform.Find ("fukidashi/heart").gameObject.SetActive (true);
+						kokuhakuWaitTime = 60;
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount180:
+				{
+					if (KokuhakuWaitTimeSubLoop ()) {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount190;
+						CharaTamago [1].transform.Find ("fukidashi/heart").gameObject.SetActive (false);
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount190:
+				{
+					if ((kokuhakuRivalNumber & 32) != 0) {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount200;
+					} else {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount220;
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount200:
+				{
+					if (KokuhakuTimeIdou2 (2)) {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount210;
+						tamagochiPatanChenge (0, 2);
+						CharaTamago [2].transform.Find ("fukidashi/heart").gameObject.SetActive (true);
+						kokuhakuWaitTime = 60;
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount210:
+				{
+					if (KokuhakuWaitTimeSubLoop ()) {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount220;
+						CharaTamago [2].transform.Find ("fukidashi/heart").gameObject.SetActive (false);
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount220:
+				{
+					if ((kokuhakuRivalNumber & 64) != 0) {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount230;
+					} else {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount250;
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount230:
+				{
+					if (KokuhakuTimeIdou2 (3)) {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount240;
+						tamagochiPatanChenge (0, 3);
+						CharaTamago [3].transform.Find ("fukidashi/heart").gameObject.SetActive (true);
+						kokuhakuWaitTime = 60;
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount240:
+				{
+					if (KokuhakuWaitTimeSubLoop ()) {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount250;
+						CharaTamago [3].transform.Find ("fukidashi/heart").gameObject.SetActive (false);
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount250:
+				{
+
+
+
+
+
+
+
+
+
+					kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount260;
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount260:
+				{
+					kokuhakuManTable [kokuhakuManNumber] = 255;
+					if ((kokuhakuRivalNumber & 16) != 0) {
+						kokuhakuManTable [1] = 255;
+					}
+					if ((kokuhakuRivalNumber & 32) != 0) {
+						kokuhakuManTable [2] = 255;
+					}
+					if ((kokuhakuRivalNumber & 64) != 0) {
+						kokuhakuManTable [3] = 255;
+					}
+
+
+					kokuhakuManNumber++;
+					if (kokuhakuManNumber == 4) {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount270;
+					} else {
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount010;
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount270:
+				{
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount280:
+				{
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount290:
+				{
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount300:
+				{
 					break;
 				}
 			}
 		}
+		private bool KokuhakuWaitTimeSubLoop(){
+			kokuhakuWaitTime--;
+			if (kokuhakuWaitTime == 0) {
+				return true;
+			}
+			return false;
+		}
+
+		private bool KokuhakuTimeIdou1(int Number){
+			float[,] posTable = new float[8,4] {
+				{  4.0f,  2.0f, -0.05f, 0f },
+				{  4.5f,  2.5f, -0.05f, 0f },
+				{  5.0f,  3.0f, -0.05f, 0f },
+				{  5.5f,  3.5f, -0.05f, 0f },
+				{ -4.0f, -2.0f,  0.05f, 1f },
+				{ -4.5f, -2.5f,  0.05f, 1f },
+				{ -5.0f, -3.0f,  0.05f, 1f },
+				{ -5.5f, -3.5f,  0.05f, 1f },
+			};
+
+			if (posTable [Number, 3] == 0) {
+				if (posTamago [Number].x <= posTable [Number, 1]) {
+					posTamago [Number].x = posTable [Number, 1];
+					return	true;
+				}
+			} else {
+				if (posTamago [Number].x >= posTable [Number, 1]) {
+					posTamago [Number].x = posTable [Number, 1];
+					return	true;
+				}
+			}
+			if (posTamago [Number].x == posTable [Number, 0]) {
+				cbTamagoChara [Number].gotoAndPlay ("walk");
+			}
+			posTamago [Number].x += posTable [Number, 2];
+			return false;
+		}
+		private bool KokuhakuTimeIdou2(int Number){
+			float[,] posTable = new float[4,4] {
+				{  2.0f,  1.0f, -0.05f, 0f },
+				{  2.5f,  1.5f, -0.05f, 0f },
+				{  3.0f,  2.0f, -0.05f, 0f },
+				{  3.5f,  2.5f, -0.05f, 0f },
+			};
+
+			if (posTable [Number, 3] == 0) {
+				if (posTamago [Number].x <= posTable [Number, 1]) {
+					posTamago [Number].x = posTable [Number, 1];
+					return	true;
+				}
+			} else {
+				if (posTamago [Number].x >= posTable [Number, 1]) {
+					posTamago [Number].x = posTable [Number, 1];
+					return	true;
+				}
+			}
+			if (posTamago [Number].x == posTable [Number, 0]) {
+				cbTamagoChara [Number].gotoAndPlay ("walk");
+			}
+			posTamago [Number].x += posTable [Number, 2];
+			return false;
+		}
+
+		private void KokuhakuEnd(){
+		}
+
+		private int KokuhakuTimeObjectSelect(int manNum){
+			
+			int womanNum = 0;
+
+			womanNum = KokuhakuTimeObjectSelectSub (manNum, 0, 1);
+
+			if (womanNum == 0) {
+				womanNum = KokuhakuTimeObjectSelectSub (manNum, 0, 2);
+			} else {
+				womanNum = KokuhakuTimeObjectSelectSub (manNum, 1, 2);
+			}
+
+			switch (womanNum) {
+			case	0:
+				{
+					womanNum = KokuhakuTimeObjectSelectSub (manNum, 0, 3);
+					break;
+				}
+			case	1:
+				{
+					womanNum = KokuhakuTimeObjectSelectSub (manNum, 1, 3);
+					break;
+				}
+			case	2:
+				{
+					womanNum = KokuhakuTimeObjectSelectSub (manNum, 2, 3);
+					break;
+				}
+			}
+
+			return womanNum;
+		}
+		
+		private int KokuhakuTimeObjectSelectSub(int manNum1,int womanNum1,int womanNum2){
+			int womanNum = 0;
+
+			if(loveManWoman[manNum1,womanNum1] <= loveManWoman[manNum1,womanNum2]){
+				if (loveManWoman [manNum1, womanNum1] == loveManWoman [manNum1, womanNum2]) {
+					if (Random.Range (0, 2) == 0) {
+						womanNum = womanNum1;
+					} else {
+						womanNum = womanNum2;
+					}
+				} else {
+					womanNum = womanNum2;
+				}
+			}
+
+			return	womanNum;
+		}
+
+		private void tamagochiPatanChenge(int patanNum,int tamagoNum){
+			switch (patanNum) {
+			case	0:
+				{	// 告白者のアニメパターン
+					switch (Random.Range (0, 3)) {
+					case	0:
+						{
+							cbTamagoChara [tamagoNum].gotoAndPlay ("grad2");	// 喜び２
+							break;
+						}
+					case	1:
+						{
+							cbTamagoChara [tamagoNum].gotoAndPlay ("shy1");		// 照れ１
+							break;
+						}
+					case	2:
+						{
+							cbTamagoChara [tamagoNum].gotoAndPlay ("shy3");		// 照れ３
+							break;
+						}
+					}
+					break;
+				}
+			case	1:
+				{	// 告白対象者のアニメパターン
+					switch (Random.Range (0, 2)) {
+					case	0:
+						{
+							cbTamagoChara [tamagoNum].gotoAndPlay ("shy1");		// 照れ１
+							break;
+						}
+					case	1:
+						{
+							cbTamagoChara [tamagoNum].gotoAndPlay ("shy2");		// 照れ２
+							break;
+						}
+					}
+					break;
+				}
+			}
+		}
+
+		private int KokuhakuRivalCheck(){
+			int flag = 0;
+
+
+			switch (kokuhakuManNumber) {
+			case	0:
+				{
+					if (KokuhakuManToWomanTable [0] == KokuhakuManToWomanTable [1]) {
+						flag += 16;
+					}
+					if (KokuhakuManToWomanTable [0] == KokuhakuManToWomanTable [2]) {
+						flag += 32;
+					}
+					if (KokuhakuManToWomanTable [0] == KokuhakuManToWomanTable [3]) {
+						flag += 64;
+					}
+					break;
+				}
+			case	1:
+				{
+					if (KokuhakuManToWomanTable [1] == KokuhakuManToWomanTable [2]) {
+						flag += 32;
+					}
+					if (KokuhakuManToWomanTable [1] == KokuhakuManToWomanTable [3]) {
+						flag += 64;
+					}
+					break;
+				}
+			case	2:
+				{
+					if (KokuhakuManToWomanTable [2] == KokuhakuManToWomanTable [3]) {
+						flag += 64;
+					}
+					break;
+				}
+			}
+
+			return	flag;
+		}
+
+		private void KokuhakuRivalWaitStop(int Number,bool flag){
+			EventWaitStop.SetActive (true);
+			cbTamagoChara [Number].gotoAndPlay ("anger");
+			EventWaitStop.transform.Find ("panel/image").gameObject.GetComponent<Image> ().sprite = CharaTamago [Number].GetComponent<SpriteRenderer> ().sprite;
+
+			if (flag) {
+				MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp12);
+				kokuhakuWaitTime = 120;
+			}
+		}
+
 			
 		private void ButtneYesClick(){
 			LoveManWomanNumberSet (10);		// 好感度を１０上げる

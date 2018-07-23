@@ -115,12 +115,15 @@ namespace Mix2App.MachiCon{
 		};
 
 		void Awake(){
+			
 		}
 
 		void Start(){
+			
 		}
 
 		void Destroy(){
+			
 		}
 
 		void Update(){
