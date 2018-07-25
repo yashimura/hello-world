@@ -84,7 +84,20 @@ namespace Mix2App.MachiCon{
 			"ではまた おあいしましょう！アプリっちでした！",
 		};
 			
-
+		private readonly string[] KokuhakuReturnMesType01 = new string[]{
+			"ありがとう・・・（＋語尾）",
+			"こちらこそおねがいします（＋語尾）",
+			"わたしもだいすき（＋語尾）",
+			"なかよくしてください（＋語尾）",
+			"すこしかんげきしちゃった（＋語尾）",
+		};
+		private readonly string[] KokuhakuReturnMesType02 = new string[]{
+			"ごめんなさい・・・（＋語尾）",
+			"ほかにすきなひとがいるの（＋語尾）",
+			"すこしかんがえさせてください（＋語尾）",
+			"おともだちでいましょう（＋語尾）",
+			"ほんとうにごめんなさい（＋語尾）",
+		};
 
 
 		public enum JikkyouMesTable{
@@ -112,6 +125,12 @@ namespace Mix2App.MachiCon{
 			SoudanMesDispMan2,		// みーつユーザー以外の男の子
 			SoudanMesDispWoman2,	// みーつユーザー以外の女の子
 			SoudanMesDispOff,		// 表示オフ
+		};
+
+		public enum KokuhakuMesTable{
+			KokuhakuMesDispOK,		// 告白OK
+			KokuhakuMesDispNo,		// 告白No
+			KokuhakuMesDispOff,		// 表示オフ
 		};
 
 		void Awake(){
@@ -264,7 +283,28 @@ namespace Mix2App.MachiCon{
 			}
 		}
 
+		public string KokuhakuMesDisp(KokuhakuMesTable flag){
+			string	retMes = "";
 
+			switch (flag) {
+			case	KokuhakuMesTable.KokuhakuMesDispOK:
+				{
+					retMes = KokuhakuReturnMesType01 [Random.Range (0, 5)];
+					break;
+				}
+			case	KokuhakuMesTable.KokuhakuMesDispNo:
+				{
+					retMes = KokuhakuReturnMesType02 [Random.Range (0, 5)];
+					break;
+				}
+			default:
+				{
+					retMes = "";
+					break;
+				}
+			}
+			return retMes;
+		}
 
 	}
 }
