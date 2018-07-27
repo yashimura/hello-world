@@ -154,91 +154,91 @@ namespace Mix2App.MachiCon{
 			case	JikkyouMesTable.JikkyouMesDisp01:
 				{
 					// 開始時	
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType01 [Random.Range (0, 3)];
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType01 [Random.Range (0, JikkyouMesType01.Length)];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp02:
 				{
 					// 男の子１人目入場時
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType02 [Random.Range (0, 2)];
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType02 [Random.Range (0, JikkyouMesType02.Length)];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp03:
 				{
 					// 男の子２～４人目入場時
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType03 [Random.Range (0, 2)];
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType03 [Random.Range (0, JikkyouMesType03.Length)];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp04:
 				{
 					// 女の子１人目入場時
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType04 [Random.Range (0, 2)];
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType04 [Random.Range (0, JikkyouMesType04.Length)];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp05:
 				{
 					// 女の子２～４人目入場時
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType05 [Random.Range (0, 2)];
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType05 [Random.Range (0, JikkyouMesType05.Length)];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp06:
 				{
 					// 全員入場
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType06 [Random.Range (0, 2)];
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType06 [Random.Range (0, JikkyouMesType06.Length)];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp07:
 				{
 					// 相談待ち
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType07 [Random.Range (0, 2)];
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType07 [Random.Range (0, JikkyouMesType07.Length)];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp08:
 				{
 					// アピールタイム開始時
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType08 [Random.Range (0, 2)];
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType08 [Random.Range (0, JikkyouMesType08.Length)];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp09:
 				{
 					// アピールタイム中
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType09 [Random.Range (0, 2)];
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType09 [Random.Range (0, JikkyouMesType09.Length)];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp10:
 				{
 					// 告白開始
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType10 [Random.Range (0, 2)];
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType10 [Random.Range (0, JikkyouMesType10.Length)];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp11:
 				{
 					// キャラ告白後
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType11 [Random.Range (0, 2)];
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType11 [Random.Range (0, JikkyouMesType11.Length)];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp12:
 				{
 					// ちょっとまった！後
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType12 [Random.Range (0, 2)];
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType12 [Random.Range (0, JikkyouMesType12.Length)];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp13:
 				{
 					// 告白成功後
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType13 [Random.Range (0, 2)];
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType13 [Random.Range (0, JikkyouMesType13.Length)];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp14:
 				{
 					// 告白失敗後
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType14 [Random.Range (0, 2)];
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType14 [Random.Range (0, JikkyouMesType14.Length)];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp15:
 				{
 					// お疲れ様
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType15 [Random.Range (0, 2)];
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType15 [Random.Range (0, JikkyouMesType15.Length)];
 					break;
 				}
 			default:
@@ -289,12 +289,12 @@ namespace Mix2App.MachiCon{
 			switch (flag) {
 			case	KokuhakuMesTable.KokuhakuMesDispOK:
 				{
-					retMes = KokuhakuReturnMesType01 [Random.Range (0, 5)];
+					retMes = KokuhakuReturnMesType01 [Random.Range (0, KokuhakuReturnMesType01.Length)];
 					break;
 				}
 			case	KokuhakuMesTable.KokuhakuMesDispNo:
 				{
-					retMes = KokuhakuReturnMesType02 [Random.Range (0, 5)];
+					retMes = KokuhakuReturnMesType02 [Random.Range (0, KokuhakuReturnMesType02.Length)];
 					break;
 				}
 			default:

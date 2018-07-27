@@ -393,7 +393,8 @@ namespace Mix2App.MachiCon{
 							cbTamagoChara [i].gotoAndPlay ("idle");
 						}
 
-						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp07);
+//						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp07);
+						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
 					}
 					break;
 				}
@@ -408,6 +409,7 @@ namespace Mix2App.MachiCon{
 						posTamago [targetNumber].y = 1.5f;
 
 						EventSoudanPartsDisp (true);
+						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp07);
 					}
 					CharaTamago [playerNumber].GetComponent<SpriteRenderer> ().sortingLayerName = "Chara";		// 優先順位をカーテンの手前にする
 					CharaTamago [playerNumber].GetComponent<SpriteRenderer> ().flipX = false;
@@ -439,6 +441,8 @@ namespace Mix2App.MachiCon{
 						AppealPositionChangeInit ();											// アピールタイム初期表示位置設定
 						TamagochiFukidashiOff ();
 						waitTime = 90;
+
+						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
 					}
 					break;
 				}
