@@ -15,10 +15,10 @@ namespace Mix2App.MachiCon{
 
 		[SerializeField] private GameObject	EventSoudanSprite;		// アピールタイトル表示スプライト
 		[SerializeField] private Sprite 	EventSoudanSprite2;		// 表示オフ
-		[SerializeField] private Sprite[]	EventMan1;				// みーつユーザー男の子のタイトル表示スプライトリスト
-		[SerializeField] private Sprite[]	EventWoman1;			// みーつユーザー女の子のタイトル表示スプライトリスト
-		[SerializeField] private Sprite[]	EventMan2;				// みーつユーザー以外男の子のタイトル表示スプライトリスト
-		[SerializeField] private Sprite[]	EventWoman2;			// みーつユーザー以外女の子のタイトル表示スプライトリスト
+		[SerializeField] private Sprite[]	EventMan1;				// みーつユーザー男の子のアピールタイトル表示スプライトリスト
+		[SerializeField] private Sprite[]	EventWoman1;			// みーつユーザー女の子のアピールタイトル表示スプライトリスト
+		[SerializeField] private Sprite[]	EventMan2;				// みーつユーザー以外男の子のアピールタイトル表示スプライトリスト
+		[SerializeField] private Sprite[]	EventWoman2;			// みーつユーザー以外女の子のアピールタイトル表示スプライトリスト
 
 
 

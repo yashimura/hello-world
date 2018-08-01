@@ -392,8 +392,6 @@ namespace Mix2App.MachiCon{
 						for (int i = 0; i < 8; i++) {
 							cbTamagoChara [i].gotoAndPlay ("idle");
 						}
-
-//						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp07);
 						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
 					}
 					break;
