@@ -651,50 +651,50 @@ namespace Mix2App.MachiCon{
 			switch (posNumber) {
 			case	0:
 				{
-					mesAvater = "アバターネーム１";
-					mesTamago = "たまごっちネーム語尾！";
+					mesAvater = "アバターネーム1";
+					mesTamago = "たまごっちネームごび！";
 					break;
 				}
 			case	1:
 				{
-					mesAvater = "アバターネーム２";
-					mesTamago = "たまごっちネーム語尾！";
+					mesAvater = "アバターネーム2";
+					mesTamago = "たまごっちネームごび！";
 					break;
 				}
 			case	2:
 				{
-					mesAvater = "アバターネーム３";
-					mesTamago = "たまごっちネーム語尾！";
+					mesAvater = "アバターネーム3";
+					mesTamago = "たまごっちネームごび！";
 					break;
 				}
 			case	3:
 				{
-					mesAvater = "アバターネーム４";
-					mesTamago = "たまごっちネーム語尾！";
+					mesAvater = "アバターネーム4";
+					mesTamago = "たまごっちネームごび！";
 					break;
 				}
 			case	4:
 				{
-					mesAvater = "アバターネーム５";
-					mesTamago = "たまごっちネーム語尾！";
+					mesAvater = "アバターネーム5";
+					mesTamago = "たまごっちネームごび！";
 					break;
 				}
 			case	5:
 				{
-					mesAvater = "アバターネーム６";
-					mesTamago = "たまごっちネーム語尾！";
+					mesAvater = "アバターネーム6";
+					mesTamago = "たまごっちネームごび！";
 					break;
 				}
 			case	6:
 				{
-					mesAvater = "アバターネーム７";
-					mesTamago = "たまごっちネーム語尾！";
+					mesAvater = "アバターネーム7";
+					mesTamago = "たまごっちネームごび！";
 					break;
 				}
 			case	7:
 				{
-					mesAvater = "アバターネーム８";
-					mesTamago = "たまごっちネーム語尾！";
+					mesAvater = "アバターネーム8";
+					mesTamago = "たまごっちネームごび！";
 					break;
 				}
 			}
@@ -720,25 +720,25 @@ namespace Mix2App.MachiCon{
 			switch (targetNum) {
 			case	4:
 				{
-					mesAvater = "アバターネーム５";
+					mesAvater = "アバターネーム5";
 					mesTamago = "たまごっちネーム";
 					break;
 				}
 			case	5:
 				{
-					mesAvater = "アバターネーム６";
+					mesAvater = "アバターネーム6";
 					mesTamago = "たまごっちネーム";
 					break;
 				}
 			case	6:
 				{
-					mesAvater = "アバターネーム７";
+					mesAvater = "アバターネーム7";
 					mesTamago = "たまごっちネーム";
 					break;
 				}
 			case	7:
 				{
-					mesAvater = "アバターネーム８";
+					mesAvater = "アバターネーム8";
 					mesTamago = "たまごっちネーム";
 					break;
 				}
@@ -1304,49 +1304,49 @@ namespace Mix2App.MachiCon{
 			switch (targetNumber) {
 			case	0:
 				{
-					avaterMes = "アバターネーム１";
+					avaterMes = "アバターネーム1";
 					tamagoMes = "たまごっちネーム";
 					break;
 				}
 			case	1:
 				{
-					avaterMes = "アバターネーム２";
+					avaterMes = "アバターネーム2";
 					tamagoMes = "たまごっちネーム";
 					break;
 				}
 			case	2:
 				{
-					avaterMes = "アバターネーム３";
+					avaterMes = "アバターネーム3";
 					tamagoMes = "たまごっちネーム";
 					break;
 				}
 			case	3:
 				{
-					avaterMes = "アバターネーム４";
+					avaterMes = "アバターネーム4";
 					tamagoMes = "たまごっちネーム";
 					break;
 				}
 			case	4:
 				{
-					avaterMes = "アバターネーム５";
+					avaterMes = "アバターネーム5";
 					tamagoMes = "たまごっちネーム";
 					break;
 				}
 			case	5:
 				{
-					avaterMes = "アバターネーム６";
+					avaterMes = "アバターネーム6";
 					tamagoMes = "たまごっちネーム";
 					break;
 				}
 			case	6:
 				{
-					avaterMes = "アバターネーム７";
+					avaterMes = "アバターネーム7";
 					tamagoMes = "たまごっちネーム";
 					break;
 				}
 			case	7:
 				{
-					avaterMes = "アバターネーム８";
+					avaterMes = "アバターネーム8";
 					tamagoMes = "たまごっちネーム";
 					break;
 				}
