@@ -23,9 +23,9 @@ namespace Mix2App.MachiCon{
 
 
 		private readonly string[] JikkyouMesType01 = new string[]{
-			"レディース エ～ンド ジェントルマン！ようこそ たまキュン♡パーティへ！",
-			"すてきな であいのばしょ・・・ たまキュン♡パーティへ ようこそ！",
-			"イエ～イ♪ はっぴ～か～い！ たまキュン♡パーティはじまる よ！",
+			"レディース エ～ンド ジェントルマン！ようこそ たまキュン♥パーティへ！",
+			"すてきな であいのばしょ・・・ たまキュン♥パーティへ ようこそ！",
+			"イエ～イ♪ はっぴ～か～い！ たまキュン♥パーティはじまる よ！",
 		};
 		private readonly string[] JikkyouMesType02 = new string[]{
 			"カムヒア～！まずは このダンディから にゅうじょうだ！",
@@ -44,7 +44,7 @@ namespace Mix2App.MachiCon{
 			"きた～っ！かわゆい このこのにゅうじょう だ！",
 		};
 		private readonly string[] JikkyouMesType06 = new string[]{
-			"このメンバーで たまキュン♡パーティのスタートだ！",
+			"このメンバーで たまキュン♥パーティのスタートだ！",
 			"まずは そうだんタイムスタート！",
 		};
 		private readonly string[] JikkyouMesType07 = new string[]{
@@ -254,30 +254,35 @@ namespace Mix2App.MachiCon{
 			case	SoudanMesTable.SoudanMesDispMan1:
 				{
 					// みーつユーザー男の子
-					EventSoudanSprite.GetComponent<SpriteRenderer> ().sprite = EventMan1 [Random.Range (0, EventMan1.Length)];
+					EventSoudanSprite.SetActive(true);
+					EventSoudanSprite.GetComponent<Image> ().sprite = EventMan1 [Random.Range (0, EventMan1.Length)];
 					break;
 				}
 			case	SoudanMesTable.SoudanMesDispWoman1:
 				{
 					// みーつユーザー女の子
-					EventSoudanSprite.GetComponent<SpriteRenderer> ().sprite = EventWoman1 [Random.Range (0, EventWoman1.Length)];
+					EventSoudanSprite.SetActive(true);
+					EventSoudanSprite.GetComponent<Image> ().sprite = EventWoman1 [Random.Range (0, EventWoman1.Length)];
 					break;
 				}
 			case	SoudanMesTable.SoudanMesDispMan2:
 				{
 					// みーつユーザー以外男の子
-					EventSoudanSprite.GetComponent<SpriteRenderer> ().sprite = EventMan2 [Random.Range (0, EventMan2.Length)];
+					EventSoudanSprite.SetActive(true);
+					EventSoudanSprite.GetComponent<Image> ().sprite = EventMan2 [Random.Range (0, EventMan2.Length)];
 					break;
 				}
 			case	SoudanMesTable.SoudanMesDispWoman2:
 				{
 					// みーつユーザー以外女の子
-					EventSoudanSprite.GetComponent<SpriteRenderer> ().sprite = EventWoman2 [Random.Range (0, EventWoman2.Length)];
+					EventSoudanSprite.SetActive(true);
+					EventSoudanSprite.GetComponent<Image> ().sprite = EventWoman2 [Random.Range (0, EventWoman2.Length)];
 					break;
 				}
 			default:
 				{
-					EventSoudanSprite.GetComponent<SpriteRenderer> ().sprite = EventSoudanSprite2;
+					EventSoudanSprite.SetActive(false);
+					EventSoudanSprite.GetComponent<Image> ().sprite = EventSoudanSprite2;
 					break;
 				}
 			}
@@ -289,11 +294,13 @@ namespace Mix2App.MachiCon{
 			switch (flag) {
 			case	KokuhakuMesTable.KokuhakuMesDispOK:
 				{
+					// 告白受諾メッセージ
 					retMes = KokuhakuReturnMesType01 [Random.Range (0, KokuhakuReturnMesType01.Length)];
 					break;
 				}
 			case	KokuhakuMesTable.KokuhakuMesDispNo:
 				{
+					// 告白拒否メッセージ
 					retMes = KokuhakuReturnMesType02 [Random.Range (0, KokuhakuReturnMesType02.Length)];
 					break;
 				}
