@@ -48,6 +48,7 @@ namespace Mix2App.MiniGame1{
 			new Vector3 (0.0f, -10.0f, 0.0f),
 			new Vector3 (0.0f, -10.0f, 0.0f),
 		};
+		private bool startEndFlag = false;
 		private int waitCount = 0;
 		private int charaAnimeFlag = 0;										// 0:idel,1:r-idou,2:l-idou
 		private int itemIdouFlag = 0;										// 0;init,1:d-idou,2:
@@ -119,6 +120,7 @@ namespace Mix2App.MiniGame1{
 			Debug.Log ("MiniGame1 Start");
 
 			jobCount = statusJobCount.minigame1JobCount000;
+			startEndFlag = false;
 
 			ButtonStart.GetComponent<Button> ().onClick.AddListener (ButtonStartClick);
 			ButtonClose.GetComponent<Button> ().onClick.AddListener (ButtonCloseClick);
@@ -127,14 +129,6 @@ namespace Mix2App.MiniGame1{
 			ButtonTakuhai.GetComponent<Button> ().onClick.AddListener (ButtonTakuhaiClick);
 			ButtonTojiru.GetComponent<Button> ().onClick.AddListener (ButtonTojiruClick);
 			ButtonModoru.GetComponent<Button> ().onClick.AddListener (ButtonModoruClick);
-
-			cbCharaTamago[0] = CharaTamago[0].GetComponent<CharaBehaviour> ();		// プレイヤー
-			cbCharaTamago[1] = CharaTamago[1].GetComponent<CharaBehaviour> ();		// 応援キャラ１
-			cbCharaTamago[2] = CharaTamago[2].GetComponent<CharaBehaviour> ();		// 応援キャラ２
-			yield return cbCharaTamago[0].init (new TamaChara (16));
-			yield return cbCharaTamago[1].init (new TamaChara (17));
-			yield return cbCharaTamago[2].init (new TamaChara (18));
-
 
 			float use_screen_x = Screen.currentResolution.width;
 			float use_screen_y = Screen.currentResolution.height;
@@ -153,6 +147,19 @@ namespace Mix2App.MiniGame1{
 			if ((num > 1.33f) && (num < 1.34f)) {
 				baseSizePanel.GetComponent<Transform>().transform.localScale = new Vector3 (1.3f, 1.3f, 1.0f);	// 3:4の時のみ画面を拡大表示
 			}
+
+
+
+			cbCharaTamago[0] = CharaTamago[0].GetComponent<CharaBehaviour> ();		// プレイヤー
+			cbCharaTamago[1] = CharaTamago[1].GetComponent<CharaBehaviour> ();		// 応援キャラ１
+			cbCharaTamago[2] = CharaTamago[2].GetComponent<CharaBehaviour> ();		// 応援キャラ２
+			yield return cbCharaTamago[0].init (new TamaChara (16));
+			yield return cbCharaTamago[1].init (new TamaChara (17));
+			yield return cbCharaTamago[2].init (new TamaChara (18));
+
+
+
+			startEndFlag = true;
 		}
 
 		void Destroy(){
@@ -163,9 +170,11 @@ namespace Mix2App.MiniGame1{
 			switch (jobCount) {
 			case statusJobCount.minigame1JobCount000:
 				{
-					EventTitle.SetActive (true);
-					jobCount = statusJobCount.minigame1JobCount010;
-					TamagoCharaPositionInit ();
+					if (startEndFlag) {
+						EventTitle.SetActive (true);
+						jobCount = statusJobCount.minigame1JobCount010;
+						TamagoCharaPositionInit ();
+					}
 					break;
 				}
 			case statusJobCount.minigame1JobCount010:
