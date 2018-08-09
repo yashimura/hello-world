@@ -93,10 +93,12 @@ namespace Mix2App.MiniGame1 {
         public void GameStartAnimation() {
             // Called, when game game started and need to play animation
         }
-
-
+			
         public GameItem GameItemGet(int number){
 			return GameItems [number];
+		}
+		public void GameScoreSet(int score){
+			CharacterGetScore (score);
 		}
 #if UNITY_EDITOR
         /// <summary>

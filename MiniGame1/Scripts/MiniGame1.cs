@@ -208,12 +208,7 @@ namespace Mix2App.MiniGame1{
 						jobCount = statusJobCount.minigame1JobCount040;
 						EventStart.SetActive (false);
 						EventGame.SetActive (true);
-						charaAnimeFlag = 0;
-						itemIdouFlag = 0;
-						itemGetNumber = 0;
-						charaJumpCheckFlag = 0;
-						charaJumpCheckFlag2 = 0;
-						gameMainLoopFlag = false;
+						GameMainInit ();
 						TamagoAnimeSprite (EventGame);								// たまごっちのアニメをImage,SpriteRendererに反映する
 					}
 					TamagoAnimeSprite (EventStart);									// たまごっちのアニメをImage,SpriteRendererに反映する
@@ -324,6 +319,22 @@ namespace Mix2App.MiniGame1{
 			obj.transform.Find ("chara3").gameObject.GetComponent<Image> ().sprite = CharaTamago [2].GetComponent<SpriteRenderer> ().sprite;
 		}
 			
+
+
+		// ゲームメイン初期化
+		private void GameMainInit(){
+			charaAnimeFlag = 0;
+			itemIdouFlag = 0;
+			itemGetNumber = 0;
+			charaJumpCheckFlag = 0;
+			charaJumpCheckFlag2 = 0;
+			itemDownSpeed = 0.0f;
+			itemXbase = 0.0f;
+			itemYNumber = 0;
+			scoreYIdouNumber = 0;
+			gameMainLoopFlag = false;
+		}
+
 		private float itemDownSpeed = 0.0f;
 		private float itemXbase = 0.0f;
 		private int itemYNumber = 0;
@@ -352,13 +363,17 @@ namespace Mix2App.MiniGame1{
 
 				if (ray.direction.x * 600 >= pos.x) {
 					if (charaAnimeFlag != 1) {
-						cbCharaTamago [0].gotoAndPlay ("walk");
+						if (cbCharaTamago [0].nowlabel != "walk") {
+							cbCharaTamago [0].gotoAndPlay ("walk");
+						}
 						charaObj.GetComponent<SpriteRenderer> ().flipX = true;
 						charaAnimeFlag = 1;
 					}
 				} else {
 					if (charaAnimeFlag != 2) {
-						cbCharaTamago [0].gotoAndPlay ("walk");
+						if (cbCharaTamago [0].nowlabel != "walk") {
+							cbCharaTamago [0].gotoAndPlay ("walk");
+						}
 						charaObj.GetComponent<SpriteRenderer> ().flipX = false;
 						charaAnimeFlag = 2;
 					}
@@ -462,6 +477,7 @@ namespace Mix2App.MiniGame1{
 						posScore.y = pos.y - 26.0f;
 						scoreYIdouNumber = scoreYIdouTable.Length;
 						scoreObj.GetComponent<Text> ().text = gameitem.Score.ToString ();
+//						pgGameCore.GameScoreSet (gameitem.Score);
 
 						itemIdouFlag = 0;
 						Debug.Log ("アイテムゲット");
