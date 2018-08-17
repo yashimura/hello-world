@@ -4,9 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Mix2App.Lib;
-using Mix2App.Lib.System;
 using Mix2App.Lib.Model;
+using Mix2App.Lib.Events;
 using Mix2App.Lib.View;
+using Mix2App.Lib.Utils;
 
 namespace Mix2App.MarriageDate{
 	public class MarriageDate : MonoBehaviour,IReceiver {
@@ -225,6 +226,12 @@ namespace Mix2App.MarriageDate{
 						womanXposition = woman_walk3.transform.localPosition.x;
 
 						EventEndMessageSet ();
+
+						{
+							Vector3 pos = EventEnd.transform.Find ("serif_1").gameObject.transform.localPosition;
+							pos.x -= 20.0f;
+							EventEnd.transform.Find ("serif_1").gameObject.transform.localPosition = pos;
+						}
 					} else {
 						posMan1.y = (man_sit.transform.localPosition.y / 48.0f) + 0.5f;
 						posWoman1.y = (man_sit.transform.localPosition.y / 48.0f) + 0.5f;
@@ -234,9 +241,9 @@ namespace Mix2App.MarriageDate{
 			case	statusJobCount.marriageJobCount050:
 				{
 					if ((manXposition == man_walk3.transform.localPosition.x) && (womanXposition == woman_walk3.transform.localPosition.x)) {
-						posMan1.y = (man_happy.transform.localPosition.y / 47.0f) - 0.2f;
-						posWoman1.y = (woman_happy.transform.localPosition.y / 47.0f) - 0.2f;
-						posMan1.x = 2.5f;
+						posMan1.y = (EventEnd.transform.Find("bg1").gameObject.transform.localPosition.y / 47.0f) + 1.7f;
+						posWoman1.y = (EventEnd.transform.Find("bg1").gameObject.transform.localPosition.y / 47.0f) + 1.7f;
+						posMan1.x = 2.0f;
 						posWoman1.x = -2.0f;
 					} else {
 						jobCount = statusJobCount.marriageJobCount060;
@@ -263,6 +270,7 @@ namespace Mix2App.MarriageDate{
 			case	statusJobCount.marriageJobCount070:
 				{
 					Debug.Log ("たまタウンへ・・・");
+					jobCount = statusJobCount.marriageJobCount080;
 					break;
 				}
 			case	statusJobCount.marriageJobCount080:
@@ -314,17 +322,17 @@ namespace Mix2App.MarriageDate{
 			switch (Random.Range (0, 3)) {
 			case	0:
 				{
-					cb.gotoAndPlay ("grad1");						// 喜び１
+					cb.gotoAndPlay ("glad1");						// 喜び１
 					break;
 				}
 			case	1:
 				{
-					cb.gotoAndPlay ("grad2");						// 喜び２
+					cb.gotoAndPlay ("glad2");						// 喜び２
 					break;
 				}
 			case	2:
 				{
-					cb.gotoAndPlay ("grad3");						// 喜び３
+					cb.gotoAndPlay ("glad3");						// 喜び３
 					break;
 				}
 			}

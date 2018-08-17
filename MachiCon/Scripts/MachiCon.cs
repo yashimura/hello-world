@@ -4,9 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Mix2App.Lib;
-using Mix2App.Lib.System;
 using Mix2App.Lib.Model;
+using Mix2App.Lib.Events;
 using Mix2App.Lib.View;
+using Mix2App.Lib.Utils;
+using Mix2App.Lib.Sounds;
+using Mix2App.Lib.Net;
 
 
 
@@ -17,6 +20,7 @@ namespace Mix2App.MachiCon{
 		[SerializeField] private GameObject EventTitle;						// たまキュンパーティータイトル
 		[SerializeField] private GameObject EventTitleClock;				// たまキュンパーティーカウントダウンマーク
 		[SerializeField] private GameObject EventTitleText;					// たまキュンパーティーカウントダウン時間
+		[SerializeField] private Sprite[] EventTitleSprite;
 		[SerializeField] private GameObject[] CharaTamago;					// たまごっち
 		[SerializeField] private GameObject[] CharaTamagochi;				// たまごっち（Image）
 		[SerializeField] private GameObject EventPhase;						// 幕間
@@ -27,7 +31,7 @@ namespace Mix2App.MachiCon{
 		[SerializeField] private GameObject EventSoudan;					// 相談
 		[SerializeField] private GameObject EventSoudanChara;				// 旧相談たまごっち
 		[SerializeField] private GameObject EventSoudanTarget;				// 旧相談対象たまごっち
-		[SerializeField] private GameObject EventSoudanTamago;				// 新相談たまごっち（chara,target)
+		[SerializeField] private GameObject EventSoudanTamago;				// 新相談たまごっち（chara,target）
 		[SerializeField] private GameObject EventSoudanAvaterNameOld;		// 旧アバターネーム
 		[SerializeField] private GameObject EventSoudanTamagoNameOld;		// 旧たまごっちネーム
 		[SerializeField] private GameObject EventSoudanAvaterNameNew;		// 新アバターネーム
@@ -43,8 +47,6 @@ namespace Mix2App.MachiCon{
 		[SerializeField] private GameObject EventResult;					// 告白結果
 		[SerializeField] private GameObject EventLastResult;				// 最終結果
 		[SerializeField] private GameObject EventEnd;						// おしまい
-
-
 
 		private object[]		mparam;
 
@@ -155,6 +157,7 @@ namespace Mix2App.MachiCon{
 
 		void Awake(){
 			Debug.Log ("MachiCon Awake");
+
 		}
 
 		public void receive(params object[] parameter){
@@ -214,12 +217,12 @@ namespace Mix2App.MachiCon{
 			}
 			yield return cbTamagoChara[0].init (new TamaChara (16));				// 男の子１のたまごっちを登録する
 			yield return cbTamagoChara[1].init (new TamaChara (17));				// 男の子２のたまごっちを登録する
-			yield return cbTamagoChara[2].init (new TamaChara (16));				// 男の子３のたまごっちを登録する
-			yield return cbTamagoChara[3].init (new TamaChara (17));				// 男の子４のたまごっちを登録する
+			yield return cbTamagoChara[2].init (new TamaChara (20));				// 男の子３のたまごっちを登録する
+			yield return cbTamagoChara[3].init (new TamaChara (21));				// 男の子４のたまごっちを登録する
 			yield return cbTamagoChara[4].init (new TamaChara (18));				// 女の子１のたまごっちを登録する
 			yield return cbTamagoChara[5].init (new TamaChara (19));				// 女の子２のたまごっちを登録する
-			yield return cbTamagoChara[6].init (new TamaChara (18));				// 女の子３のたまごっちを登録する
-			yield return cbTamagoChara[7].init (new TamaChara (19));				// 女の子４のたまごっちを登録する
+			yield return cbTamagoChara[6].init (new TamaChara (22));				// 女の子３のたまごっちを登録する
+			yield return cbTamagoChara[7].init (new TamaChara (23));				// 女の子４のたまごっちを登録する
 
 
 
@@ -278,7 +281,7 @@ namespace Mix2App.MachiCon{
 						countTime1 -= 1.0f;
 						countTime2--;
 					}
-					EventTitleText.GetComponent<Text> ().text = countTime2.ToString ();			// カウントダウン数字
+					EventTitleText.GetComponent<Image> ().sprite = EventTitleSprite [countTime2];
 					if (countTime2 == 0) {
 						jobCount = statusJobCount.machiconJobCount020;
 
@@ -517,9 +520,8 @@ namespace Mix2App.MachiCon{
 						for (int i = 0; i < 8; i++) {
 							CharaTamagochi [i].transform.Find ("fukidashi/message").gameObject.SetActive (false);
 						}
-						waitTime = 600;
+						waitTime = 900;
 					}
-/////					AppealPositionChangeLoop ();
 					break;
 				}
 			case	statusJobCount.machiconJobCount210:
@@ -527,7 +529,7 @@ namespace Mix2App.MachiCon{
 					ApplealPositionChangeMain ();												// アピールタイムのキャラ移動
 
 					// 一定時間で実況表示を変える
-					if ((waitTime == 200) || (waitTime == 400)) {
+					if((waitTime & 255) == 0){
 						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp09);
 					}
 					if (WaitTimeSubLoop ()) {
@@ -992,64 +994,20 @@ namespace Mix2App.MachiCon{
 			posTamago [posNumber].y = pos [posNumber, 1];
 		}
 
-		// アピールタイムの配置順番
-		private int[] appealPosCharaTable = new int [8]{ 0, 1, 2, 3, 4, 5, 6, 7 };
-		// アピールタイムの配置順番変更
-		private void AppealCharaPositionChange(){
-			int[,] numTbl = new int[24, 4] {
-				{ 0, 1, 2, 3 },
-				{ 0, 1, 3, 2 },
-				{ 0, 2, 1, 3 },
-				{ 0, 2, 3, 1 },
-				{ 0, 3, 1, 2 },
-				{ 0, 3, 2, 1 },
-				{ 1, 0, 2, 3 },
-				{ 1, 0, 3, 2 },
-				{ 1, 2, 0, 3 },
-				{ 1, 2, 3, 0 },
-				{ 1, 3, 0, 2 },
-				{ 1, 3, 2, 0 },
-				{ 2, 0, 1, 3 },
-				{ 2, 0, 3, 1 },
-				{ 2, 1, 0, 3 },
-				{ 2, 1, 3, 0 },
-				{ 2, 3, 0, 1 },
-				{ 2, 3, 1, 0 },
-				{ 3, 0, 1, 2 },
-				{ 3, 0, 2, 1 },
-				{ 3, 1, 0, 2 },
-				{ 3, 1, 2, 0 },
-				{ 3, 2, 0, 1 },
-				{ 3, 2, 1, 0 },
-			};
-			int num = Random.Range (0, 24);
-			int num2 = Random.Range (0, 24);
-
-			for (int i = 0; i < 4; i++) {
-				appealPosCharaTable [i] = numTbl [num, i];
-			}
-
-			for (int i = 4; i < 8; i++) {
-//				appealPosCharaTable [i] = i;
-				appealPosCharaTable [i] = numTbl [num2, i - 4] + 4;
-			}
-		}
-
 		// アピールタイムの初期配置
 		private void AppealPositionChangeInit(){
 			float[,] pos = new float[8, 2] {
-				{  -90.0f,   20.0f },									// 男の子１の初期位置
-				{  230.0f,   20.0f },									// 男の子２の初期位置
-				{ -190.0f, -190.0f },									// 男の子３の初期位置
-				{  330.0f, -190.0f },									// 男の子４の初期位置
-				{ -230.0f,   20.0f },									// 女の子１の初期位置
-				{   90.0f,   20.0f },									// 女の子２の初期位置
-				{ -330.0f, -190.0f },									// 女の子３の初期位置
-				{  190.0f, -190.0f },									// 女の子４の初期位置
+				{   90.0f, -200.0f },									// 男の子１の整列位置
+				{  170.0f, -180.0f },									// 男の子２の整列位置
+				{  250.0f, -160.0f },									// 男の子３の整列位置
+				{  330.0f, -140.0f },									// 男の子４の整列位置
+				{  -90.0f, -200.0f },									// 女の子１の整列位置
+				{ -170.0f, -180.0f },									// 女の子２の整列位置
+				{ -250.0f, -160.0f },									// 女の子３の整列位置
+				{ -330.0f, -140.0f },									// 女の子４の整列位置
 			};
 
 			bool flag = true;
-			AppealCharaPositionChange ();
 
 			for (int i = 0; i < 8; i++) {
 				switch (i) {
@@ -1072,22 +1030,22 @@ namespace Mix2App.MachiCon{
 				}
 				CharaTamago [i].GetComponent<SpriteRenderer> ().flipX = flag;
 
-				posTamago [i].x = pos [appealPosCharaTable [i], 0];
-				posTamago [i].y = pos [appealPosCharaTable [i], 1];
+				posTamago [i].x = pos [i, 0];
+				posTamago [i].y = pos [i, 1];
 
 				cbTamagoChara [i].gotoAndPlay ("idle");
+
+				CharaTamagochi [i].GetComponent<Canvas> ().sortingOrder = 1;
 			}
+
+			EventAppeal.transform.Find ("table1").gameObject.GetComponent<Canvas> ().sortingOrder = 0;
+			EventAppeal.transform.Find ("table2").gameObject.GetComponent<Canvas> ().sortingOrder = 0;
+			EventAppeal.transform.Find ("table3").gameObject.GetComponent<Canvas> ().sortingOrder = 0;
+			EventAppeal.transform.Find ("table4").gameObject.GetComponent<Canvas> ().sortingOrder = 0;
 				
 			appealTimeCounter = 0;
 		}
 			
-		// アピールタイムのキャラ移動（そわそわ）
-		private void AppealPositionChangeLoop(){
-			for (int i = 0; i < 8; i++) {
-				posTamago [i].x += Random.Range (-0.5f, 0.5f);
-				posTamago [i].y += Random.Range (-0.5f, 0.5f);
-			}
-		}
 
 		private int	appealTimeCounter = 0;
 		private float[] posTamagoSpeedX = new float[8] {
@@ -1105,28 +1063,41 @@ namespace Mix2App.MachiCon{
 		private int[] fukidashiTamagoWait = new int[8] {
 			60, 60, 60, 60, 60, 60, 60, 60
 		};
-		// 作業中（自動移動をどのよういするかを思案中）
+
+
+		private float[] posTamagoTargetX = new float[8];
+		private float[] posTamagoTargetY = new float[8];
+
+		private Vector2[] posTamagoTargetTableMan = new Vector2[4] {
+			new Vector2 (-90.0f,  20.0f),	// テーブル１の右側
+			new Vector2 (230.0f,  20.0f),	// テーブル２の右側
+			new Vector2 (-90.0f, -90.0f),	// テーブル３の右側
+			new Vector2 (230.0f, -90.0f),	// テーブル４の右側
+		};
+		private Vector2[] posTamagoTargetTableWoman = new Vector2[4]{
+			new Vector2 (-230.0f,  20.0f),	// テーブル１の左側
+			new Vector2 (  90.0f,  20.0f),	// テーブル２の左側
+			new Vector2 (-230.0f, -90.0f),	// テーブル３の左側
+			new Vector2 (  90.0f, -90.0f),	// テーブル４の左側
+		};
+
+		private int[] countTableChakusekiTime = new int[8]{
+			0,0,0,0,0,0,0,0,
+		};
+
+
+		// アピールタイム動作作業中
+		// 移動予定先
+		//  男の子 テーブルの右側の４箇所かランダム地点
+		//  女の子 テーブルの左側の４箇所かランダム地点
 		private void ApplealPositionChangeMain(){
 			if (appealTimeCounter == 0) {
 				for (int i = 0; i < 8; i++) {
-					posTamagoSpeedX [i] = Random.Range (0.01f, 0.03f);
-					posTamagoSpeedY [i] = Random.Range (0.01f, 0.03f);
-					if (i < 4) {
-						posTamagoIdouXFlag [i] = true;
-					} else {
-						posTamagoIdouXFlag [i] = false;
-					}
-					if (Random.Range (0, 2) == 0) {
-						posTamagoIdouYFlag [i] = true;
-					} else {
-						posTamagoIdouYFlag [i] = false;
-					}
-
-					fukidashiTamagoWait [i] = Random.Range (60, 100);
+					TamagochiIdouInit (i);
 				}
 			}
-			AppealPositionChangeLoop ();
-			// １→２、２↓４、３↑１、４←３
+
+
 
 			for (int i = 0; i < 8; i++) {
 				fukidashiTamagoWait [i]--;
@@ -1165,51 +1136,240 @@ namespace Mix2App.MachiCon{
 				}
 			}
 
-#if false
-			for (int i = 0; i < 8; i++) {
-				if (appealTimeCounter == 80) {
-					tamagoChara [i].gotoAndPlay ("walk");
+
+
+			if (appealTimeCounter >= 80) {
+				float[] _posY = new float[12];
+
+				for (int i = 0; i < 8; i++) {
+					if ((posTamagoSpeedX [i] != 0.0f) || (posTamagoSpeedY [i] != 0.0f)) {
+						TamagochiAnimeSet (i, "walk");
+
+						if (posTamagoIdouXFlag [i]) {
+							posTamago [i].x += posTamagoSpeedX [i];
+							if (posTamago [i].x >= posTamagoTargetX [i]) {
+								posTamago [i].x = posTamagoTargetX [i];
+							}
+							CharaTamago [i].GetComponent<SpriteRenderer> ().flipX = posTamagoIdouXFlag [i];
+						} else {
+							posTamago [i].x -= posTamagoSpeedX [i];
+							if (posTamago [i].x <= posTamagoTargetX [i]) {
+								posTamago [i].x = posTamagoTargetX [i];
+							}
+							CharaTamago [i].GetComponent<SpriteRenderer> ().flipX = posTamagoIdouXFlag [i];
+						}
+
+						if (posTamagoIdouYFlag [i]) {
+							posTamago [i].y += posTamagoSpeedY [i];
+							if (posTamago [i].y >= posTamagoTargetY [i]) {
+								posTamago [i].y = posTamagoTargetY [i];
+							}
+						} else {
+							posTamago [i].y -= posTamagoSpeedY [i];
+							if (posTamago [i].y <= posTamagoTargetY [i]) {
+								posTamago [i].y = posTamagoTargetY [i];
+							}
+						}
+
+						if (posTamagoSpeedX [i] != 0.0f) {
+							if (posTamago [i].x == posTamagoTargetX [i]) {
+								countTableChakusekiTime [i] = Random.Range (30, 90);
+								posTamagoSpeedX [i] = 0.0f;
+								posTamagoSpeedY [i] = 0.0f;
+							}
+						} else {
+							if (posTamago [i].y == posTamagoTargetY [i]) {
+								countTableChakusekiTime [i] = Random.Range (30, 90);
+								posTamagoSpeedX [i] = 0.0f;
+								posTamagoSpeedY [i] = 0.0f;
+							}
+						}
+						TamagochiTableHitcheck (i);
+					} else {
+						if (countTableChakusekiTime [i] != 0) {
+							countTableChakusekiTime [i]--;
+							TamagochiAnimeSet (i, "idle");
+							if (i < 4) {
+								CharaTamago [i].GetComponent<SpriteRenderer> ().flipX = false;
+							} else {
+								CharaTamago [i].GetComponent<SpriteRenderer> ().flipX = true;
+							}
+						} else {
+							TamagochiIdouInit (i);
+						}
+					}
+
+
+
+
+					_posY [i] = posTamago [i].y;
 				}
 
+				_posY[8] = EventAppeal.transform.Find ("table1").gameObject.transform.localPosition.y + 30.0f;
+				_posY[9] = EventAppeal.transform.Find ("table2").gameObject.transform.localPosition.y + 30.0f;
+				_posY[10] = EventAppeal.transform.Find ("table3").gameObject.transform.localPosition.y + 30.0f;
+				_posY[11] = EventAppeal.transform.Find ("table4").gameObject.transform.localPosition.y + 30.0f;
 
-				if (posTamagoIdouXFlag [i]) {
-					posTamago [i].x += posTamagoSpeedX [i];
-					CharaTamago [i].GetComponent<SpriteRenderer> ().flipX = posTamagoIdouXFlag [i];
-					if (posTamago [i].x >= 7.0f) {
-						posTamagoIdouXFlag [i] = false;
-						posTamagoSpeedX [i] = Random.Range (0.01f, 0.03f);
+				for (int j = 0; j < 12; j++) {								// たまごっちとテーブルの表示優先順位の変更
+					int k = 0;
+					float _checkPos = -1000.0f;
+					for (int i = 0; i < 12; i++) {
+						if (_checkPos <= _posY [i]) {
+							_checkPos = _posY [i];
+							k = i;
+						}
 					}
-				} else {
-					posTamago [i].x -= posTamagoSpeedX [i];
-					CharaTamago [i].GetComponent<SpriteRenderer> ().flipX = posTamagoIdouXFlag [i];
-					if (posTamago [i].x <= -7.0f) {
-						posTamagoIdouXFlag [i] = true;
-						posTamagoSpeedX [i] = Random.Range (0.01f, 0.03f);
-					}
-				}
-
-				if (posTamagoIdouYFlag [i]) {
-					posTamago [i].y += posTamagoSpeedY [i];
-					if (posTamago [i].y >= 1.0f) {
-						posTamagoIdouYFlag [i] = false;
-						posTamagoSpeedY [i] = Random.Range (0.01f, 0.03f);
-					}
-				} else {
-					posTamago [i].y -= posTamagoSpeedY [i];
-					if (posTamago [i].y <= -3.5f) {
-						posTamagoIdouYFlag [i] = true;
-						posTamagoSpeedY [i] = Random.Range (0.01f, 0.03f);
+					_posY [k] = -1000.0f;
+					switch (k) {
+					default:
+						{
+							CharaTamagochi [k].GetComponent<Canvas> ().sortingOrder = j + 1;
+							break;
+						}
+					case	8:
+						{
+							EventAppeal.transform.Find ("table1").gameObject.GetComponent<Canvas> ().sortingOrder = j + 1;
+							break;
+						}
+					case	9:
+						{
+							EventAppeal.transform.Find ("table2").gameObject.GetComponent<Canvas> ().sortingOrder = j + 1;
+							break;
+						}
+					case	10:
+						{
+							EventAppeal.transform.Find ("table3").gameObject.GetComponent<Canvas> ().sortingOrder = j + 1;
+							break;
+						}
+					case	11:
+						{
+							EventAppeal.transform.Find ("table4").gameObject.GetComponent<Canvas> ().sortingOrder = j + 1;
+							break;
+						}
 					}
 				}
 			}
-#endif
+
+
+
+
+
+
 			appealTimeCounter++;
 		}
+
+		private void TamagochiAnimeSet(int num,string status){
+			if (cbTamagoChara [num].nowlabel != status) {
+				cbTamagoChara [num].gotoAndPlay (status);
+			}
+		}
+		private void TamagochiTableHitcheck(int num){
+			float[] _posX = new float[4];
+			float[] _posY = new float[4];
+
+			_posX[0] = EventAppeal.transform.Find ("table1").gameObject.transform.localPosition.x;
+			_posX[1] = EventAppeal.transform.Find ("table2").gameObject.transform.localPosition.x;
+			_posX[2] = EventAppeal.transform.Find ("table3").gameObject.transform.localPosition.x;
+			_posX[3] = EventAppeal.transform.Find ("table4").gameObject.transform.localPosition.x;
+
+			_posY[0] = EventAppeal.transform.Find ("table1").gameObject.transform.localPosition.y + 30.0f;
+			_posY[1] = EventAppeal.transform.Find ("table2").gameObject.transform.localPosition.y + 30.0f;
+			_posY[2] = EventAppeal.transform.Find ("table3").gameObject.transform.localPosition.y + 30.0f;
+			_posY[3] = EventAppeal.transform.Find ("table4").gameObject.transform.localPosition.y + 30.0f;
+
+			for(int i = 0;i < 4;i++){
+				if (((posTamago[num].x - 40.0f) < _posX[i]) && (_posX[i] < (posTamago[num].x + 40.0f))) {
+					if (((posTamago[num].y - 12.0f) < _posY[i]) && (_posY[i] < (posTamago[num].y + 12.0f))) {
+
+
+
+//						if (posTamago [num].x < _posX [i]) {
+//							posTamago [num].x = _posX [i] - 41.0f;
+//						} else {
+//							posTamago [num].x = _posX [i] + 41.0f;
+//						}
+
+						if (posTamago [num].y < _posY [i]) {
+							posTamago [num].y = _posY [i] - 13.0f;
+						} else {
+							posTamago [num].y = _posY [i] + 13.0f;
+						}
+
+
+						posTamagoSpeedX [num] = 0.0f;
+						posTamagoSpeedY [num] = 0.0f;
+
+						countTableChakusekiTime [num] = Random.Range (20, 40);
+					}
+				}
+			}
+
+		}
+
+		private void TamagochiIdouInit(int num){
+			float _randSpeed = Random.Range (45, 90);
+			int _randPoint = Random.Range (0, 8);
+
+			switch (_randPoint) {
+			case	0:
+			case	1:
+			case	2:
+			case	3:
+				{
+					if (num < 4) {
+						posTamagoTargetX [num] = posTamagoTargetTableMan [_randPoint].x;
+						posTamagoTargetY [num] = posTamagoTargetTableMan [_randPoint].y;
+					} else {
+						posTamagoTargetX [num] = posTamagoTargetTableWoman [_randPoint].x;
+						posTamagoTargetY [num] = posTamagoTargetTableWoman [_randPoint].y;
+					}
+					break;
+				}
+			default:
+				{
+					int _rand = Random.Range (-30, 30);
+					int _rand2 = Random.Range (-20, 2);
+					posTamagoTargetX [num] = _rand * 10;
+					posTamagoTargetY [num] = _rand2 * 10;
+					break;
+				}
+			}
+
+			float x1 = System.Math.Abs(posTamago [num].x - posTamagoTargetX[num]);
+			if (x1 < 1.0f) {
+				posTamagoTargetX [num] = posTamago [num].x;
+			}
+			float y1 = System.Math.Abs (posTamago [num].y - posTamagoTargetY [num]);
+			if (y1 < 1.0f) {
+				posTamagoTargetY [num] = posTamago [num].y;
+			}
+
+
+
+
+			if (posTamagoTargetX [num] < posTamago [num].x) {
+				posTamagoIdouXFlag [num] = false;
+				posTamagoSpeedX [num] = (posTamago [num].x - posTamagoTargetX [num]) / _randSpeed;
+			} else {
+				posTamagoIdouXFlag [num] = true;
+				posTamagoSpeedX [num] = (posTamagoTargetX [num] - posTamago [num].x) / _randSpeed;
+			}
+
+			if (posTamagoTargetY [num] < posTamago [num].y) {
+				posTamagoIdouYFlag [num] = false;
+				posTamagoSpeedY [num] = (posTamago [num].y - posTamagoTargetY [num]) / _randSpeed;
+			} else {
+				posTamagoIdouYFlag [num] = true;
+				posTamagoSpeedY [num] = (posTamagoTargetY [num] - posTamago [num].y) / _randSpeed;
+			}
+
+		}
+
 
 		private void TamagochiFukidashiOff(){
 			for (int i = 0; i < 8; i++) {
 				CharaTamagochi [i].transform.Find ("fukidashi/cake").gameObject.SetActive (false);			// 吹き出しケーキを消す
-				CharaTamagochi [i].transform.Find ("fukidashi/heart").gameObject.SetActive (false);		// 吹き出しハートを消す
+				CharaTamagochi [i].transform.Find ("fukidashi/heart").gameObject.SetActive (false);			// 吹き出しハートを消す
 				CharaTamagochi [i].transform.Find ("fukidashi/message").gameObject.SetActive (false);		// 吹き出しコメントを消す
 			}
 		}
@@ -1276,7 +1436,7 @@ namespace Mix2App.MachiCon{
 			EventCurtain.transform.localPosition = pos;
 
 			if (num > 0) {
-				if (EventCurtain.transform.localPosition.y >= 800.0f) {
+				if (EventCurtain.transform.localPosition.y >= 1000.0f) {
 					return true;
 				}
 			} else {
@@ -2070,7 +2230,7 @@ namespace Mix2App.MachiCon{
 					switch (Random.Range (0, 3)) {
 					case	0:
 						{
-							cbTamagoChara [tamagoNum].gotoAndPlay ("grad2");					// 喜び２
+							cbTamagoChara [tamagoNum].gotoAndPlay ("glad2");					// 喜び２
 							break;
 						}
 					case	1:
@@ -2107,17 +2267,17 @@ namespace Mix2App.MachiCon{
 					switch (Random.Range (0, 3)) {
 					case	0:
 						{
-							cbTamagoChara [tamagoNum].gotoAndPlay ("grad1");					// 喜び１
+							cbTamagoChara [tamagoNum].gotoAndPlay ("glad1");					// 喜び１
 							break;
 						}
 					case	1:
 						{
-							cbTamagoChara [tamagoNum].gotoAndPlay ("grad2");					// 喜び２
+							cbTamagoChara [tamagoNum].gotoAndPlay ("glad2");					// 喜び２
 							break;
 						}
 					case	2:
 						{
-							cbTamagoChara [tamagoNum].gotoAndPlay ("grad3");					// 喜び３
+							cbTamagoChara [tamagoNum].gotoAndPlay ("glad3");					// 喜び３
 							break;
 						}
 					}
@@ -2128,12 +2288,12 @@ namespace Mix2App.MachiCon{
 					switch (Random.Range (0, 4)) {
 					case	0:
 						{
-							cbTamagoChara [tamagoNum].gotoAndPlay ("grad1");					// 喜び１
+							cbTamagoChara [tamagoNum].gotoAndPlay ("glad1");					// 喜び１
 							break;
 						}
 					case	1:
 						{
-							cbTamagoChara [tamagoNum].gotoAndPlay ("grad2");					// 喜び２
+							cbTamagoChara [tamagoNum].gotoAndPlay ("glad2");					// 喜び２
 							break;
 						}
 					case	2:

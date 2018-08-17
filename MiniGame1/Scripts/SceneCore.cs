@@ -2,7 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using Mix2App.Lib.System;
+
+using Mix2App.Lib;
+using Mix2App.Lib.Model;
+using Mix2App.Lib.Events;
+using Mix2App.Lib.View;
+using Mix2App.Lib.Utils;
 using Mix2App.UI.Events;
 
 namespace Mix2App.MiniGame1 {

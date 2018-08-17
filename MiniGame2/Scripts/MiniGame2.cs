@@ -4,9 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Mix2App.Lib;
-using Mix2App.Lib.System;
 using Mix2App.Lib.Model;
+using Mix2App.Lib.Events;
 using Mix2App.Lib.View;
+using Mix2App.Lib.Utils;
 
 
 
@@ -152,10 +153,10 @@ namespace Mix2App.MiniGame2{
 			switch (jobCount) {
 			case	statusJobCount.minigame2JobCount000:
 				{
-					if (startEndFlag) {
+//					if (startEndFlag) {
 						EventTitle.SetActive (true);
 						jobCount = statusJobCount.minigame2JobCount010;
-					}
+//					}
 					break;
 				}
 			case	statusJobCount.minigame2JobCount010:
@@ -238,7 +239,6 @@ namespace Mix2App.MiniGame2{
 				new Vector2 (2.25f, 3.4f),
 			};
 
-
 			for (int i = 0; i < 3; i++) {
 				Vector3 pos = CharaTamagoMain [i].transform.localPosition;
 				pos.x = _initTable [i].x;
@@ -246,17 +246,43 @@ namespace Mix2App.MiniGame2{
 				CharaTamagoMain [i].transform.localPosition = pos;
 			}
 
-
 			for (int i = 0; i < 12; i++) {
 				Vector3 pos = CharaTamago [i].transform.localPosition;
-				pos.x = (-7 - (i * 2));
-				pos.y = (-6 - (i * 2));
+				pos.x = (-7.0f - (i * 2));
+				pos.y = (-6.5f - (i * 2));
 				CharaTamago [i].transform.localPosition = pos;
 				tamagochiIdouFlag [i] = 0;
-				tamagochiIdouNumber = 0;
 				tamagochiIdouNumberTable [i] = i;
 			}
+			tamagochiIdouNumber = 0;
 		}
+
+/*
+		2.0f,-0.5f
+		4.0f,-0.5f
+		6.0f,-0.5f
+		6.0f,-3.5f
+		4.0f,-3.5f
+		2.0f,-3.5f
+		0.0f,-3.5f
+		-2.0f,-3.5f
+		-4.0f,-3.5f
+*/
+
+		private float[,] _idouTable = new float[12, 8] {
+			{  -4.0f,  -3.5f,   6.0f, 255.0f, 255.0f,  -0.5f,   2.0f, 255.0f },
+			{  -4.0f,  -3.5f,   6.0f, 255.0f, 255.0f,  -0.5f,   4.0f, 255.0f },
+			{  -4.0f,  -3.5f,   6.0f, 255.0f, 255.0f,  -0.5f,   6.0f, 255.0f },
+			{  -4.0f,  -3.5f,   6.0f, 255.0f, 255.0f,  -3.5f, 255.0f, 255.0f },
+			{  -4.0f,  -3.5f,   4.0f, 255.0f, 255.0f, 255.0f, 255.0f, 255.0f },
+			{  -4.0f,  -3.5f,   2.0f, 255.0f, 255.0f, 255.0f, 255.0f, 255.0f },
+			{  -4.0f,  -3.5f,   0.0f, 255.0f, 255.0f, 255.0f, 255.0f, 255.0f },
+			{  -4.0f,  -3.5f,  -2.0f, 255.0f, 255.0f, 255.0f, 255.0f, 255.0f },
+			{  -4.0f,  -3.5f,  -4.0f, 255.0f, 255.0f, 255.0f, 255.0f, 255.0f },
+			{ 255.0f, 255.0f, 255.0f, 255.0f, 255.0f, 255.0f, 255.0f, 255.0f },
+			{ 255.0f, 255.0f, 255.0f, 255.0f, 255.0f, 255.0f, 255.0f, 255.0f },
+			{ 255.0f, 255.0f, 255.0f, 255.0f, 255.0f, 255.0f, 255.0f, 255.0f },
+		};
 		private void TamagochiLoopIdou(){
 			Vector3 pos;
 			for (int num = 0; num < 12; num++) {
@@ -264,39 +290,48 @@ namespace Mix2App.MiniGame2{
 				switch (tamagochiIdouFlag [num]) {
 				case	0:
 					{
-						pos.x += 0.125f;
-						pos.y += 0.125f;
-						if (pos.x >= -4.0f) {
-							pos.x = -4.0f;
-							pos.y = -3.0f;
-							tamagochiIdouFlag [num] = 1;
+						if (_idouTable [tamagochiIdouNumberTable [num], 0] != 255.0f) {
+							pos.x += 0.125f;
+							pos.y += 0.125f;
+
+							if (pos.x >= _idouTable[tamagochiIdouNumberTable[num],0]) {
+								pos.x = _idouTable [tamagochiIdouNumberTable [num], 0];
+								pos.y = _idouTable [tamagochiIdouNumberTable [num], 1];
+								tamagochiIdouFlag [num] = 1;
+							}
 						}
 						break;
 					}
 				case	1:
 					{
-						pos.x += 0.125f;
-						if (pos.x >= 5.0f) {
-							pos.x = 5.0f;
-							tamagochiIdouFlag [num] = 2;
+						if (_idouTable [tamagochiIdouNumberTable [num], 2] != 255.0f) {
+							pos.x += 0.125f;
+							if (pos.x >= _idouTable[tamagochiIdouNumberTable[num],2]) {
+								pos.x = _idouTable [tamagochiIdouNumberTable [num], 2];
+								tamagochiIdouFlag [num] = 2;
+							}
 						}
 						break;
 					}
 				case	2:
 					{
-						pos.y += 0.125f;
-						if (pos.y >= -0.5f) {
-							pos.y = -0.5f;
-							tamagochiIdouFlag [num] = 3;
+						if (_idouTable [tamagochiIdouNumberTable [num], 5] != 255.0f) {
+							pos.y += 0.125f;
+							if (pos.y >= _idouTable[tamagochiIdouNumberTable[num],5]) {
+								pos.y = _idouTable [tamagochiIdouNumberTable [num], 5];
+								tamagochiIdouFlag [num] = 3;
+							}
 						}
 						break;
 					}
 				case	3:
 					{
-						pos.x -= 0.125f;
-						if (pos.x <= 1.8f) {
-							pos.x = 1.8f;
-							tamagochiIdouFlag [num] = 4;
+						if (_idouTable [tamagochiIdouNumberTable [num], 6] != 255.0f) {
+							pos.x -= 0.125f;
+							if (pos.x <= _idouTable[tamagochiIdouNumberTable[num],6]) {
+								pos.x = _idouTable [tamagochiIdouNumberTable [num], 6];
+								tamagochiIdouFlag [num] = 4;
+							}
 						}
 						break;
 					}
@@ -304,6 +339,8 @@ namespace Mix2App.MiniGame2{
 				CharaTamago [num].transform.localPosition = pos;
 			}
 		}
+
+
 
 		private void TamagochiMainAnimeSet(int num,string status){
 			if(cbCharaTamagoMain[num].nowlabel != status){

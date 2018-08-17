@@ -4,9 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Mix2App.Lib;
-using Mix2App.Lib.System;
 using Mix2App.Lib.Model;
+using Mix2App.Lib.Events;
 using Mix2App.Lib.View;
+using Mix2App.Lib.Utils;
 
 
 
@@ -145,7 +146,9 @@ namespace Mix2App.MiniGame1{
 			}
 
 			if ((num > 1.33f) && (num < 1.34f)) {
-				baseSizePanel.GetComponent<Transform>().transform.localScale = new Vector3 (1.3f, 1.3f, 1.0f);	// 3:4の時のみ画面を拡大表示
+				baseSizePanel.GetComponent<Transform> ().transform.localScale = new Vector3 (1.15f, 1.15f, 1.0f);	// 3:4の時のみ画面を拡大表示
+			} else {
+				baseSizePanel.GetComponent<Transform> ().transform.localScale = new Vector3 (1.15f, 1.15f, 1.0f);	// 3:4の時以外の画面を拡大表示
 			}
 
 

@@ -4,14 +4,19 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Mix2App.Lib;
-using Mix2App.Lib.System;
 using Mix2App.Lib.Model;
+using Mix2App.Lib.Events;
 using Mix2App.Lib.View;
+using Mix2App.Lib.Utils;
 
 namespace Mix2App.MachiCon{
 	public class Message : MonoBehaviour {
 		[SerializeField] private GameObject EventJikkyou;
 		[SerializeField] private GameObject EventJikkyouText;
+		[SerializeField] private GameObject EventJikkyouText2;
+		[SerializeField] private GameObject EventJikkyouAplichi1;	// アプリっちの表示スプライト１
+		[SerializeField] private GameObject EventJikkyouAplichi2;	// アプリっちの表示スプライト２
+		[SerializeField] private Sprite[]	EventJikkyouImage;		// アプリっちの表示スプライトリスト（普通 = 0、ガイド = 1、喜び = 2、笑顔 = 3、驚き = 4、泣き = 5）
 
 		[SerializeField] private GameObject	EventSoudanSprite;		// アピールタイトル表示スプライト
 		[SerializeField] private Sprite 	EventSoudanSprite2;		// 表示オフ
@@ -22,68 +27,131 @@ namespace Mix2App.MachiCon{
 
 
 
+
+
+		// 開始時	
 		private readonly string[] JikkyouMesType01 = new string[]{
-			"レディース エ～ンド ジェントルマン！ようこそ たまキュン♥パーティへ！",
-			"すてきな であいのばしょ・・・ たまキュン♥パーティへ ようこそ！",
-			"イエ～イ♪ はっぴ～か～い！ たまキュン♥パーティはじまる よ！",
+			"レディース エ～ンド ジェントルマン！\nようこそ たまキュン♥パーティへ！",
+			"すてきな であいのばしょ・・・\nたまキュン♥パーティへ ようこそ！",
+			"イエ～イ♪ はっぴ～か～い！\nたまキュン♥パーティはじまる よ！",
 		};
+		private int[] JikkyouImageType01 = new int[]{			// ガイド、ガイド、ガイド
+			1,1,1,
+		};
+		// 男の子１人目入場時
 		private readonly string[] JikkyouMesType02 = new string[]{
-			"カムヒア～！まずは このダンディから にゅうじょうだ！",
-			"さっそく ステキなだんしを よんでみよう！",
+			"カムヒア～！\nまずは このダンディから にゅうじょうだ！",
+			"さっそく\nステキなだんしを よんでみよう！",
 		};
+		private int[] JikkyouImageType02 = new int[]{			// 喜び、喜び
+			2,2,
+		};
+		// 男の子２～４人目入場時
 		private readonly string[] JikkyouMesType03 = new string[]{
-			"おつぎは どんなイケメンボーイだい！？	",
-			"う～ん なかなかのステキオーラ！つぎいってみよう！",
+			"おつぎは\nどんなイケメンボーイだい！？	",
+			"う～ん なかなかのステキオーラ！\nつぎいってみよう！",
 		};
+		private int[] JikkyouImageType03 = new int[]{			// 普通、笑顔
+			0,3,
+		};
+		// 女の子１人目入場時
 		private readonly string[] JikkyouMesType04 = new string[]{
-			"おつぎは かわいいプリンセスの とうじょう だ！",
-			"おまたせ！ガールズのみなさん でばんですよ！",
+			"おつぎは\nかわいいプリンセスの とうじょう だ！",
+			"おまたせ！\nガールズのみなさん でばんですよ！",
 		};
+		private int[] JikkyouImageType04 = new int[]{			// 喜び、喜び
+			2,2,
+		};
+		// 女の子２～４人目入場時
 		private readonly string[] JikkyouMesType05 = new string[]{
-			"キラキラかがやいてまぶしいねっ！つぎいってみよう！",
-			"きた～っ！かわゆい このこのにゅうじょう だ！",
+			"キラキラかがやいてまぶしいねっ！\nつぎいってみよう！",
+			"きた～っ！\nかわゆい このこのにゅうじょう だ！",
 		};
+		private int[] JikkyouImageType05 = new int[]{			// 笑顔、笑顔
+			3,3,
+		};
+		// 全員入場
 		private readonly string[] JikkyouMesType06 = new string[]{
-			"このメンバーで たまキュン♥パーティのスタートだ！",
+			"このメンバーで\nたまキュン♥パーティのスタートだ！",
 			"まずは そうだんタイムスタート！",
 		};
+		private int[] JikkyouImageType06 = new int[]{			// 喜び、ガイド
+			2,1,
+		};
+		// 相談待ち
 		private readonly string[] JikkyouMesType07 = new string[]{
 			"どんな そうだんを してるのかな？",
-			"だれに こくはくするか・・・みんな なやむよね！",
+			"だれに こくはくするか・・・\nみんな なやむよね！",
 		};
+		private int[] JikkyouImageType07 = new int[]{			// 普通、普通
+			0,0,
+		};
+		// アピールタイム開始時
 		private readonly string[] JikkyouMesType08 = new string[]{
-			"おまたせしました！アピールタ～イム！",
-			"じゅんびはOK？アピールタイムのスタートだ！",
+			"おまたせしました！\nアピールタ～イム！",
+			"じゅんびはOK？\nアピールタイムのスタートだ！",
 		};
+		private int[] JikkyouImageType08 = new int[]{			// 喜び、笑顔
+			2,3,
+		};
+		// アピールタイム中
 		private readonly string[] JikkyouMesType09 = new string[]{
-			"おーっと！きになる あのこに モーレツアピール！",
-			"なごやかな ふんいきに なってきました！",
+			"おーっと！\nきになる あのこに モーレツアピール！",
+			"なごやかな ふんいきに\nなってきました！",
 		};
+		private int[] JikkyouImageType09 = new int[]{			// 驚き、笑顔
+			4,3,
+		};
+		// 告白開始
 		private readonly string[] JikkyouMesType10 = new string[]{
-			"ゆうきを だして！こ～くは～くタ～イム！",
-			"おまちかね！？ドッキドキの こくはくタイム！",
+			"ゆうきを だして！\nこ～くは～くタ～イム！",
+			"おまちかね！？\nドッキドキの こくはくタイム！",
 		};
+		private int[] JikkyouImageType10 = new int[]{			// 喜び、喜び
+			2,2,
+		};
+		// キャラ告白後
 		private readonly string[] JikkyouMesType11 = new string[]{
-			"いったぁ～！これぞ うんめいの しゅんかん！",
-			"このストレートなおもいは かのじょにとどくのか！？",
+			"いったぁ～！\nこれぞ うんめいの しゅんかん！",
+			"このストレートなおもいは\nかのじょにとどくのか！？",
 		};
+		private int[] JikkyouImageType11 = new int[]{			// 笑顔、普通
+			3,0,
+		};
+		// ちょっとまった！後
 		private readonly string[] JikkyouMesType12 = new string[]{
-			"きたぁ～！！ライバルの とうじょうだ！",
-			"ここでくるのか！こいの ゆくえはいかに！",
+			"きたぁ～！！\nライバルの とうじょうだ！",
+			"ここでくるのか！\nこいの ゆくえはいかに！",
 		};
+		private int[] JikkyouImageType12 = new int[]{			// 驚き、驚き
+			4,4,
+		};
+		// 告白成功後
 		private readonly string[] JikkyouMesType13 = new string[]{
-			"おめでとう！ステキなカップルの たんじょうです！",
-			"なんと！まさかの こくはくOK これはよそうがい！",
+			"おめでとう！\nステキなカップルの たんじょうです！",
+			"なんと！\nまさかの こくはくOK これはよそうがい！",
 		};
+		private int[] JikkyouImageType13 = new int[]{			// 喜び、笑顔
+			2,3,
+		};
+		// 告白失敗後
 		private readonly string[] JikkyouMesType14 = new string[]{
-			"あわわっ・・・これは おどろき もものき さんしょのき！",
-			"ざんねん！おたがい よくがんばり ました！",
+			"あわわっ・・・\nこれは おどろき もものき さんしょのき！",
+			"ざんねん！\nおたがい よくがんばり ました！",
 		};
+		private int[] JikkyouImageType14 = new int[]{			// 驚き、泣き
+			4,5,
+		};
+		// お疲れ様
 		private readonly string[] JikkyouMesType15 = new string[]{
 			"またの おこしを おまちしてま～す！",
-			"ではまた おあいしましょう！アプリっちでした！",
+			"ではまた おあいしましょう！\nアプリっちでした！",
+		};
+		private int[] JikkyouImageType15 = new int[]{			// 笑顔、笑顔
+			3,3,
 		};
 			
+		// 告白受諾メッセージ
 		private readonly string[] KokuhakuReturnMesType01 = new string[]{
 			"ありがとう・・・（＋ごび）",
 			"こちらこそおねがいします（＋ごび）",
@@ -91,6 +159,7 @@ namespace Mix2App.MachiCon{
 			"なかよくしてください（＋ごび）",
 			"すこしかんげきしちゃった（＋ごび）",
 		};
+		// 告白拒否メッセージ
 		private readonly string[] KokuhakuReturnMesType02 = new string[]{
 			"ごめんなさい・・・（＋ごび）",
 			"ほかにすきなひとがいるの（＋ごび）",
@@ -150,95 +219,157 @@ namespace Mix2App.MachiCon{
 		}	
 
 		public void JikkyouMesDisp(JikkyouMesTable flag){
+			int randNum;
+
 			switch (flag) {
 			case	JikkyouMesTable.JikkyouMesDisp01:
 				{
 					// 開始時	
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType01 [Random.Range (0, JikkyouMesType01.Length)];
+					randNum = Random.Range (0, JikkyouMesType01.Length);
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType01 [randNum];
+
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType01 [randNum]];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType01 [randNum]];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp02:
 				{
 					// 男の子１人目入場時
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType02 [Random.Range (0, JikkyouMesType02.Length)];
+					randNum = Random.Range (0, JikkyouMesType02.Length);
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType02 [randNum];
+
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType02 [randNum]];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType02 [randNum]];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp03:
 				{
 					// 男の子２～４人目入場時
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType03 [Random.Range (0, JikkyouMesType03.Length)];
+					randNum = Random.Range (0, JikkyouMesType03.Length);
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType03 [randNum];
+
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType03 [randNum]];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType03 [randNum]];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp04:
 				{
 					// 女の子１人目入場時
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType04 [Random.Range (0, JikkyouMesType04.Length)];
+					randNum = Random.Range (0, JikkyouMesType04.Length);
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType04 [randNum];
+
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType04 [randNum]];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType04 [randNum]];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp05:
 				{
 					// 女の子２～４人目入場時
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType05 [Random.Range (0, JikkyouMesType05.Length)];
+					randNum = Random.Range (0, JikkyouMesType05.Length);
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType05 [randNum];
+
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType05 [randNum]];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType05 [randNum]];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp06:
 				{
 					// 全員入場
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType06 [Random.Range (0, JikkyouMesType06.Length)];
+					randNum = Random.Range (0, JikkyouMesType06.Length);
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType06 [randNum];
+
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType06 [randNum]];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType06 [randNum]];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp07:
 				{
 					// 相談待ち
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType07 [Random.Range (0, JikkyouMesType07.Length)];
+					randNum = Random.Range (0, JikkyouMesType07.Length);
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType07 [randNum];
+
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType07 [randNum]];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType07 [randNum]];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp08:
 				{
 					// アピールタイム開始時
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType08 [Random.Range (0, JikkyouMesType08.Length)];
+					randNum = Random.Range (0, JikkyouMesType08.Length);
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType08 [randNum];
+
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType08 [randNum]];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType08 [randNum]];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp09:
 				{
 					// アピールタイム中
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType09 [Random.Range (0, JikkyouMesType09.Length)];
+					randNum = Random.Range (0, JikkyouMesType09.Length);
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType09 [randNum];
+
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType09 [randNum]];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType09 [randNum]];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp10:
 				{
 					// 告白開始
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType10 [Random.Range (0, JikkyouMesType10.Length)];
+					randNum = Random.Range (0, JikkyouMesType10.Length);
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType10 [randNum];
+
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType10 [randNum]];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType10 [randNum]];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp11:
 				{
 					// キャラ告白後
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType11 [Random.Range (0, JikkyouMesType11.Length)];
+					randNum = Random.Range (0, JikkyouMesType11.Length);
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType11 [randNum];
+
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType11 [randNum]];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType11 [randNum]];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp12:
 				{
 					// ちょっとまった！後
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType12 [Random.Range (0, JikkyouMesType12.Length)];
+					randNum = Random.Range (0, JikkyouMesType12.Length);
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType12 [randNum];
+
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType12 [randNum]];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType12 [randNum]];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp13:
 				{
 					// 告白成功後
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType13 [Random.Range (0, JikkyouMesType13.Length)];
+					randNum = Random.Range (0, JikkyouMesType13.Length);
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType13 [randNum];
+
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType13 [randNum]];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType13 [randNum]];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp14:
 				{
 					// 告白失敗後
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType14 [Random.Range (0, JikkyouMesType14.Length)];
+					randNum = Random.Range (0, JikkyouMesType14.Length);
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType14 [randNum];
+
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType14 [randNum]];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType14 [randNum]];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp15:
 				{
 					// お疲れ様
-					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType15 [Random.Range (0, JikkyouMesType15.Length)];
+					randNum = Random.Range (0, JikkyouMesType15.Length);
+					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType15 [randNum];
+
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType15 [randNum]];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType15 [randNum]];
 					break;
 				}
 			default:
@@ -247,6 +378,7 @@ namespace Mix2App.MachiCon{
 					break;
 				}
 			}
+			EventJikkyouText2.GetComponent<Text> ().text = EventJikkyouText.GetComponent<Text> ().text;
 		}
 
 		public void SoudanMesDisp(SoudanMesTable flag){

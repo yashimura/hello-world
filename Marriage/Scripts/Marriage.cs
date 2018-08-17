@@ -4,9 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Mix2App.Lib;
-using Mix2App.Lib.System;
 using Mix2App.Lib.Model;
+using Mix2App.Lib.Events;
 using Mix2App.Lib.View;
+using Mix2App.Lib.Utils;
 
 namespace Mix2App.Marriage{
 	public class Marriage : MonoBehaviour,IReceiver {
@@ -85,11 +86,6 @@ namespace Mix2App.Marriage{
 			marriageJobCount080,
 			marriageJobCount090,
 			marriageJobCount100,
-			marriageJobCount110,
-			marriageJobCount120,
-			marriageJobCount130,
-			marriageJobCount140,
-			marriageJobCount150,
 		}
 
 		void Awake(){
@@ -341,37 +337,20 @@ namespace Mix2App.Marriage{
 					if (waitFlag) {
 						waitCount = 1;
 						jobCount = statusJobCount.marriageJobCount000;
+					} else {
+//						if (たまごっちとの通信終了) {
+//							Debug.Log("たまタウンへ・・・");
+//							jobCount = statusJobCount.marriageJobCount090;
+//						}
 					}
-					// たまごっちとの通信終了待ち
 
 					break;
 				}
 			case	statusJobCount.marriageJobCount090:
 				{
-					// たまタウンに移行する？
 					break;
 				}
 			case	statusJobCount.marriageJobCount100:
-				{
-					break;
-				}
-			case	statusJobCount.marriageJobCount110:
-				{
-					break;
-				}
-			case	statusJobCount.marriageJobCount120:
-				{
-					break;
-				}
-			case	statusJobCount.marriageJobCount130:
-				{
-					break;
-				}
-			case	statusJobCount.marriageJobCount140:
-				{
-					break;
-				}
-			case	statusJobCount.marriageJobCount150:
 				{
 					break;
 				}
