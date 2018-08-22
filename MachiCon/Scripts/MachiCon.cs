@@ -268,7 +268,6 @@ namespace Mix2App.MachiCon{
 			yield return cbTamagoChara[7].init (mpdata.members[7].user.GetCharaAt(mpdata.members[7].index));// 女の子４のたまごっちを登録する
 
 
-
 		}
 	
 		void Destroy(){
@@ -768,54 +767,59 @@ namespace Mix2App.MachiCon{
 			string mesTamago = "";
 			string mesRet = "\n";
 
-			switch (posNumber) {
-			case	0:
-				{
-					mesAvater = "アバターネーム1";
-					mesTamago = "たまごっちネームごび！";
-					break;
-				}
-			case	1:
-				{
-					mesAvater = "アバターネーム2";
-					mesTamago = "たまごっちネームごび！";
-					break;
-				}
-			case	2:
-				{
-					mesAvater = "アバターネーム3";
-					mesTamago = "たまごっちネームごび！";
-					break;
-				}
-			case	3:
-				{
-					mesAvater = "アバターネーム4";
-					mesTamago = "たまごっちネームごび！";
-					break;
-				}
-			case	4:
-				{
-					mesAvater = "アバターネーム5";
-					mesTamago = "たまごっちネームごび！";
-					break;
-				}
-			case	5:
-				{
-					mesAvater = "アバターネーム6";
-					mesTamago = "たまごっちネームごび！";
-					break;
-				}
-			case	6:
-				{
-					mesAvater = "アバターネーム7";
-					mesTamago = "たまごっちネームごび！";
-					break;
-				}
-			case	7:
-				{
-					mesAvater = "アバターネーム8";
-					mesTamago = "たまごっちネームごび！";
-					break;
+			mesTamago = mpdata.members [posNumber].user.GetCharaAt (mpdata.members [posNumber].index).cname + mpdata.members [posNumber].user.GetCharaAt (mpdata.members [posNumber].index).wend;
+			mesAvater = mpdata.members [posNumber].user.nickname;
+
+			if (mesTamago == "" || mesTamago == null) {
+				switch (posNumber) {
+				case	0:
+					{
+						mesAvater = "アバターネーム1";
+						mesTamago = "たまごっちネームごび！";
+						break;
+					}
+				case	1:
+					{
+						mesAvater = "アバターネーム2";
+						mesTamago = "たまごっちネームごび！";
+						break;
+					}
+				case	2:
+					{
+						mesAvater = "アバターネーム3";
+						mesTamago = "たまごっちネームごび！";
+						break;
+					}
+				case	3:
+					{
+						mesAvater = "アバターネーム4";
+						mesTamago = "たまごっちネームごび！";
+						break;
+					}
+				case	4:
+					{
+						mesAvater = "アバターネーム5";
+						mesTamago = "たまごっちネームごび！";
+						break;
+					}
+				case	5:
+					{
+						mesAvater = "アバターネーム6";
+						mesTamago = "たまごっちネームごび！";
+						break;
+					}
+				case	6:
+					{
+						mesAvater = "アバターネーム7";
+						mesTamago = "たまごっちネームごび！";
+						break;
+					}
+				case	7:
+					{
+						mesAvater = "アバターネーム8";
+						mesTamago = "たまごっちネームごび！";
+						break;
+					}
 				}
 			}
 
@@ -830,30 +834,36 @@ namespace Mix2App.MachiCon{
 			string mesNo = "の";
 			string mesTo = "さん";
 
-			switch (targetNum) {
-			case	4:
-				{
-					mesAvater = "アバターネーム5";
-					mesTamago = "たまごっちネーム";
-					break;
-				}
-			case	5:
-				{
-					mesAvater = "アバターネーム6";
-					mesTamago = "たまごっちネーム";
-					break;
-				}
-			case	6:
-				{
-					mesAvater = "アバターネーム7";
-					mesTamago = "たまごっちネーム";
-					break;
-				}
-			case	7:
-				{
-					mesAvater = "アバターネーム8";
-					mesTamago = "たまごっちネーム";
-					break;
+			mesTamago = mpdata.members [targetNum].user.GetCharaAt (mpdata.members [targetNum].index).cname;
+			mesAvater = mpdata.members [targetNum].user.nickname;
+
+			if (mesTamago == "" || mesTamago == null) {
+				switch (targetNum) {
+				case	4:
+					{
+
+						mesAvater = "アバターネーム5";
+						mesTamago = "たまごっちネーム";
+						break;
+					}
+				case	5:
+					{
+						mesAvater = "アバターネーム6";
+						mesTamago = "たまごっちネーム";
+						break;
+					}
+				case	6:
+					{
+						mesAvater = "アバターネーム7";
+						mesTamago = "たまごっちネーム";
+						break;
+					}
+				case	7:
+					{
+						mesAvater = "アバターネーム8";
+						mesTamago = "たまごっちネーム";
+						break;
+					}
 				}
 			}
 
@@ -863,11 +873,13 @@ namespace Mix2App.MachiCon{
 		// 告白された事に対する返事のメッセージ（肯定、否定）
 		// num:告白された女の子の番号（０〜３）、msgFlag:メッセージの種類（true:肯定、false:否定）
 		private void FukidashiMessageKokuhakuReturn(int num,bool msgFlag){
+			string _gobiMes = mpdata.members [num + 4].user.GetCharaAt (mpdata.members [num + 4].index).wend;
+
 			if (msgFlag) {		// 告白肯定のメッセージ
-				CharaTamagochi [num + 4].transform.Find ("fukidashi/comment/text").gameObject.GetComponent<Text> ().text = MesDisp.KokuhakuMesDisp (Message.KokuhakuMesTable.KokuhakuMesDispOK);
+				CharaTamagochi [num + 4].transform.Find ("fukidashi/comment/text").gameObject.GetComponent<Text> ().text = MesDisp.KokuhakuMesDisp (Message.KokuhakuMesTable.KokuhakuMesDispOK,_gobiMes);
 				MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp13);
 			} else {			// 告白否定のメッセージ
-				CharaTamagochi [num + 4].transform.Find ("fukidashi/comment/text").gameObject.GetComponent<Text> ().text = MesDisp.KokuhakuMesDisp (Message.KokuhakuMesTable.KokuhakuMesDispNo);
+				CharaTamagochi [num + 4].transform.Find ("fukidashi/comment/text").gameObject.GetComponent<Text> ().text = MesDisp.KokuhakuMesDisp (Message.KokuhakuMesTable.KokuhakuMesDispNo,_gobiMes);
 				MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp14);
 			}
 		}
@@ -1622,54 +1634,60 @@ namespace Mix2App.MachiCon{
 			string avaterMes = "";
 			string tamagoMes = "";
 
-			switch (targetNumber) {
-			case	0:
-				{
-					avaterMes = "アバターネーム1";
-					tamagoMes = "たまごっちネーム";
-					break;
-				}
-			case	1:
-				{
-					avaterMes = "アバターネーム2";
-					tamagoMes = "たまごっちネーム";
-					break;
-				}
-			case	2:
-				{
-					avaterMes = "アバターネーム3";
-					tamagoMes = "たまごっちネーム";
-					break;
-				}
-			case	3:
-				{
-					avaterMes = "アバターネーム4";
-					tamagoMes = "たまごっちネーム";
-					break;
-				}
-			case	4:
-				{
-					avaterMes = "アバターネーム5";
-					tamagoMes = "たまごっちネーム";
-					break;
-				}
-			case	5:
-				{
-					avaterMes = "アバターネーム6";
-					tamagoMes = "たまごっちネーム";
-					break;
-				}
-			case	6:
-				{
-					avaterMes = "アバターネーム7";
-					tamagoMes = "たまごっちネーム";
-					break;
-				}
-			case	7:
-				{
-					avaterMes = "アバターネーム8";
-					tamagoMes = "たまごっちネーム";
-					break;
+
+			tamagoMes = mpdata.members [targetNumber].user.GetCharaAt (mpdata.members [targetNumber].index).cname;
+			avaterMes = mpdata.members [targetNumber].user.nickname;
+
+			if (tamagoMes == "" || tamagoMes == null) {
+				switch (targetNumber) {
+				case	0:
+					{
+						avaterMes = "アバターネーム1";
+						tamagoMes = "たまごっちネーム";
+						break;
+					}
+				case	1:
+					{
+						avaterMes = "アバターネーム2";
+						tamagoMes = "たまごっちネーム";
+						break;
+					}
+				case	2:
+					{
+						avaterMes = "アバターネーム3";
+						tamagoMes = "たまごっちネーム";
+						break;
+					}
+				case	3:
+					{
+						avaterMes = "アバターネーム4";
+						tamagoMes = "たまごっちネーム";
+						break;
+					}
+				case	4:
+					{
+						avaterMes = "アバターネーム5";
+						tamagoMes = "たまごっちネーム";
+						break;
+					}
+				case	5:
+					{
+						avaterMes = "アバターネーム6";
+						tamagoMes = "たまごっちネーム";
+						break;
+					}
+				case	6:
+					{
+						avaterMes = "アバターネーム7";
+						tamagoMes = "たまごっちネーム";
+						break;
+					}
+				case	7:
+					{
+						avaterMes = "アバターネーム8";
+						tamagoMes = "たまごっちネーム";
+						break;
+					}
 				}
 			}
 
@@ -1711,10 +1729,10 @@ namespace Mix2App.MachiCon{
 					kokuhakuManNumber = 0;
 					kokuhakuOkFlag = false;
 
-					kokuhakuManMessage [0] = MesDisp.KokuhakuMesDispMan ();						// 告白宣言メッセージをここで決定
-					kokuhakuManMessage [1] = MesDisp.KokuhakuMesDispMan ();
-					kokuhakuManMessage [2] = MesDisp.KokuhakuMesDispMan ();
-					kokuhakuManMessage [3] = MesDisp.KokuhakuMesDispMan ();
+					kokuhakuManMessage [0] = MesDisp.KokuhakuMesDispMan (mpdata.members [0].user.GetCharaAt (mpdata.members [0].index).wend);	// 告白宣言メッセージをここで決定
+					kokuhakuManMessage [1] = MesDisp.KokuhakuMesDispMan (mpdata.members [1].user.GetCharaAt (mpdata.members [1].index).wend);
+					kokuhakuManMessage [2] = MesDisp.KokuhakuMesDispMan (mpdata.members [2].user.GetCharaAt (mpdata.members [2].index).wend);
+					kokuhakuManMessage [3] = MesDisp.KokuhakuMesDispMan (mpdata.members [3].user.GetCharaAt (mpdata.members [3].index).wend);
 					break;
 				}
 			case	statusKokuhakuCount.kokuhakuCount010:

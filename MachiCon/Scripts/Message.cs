@@ -153,28 +153,28 @@ namespace Mix2App.MachiCon{
 			
 		// 告白宣言メッセージ
 		private readonly string[] KokuhakuAttackMesType01 = new string[] {
-			"すき（＋ごび） けっこんして（＋ごび）",
-			"ひとめぼれ（＋ごび） けっこんして（＋ごび）",
-			"もうあなたしかかんがえられない（＋ごび）",
-			"ぜったいしあわせにする（＋ごび）",
-			"いっしょになってほしい（＋ごび）",
+			"すき（＋語尾） けっこんして（＋語尾）",
+			"ひとめぼれ（＋語尾） けっこんして（＋語尾）",
+			"もうあなたしかかんがえられない（＋語尾）",
+			"ぜったいしあわせにする（＋語尾）",
+			"いっしょになってほしい（＋語尾）",
 		};
 
 		// 告白受諾メッセージ
 		private readonly string[] KokuhakuReturnMesType01 = new string[]{
-			"ありがとう・・・（＋ごび）",
-			"こちらこそおねがいします（＋ごび）",
-			"わたしもだいすき（＋ごび）",
-			"なかよくしてください（＋ごび）",
-			"すこしかんげきしちゃった（＋ごび）",
+			"ありがとう・・・（＋語尾）",
+			"こちらこそおねがいします（＋語尾）",
+			"わたしもだいすき（＋語尾）",
+			"なかよくしてください（＋語尾）",
+			"すこしかんげきしちゃった（＋語尾）",
 		};
 		// 告白拒否メッセージ
 		private readonly string[] KokuhakuReturnMesType02 = new string[]{
-			"ごめんなさい・・・（＋ごび）",
-			"ほかにすきなひとがいるの（＋ごび）",
-			"すこしかんがえさせてください（＋ごび）",
-			"おともだちでいましょう（＋ごび）",
-			"ほんとうにごめんなさい（＋ごび）",
+			"ごめんなさい・・・（＋語尾）",
+			"ほかにすきなひとがいるの（＋語尾）",
+			"すこしかんがえさせてください（＋語尾）",
+			"おともだちでいましょう（＋語尾）",
+			"ほんとうにごめんなさい（＋語尾）",
 		};
 
 
@@ -430,24 +430,24 @@ namespace Mix2App.MachiCon{
 		}
 
 
-		public string KokuhakuMesDispMan(){
-			return KokuhakuAttackMesType01 [Random.Range (0, KokuhakuAttackMesType01.Length)];
+		public string KokuhakuMesDispMan(string _gobi){
+			return KokuhakuAttackMesType01 [Random.Range (0, KokuhakuAttackMesType01.Length)].Replace("（＋語尾）",_gobi);
 		}
 
-		public string KokuhakuMesDisp(KokuhakuMesTable flag){
+		public string KokuhakuMesDisp(KokuhakuMesTable flag,string _gobi){
 			string	retMes = "";
 
 			switch (flag) {
 			case	KokuhakuMesTable.KokuhakuMesDispOK:
 				{
 					// 告白受諾メッセージ
-					retMes = KokuhakuReturnMesType01 [Random.Range (0, KokuhakuReturnMesType01.Length)];
+					retMes = KokuhakuReturnMesType01 [Random.Range (0, KokuhakuReturnMesType01.Length)].Replace("（＋語尾）",_gobi);
 					break;
 				}
 			case	KokuhakuMesTable.KokuhakuMesDispNo:
 				{
 					// 告白拒否メッセージ
-					retMes = KokuhakuReturnMesType02 [Random.Range (0, KokuhakuReturnMesType02.Length)];
+					retMes = KokuhakuReturnMesType02 [Random.Range (0, KokuhakuReturnMesType02.Length)].Replace("（＋語尾）",_gobi);
 					break;
 				}
 			default:

@@ -32,6 +32,7 @@ namespace Mix2App.MiniGame2{
 		[SerializeField] private GameObject ButtonTakuhai;						// アイテム入手 宅配ボタン
 		[SerializeField] private GameObject ButtonTojiru;						// アイテム入手 閉じるボタン
 		[SerializeField] private GameObject ButtonModoru;						// 結果 戻るボタン
+		[SerializeField] private GameObject ButtonHelpModoru;					// 遊び方説明画面 戻るボタン
 		[SerializeField] private GameObject[] ButtonMenu;						// ゲーム メニューボタン（８個）
 		[SerializeField] private GameObject EventGameMenu;
 		[SerializeField] private GameObject EventGameFukidashi;
@@ -40,9 +41,9 @@ namespace Mix2App.MiniGame2{
 		[SerializeField] private GameObject[] EventGameTamago;
 		[SerializeField] private GameObject[] EventEndTamago;
 		[SerializeField] private GameObject[] EventResultTamago;
-		[SerializeField] private Sprite[] MenuImage;							// ０：カツ丼、１：プリン、２：サンド、３：ステーキ、４：パスタ、５：オムライス、６：ご飯、７：寿司、８：空白
-		[SerializeField] private Sprite[] FukidashiImage;						// ０：吹き出し１、１：吹き出し２、２：吹き出し３、３：吹き出し４、４：空白
-		[SerializeField] private Sprite[] CheckImage;							// ０：丸、１：バツ、２：空白
+		[SerializeField] private Sprite[] MenuImage;							// ０：カツ丼、１：プリン、２：サンド、３：ステーキ、４：パスタ、５：オムライス、６：ご飯、７：寿司
+		[SerializeField] private Sprite[] FukidashiImage;						// ０：吹き出し１、１：吹き出し２、２：吹き出し３、３：吹き出し４
+		[SerializeField] private Sprite[] CheckImage;							// ０：丸、１：バツ
 
 
 
@@ -50,9 +51,16 @@ namespace Mix2App.MiniGame2{
 
 		private CharaBehaviour[] cbCharaTamagoMain = new CharaBehaviour[3];		// プレイヤーとゲスト
 		private CharaBehaviour[] cbCharaTamago = new CharaBehaviour[12];		// お客様
-		private bool startEndFlag = false;
+//		private bool startEndFlag = false;
 		private bool screenModeFlag = true;
 		private int waitCount;
+		private int nowScore;													// 得点
+		private float nowTime1;													// 残り時間（カウントダウン用）
+		private int	nowTime2;													// 残り時間（制限時間）
+
+		private readonly float MENUIDOUSPEED = 25.0f;							// メニューの移動速度
+		private readonly int GAMEPLAYTIMER = 60;								// 制限時間
+
 
 		private statusJobCount	jobCount = statusJobCount.minigame2JobCount000;
 		private enum statusJobCount{
@@ -97,11 +105,12 @@ namespace Mix2App.MiniGame2{
 
 
 
-			startEndFlag = false;
+//			startEndFlag = false;
 
 			ButtonStart.GetComponent<Button> ().onClick.AddListener (ButtonStartClick);
 			ButtonClose.GetComponent<Button> ().onClick.AddListener (ButtonCloseClick);
 			ButtonHelp.GetComponent<Button> ().onClick.AddListener (ButtonHelpClick);
+			ButtonHelpModoru.GetComponent<Button> ().onClick.AddListener (ButtonHelpModoruClick);
 			ButtonYameru.GetComponent<Button> ().onClick.AddListener (ButtonYameruClick);
 			ButtonTakuhai.GetComponent<Button> ().onClick.AddListener (ButtonTakuhaiClick);
 			ButtonTojiru.GetComponent<Button> ().onClick.AddListener (ButtonTojiruClick);
@@ -132,12 +141,11 @@ namespace Mix2App.MiniGame2{
 			}
 
 			if ((num > 1.33f) && (num < 1.34f)) {
-				baseSizePanel.GetComponent<Transform> ().transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);	// 3:4の時のみ画面を拡大表示
+				baseSizePanel.GetComponent<Transform> ().transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);		// 3:4の時のみ画面を拡大表示
 				screenModeFlag = true;
 			} else {
 				baseSizePanel.GetComponent<Transform> ().transform.localScale = new Vector3 (1.15f, 1.15f, 1.0f);	// 3:4の以外の時の画面を拡大表示
 				screenModeFlag = false;
-//				baseSizePanel.transform.Find("bg").gameObject.transform.localScale = new Vector3(1.2f,1.2f,1.0f);
 			}
 
 			for (int i = 0; i < 3; i++) {
@@ -179,9 +187,7 @@ namespace Mix2App.MiniGame2{
 			yield return cbCharaTamago[11].init (new TamaChara (30));
 			TamagochiAnimeSet (11, "idle");
 
-
-
-			startEndFlag = true;
+//			startEndFlag = true;
 		}
 
 		void Destroy(){
@@ -196,6 +202,10 @@ namespace Mix2App.MiniGame2{
 						EventTitle.SetActive (true);
 						TamagochiDesignOff ();
 						jobCount = statusJobCount.minigame2JobCount010;
+						TamagoCharaPositionInit ();
+						nowScore = 0;
+						nowTime1 = 0.0f;
+						nowTime2 = GAMEPLAYTIMER;									// 制限時間５０
 //					}
 					break;
 				}
@@ -247,14 +257,13 @@ namespace Mix2App.MiniGame2{
 						EventEnd.SetActive (false);
 						EventResult.SetActive (true);
 
-						for (int i = 0; i < CharaTamago.Length; i++) {
+						for (int i = 0; i < CharaTamago.Length; i++) {				// お客さん達を消す
 							CharaTamago [i].SetActive (false);
 						}
-						for (int i = 0; i < CharaTamagoMain.Length; i++) {
+						for (int i = 0; i < CharaTamagoMain.Length; i++) {			// プレイヤーとゲストを消す
 							CharaTamagoMain [i].transform.localPosition = new Vector3 (-50.0f, 0.0f, 1.0f);
 							TamagochiMainAnimeSet (i, "idle");
 						}
-
 
 						resultLoopCount = statusResult.resultJobCount000;
 						resultMainLoopFlag = false;
@@ -270,7 +279,7 @@ namespace Mix2App.MiniGame2{
 						EventResult.SetActive (false);
 						EventTitle.SetActive (true);
 					}
-					TamagoAnimeSprite ();										// たまごっちのアニメをImageに反映する
+					TamagoAnimeSprite ();											// たまごっちのアニメをImageに反映する
 					break;
 				}
 			case	statusJobCount.minigame2JobCount080:
@@ -289,16 +298,22 @@ namespace Mix2App.MiniGame2{
 		}
 
 		private void ButtonStartClick(){
-			jobCount = statusJobCount.minigame2JobCount020;						// スタートボタンが押されたのでゲーム開始
+			jobCount = statusJobCount.minigame2JobCount020;							// スタートボタンが押されたのでゲーム開始
 		}
 		private void ButtonCloseClick(){
+			Debug.Log ("たまタウンへ・・・");
 		}
 		private void ButtonHelpClick(){
+			EventHelp.SetActive (true);
+		}
+		private void ButtonHelpModoruClick(){
+			EventHelp.SetActive (false);
 		}
 		private void ButtonYameruClick(){
 			gameMainLoopFlag = true;
 		}
 		private void ButtonTakuhaiClick(){
+			Debug.Log ("宅配サービスへ・・・");
 		}
 		private void ButtonTojiruClick(){
 			resultItemGetFlag = true;
@@ -340,7 +355,6 @@ namespace Mix2App.MiniGame2{
 			}
 		}
 
-
 		private int[] tamagochiIdouFlag = new int[12];
 		private void TamagochiLoopInit(){
 			Vector2[] _initTable = new Vector2[] {
@@ -354,8 +368,8 @@ namespace Mix2App.MiniGame2{
 			}
 			for (int i = 0; i < CharaTamagoMain.Length; i++) {
 				CharaTamagoMain [i].SetActive (true);
+				TamagochiMainAnimeSet (i, "idle");
 			}
-
 
 			for (int i = 0; i < 3; i++) {
 				Vector3 pos = CharaTamagoMain [i].transform.localPosition;
@@ -462,7 +476,6 @@ namespace Mix2App.MiniGame2{
 
 
 
-
 		private int[] tamagochiIdouTable = new int[12];
 		private int tamagoIdouTime = 80;
 		private int tamagoIdouTime2 = 40;
@@ -484,11 +497,11 @@ namespace Mix2App.MiniGame2{
 				{
 					tamagoIdouTimeFlag = 0;
 
-					tamagoGameIdouWork [tamagochiIdouTable[0]].targetX = -4.0f;
-					tamagoGameIdouWork [tamagochiIdouTable[0]].targetY = -1.5f;
+					tamagoGameIdouWork [tamagochiIdouTable [0]].targetX = -4.0f;
+					tamagoGameIdouWork [tamagochiIdouTable [0]].targetY = -1.5f;
 					_pos = CharaTamago [tamagochiIdouTable [0]].transform.localPosition;
-					tamagoGameIdouWork [tamagochiIdouTable[0]].speedX = (tamagoGameIdouWork [tamagochiIdouTable[0]].targetX - _pos.x) / tamagoIdouTime2;
-					tamagoGameIdouWork [tamagochiIdouTable[0]].speedY = (tamagoGameIdouWork [tamagochiIdouTable[0]].targetY - _pos.y) / tamagoIdouTime2;
+					tamagoGameIdouWork [tamagochiIdouTable [0]].speedX = (tamagoGameIdouWork [tamagochiIdouTable [0]].targetX - _pos.x) / tamagoIdouTime2;
+					tamagoGameIdouWork [tamagochiIdouTable [0]].speedY = (tamagoGameIdouWork [tamagochiIdouTable [0]].targetY - _pos.y) / tamagoIdouTime2;
 
 					if (tamagoGameIdouWork [tamagochiIdouTable [0]].targetX <= _pos.x) {
 						TamagochiAnimeSet (tamagochiIdouTable [0], "walk", false);
@@ -498,12 +511,12 @@ namespace Mix2App.MiniGame2{
 
 					for (int num = 1; num < 12; num++) {
 						_pos = CharaTamago [tamagochiIdouTable [num - 1]].transform.localPosition;
-						tamagoGameIdouWork [tamagochiIdouTable[num]].targetX = _pos.x;
-						tamagoGameIdouWork [tamagochiIdouTable[num]].targetY = _pos.y;
+						tamagoGameIdouWork [tamagochiIdouTable [num]].targetX = _pos.x;
+						tamagoGameIdouWork [tamagochiIdouTable [num]].targetY = _pos.y;
 
 						_pos = CharaTamago [tamagochiIdouTable [num]].transform.localPosition;
-						tamagoGameIdouWork [tamagochiIdouTable[num]].speedX = (tamagoGameIdouWork [tamagochiIdouTable[num]].targetX - _pos.x) / tamagoIdouTime;
-						tamagoGameIdouWork [tamagochiIdouTable[num]].speedY = (tamagoGameIdouWork [tamagochiIdouTable[num]].targetY - _pos.y) / tamagoIdouTime;
+						tamagoGameIdouWork [tamagochiIdouTable [num]].speedX = (tamagoGameIdouWork [tamagochiIdouTable [num]].targetX - _pos.x) / tamagoIdouTime;
+						tamagoGameIdouWork [tamagochiIdouTable [num]].speedY = (tamagoGameIdouWork [tamagochiIdouTable [num]].targetY - _pos.y) / tamagoIdouTime;
 
 						if (tamagoGameIdouWork [tamagochiIdouTable [num]].targetX <= _pos.x) {
 							TamagochiAnimeSet (tamagochiIdouTable [num], "walk", false);
@@ -547,11 +560,11 @@ namespace Mix2App.MiniGame2{
 
 					_pos = CharaTamago [tamagochiIdouTable [0]].transform.localPosition;
 					if ((_pos.x <= -4.0f) && (tamagoIdouTimeFlag == 0)) {
-						tamagoGameIdouWork [tamagochiIdouTable[0]].targetX = -8.0f;
-						tamagoGameIdouWork [tamagochiIdouTable[0]].targetY = -7.5f;
+						tamagoGameIdouWork [tamagochiIdouTable [0]].targetX = -8.0f;
+						tamagoGameIdouWork [tamagochiIdouTable [0]].targetY = -7.5f;
 						_pos = CharaTamago [tamagochiIdouTable [0]].transform.localPosition;
-						tamagoGameIdouWork [tamagochiIdouTable[0]].speedX = (tamagoGameIdouWork [tamagochiIdouTable[0]].targetX - _pos.x) / tamagoIdouTime3;
-						tamagoGameIdouWork [tamagochiIdouTable[0]].speedY = (tamagoGameIdouWork [tamagochiIdouTable[0]].targetY - _pos.y) / tamagoIdouTime3;
+						tamagoGameIdouWork [tamagochiIdouTable [0]].speedX = (tamagoGameIdouWork [tamagochiIdouTable [0]].targetX - _pos.x) / tamagoIdouTime3;
+						tamagoGameIdouWork [tamagochiIdouTable [0]].speedY = (tamagoGameIdouWork [tamagochiIdouTable [0]].targetY - _pos.y) / tamagoIdouTime3;
 						tamagoIdouTimeFlag = 1;
 					}
 					if ((_pos.x <= -8.0f) && (_pos.y <= -7.5f) && (tamagoIdouTimeFlag == 1)) {
@@ -582,7 +595,7 @@ namespace Mix2App.MiniGame2{
 
 		private void TamagochiMainAnimeSet(int num,string status){
 			string _status = status;
-			switch(status){
+			switch(_status){
 			case	"glad1":
 				{
 					switch (Random.Range (0, 3)) {
@@ -606,14 +619,13 @@ namespace Mix2App.MiniGame2{
 				}
 			}
 
-
 			if (cbCharaTamagoMain [num].nowlabel != _status) {
 				cbCharaTamagoMain [num].gotoAndPlay (_status);
 			}
 		}
 		private void TamagochiAnimeSet(int num,string status,bool flag = false){
 			string _status = status;
-			switch(status){
+			switch(_status){
 			case	"glad1":
 				{
 					switch (Random.Range (0, 3)) {
@@ -661,11 +673,11 @@ namespace Mix2App.MiniGame2{
 
 
 
-		private Vector3 posMenu = new Vector3 (0, 0, 0);
+		private Vector3 posMenu = new Vector3 (0, 0, 0);	// メニュー一覧の表示位置
 		private int seikaiCount;							// 正解数
 		private int menuCount;								// 表示メニュー数
-		private bool buttonCheckFlag;
-		private bool gameMainLoopFlag = false;
+		private bool buttonCheckFlag;						// メニュー一覧のボタンの有効・無効
+		private bool gameMainLoopFlag = false;				// ゲーム処理フラグ
 
 		private statusGameCount gameJobCount;
 		private enum statusGameCount{
@@ -691,6 +703,10 @@ namespace Mix2App.MiniGame2{
 			buttonCheckFlag = false;
 			TamagochiGameIdouInit ();
 			gameMainLoopFlag = false;
+			fukidashiOff ();
+			for (int i = 0; i < 3; i++) {
+				TamagochiMainAnimeSet (i, "idle");
+			}
 		}
 
 		private bool GameMainLoop(){
@@ -741,7 +757,7 @@ namespace Mix2App.MiniGame2{
 				}
 			case	statusGameCount.minigame2GameCount010:
 				{
-					posMenu.x -= 25.0f;
+					posMenu.x -= MENUIDOUSPEED;
 					if (posMenu.x <= 0.0f) {
 						posMenu.x = 0.0f;
 						gameJobCount = statusGameCount.minigame2GameCount020;
@@ -780,7 +796,7 @@ namespace Mix2App.MiniGame2{
 				}
 			case	statusGameCount.minigame2GameCount040:
 				{
-					posMenu.x -= 25.0f;
+					posMenu.x -= MENUIDOUSPEED;
 					if (posMenu.x <= -1000.0f) {
 						posMenu.x = -1000.0f;
 						gameJobCount = statusGameCount.minigame2GameCount050;
@@ -830,7 +846,21 @@ namespace Mix2App.MiniGame2{
 				}
 			}
 
+			nowTime1 += 1.0f * Time.deltaTime;
+			if (nowTime1 >= 1.0f) {
+				nowTime1 -= 1.0f;
+				if (nowTime2 == 0) {
+					gameMainLoopFlag = true;
+				} else {
+					nowTime2--;
+				}
+			}
+
 			EventGameMenu.transform.localPosition = posMenu;
+			EventGame.transform.Find ("points/Text").gameObject.GetComponent<Text> ().text = nowScore.ToString ();
+			EventEnd.transform.Find ("points/Text").gameObject.GetComponent<Text> ().text = nowScore.ToString ();
+			EventResult.transform.Find ("points/Text").gameObject.GetComponent<Text> ().text = nowScore.ToString ();
+			EventGame.transform.Find ("timer/Text").gameObject.GetComponent<Text> ().text = nowTime2.ToString ();
 
 			return	gameMainLoopFlag;
 		}
@@ -866,7 +896,7 @@ namespace Mix2App.MiniGame2{
 				}
 			}
 			EventGameFukidashi.transform.Find ("fukidashi").gameObject.GetComponent<Image> ().sprite = FukidashiImage [fukidashiNumber];
-			EventGameFukidashi.transform.Find ("menu").gameObject.GetComponent<Image> ().sprite = MenuImage [fukidashiMenuNumber];			// ０：カツ丼、１：プリン、２：サンド、３：ステーキ、４：パスタ、５：オムライス、６：ご飯、７：寿司、８：空白
+			EventGameFukidashi.transform.Find ("menu").gameObject.GetComponent<Image> ().sprite = MenuImage [fukidashiMenuNumber];			// ０：カツ丼、１：プリン、２：サンド、３：ステーキ、４：パスタ、５：オムライス、６：ご飯、７：寿司
 
 			EventGameFukidashi.transform.Find ("fukidashi").gameObject.SetActive (true);
 			EventGameFukidashi.transform.Find ("menu").gameObject.SetActive (true);
@@ -876,34 +906,38 @@ namespace Mix2App.MiniGame2{
 		private bool fukidashiHantei(){
 			bool _flag;
 			if (buttonNumber == fukidashiMenuNumber) {
-				EventGameFukidashi.transform.Find ("hantei").gameObject.GetComponent<Image> ().sprite = CheckImage [0];						// ０：丸、１：バツ、２：空白
+				int _score;
+
+				EventGameFukidashi.transform.Find ("hantei").gameObject.GetComponent<Image> ().sprite = CheckImage [0];						// ０：丸、１：バツ
 				_flag = true;
 
 				switch (menuCount) {
 				case	2:
 					{
-						EventGameScore.transform.Find ("score").gameObject.GetComponent<Text> ().text = "10";
+						_score = 10;
 						break;
 					}
 				case	4:
 					{
-						EventGameScore.transform.Find ("score").gameObject.GetComponent<Text> ().text = "20";
+						_score = 20;
 						break;
 					}
 				case	6:
 					{
-						EventGameScore.transform.Find ("score").gameObject.GetComponent<Text> ().text = "50";
+						_score = 50;
 						break;
 					}
 				default:
 					{
-						EventGameScore.transform.Find ("score").gameObject.GetComponent<Text> ().text = "100";
+						_score = 100;
 						break;
 					}
 				}
+				EventGameScore.transform.Find ("score").gameObject.GetComponent<Text> ().text = _score.ToString();
+				nowScore += _score;
 
 			} else {
-				EventGameFukidashi.transform.Find ("hantei").gameObject.GetComponent<Image> ().sprite = CheckImage [1];						// ０：丸、１：バツ、２：空白
+				EventGameFukidashi.transform.Find ("hantei").gameObject.GetComponent<Image> ().sprite = CheckImage [1];						// ０：丸、１：バツ
 				_flag = false;
 			}
 			EventGameFukidashi.transform.Find ("hantei").gameObject.SetActive (true);
@@ -1018,8 +1052,6 @@ namespace Mix2App.MiniGame2{
 					EventResult.transform.Find ("chara2").gameObject.transform.localPosition = new Vector3 (-202.0f, -185.0f, 0.0f);
 					EventResult.transform.Find ("chara3").gameObject.transform.localPosition = new Vector3 (-88.0f, -185.0f, 0.0f);
 
-
-
 					resultLoopCount = statusResult.resultJobCount010;
 					break;
 				}
@@ -1050,6 +1082,10 @@ namespace Mix2App.MiniGame2{
 				{
 					if (ResultWaitTimeSubLoop ()) {															// スコアなどを見せる
 						resultLoopCount = statusResult.resultJobCount040;
+						if (nowScore < 50) {
+							resultItemGetFlag = true;														// ５０点未満ならアイテム入手できないのでそのまま終了
+							resultLoopCount = statusResult.resultJobCount090;
+						}
 					}
 					break;
 				}
@@ -1105,6 +1141,12 @@ namespace Mix2App.MiniGame2{
 						EventItemget.SetActive (false);														// アイテム入手画面を消す
 						EventResult.SetActive (true);														// 結果画面を表示する
 						EventResult.transform.Find ("Button_blue_modoru").gameObject.SetActive (true);		// 戻るボタンを表示する
+						if (nowScore >= 50) {
+							for (int i = 0; i < 3; i++) {													// ５０点以上ならアイテム入手したのでたまごっちを喜ばす
+								TamagochiMainAnimeSet (i, "glad1");
+							}
+						}
+							
 						resultLoopCount = statusResult.resultJobCount100;
 					}
 					break;
@@ -1149,6 +1191,23 @@ namespace Mix2App.MiniGame2{
 			EventResult.transform.Find ("chara").transform.localScale = new Vector3 (2.5f, 2.5f, 1.0f);
 			EventResult.transform.Find ("chara2").transform.localScale = new Vector3 (-2.5f, 2.5f, 1.0f);
 			EventResult.transform.Find ("chara3").transform.localScale = new Vector3 (-2.5f, 2.5f, 1.0f);
+		}
+
+		private Vector2[] tamagoCharaPositionInitTable = new Vector2[] {
+			new Vector2 (   0.0f,  420.0f),		// 結果画面の宝箱の初期位置
+			new Vector2 (   0.0f,  420.0f),		// 結果画面のメッセージの初期位置
+		};
+		private void TamagoCharaPositionInit(){
+			TamagoCharaPositionInitSub (EventResult.transform.Find ("treasure").gameObject, 0);
+			TamagoCharaPositionInitSub (EventResult.transform.Find ("result_text").gameObject, 1);
+		}
+		private void TamagoCharaPositionInitSub (GameObject obj, int num){
+			Vector3 pos = new Vector3 (0.0f, 0.0f, 0.0f);
+
+			pos = obj.transform.localPosition;
+			pos.x = tamagoCharaPositionInitTable [num].x;
+			pos.y = tamagoCharaPositionInitTable [num].y;
+			obj.transform.localPosition = pos;
 		}
 
 

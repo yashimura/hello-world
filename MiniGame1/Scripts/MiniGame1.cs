@@ -297,9 +297,6 @@ namespace Mix2App.MiniGame1{
 					break;
 				}
 			}
-//			for (int i = 0; i < 3; i++) {											// 各キャラの表示位置を登録
-//				CharaTamago [i].transform.localPosition = posTamago [i];
-//			}
 		}	
 
 
@@ -478,8 +475,8 @@ namespace Mix2App.MiniGame1{
 			case	1:																// 落下アイテムの落下処理
 				{
 					posItem.y -= itemDownSpeed;
-					if (posItem.y <= -182.0f) {
-						posItem.y = -182.0f;										// 地面に落ちたのでアイテムは消える
+					if (posItem.y <= -195.0f) {
+						posItem.y = -195.0f;										// 地面に落ちたのでアイテムは消える
 						itemIdouFlag = 2;
 					}
 
@@ -492,6 +489,7 @@ namespace Mix2App.MiniGame1{
 
 						posScore.x = pos.x;											// アイテムをゲットしたので得点を表示する
 						posScore.y = pos.y - 26.0f;
+						posScore.y = pos.y + 10.0f;
 						scoreYIdouNumber = scoreYIdouTable.Length;
 						scoreObj.GetComponent<Text> ().text = gameitem.Score.ToString ();
 //						pgGameCore.GameScoreSet (gameitem.Score);
@@ -541,7 +539,7 @@ namespace Mix2App.MiniGame1{
 		// たまごっちとアイテムの当たり判定
 		private bool HitCheck(Vector3 tamagoPos,Vector3 itemPos){
 			if (((tamagoPos.x - 50.0f) < itemPos.x) && (itemPos.x < (tamagoPos.x + 50.0f))) {
-				if (((tamagoPos.y - 50.0f) < itemPos.y) && (itemPos.y < (tamagoPos.y + 50.0f))) {
+				if (((tamagoPos.y - 100.0f) < itemPos.y) && (itemPos.y < (tamagoPos.y + 100.0f))) {
 					return true;
 				}
 			}
@@ -730,15 +728,15 @@ namespace Mix2App.MiniGame1{
 
 
 		private Vector2[] tamagoCharaPositionInitTable = new Vector2[] {
-			new Vector2 (   0.0f, -182.0f),		// スタート画面のプレイヤーキャラの初期位置
+			new Vector2 (   0.0f, -227.0f),		// スタート画面のプレイヤーキャラの初期位置
 			new Vector2 (-235.0f, -124.0f),		// スタート画面の応援キャラ１の初期位置
 			new Vector2 ( 236.0f,  -97.0f),		// スタート画面の応援キャラ２の初期位置
-			new Vector2 (   0.0f, -182.0f),		// ゲーム画面のプレイヤーキャラの初期位置
+			new Vector2 (   0.0f, -227.0f),		// ゲーム画面のプレイヤーキャラの初期位置
 			new Vector2 (-235.0f, -124.0f),		// ゲーム画面の応援キャラ１の初期位置
 			new Vector2 ( 236.0f,  -97.0f),		// ゲーム画面の応援キャラ２の初期位置
-			new Vector2 (  60.0f, -185.0f),		// 結果画面のプレイヤーキャラの初期位置
-			new Vector2 (-202.0f, -185.0f),		// 結果画面の応援キャラ１の初期位置
-			new Vector2 ( -88.0f, -185.0f),		// 結果画面の応援キャラ２の初期位置
+			new Vector2 (  60.0f, -230.0f),		// 結果画面のプレイヤーキャラの初期位置
+			new Vector2 (-202.0f, -175.0f),		// 結果画面の応援キャラ１の初期位置
+			new Vector2 ( -88.0f, -175.0f),		// 結果画面の応援キャラ２の初期位置
 			new Vector2 (   0.0f,  420.0f),		// 結果画面の宝箱の初期位置
 			new Vector2 (   0.0f,  420.0f),		// 結果画面のメッセージの初期位置
 			new Vector2 (   0.0f,  418.0f),		// ゲーム画面の落下アイテムの初期位置

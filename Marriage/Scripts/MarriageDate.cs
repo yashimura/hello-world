@@ -39,6 +39,17 @@ namespace Mix2App.MarriageDate{
 		[SerializeField] private GameObject womanChara1;			// 女の子
 
 
+	
+		private readonly string[] manMessageTable = new string[]{
+			"きょうはありがとう（＋語尾）",
+			"またあそぼう（＋語尾）",
+		};
+		private readonly string[] womanMessageTable = new string[]{
+			"これからもよろしく（＋語尾）",
+			"たのしかった（＋語尾）",
+		};
+
+
 
 		private object[]		mparam;
 
@@ -57,6 +68,8 @@ namespace Mix2App.MarriageDate{
 		private float manXposition = 0.0f;
 		private float womanXposition = 0.0f;
 
+
+
 		private statusJobCount	jobCount = statusJobCount.marriageJobCount000;
 		private enum statusJobCount{
 			marriageJobCount000,
@@ -74,9 +87,9 @@ namespace Mix2App.MarriageDate{
 
 		private User muser1;//自分
 		private User muser2;//相手
-		private int mkind;//結婚種類
-		private int mkind1;//兄弟種類
-		private int mkind2;//兄弟種類
+//		private int mkind;//結婚種類
+//		private int mkind1;//兄弟種類
+//		private int mkind2;//兄弟種類
 
 		void Awake(){
 			Debug.Log ("MarriageDate Awake");
@@ -84,9 +97,9 @@ namespace Mix2App.MarriageDate{
 			mparam=null;
 			muser1=null;
 			muser2=null;
-			mkind=0;
-			mkind1=0;
-			mkind2=0;
+//			mkind=0;
+//			mkind1=0;
+//			mkind2=0;
 		}
 
 		public void receive(params object[] parameter){
@@ -109,11 +122,11 @@ namespace Mix2App.MarriageDate{
 				};
 			}
 
-			mkind = (int)mparam[0];
+//			mkind = (int)mparam[0];
 			muser1 = (User)mparam[1];		// 右のたまごっち
-			mkind1 = (int)mparam[2];
+//			mkind1 = (int)mparam[2];
 			muser2 = (User)mparam[3];		// 左のたまごっち
-			mkind2 = (int)mparam[4];
+//			mkind2 = (int)mparam[4];
 
 			jobCount = statusJobCount.marriageJobCount000;
 			startEndFlag = false;
@@ -349,20 +362,10 @@ namespace Mix2App.MarriageDate{
 			posWoman1 = new Vector3 (-9.0f, -1.5f - 1.0f, 0.0f);
 		}
 
-		private readonly string[] manMessageTable = new string[]{
-			"きょうはありがとう（＋ごび）",
-			"またあそぼう（＋ごび）",
-		};
-		private readonly string[] womanMessageTable = new string[]{
-			"これからもよろしく（＋ごび）",
-			"たのしかった（＋ごび）",
-		};
-
 		private void EventEndMessageSet(){
-			man_text.GetComponent<Text> ().text = manMessageTable [Random.Range (0, manMessageTable.Length)];
-			woman_text.GetComponent<Text> ().text = womanMessageTable [Random.Range (0, womanMessageTable.Length)];
+			man_text.GetComponent<Text> ().text = manMessageTable [Random.Range (0, manMessageTable.Length)].Replace ("（＋語尾）", muser1.chara1.wend);
+			woman_text.GetComponent<Text> ().text = womanMessageTable [Random.Range (0, womanMessageTable.Length)].Replace ("（＋語尾）", muser2.chara1.wend);
 		}
-
 
 		private void TamagochiAnimeRandomChenge(CharaBehaviour cb){
 			
