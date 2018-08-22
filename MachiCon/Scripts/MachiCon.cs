@@ -15,6 +15,9 @@ using Mix2App.Lib.Net;
 
 namespace Mix2App.MachiCon{
 	public class MachiCon : MonoBehaviour,IReceiver {
+
+		public ManagerObject manager;//ライブラリ
+
 		[SerializeField] private Message	MesDisp;						// メッセージ関連
 		[SerializeField] private GameObject EventCurtain;					// カーテン
 		[SerializeField] private GameObject EventTitle;						// たまキュンパーティータイトル
@@ -48,16 +51,16 @@ namespace Mix2App.MachiCon{
 		[SerializeField] private GameObject EventLastResult;				// 最終結果
 		[SerializeField] private GameObject EventEnd;						// おしまい
 
-		private object[]		mparam;
+		//private object[]		mparam;
 
 		private int playerNumber = 0;					// ０〜７（０〜３：男の子、４〜７：女の子）
 		private int targetNumber = 0;					// ０〜７（０〜３：男の子、４〜７：女の子）
 		private bool playerResultFlag = false;			// カップル成立:true 不成立:false
 
 		private bool buttonFlag = false;
-		private bool btnYesNo = false;					// Yes:true No:false
+		//private bool btnYesNo = false;					// Yes:true No:false
 		private int sceneNumber = 0;					// シーンナンバー
-		private bool screenMode = false;
+		//private bool screenMode = false;
 
 
 		private bool kokuhakuTimeEndFlag = true;
@@ -68,7 +71,7 @@ namespace Mix2App.MachiCon{
 		// 相性度（０〜１００）（男の子、女の子）
 		private int[,] loveManWoman = new int[4, 4]{ { 40,40,40,40 }, { 40,40,40,40 }, { 40,40,40,40 }, { 40,40,40,40 } };
 		// 成否判定の種（０〜１００）（男の子、女の子）
-		private int[,] loveManWomanFix = new int[4, 4];
+		private int[,] loveManWomanFix;
 
 		private statusJobCount	jobCount = statusJobCount.machiconJobCount000;
 		private enum statusJobCount{
@@ -155,14 +158,30 @@ namespace Mix2App.MachiCon{
 			kokuhakuCount400,
 		};
 
+		private PartyData mpdata;
+		private AskData[] maskdatas;
+		private bool mresult;
+		private int mkind;
+		private User muser1;
+		private int mkind1;
+		private User muser2;
+		private int mkind2;
+
 		void Awake(){
 			Debug.Log ("MachiCon Awake");
-
+			mresult=false;
+			loveManWomanFix=null;
+			mkind=0;
+			mkind1=0;
+			mkind2=0;
+			muser1=null;
+			muser2=null;
+			maskdatas = new AskData[3];
 		}
 
 		public void receive(params object[] parameter){
 			Debug.Log ("MachiCon receive");
-			mparam = parameter;
+			//mparam = parameter;
 
 			// イベントたまキュンか？
 			// コラボたまキュンか？
@@ -171,17 +190,40 @@ namespace Mix2App.MachiCon{
 
 		}
 			
-		IEnumerator Start(){
+		void Start() {
 			Debug.Log ("MachiCon start");
 
-			for (int i = 0; i < 4; i++) {
-				for (int i2 = 0; i2 < 4; i2++) {
-					// これは本当は、サーバーで決定してもらう方が良い（他の参加ユーザーとの同期を取る為には、サーバー側で管理してもらう必要がある）
-					loveManWomanFix [i, i2] = Random.Range (0, 100);
-				}
-			}
+			//ルーム情報取得、メンバーマッチング処理
+			//パラメタは設計書参照
+			GameCall call = new GameCall(CallLabel.GET_ROOM_INFO);
+			call.AddListener(mgetroominf);
+			manager.connect.send(call);
+		}
+		
+		void mgetroominf(bool success,object data)
+		{
+			// dataの内容は設計書参照
+			// dataを変更したいときはConnectManagerDriverのGetRoomInfo()を変更する
+			mpdata = (PartyData)data;
+			StartCoroutine(mstart());
+		}
 
-			playerNumber = Random.Range (0, 8);
+		void mgetroomres(bool success,object data)
+		{
+			mresult=true;
+			// dataの内容は設計書参照
+			// dataを変更したいときはConnectManagerDriverのGetRoomResult()を変更する
+			PartyResultData prdata = (PartyResultData)data;
+			loveManWoman = prdata.fixs;
+			loveManWomanFix = prdata.loves;
+		}
+
+		IEnumerator mstart()
+		{
+
+			playerNumber = mpdata.playerIndex;
+			muser1 = mpdata.members[playerNumber].user;
+			mkind1 = mpdata.members[playerNumber].index;
 			playerResultFlag = false;
 
 			EventSoudanYesNew.GetComponent<Button> ().onClick.AddListener (ButtneYesClick);
@@ -197,6 +239,7 @@ namespace Mix2App.MachiCon{
 			use_screen_y = Screen.height;
 			#endif
 
+			/*
 			float num;
 			if (use_screen_x >= use_screen_y) {
 				num = use_screen_x / use_screen_y;
@@ -209,20 +252,20 @@ namespace Mix2App.MachiCon{
 			} else {
 				screenMode = true;													// 3:4以外
 			}
-
+			*/
 
 
 			for (int i = 0; i < 8; i++) {
 				cbTamagoChara [i] = CharaTamago [i].GetComponent<CharaBehaviour> ();
 			}
-			yield return cbTamagoChara[0].init (new TamaChara (16));				// 男の子１のたまごっちを登録する
-			yield return cbTamagoChara[1].init (new TamaChara (17));				// 男の子２のたまごっちを登録する
-			yield return cbTamagoChara[2].init (new TamaChara (20));				// 男の子３のたまごっちを登録する
-			yield return cbTamagoChara[3].init (new TamaChara (21));				// 男の子４のたまごっちを登録する
-			yield return cbTamagoChara[4].init (new TamaChara (18));				// 女の子１のたまごっちを登録する
-			yield return cbTamagoChara[5].init (new TamaChara (19));				// 女の子２のたまごっちを登録する
-			yield return cbTamagoChara[6].init (new TamaChara (22));				// 女の子３のたまごっちを登録する
-			yield return cbTamagoChara[7].init (new TamaChara (23));				// 女の子４のたまごっちを登録する
+			yield return cbTamagoChara[0].init (mpdata.members[0].user.GetCharaAt(mpdata.members[0].index));// 男の子１のたまごっちを登録する
+			yield return cbTamagoChara[1].init (mpdata.members[1].user.GetCharaAt(mpdata.members[1].index));// 男の子２のたまごっちを登録する
+			yield return cbTamagoChara[2].init (mpdata.members[2].user.GetCharaAt(mpdata.members[2].index));// 男の子３のたまごっちを登録する
+			yield return cbTamagoChara[3].init (mpdata.members[3].user.GetCharaAt(mpdata.members[3].index));// 男の子４のたまごっちを登録する
+			yield return cbTamagoChara[4].init (mpdata.members[4].user.GetCharaAt(mpdata.members[4].index));// 女の子１のたまごっちを登録する
+			yield return cbTamagoChara[5].init (mpdata.members[5].user.GetCharaAt(mpdata.members[5].index));// 女の子２のたまごっちを登録する
+			yield return cbTamagoChara[6].init (mpdata.members[6].user.GetCharaAt(mpdata.members[6].index));// 女の子３のたまごっちを登録する
+			yield return cbTamagoChara[7].init (mpdata.members[7].user.GetCharaAt(mpdata.members[7].index));// 女の子４のたまごっちを登録する
 
 
 
@@ -386,6 +429,7 @@ namespace Mix2App.MachiCon{
 						TargetRandomSet ();														// 相談相手の決定
 
 						EventAppeal.SetActive (false);
+						EventAppealTableHeartClear ();											// テーブルハートを消しておく
 					}
 					break;
 				}
@@ -508,8 +552,9 @@ namespace Mix2App.MachiCon{
 						for (int i = 0; i < 8; i++) {
 							CharaTamagochi [i].transform.Find ("fukidashi/message").gameObject.SetActive (true);
 						}
+						TablePositionInit ();
+						waitTime = 120;
 					}
-					waitTime = 120;
 					break;
 				}
 			case	statusJobCount.machiconJobCount200:
@@ -552,12 +597,20 @@ namespace Mix2App.MachiCon{
 						jobCount = statusJobCount.machiconJobCount230;
 						waitTime = 60;
 						EventAppeal.SetActive (false);
+						EventAppealTableHeartClear ();											// テーブルハートを消しておく
+
+						//相談送信、全メンバーの相談処理を完了後、告白結果取得
+						// パラメタは設計書参照
+						//TODO masklistは現在何も反映していないので適宜設定を
+						GameCall call = new GameCall(CallLabel.GET_ROOM_RESULT,maskdatas);
+						call.AddListener(mgetroomres);
+						manager.connect.send(call);
 					}
 					break;
 				}
 			case	statusJobCount.machiconJobCount230:
 				{
-					if (WaitTimeSubLoop ()) {
+					if (WaitTimeSubLoop () && mresult) {
 						jobCount = statusJobCount.machiconJobCount240;
 						EventKokuhaku.SetActive (true);											// 告白タイム表示
 						waitTime = 60;
@@ -621,8 +674,10 @@ namespace Mix2App.MachiCon{
 					if (WaitTimeSubLoop ()) {
 						if (playerResultFlag) {
 							Debug.Log ("結婚イベントへ・・・");
+							manager.view.change("Marriage",mkind,muser1,mkind1,muser2,mkind2);
 						} else {
 							Debug.Log ("たまタウンへ・・・");
+							manager.view.change("Town");
 						}
 
 						jobCount = statusJobCount.machiconJobCount300;
@@ -678,6 +733,9 @@ namespace Mix2App.MachiCon{
 		}
 
 		private bool WaitTimeSubLoop(){
+			if (waitTime == 0) {
+				return true;
+			}
 			waitTime--;
 			if (waitTime == 0) {
 				return true;
@@ -1068,18 +1126,6 @@ namespace Mix2App.MachiCon{
 		private float[] posTamagoTargetX = new float[8];
 		private float[] posTamagoTargetY = new float[8];
 
-		private Vector2[] posTamagoTargetTableMan = new Vector2[4] {
-			new Vector2 (-90.0f,  20.0f),	// テーブル１の右側
-			new Vector2 (230.0f,  20.0f),	// テーブル２の右側
-			new Vector2 (-90.0f, -90.0f),	// テーブル３の右側
-			new Vector2 (230.0f, -90.0f),	// テーブル４の右側
-		};
-		private Vector2[] posTamagoTargetTableWoman = new Vector2[4]{
-			new Vector2 (-230.0f,  20.0f),	// テーブル１の左側
-			new Vector2 (  90.0f,  20.0f),	// テーブル２の左側
-			new Vector2 (-230.0f, -90.0f),	// テーブル３の左側
-			new Vector2 (  90.0f, -90.0f),	// テーブル４の左側
-		};
 
 		private int[] countTableChakusekiTime = new int[8]{
 			0,0,0,0,0,0,0,0,
@@ -1098,12 +1144,12 @@ namespace Mix2App.MachiCon{
 			}
 
 
-
+			// 吹き出しをランダム表示
 			for (int i = 0; i < 8; i++) {
 				fukidashiTamagoWait [i]--;
 				if (fukidashiTamagoWait [i] == 0) {
-					fukidashiTamagoWait [i] = Random.Range (60, 100);
-					switch (Random.Range (0, 8)) {
+					fukidashiTamagoWait [i] = Random.Range (45, 75);
+					switch (Random.Range (0, 12)) {
 					case	0:
 						{	// 吹き出しケーキを表示
 							CharaTamagochi [i].transform.Find ("fukidashi/cake").gameObject.SetActive (true);
@@ -1136,7 +1182,7 @@ namespace Mix2App.MachiCon{
 				}
 			}
 
-
+			EventAppealTableHeartClear ();										// テーブルハートを消しておく
 
 			if (appealTimeCounter >= 80) {
 				float[] _posY = new float[12];
@@ -1173,13 +1219,21 @@ namespace Mix2App.MachiCon{
 
 						if (posTamagoSpeedX [i] != 0.0f) {
 							if (posTamago [i].x == posTamagoTargetX [i]) {
-								countTableChakusekiTime [i] = Random.Range (30, 90);
+								if (posTamagoTargetType [i] < 4) {
+									countTableChakusekiTime [i] = Random.Range (120, 180);
+								} else {
+									countTableChakusekiTime [i] = Random.Range (30, 90);
+								}
 								posTamagoSpeedX [i] = 0.0f;
 								posTamagoSpeedY [i] = 0.0f;
 							}
 						} else {
 							if (posTamago [i].y == posTamagoTargetY [i]) {
-								countTableChakusekiTime [i] = Random.Range (30, 90);
+								if (posTamagoTargetType [i] < 4) {
+									countTableChakusekiTime [i] = Random.Range (120, 180);
+								} else {
+									countTableChakusekiTime [i] = Random.Range (30, 90);
+								}
 								posTamagoSpeedX [i] = 0.0f;
 								posTamagoSpeedY [i] = 0.0f;
 							}
@@ -1194,6 +1248,7 @@ namespace Mix2App.MachiCon{
 							} else {
 								CharaTamago [i].GetComponent<SpriteRenderer> ().flipX = true;
 							}
+							TamagoPairCheck (i);
 						} else {
 							TamagochiIdouInit (i);
 						}
@@ -1201,14 +1256,13 @@ namespace Mix2App.MachiCon{
 
 
 
-
 					_posY [i] = posTamago [i].y;
 				}
 
-				_posY[8] = EventAppeal.transform.Find ("table1").gameObject.transform.localPosition.y + 30.0f;
-				_posY[9] = EventAppeal.transform.Find ("table2").gameObject.transform.localPosition.y + 30.0f;
-				_posY[10] = EventAppeal.transform.Find ("table3").gameObject.transform.localPosition.y + 30.0f;
-				_posY[11] = EventAppeal.transform.Find ("table4").gameObject.transform.localPosition.y + 30.0f;
+				_posY[8] = _tablePostionY[0] + 30.0f;
+				_posY[9] = _tablePostionY[1] + 30.0f;
+				_posY[10] = _tablePostionY[2] + 30.0f;
+				_posY[11] = _tablePostionY[3] + 30.0f;
 
 				for (int j = 0; j < 12; j++) {								// たまごっちとテーブルの表示優先順位の変更
 					int k = 0;
@@ -1252,9 +1306,6 @@ namespace Mix2App.MachiCon{
 
 
 
-
-
-
 			appealTimeCounter++;
 		}
 
@@ -1264,36 +1315,23 @@ namespace Mix2App.MachiCon{
 			}
 		}
 		private void TamagochiTableHitcheck(int num){
-			float[] _posX = new float[4];
-			float[] _posY = new float[4];
-
-			_posX[0] = EventAppeal.transform.Find ("table1").gameObject.transform.localPosition.x;
-			_posX[1] = EventAppeal.transform.Find ("table2").gameObject.transform.localPosition.x;
-			_posX[2] = EventAppeal.transform.Find ("table3").gameObject.transform.localPosition.x;
-			_posX[3] = EventAppeal.transform.Find ("table4").gameObject.transform.localPosition.x;
-
-			_posY[0] = EventAppeal.transform.Find ("table1").gameObject.transform.localPosition.y + 30.0f;
-			_posY[1] = EventAppeal.transform.Find ("table2").gameObject.transform.localPosition.y + 30.0f;
-			_posY[2] = EventAppeal.transform.Find ("table3").gameObject.transform.localPosition.y + 30.0f;
-			_posY[3] = EventAppeal.transform.Find ("table4").gameObject.transform.localPosition.y + 30.0f;
-
 			for(int i = 0;i < 4;i++){
-				if (((posTamago[num].x - 40.0f) < _posX[i]) && (_posX[i] < (posTamago[num].x + 40.0f))) {
-					if (((posTamago[num].y - 12.0f) < _posY[i]) && (_posY[i] < (posTamago[num].y + 12.0f))) {
+				if (((posTamago[num].x - 40.0f) < _tablePostionX[i]) && (_tablePostionX[i] < (posTamago[num].x + 40.0f))) {
+					if (((posTamago[num].y - 12.0f) < (_tablePostionY[i] + 30.0f)) && ((_tablePostionY[i] + 30.0f) < (posTamago[num].y + 12.0f))) {
 
 
-
-//						if (posTamago [num].x < _posX [i]) {
-//							posTamago [num].x = _posX [i] - 41.0f;
+//						if (posTamago [num].x < _tablePostionX [i]) {
+//							posTamago [num].x = _tablePostionX [i] - 41.0f;
 //						} else {
-//							posTamago [num].x = _posX [i] + 41.0f;
+//							posTamago [num].x = _tablePostionX [i] + 41.0f;
 //						}
 
-						if (posTamago [num].y < _posY [i]) {
-							posTamago [num].y = _posY [i] - 13.0f;
+						if (posTamago [num].y < (_tablePostionY[i] + 30.0f)) {
+							posTamago [num].y = (_tablePostionY[i] + 30.0f) - 13.0f;
 						} else {
-							posTamago [num].y = _posY [i] + 13.0f;
+							posTamago [num].y = (_tablePostionY[i] + 30.0f) + 13.0f;
 						}
+
 
 
 						posTamagoSpeedX [num] = 0.0f;
@@ -1303,12 +1341,46 @@ namespace Mix2App.MachiCon{
 					}
 				}
 			}
-
 		}
 
+
+		// テーブルハートを消しておく
+		private void EventAppealTableHeartClear (){
+			EventAppeal.transform.Find ("table1/heart").gameObject.SetActive (false);
+			EventAppeal.transform.Find ("table2/heart").gameObject.SetActive (false);
+			EventAppeal.transform.Find ("table3/heart").gameObject.SetActive (false);
+			EventAppeal.transform.Find ("table4/heart").gameObject.SetActive (false);
+		}
+
+		private float[] _tablePostionX = new float[4];
+		private float[] _tablePostionY = new float[4];
+
+		private void TablePositionInit(){
+			_tablePostionX[0] = EventAppeal.transform.Find ("table1").gameObject.transform.localPosition.x;
+			_tablePostionX[1] = EventAppeal.transform.Find ("table2").gameObject.transform.localPosition.x;
+			_tablePostionX[2] = EventAppeal.transform.Find ("table3").gameObject.transform.localPosition.x;
+			_tablePostionX[3] = EventAppeal.transform.Find ("table4").gameObject.transform.localPosition.x;
+
+			_tablePostionY[0] = EventAppeal.transform.Find ("table1").gameObject.transform.localPosition.y;
+			_tablePostionY[1] = EventAppeal.transform.Find ("table2").gameObject.transform.localPosition.y;
+			_tablePostionY[2] = EventAppeal.transform.Find ("table3").gameObject.transform.localPosition.y;
+			_tablePostionY[3] = EventAppeal.transform.Find ("table4").gameObject.transform.localPosition.y;
+
+
+			for (int i = 0; i < 4; i++) {
+				posTamagoTargetTableMan [i].x = _tablePostionX [i] + 70.0f;
+				posTamagoTargetTableMan [i].y = _tablePostionY [i] + 30.0f;
+				posTamagoTargetTableWoman [i].x = _tablePostionX [i] - 70.0f;
+				posTamagoTargetTableWoman [i].y = _tablePostionY [i] + 30.0f;
+			}
+		}
+
+		private Vector2[] posTamagoTargetTableMan = new Vector2[4];
+		private Vector2[] posTamagoTargetTableWoman = new Vector2[4];
+		private int[] posTamagoTargetType = new int[8];
 		private void TamagochiIdouInit(int num){
 			float _randSpeed = Random.Range (45, 90);
-			int _randPoint = Random.Range (0, 8);
+			int _randPoint = Random.Range (0, 7);
 
 			switch (_randPoint) {
 			case	0:
@@ -1334,6 +1406,7 @@ namespace Mix2App.MachiCon{
 					break;
 				}
 			}
+			posTamagoTargetType [num] = _randPoint;
 
 			float x1 = System.Math.Abs(posTamago [num].x - posTamagoTargetX[num]);
 			if (x1 < 1.0f) {
@@ -1343,7 +1416,6 @@ namespace Mix2App.MachiCon{
 			if (y1 < 1.0f) {
 				posTamagoTargetY [num] = posTamago [num].y;
 			}
-
 
 
 
@@ -1362,8 +1434,58 @@ namespace Mix2App.MachiCon{
 				posTamagoIdouYFlag [num] = true;
 				posTamagoSpeedY [num] = (posTamagoTargetY [num] - posTamago [num].y) / _randSpeed;
 			}
-
 		}
+
+		private void TamagoPairCheck(int num){
+			int _target = posTamagoTargetType [num];
+			bool _flag = false;
+
+			if ((_target < 4) && (posTamago[num].x == posTamagoTargetX[num]) && (posTamago[num].y == posTamagoTargetY[num])) {
+				if (num < 4) {
+					for (int i = 4; i < 8; i++) {
+						if ((countTableChakusekiTime [i] != 0) && (posTamagoSpeedX [i] == 0) && (posTamagoSpeedY [i] == 0) && (_target == posTamagoTargetType[i]) && (posTamago[i].x == posTamagoTargetX[i]) && (posTamago[i].y == posTamagoTargetY[i])) {
+							TamagochiAnimeSet (i, "glad1");
+							TamagochiAnimeSet (num, "glad1");
+							_flag = true;
+						}
+					}
+				} else {
+					for (int i = 0; i < 4; i++) {
+						if ((countTableChakusekiTime [i] != 0) && (posTamagoSpeedX [i] == 0) && (posTamagoSpeedY [i] == 0) && (_target == posTamagoTargetType[i]) && (posTamago[i].x == posTamagoTargetX[i]) && (posTamago[i].y == posTamagoTargetY[i])) {
+							TamagochiAnimeSet (i, "glad1");
+							TamagochiAnimeSet (num, "glad1");
+							_flag = true;
+						}
+					}
+				}
+			}
+
+			if (_flag) {
+				switch (_target) {
+				case	0:
+					{
+						EventAppeal.transform.Find ("table1/heart").gameObject.SetActive (true);
+						break;
+					}
+				case	1:
+					{
+						EventAppeal.transform.Find ("table2/heart").gameObject.SetActive (true);
+						break;
+					}
+				case	2:
+					{
+						EventAppeal.transform.Find ("table3/heart").gameObject.SetActive (true);
+						break;
+					}
+				case	3:
+					{
+						EventAppeal.transform.Find ("table4/heart").gameObject.SetActive (true);
+						break;
+					}
+				}
+			}
+		}
+
 
 
 		private void TamagochiFukidashiOff(){
@@ -1575,6 +1697,7 @@ namespace Mix2App.MachiCon{
 		private bool kokuhakuOkFlag = false;
 		private int kokuhakuRivalNumber = 0;								// ライバルが出現するかどうか（16進数で考えて２番目がライバル10h、３番目がライバル20h、４番目がライバル40h）
 		private float heartSize = 0.0f;										// 告白の成否判定の時に表示するハートのサイズ
+		private string[] kokuhakuManMessage = new string[4];
 		// 告白処理ループ
 		private void KokuhakuTimeMain(){
 			switch (kokuhakuTimeLoopCount) {
@@ -1587,6 +1710,11 @@ namespace Mix2App.MachiCon{
 					kokuhakuManTable [3] = 3;
 					kokuhakuManNumber = 0;
 					kokuhakuOkFlag = false;
+
+					kokuhakuManMessage [0] = MesDisp.KokuhakuMesDispMan ();						// 告白宣言メッセージをここで決定
+					kokuhakuManMessage [1] = MesDisp.KokuhakuMesDispMan ();
+					kokuhakuManMessage [2] = MesDisp.KokuhakuMesDispMan ();
+					kokuhakuManMessage [3] = MesDisp.KokuhakuMesDispMan ();
 					break;
 				}
 			case	statusKokuhakuCount.kokuhakuCount010:
@@ -1747,14 +1875,14 @@ namespace Mix2App.MachiCon{
 				{
 					if (KokuhakuTimeIdou2 (kokuhakuManTable [kokuhakuManNumber])) {				// 告白者をもう一歩前に
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount170;
-						KokuhakuheartDisp (kokuhakuManTable [kokuhakuManNumber], true);			// 吹き出しハートを表示
+						KokuhakuMessageDisp (kokuhakuManTable [kokuhakuManNumber], true);		// 吹き出しを表示
 					}
 					break;
 				}
 			case	statusKokuhakuCount.kokuhakuCount170:
 				{
 					if (KokuhakuWaitTimeSubLoop ()) {
-						KokuhakuheartDisp (kokuhakuManTable [kokuhakuManNumber], false);			// 吹き出しハートを非表示
+						KokuhakuMessageDisp (kokuhakuManTable [kokuhakuManNumber], false);		// 吹き出しを非表示
 						if (kokuhakuRivalNumber != 0) {
 							kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount180;		// ライバル出現あり
 						} else {
@@ -1776,7 +1904,7 @@ namespace Mix2App.MachiCon{
 				{
 					if (KokuhakuTimeIdou2 (1)) {												// ２番目のたまごっち、もう一歩前に
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount200;
-						KokuhakuheartDisp (1, true);											// 吹き出しハートを表示
+						KokuhakuMessageDisp (1, true);											// 吹き出しを表示
 					}
 					break;
 				}
@@ -1784,7 +1912,7 @@ namespace Mix2App.MachiCon{
 				{
 					if (KokuhakuWaitTimeSubLoop ()) {
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount210;
-						KokuhakuheartDisp (1, false);											// 吹き出しハートを非表示
+						KokuhakuMessageDisp (1, false);											// 吹き出しを非表示
 					}
 					break;
 				}
@@ -1801,7 +1929,7 @@ namespace Mix2App.MachiCon{
 				{
 					if (KokuhakuTimeIdou2 (2)) {												// ３番目のたまごっち、もう一歩前に
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount230;
-						KokuhakuheartDisp (2, true);											// 吹き出しハートを表示
+						KokuhakuMessageDisp (2, true);											// 吹き出しを表示
 					}
 					break;
 				}
@@ -1809,7 +1937,7 @@ namespace Mix2App.MachiCon{
 				{
 					if (KokuhakuWaitTimeSubLoop ()) {
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount240;
-						KokuhakuheartDisp (2, false);											// 吹き出しハートを非表示
+						KokuhakuMessageDisp (2, false);											// 吹き出しを非表示
 					}
 					break;
 				}
@@ -1826,7 +1954,7 @@ namespace Mix2App.MachiCon{
 				{
 					if (KokuhakuTimeIdou2 (3)) {												// ４番目のたまごっち、もう一歩前に
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount260;
-						KokuhakuheartDisp (3, true);											// 吹き出しハートを表示
+						KokuhakuMessageDisp (3, true);											// 吹き出しを表示
 					}
 					break;
 				}
@@ -1834,7 +1962,7 @@ namespace Mix2App.MachiCon{
 				{
 					if (KokuhakuWaitTimeSubLoop ()) {
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount270;
-						KokuhakuheartDisp (3, false);											// 吹き出しハートを非表示
+						KokuhakuMessageDisp (3, false);											// 吹き出しを非表示
 					}
 					break;
 				}
@@ -1861,7 +1989,7 @@ namespace Mix2App.MachiCon{
 				}
 			case	statusKokuhakuCount.kokuhakuCount290:
 				{
-					if (LoveResultDispHeart ()) {													// 告白結果のハートを拡大表示
+					if (LoveResultDispHeart ()) {												// 告白結果のハートを拡大表示
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount300;
 						kokuhakuWaitTime = 120;
 					}
@@ -2008,8 +2136,9 @@ namespace Mix2App.MachiCon{
 		}
 
 		// num:男の子の番号（０〜３）、flag:表示フラグ（true:表示、false:非表示）
-		private void KokuhakuheartDisp(int num,bool flag){
-			CharaTamagochi [num].transform.Find ("fukidashi/heart").gameObject.SetActive (flag);	// 吹き出しハートを表示・非表示
+		private void KokuhakuMessageDisp(int num,bool flag){
+			CharaTamagochi [num].transform.Find ("fukidashi/comment/text").gameObject.GetComponent<Text> ().text = kokuhakuManMessage [num];
+			CharaTamagochi [num].transform.Find ("fukidashi/comment").gameObject.SetActive (flag);	// 吹き出しコメントを表示・非表示
 			if (flag) {
 				TamagochiPatanChenge (0, num);														// 告白者のアニメパターンを登録
 				MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp11);
@@ -2123,6 +2252,16 @@ namespace Mix2App.MachiCon{
 
 			if ((playerNumber == num) || (playerNumber == loveParamManNumber)) {
 				playerResultFlag = true;
+				if (playerNumber == num) 
+				{
+					muser2 = mpdata.members[loveParamManNumber].user;
+					mkind2 = mpdata.members[loveParamManNumber].index;
+				}
+				else
+				{
+					muser2 = mpdata.members[num].user;
+					mkind2 = mpdata.members[num].index;
+				}
 			}
 		}
 		private bool KokuhakuTimeIdou4(){
@@ -2479,13 +2618,13 @@ namespace Mix2App.MachiCon{
 		private void ButtneYesClick(){
 			LoveManWomanNumberSet (10);		// 好感度を１０上げる
 			buttonFlag = true;
-			btnYesNo = true;
+			//btnYesNo = true;
 		}
 		// Noボタンが押された時
 		private void ButtonNoClick(){
 			LoveManWomanNumberSet (-10);	// 好感度を１０下げる
 			buttonFlag = true;
-			btnYesNo = false;
+			//btnYesNo = false;
 		}
 
 		// 好感度を上下させる（本当はサーバーでやるのが良いと思う）

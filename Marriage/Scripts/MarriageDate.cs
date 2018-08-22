@@ -11,6 +11,8 @@ using Mix2App.Lib.Utils;
 
 namespace Mix2App.MarriageDate{
 	public class MarriageDate : MonoBehaviour,IReceiver {
+		public ManagerObject manager;//ライブラリ
+
 		[SerializeField] private GameObject EventDate;
 
 		[SerializeField] private GameObject	EventEnd;				// 原っぱ
@@ -50,7 +52,7 @@ namespace Mix2App.MarriageDate{
 
 		private bool startEndFlag = false;
 		private int waitCount;
-		private bool waitFlag = false;
+		private bool screenModeFlag = false;
 
 		private float manXposition = 0.0f;
 		private float womanXposition = 0.0f;
@@ -70,8 +72,21 @@ namespace Mix2App.MarriageDate{
 			marriageJobCount100,
 		}
 
+		private User muser1;//自分
+		private User muser2;//相手
+		private int mkind;//結婚種類
+		private int mkind1;//兄弟種類
+		private int mkind2;//兄弟種類
+
 		void Awake(){
 			Debug.Log ("MarriageDate Awake");
+
+			mparam=null;
+			muser1=null;
+			muser2=null;
+			mkind=0;
+			mkind1=0;
+			mkind2=0;
 		}
 
 		public void receive(params object[] parameter){
@@ -81,6 +96,24 @@ namespace Mix2App.MarriageDate{
 
 		IEnumerator Start () {
 			Debug.Log ("MarriageDate start");
+
+			//単体動作テスト用
+			//パラメタ詳細は設計書参照
+			if (mparam==null) {
+				mparam = new object[] {
+					0,
+					manager.player,
+					0,
+					new TestUser(1,UserKind.ANOTHER,UserType.MIX2,23,0,0,1),
+					0
+				};
+			}
+
+			mkind = (int)mparam[0];
+			muser1 = (User)mparam[1];		// 右のたまごっち
+			mkind1 = (int)mparam[2];
+			muser2 = (User)mparam[3];		// 左のたまごっち
+			mkind2 = (int)mparam[4];
 
 			jobCount = statusJobCount.marriageJobCount000;
 			startEndFlag = false;
@@ -113,15 +146,19 @@ namespace Mix2App.MarriageDate{
 			}
 
 			if ((num > 1.33f) && (num < 1.34f)) {
-				EventDate.GetComponent<Transform> ().transform.localScale = new Vector3 (1.275f, 1.275f, 1.0f);
+				EventDate.GetComponent<Transform> ().transform.localScale = new Vector3 (1.35f, 1.35f, 1.0f);
+				screenModeFlag = true;
+			} else {
+				EventDate.GetComponent<Transform> ().transform.localScale = new Vector3 (1.45f, 1.45f, 1.0f);
+				screenModeFlag = false;
 			}
 
 
 			// 男の子と女の子のたまごっちをここで設定する
 			cbMan1 = manChara1.GetComponent<CharaBehaviour> ();				// 男の子
 			cbWoman1 = womanChara1.GetComponent<CharaBehaviour> ();			// 女の子
-			yield return cbMan1.init (new TamaChara (16));
-			yield return cbWoman1.init (new TamaChara (18));
+			yield return cbMan1.init (muser1.chara1);
+			yield return cbWoman1.init (muser2.chara1);
 
 			startEndFlag = true;
 		}
@@ -229,20 +266,29 @@ namespace Mix2App.MarriageDate{
 
 						{
 							Vector3 pos = EventEnd.transform.Find ("serif_1").gameObject.transform.localPosition;
-							pos.x -= 20.0f;
+							pos.x -= 20.0f - 5.0f;
 							EventEnd.transform.Find ("serif_1").gameObject.transform.localPosition = pos;
+
+							pos = EventEnd.transform.Find ("serif 2").gameObject.transform.localPosition;
+							pos.x = -5.0f;
+							EventEnd.transform.Find ("serif 2").gameObject.transform.localPosition = pos;
 						}
 					} else {
-						posMan1.y = (man_sit.transform.localPosition.y / 48.0f) + 0.5f;
-						posWoman1.y = (man_sit.transform.localPosition.y / 48.0f) + 0.5f;
+						if (screenModeFlag) {
+							posMan1.y = (man_sit.transform.localPosition.y / 48.0f) + 0.5f - 1.0f;
+							posWoman1.y = (man_sit.transform.localPosition.y / 48.0f) + 0.5f - 1.0f;
+						} else {
+							posMan1.y = (man_sit.transform.localPosition.y / 42.0f) + 0.5f - 1.0f;
+							posWoman1.y = (man_sit.transform.localPosition.y / 42.0f) + 0.5f - 1.0f;
+						}
 					}
 					break;
 				}
 			case	statusJobCount.marriageJobCount050:
 				{
 					if ((manXposition == man_walk3.transform.localPosition.x) && (womanXposition == woman_walk3.transform.localPosition.x)) {
-						posMan1.y = (EventEnd.transform.Find("bg1").gameObject.transform.localPosition.y / 47.0f) + 1.7f;
-						posWoman1.y = (EventEnd.transform.Find("bg1").gameObject.transform.localPosition.y / 47.0f) + 1.7f;
+						posMan1.y = (EventEnd.transform.Find("bg1").gameObject.transform.localPosition.y / 47.0f) + 1.7f - 1.0f;
+						posWoman1.y = (EventEnd.transform.Find("bg1").gameObject.transform.localPosition.y / 47.0f) + 1.7f - 1.0f;
 						posMan1.x = 2.0f;
 						posWoman1.x = -2.0f;
 					} else {
@@ -271,6 +317,7 @@ namespace Mix2App.MarriageDate{
 				{
 					Debug.Log ("たまタウンへ・・・");
 					jobCount = statusJobCount.marriageJobCount080;
+					manager.view.change("Town");
 					break;
 				}
 			case	statusJobCount.marriageJobCount080:
@@ -298,8 +345,8 @@ namespace Mix2App.MarriageDate{
 
 
 		private void posInit(){
-			posMan1 = new Vector3 (-7.0f, -1.5f, 0.0f);
-			posWoman1 = new Vector3 (-9.0f, -1.5f, 0.0f);
+			posMan1 = new Vector3 (-7.0f, -1.5f - 1.0f, 0.0f);
+			posWoman1 = new Vector3 (-9.0f, -1.5f - 1.0f, 0.0f);
 		}
 
 		private readonly string[] manMessageTable = new string[]{

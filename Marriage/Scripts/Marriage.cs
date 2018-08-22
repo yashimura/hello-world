@@ -11,6 +11,9 @@ using Mix2App.Lib.Utils;
 
 namespace Mix2App.Marriage{
 	public class Marriage : MonoBehaviour,IReceiver {
+
+		public ManagerObject manager;//ライブラリ
+
 		[SerializeField] private GameObject CameraObj;
 		[SerializeField] private GameObject CameraObjMarriage;
 		[SerializeField] private GameObject CameraObjWait;
@@ -73,6 +76,7 @@ namespace Mix2App.Marriage{
 		private bool startEndFlag = false;
 		private int waitCount;
 		private bool waitFlag = false;
+		private bool screenModeFlag = false;
 		private statusJobCount	jobCount = statusJobCount.marriageJobCount000;
 		private enum statusJobCount{
 			marriageJobCount000,
@@ -88,8 +92,22 @@ namespace Mix2App.Marriage{
 			marriageJobCount100,
 		}
 
+		private User muser1;//自分
+		private User muser2;//相手
+		private int mkind;//結婚種類
+		private int mkind1;//兄弟種類
+		private int mkind2;//兄弟種類
+		private int mBleSuccess;//結婚通信結果
+
 		void Awake(){
 			Debug.Log ("Marriage Awake");
+			mparam=null;
+			muser1=null;
+			muser2=null;
+			mBleSuccess=0;
+			mkind=0;
+			mkind1=0;
+			mkind2=0;
 		}
 
 		public void receive(params object[] parameter){
@@ -99,6 +117,24 @@ namespace Mix2App.Marriage{
 
 		IEnumerator Start () {
 			Debug.Log ("Marriage start");
+
+			//単体動作テスト用
+			//パラメタ詳細は設計書参照
+			if (mparam==null) {
+				mparam = new object[] {
+					0,
+					manager.player,
+					0,
+					new TestUser(1,UserKind.ANOTHER,UserType.MIX2,23,0,0,1),
+					0
+				};
+			}
+
+			mkind = (int)mparam[0];
+			muser1 = (User)mparam[1];
+			mkind1 = (int)mparam[2];
+			muser2 = (User)mparam[3];
+			mkind1 = (int)mparam[4];
 
 			jobCount = statusJobCount.marriageJobCount000;
 			startEndFlag = false;
@@ -140,9 +176,10 @@ namespace Mix2App.Marriage{
 			if ((num > 1.33f) && (num < 1.34f)) {
 				EventMarriage.GetComponent<Transform> ().transform.localScale = new Vector3 (1.275f, 1.275f, 1.0f);
 				EventWait.GetComponent<Transform> ().transform.localScale = new Vector3 (1.275f, 1.275f, 1.0f);
+				screenModeFlag = true;
+			} else {
+				screenModeFlag = false;
 			}
-
-
 
 			// 男の子と女の子のたまごっちをここで設定する
 
@@ -150,17 +187,17 @@ namespace Mix2App.Marriage{
 			cbMan2 = manChara2.GetComponent<CharaBehaviour> ();				// 男の子の双子
 			cbWoman1 = womanChara1.GetComponent<CharaBehaviour> ();			// 女の子
 			cbWoman2 = womanChara2.GetComponent<CharaBehaviour> ();			// 女の子の双子
-			yield return cbMan1.init (new TamaChara (16));
-			yield return cbMan2.init (new TamaChara (17));
-			yield return cbWoman1.init (new TamaChara (18));
-			yield return cbWoman2.init (new TamaChara (19));
+			yield return cbMan1.init (muser1.chara1);
+			if (muser1.chara2!=null) yield return cbMan2.init (muser1.chara2);
+			yield return cbWoman1.init (muser2.chara1);
+			if (muser2.chara2!=null) yield return cbWoman2.init (muser2.chara2);
 
 			// ペットをここで設定する
 
 			pbPet1 = petChara1.GetComponent<PetBehaviour> ();				// 男の子のペット
 			pbPet2 = petChara2.GetComponent<PetBehaviour> ();				// 女の子のペット
-			yield return pbPet1.init (new TamaPet (700));
-			yield return pbPet2.init (new TamaPet (701));
+			if (muser1.pet!=null) yield return pbPet1.init (muser1.pet);
+			if (muser2.pet!=null) yield return pbPet2.init (muser2.pet);
 
 			// 男の子に双子がいなければ、cbMan2.SetActive(false);
 			// 女の子に双子がいなければ、cbWoman2.SetActive(false);
@@ -173,6 +210,16 @@ namespace Mix2App.Marriage{
 		void Destroy()
 		{
 			Debug.Log("Marriage Destroy");
+		}
+
+		void mblekekkon(bool success,object data)
+		{
+			Debug.LogFormat("Marriage mblekekkon:{0},{1}",success,data);
+			//dataの内容は設計書を参照
+			//dataを変えたい場合はConnectManagerDriverのBLEKekkon()を変える
+			bool ret = (bool)data;
+			if (ret) mBleSuccess = 1;
+			else mBleSuccess = 2;
 		}
 
 		void Update () {
@@ -188,6 +235,12 @@ namespace Mix2App.Marriage{
 							cbMan1.gotoAndPlay ("walk");
 							cbWoman1.gotoAndPlay ("walk");
 
+							//裏でBLE通信する※パラメタは設計書参照
+							mBleSuccess=0;
+							GameCall call = new GameCall(CallLabel.BLE_KEKKON, mkind, muser1, mkind1, muser2, mkind2);
+							call.AddListener(mblekekkon);
+							manager.connect.send(call);
+							
 						}
 					}
 					break;
@@ -279,8 +332,14 @@ namespace Mix2App.Marriage{
 
 						posOmedetou = omedetouPosition.transform.localPosition;
 					} else {
-						posMan1.y = (man_sit.transform.localPosition.y / 48.0f) + 0.5f;
-						posWoman1.y = (man_sit.transform.localPosition.y / 48.0f) + 0.5f;
+						if(screenModeFlag){
+							posMan1.y = (man_sit.transform.localPosition.y / 48.0f) + 0.5f - 1.0f;
+							posWoman1.y = (man_sit.transform.localPosition.y / 48.0f) + 0.5f - 1.0f;
+						}
+						else{
+							posMan1.y = (man_sit.transform.localPosition.y / 42.0f) + 0.5f - 1.0f;
+							posWoman1.y = (man_sit.transform.localPosition.y / 42.0f) + 0.5f - 1.0f;
+						}
 					}
 					break;
 				}
@@ -297,8 +356,8 @@ namespace Mix2App.Marriage{
 						posPet1.y = 500.0f;					// ペット１を画面外に
 						posPet2.y = 500.0f;					// ペット２を画面外に
 					} else {
-						posMan1.y = (man_happy.transform.localPosition.y / 47.0f) + 1.2f;
-						posWoman1.y = (woman_happy.transform.localPosition.y / 47.0f) + 1.2f;
+						posMan1.y = (man_happy.transform.localPosition.y / 47.0f) + 1.2f - 1.0f;
+						posWoman1.y = (woman_happy.transform.localPosition.y / 47.0f) + 1.2f -1.0f;
 
 						posMan2.y = (man_happy.transform.localPosition.y / 47.0f) + 4.25f;
 						posWoman2.y = (woman_happy.transform.localPosition.y / 47.0f) + 4.25f;
@@ -334,14 +393,17 @@ namespace Mix2App.Marriage{
 				}
 			case	statusJobCount.marriageJobCount080:
 				{
-					if (waitFlag) {
-						waitCount = 1;
-						jobCount = statusJobCount.marriageJobCount000;
-					} else {
-//						if (たまごっちとの通信終了) {
-//							Debug.Log("たまタウンへ・・・");
-//							jobCount = statusJobCount.marriageJobCount090;
-//						}
+					//waitと結婚通信が完了するまで待つ
+					if (waitFlag&&mBleSuccess>0) {
+						if (mBleSuccess==1) {
+							//通信成功時ははホーム画面へ
+							jobCount=statusJobCount.marriageJobCount100;
+							manager.view.change("Home");
+						} else {
+							//通信失敗時は最初からやりなおし
+							waitCount = 1;
+							jobCount = statusJobCount.marriageJobCount000;
+						}
 					}
 
 					break;
@@ -386,8 +448,8 @@ namespace Mix2App.Marriage{
 		}
 
 		private void posInit(){
-			posMan1 = new Vector3 (-7.0f, -1.5f, 0.0f);
-			posWoman1 = new Vector3 (-9.0f, -1.5f, 0.0f);
+			posMan1 = new Vector3 (-7.0f, -1.5f - 1.0f, 0.0f);
+			posWoman1 = new Vector3 (-9.0f, -1.5f - 1.0f, 0.0f);
 			posMan2 = new Vector3 (1.2f, 50.0f, 0.0f);
 			posWoman2 = new Vector3 (-1.2f, 50.0f, 0.0f);
 

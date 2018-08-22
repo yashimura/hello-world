@@ -17,6 +17,7 @@ using Mix2App.Lib.Utils;
 
 namespace Mix2App.MiniGame1{
 	public class MiniGame1 : MonoBehaviour,IReceiver {
+		public ManagerObject manager;//ライブラリ
 		[SerializeField] private GameCore	pgGameCore;
 		[SerializeField] private GameObject[] CharaTamago;					// たまごっち
 		[SerializeField] private GameObject EventTitle;						// タイトル画面
@@ -108,8 +109,12 @@ namespace Mix2App.MiniGame1{
 		};
 
 
+		private User muser1;//自分
+
 		void Awake(){
 			Debug.Log ("MiniGame1 Awake");
+			mparam=null;
+			muser1=null;
 		}
 
 		public void receive(params object[] parameter){
@@ -119,6 +124,15 @@ namespace Mix2App.MiniGame1{
 
 		IEnumerator Start(){
 			Debug.Log ("MiniGame1 Start");
+
+			//単体動作テスト用
+			//パラメタ詳細は設計書参照
+			if (mparam==null) {
+				mparam = new object[] {
+					manager.player,
+				};
+			}
+			muser1 = (User)mparam[0];		// たまごっち
 
 			jobCount = statusJobCount.minigame1JobCount000;
 			startEndFlag = false;
@@ -156,7 +170,7 @@ namespace Mix2App.MiniGame1{
 			cbCharaTamago[0] = CharaTamago[0].GetComponent<CharaBehaviour> ();		// プレイヤー
 			cbCharaTamago[1] = CharaTamago[1].GetComponent<CharaBehaviour> ();		// 応援キャラ１
 			cbCharaTamago[2] = CharaTamago[2].GetComponent<CharaBehaviour> ();		// 応援キャラ２
-			yield return cbCharaTamago[0].init (new TamaChara (16));
+			yield return cbCharaTamago[0].init (muser1.chara1);
 			yield return cbCharaTamago[1].init (new TamaChara (17));
 			yield return cbCharaTamago[2].init (new TamaChara (18));
 

@@ -151,6 +151,15 @@ namespace Mix2App.MachiCon{
 			3,3,
 		};
 			
+		// 告白宣言メッセージ
+		private readonly string[] KokuhakuAttackMesType01 = new string[] {
+			"すき（＋ごび） けっこんして（＋ごび）",
+			"ひとめぼれ（＋ごび） けっこんして（＋ごび）",
+			"もうあなたしかかんがえられない（＋ごび）",
+			"ぜったいしあわせにする（＋ごび）",
+			"いっしょになってほしい（＋ごび）",
+		};
+
 		// 告白受諾メッセージ
 		private readonly string[] KokuhakuReturnMesType01 = new string[]{
 			"ありがとう・・・（＋ごび）",
@@ -418,6 +427,11 @@ namespace Mix2App.MachiCon{
 					break;
 				}
 			}
+		}
+
+
+		public string KokuhakuMesDispMan(){
+			return KokuhakuAttackMesType01 [Random.Range (0, KokuhakuAttackMesType01.Length)];
 		}
 
 		public string KokuhakuMesDisp(KokuhakuMesTable flag){
