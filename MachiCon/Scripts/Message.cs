@@ -12,18 +12,13 @@ using Mix2App.Lib.Utils;
 namespace Mix2App.MachiCon{
 	public class Message : MonoBehaviour {
 		[SerializeField] private GameObject EventJikkyou;
-		[SerializeField] private GameObject EventJikkyouText;
-		[SerializeField] private GameObject EventJikkyouText2;
+		[SerializeField] private GameObject EventJikkyouText;		// 実況の表示テキスト１
+		[SerializeField] private GameObject EventJikkyouText2;		// 実況の表示テキスト２
 		[SerializeField] private GameObject EventJikkyouAplichi1;	// アプリっちの表示スプライト１
 		[SerializeField] private GameObject EventJikkyouAplichi2;	// アプリっちの表示スプライト２
 		[SerializeField] private Sprite[]	EventJikkyouImage;		// アプリっちの表示スプライトリスト（普通 = 0、ガイド = 1、喜び = 2、笑顔 = 3、驚き = 4、泣き = 5）
 
-		[SerializeField] private GameObject	EventSoudanSprite;		// アピールタイトル表示スプライト
-		[SerializeField] private Sprite 	EventSoudanSprite2;		// 表示オフ
-		[SerializeField] private Sprite[]	EventMan1;				// みーつユーザー男の子のアピールタイトル表示スプライトリスト
-		[SerializeField] private Sprite[]	EventWoman1;			// みーつユーザー女の子のアピールタイトル表示スプライトリスト
-		[SerializeField] private Sprite[]	EventMan2;				// みーつユーザー以外男の子のアピールタイトル表示スプライトリスト
-		[SerializeField] private Sprite[]	EventWoman2;			// みーつユーザー以外女の子のアピールタイトル表示スプライトリスト
+		[SerializeField] private GameObject	EventSoudanText;		// アピールタイトル表示テキスト
 
 
 
@@ -151,6 +146,31 @@ namespace Mix2App.MachiCon{
 			3,3,
 		};
 			
+		// 相談タイム用男の子みーつユーザー
+		private readonly string[] SoudanTimeMesManType01 = new string[] {
+			"このコが すきかもしれない（＋語尾）",
+			"このコに こくはくしたい（＋語尾）",
+			"このコを みているとドキドキする（＋語尾）",
+		};
+		// 相談タイム用女の子みーつユーザー
+		private readonly string[] SoudanTimeMesWomanType01 = new string[] {
+			"このかた わたしのことがすきかも（＋語尾）",
+			"こくはくされたら どうする（＋語尾）",
+			"むねの たかまりが とまらない（＋語尾）",
+		};
+		// 相談タイム用男の子みーつユーザー以外
+		private readonly string[] SoudanTimeMesManType02 = new string[] {
+			"このコが きになりますか？",
+			"このコに こくはくしたいですか？",
+			"このコを みているとドキドキしますか",
+		};
+		// 相談タイム用女の子みーつユーザー以外
+		private readonly string[] SoudanTimeMesWomanType02 = new string[] {
+			"このコと なかよくしたいですか？",
+			"このコに こくはくしてほしいですか？",
+			"このコと カップルになれるといいですね",
+		};
+
 		// 告白宣言メッセージ
 		private readonly string[] KokuhakuAttackMesType01 = new string[] {
 			"すき（＋語尾） けっこんして（＋語尾）",
@@ -390,43 +410,44 @@ namespace Mix2App.MachiCon{
 			EventJikkyouText2.GetComponent<Text> ().text = EventJikkyouText.GetComponent<Text> ().text;
 		}
 
-		public void SoudanMesDisp(SoudanMesTable flag){
+		// 相談タイム用
+		public void SoudanMesDisp(SoudanMesTable flag,string _gobi = ""){
+			bool _flag = true;
+
 			switch (flag) {
 			case	SoudanMesTable.SoudanMesDispMan1:
 				{
 					// みーつユーザー男の子
-					EventSoudanSprite.SetActive(true);
-					EventSoudanSprite.GetComponent<Image> ().sprite = EventMan1 [Random.Range (0, EventMan1.Length)];
+					EventSoudanText.GetComponent<Text> ().text = SoudanTimeMesManType01 [Random.Range (0, SoudanTimeMesManType01.Length)].Replace("（＋語尾）",_gobi);
 					break;
 				}
 			case	SoudanMesTable.SoudanMesDispWoman1:
 				{
 					// みーつユーザー女の子
-					EventSoudanSprite.SetActive(true);
-					EventSoudanSprite.GetComponent<Image> ().sprite = EventWoman1 [Random.Range (0, EventWoman1.Length)];
+					EventSoudanText.GetComponent<Text> ().text = SoudanTimeMesWomanType01 [Random.Range (0, SoudanTimeMesWomanType01.Length)].Replace("（＋語尾）",_gobi);
 					break;
 				}
 			case	SoudanMesTable.SoudanMesDispMan2:
 				{
 					// みーつユーザー以外男の子
-					EventSoudanSprite.SetActive(true);
-					EventSoudanSprite.GetComponent<Image> ().sprite = EventMan2 [Random.Range (0, EventMan2.Length)];
+					EventSoudanText.GetComponent<Text> ().text = SoudanTimeMesManType02 [Random.Range (0, SoudanTimeMesManType02.Length)];
 					break;
 				}
 			case	SoudanMesTable.SoudanMesDispWoman2:
 				{
 					// みーつユーザー以外女の子
-					EventSoudanSprite.SetActive(true);
-					EventSoudanSprite.GetComponent<Image> ().sprite = EventWoman2 [Random.Range (0, EventWoman2.Length)];
+					EventSoudanText.GetComponent<Text> ().text = SoudanTimeMesWomanType02 [Random.Range (0, SoudanTimeMesWomanType02.Length)];
 					break;
 				}
 			default:
 				{
-					EventSoudanSprite.SetActive(false);
-					EventSoudanSprite.GetComponent<Image> ().sprite = EventSoudanSprite2;
+					EventSoudanText.GetComponent<Text> ().text = "";
+					_flag = false;
 					break;
 				}
 			}
+
+			EventSoudanText.SetActive (_flag);
 		}
 
 

@@ -320,7 +320,6 @@ namespace Mix2App.MarriageDate{
 
 						posMan1.y = 500.0f;					// 男の子を画面外に
 						posWoman1.y = 500.0f;				// 男の子の双子を画面外に
-						// たまタウンに移行する？
 					}
 					posMan1.x += 0.025f;
 					posWoman1.x -= 0.025f;

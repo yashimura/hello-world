@@ -58,9 +58,12 @@ namespace Mix2App.MiniGame2{
 		private float nowTime1;													// 残り時間（カウントダウン用）
 		private int	nowTime2;													// 残り時間（制限時間）
 
-		private readonly float MENUIDOUSPEED = 25.0f;							// メニューの移動速度
-		private readonly int GAMEPLAYTIMER = 60;								// 制限時間
-
+		private readonly float MENU_IDOU_SPEED = 25.0f;							// メニューの移動速度
+		private readonly int GAME_PLAY_TIME = 60;								// ゲームプレイ制限時間
+		private readonly int GAME_SCORE_POINT1 = 10;							// ２択時の得点
+		private readonly int GAME_SCORE_POINT2 = 20;							// ４択時の得点
+		private readonly int GAME_SCORE_POINT3 = 50;							// ６択時の得点
+		private readonly int GAME_SCORE_POINT4 = 100;							// ８択時の得点
 
 		private statusJobCount	jobCount = statusJobCount.minigame2JobCount000;
 		private enum statusJobCount{
@@ -205,7 +208,7 @@ namespace Mix2App.MiniGame2{
 						TamagoCharaPositionInit ();
 						nowScore = 0;
 						nowTime1 = 0.0f;
-						nowTime2 = GAMEPLAYTIMER;									// 制限時間５０
+						nowTime2 = GAME_PLAY_TIME;									// 制限時間
 //					}
 					break;
 				}
@@ -258,7 +261,7 @@ namespace Mix2App.MiniGame2{
 						EventResult.SetActive (true);
 
 						for (int i = 0; i < CharaTamago.Length; i++) {				// お客さん達を消す
-							CharaTamago [i].SetActive (false);
+							CharaTamago [i].transform.localPosition = new Vector3 (-50.0f, 0.0f, 1.0f);
 						}
 						for (int i = 0; i < CharaTamagoMain.Length; i++) {			// プレイヤーとゲストを消す
 							CharaTamagoMain [i].transform.localPosition = new Vector3 (-50.0f, 0.0f, 1.0f);
@@ -757,7 +760,7 @@ namespace Mix2App.MiniGame2{
 				}
 			case	statusGameCount.minigame2GameCount010:
 				{
-					posMenu.x -= MENUIDOUSPEED;
+					posMenu.x -= MENU_IDOU_SPEED;
 					if (posMenu.x <= 0.0f) {
 						posMenu.x = 0.0f;
 						gameJobCount = statusGameCount.minigame2GameCount020;
@@ -796,7 +799,7 @@ namespace Mix2App.MiniGame2{
 				}
 			case	statusGameCount.minigame2GameCount040:
 				{
-					posMenu.x -= MENUIDOUSPEED;
+					posMenu.x -= MENU_IDOU_SPEED;
 					if (posMenu.x <= -1000.0f) {
 						posMenu.x = -1000.0f;
 						gameJobCount = statusGameCount.minigame2GameCount050;
@@ -914,22 +917,22 @@ namespace Mix2App.MiniGame2{
 				switch (menuCount) {
 				case	2:
 					{
-						_score = 10;
+						_score = GAME_SCORE_POINT1;
 						break;
 					}
 				case	4:
 					{
-						_score = 20;
+						_score = GAME_SCORE_POINT2;
 						break;
 					}
 				case	6:
 					{
-						_score = 50;
+						_score = GAME_SCORE_POINT3;
 						break;
 					}
 				default:
 					{
-						_score = 100;
+						_score = GAME_SCORE_POINT4;
 						break;
 					}
 				}

@@ -73,6 +73,8 @@ namespace Mix2App.MachiCon{
 		// 成否判定の種（０〜１００）（男の子、女の子）
 		private int[,] loveManWomanFix;
 
+		private readonly float APPEAL_LIMIT_TIME = 5.0f;			// アピールタイムのキー入力待ち時間（秒）
+
 		private statusJobCount	jobCount = statusJobCount.machiconJobCount000;
 		private enum statusJobCount{
 			machiconJobCount000,
@@ -156,6 +158,7 @@ namespace Mix2App.MachiCon{
 			kokuhakuCount380,
 			kokuhakuCount390,
 			kokuhakuCount400,
+			kokuhakuCount410,
 		};
 
 		private PartyData mpdata;
@@ -487,7 +490,7 @@ namespace Mix2App.MachiCon{
 						EventSoudanPartsDisp (true);
 						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp07);
 
-						StartCoroutine ("Wait5");												// ５秒間でキー入力待ち終了
+						StartCoroutine ("AppelTimeWait");										// APPEAL_LIMIT_TIME秒間でキー入力待ち終了
 					}
 
 					if (soudanJumpFlag) {
@@ -673,7 +676,12 @@ namespace Mix2App.MachiCon{
 					if (WaitTimeSubLoop ()) {
 						if (playerResultFlag) {
 							Debug.Log ("結婚イベントへ・・・");
-							manager.view.change("Marriage",mkind,muser1,mkind1,muser2,mkind2);
+							if (muser1.utype == UserType.MIX2) {
+								manager.view.change ("Marriage", mkind, muser1, mkind1, muser2, mkind2);
+							} else {
+								Debug.Log ("みーつユーザー以外なので、デートイベントへ後で変更すること");
+								manager.view.change ("Marriage", mkind, muser1, mkind1, muser2, mkind2);
+							}
 						} else {
 							Debug.Log ("たまタウンへ・・・");
 							manager.view.change("Town");
@@ -841,7 +849,6 @@ namespace Mix2App.MachiCon{
 				switch (targetNum) {
 				case	4:
 					{
-
 						mesAvater = "アバターネーム5";
 						mesTamago = "たまごっちネーム";
 						break;
@@ -959,17 +966,24 @@ namespace Mix2App.MachiCon{
 
 		// 相談時のタイトルメッセージ
 		private void SoudanMessageDisp(){
+			string _gobi = mpdata.members [playerNumber].user.GetCharaAt (mpdata.members [playerNumber].index).wend;
+
+			UserType ut = mpdata.members [playerNumber].user.utype;
+
+
 			switch (playerNumber) {
 			case	0:
 			case	1:
 			case	2:
 			case	3:
 				{
-					// みーつユーザー男の子
-					MesDisp.SoudanMesDisp (Message.SoudanMesTable.SoudanMesDispMan1);
-
-					// みーつユーザー以外男の子
-//					MesDisp.SoudanMesDisp (Message.SoudanMesTable.SoudanMesDispMan2);
+					if (ut == UserType.MIX2) {
+						// みーつユーザー男の子
+						MesDisp.SoudanMesDisp (Message.SoudanMesTable.SoudanMesDispMan1, _gobi);
+					} else {
+						// みーつユーザー以外男の子
+						MesDisp.SoudanMesDisp (Message.SoudanMesTable.SoudanMesDispMan2, _gobi);
+					}
 					break;
 				}
 			case	4:
@@ -977,11 +991,13 @@ namespace Mix2App.MachiCon{
 			case	6:
 			case	7:
 				{
-					// みーつユーザー女の子
-					MesDisp.SoudanMesDisp (Message.SoudanMesTable.SoudanMesDispWoman1);
-
-					// みーつユーザー以外女の子
-//					MesDisp.SoudanMesDisp (Message.SoudanMesTable.SoudanMesDispWoman2);
+					if (ut == UserType.MIX2) {
+						// みーつユーザー女の子
+						MesDisp.SoudanMesDisp (Message.SoudanMesTable.SoudanMesDispWoman1, _gobi);
+					} else {
+						// みーつユーザー以外女の子
+						MesDisp.SoudanMesDisp (Message.SoudanMesTable.SoudanMesDispWoman2, _gobi);
+					}
 					break;
 				}
 			}
@@ -1738,7 +1754,7 @@ namespace Mix2App.MachiCon{
 			case	statusKokuhakuCount.kokuhakuCount010:
 				{
 					if (kokuhakuManTable [kokuhakuManNumber] == 255) {
-						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount340;			// ライバル出現したので通常告白はなし
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount350;			// ライバル出現したので通常告白はなし
 						break;
 					}
 						
@@ -1994,7 +2010,6 @@ namespace Mix2App.MachiCon{
 				{
 					if (KokuhakuWaitTimeSubLoop ()) {
 						LoveParamCheck ();														// 告白判定
-						LoveResultDisp (true);													// 告白結果のハートなどを表示
 
 						FukidashiMessageKokuhakuReturn (KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]], loveParamFlag);		// 告白の返事を表示
 						CharaTamagochi[KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].transform.Find("fukidashi/comment").gameObject.SetActive(true);
@@ -2002,29 +2017,38 @@ namespace Mix2App.MachiCon{
 
 						heartSize = 0.0f;
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount290;
+						kokuhakuWaitTime = 120;
 					}
 					break;
 				}
 			case	statusKokuhakuCount.kokuhakuCount290:
 				{
-					if (LoveResultDispHeart ()) {												// 告白結果のハートを拡大表示
+					if (KokuhakuWaitTimeSubLoop ()) {
+						LoveResultDisp (true);													// 告白結果のハートなどを表示
+						CharaTamagochi[KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].transform.Find("fukidashi/comment").gameObject.SetActive(false);
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount300;
-						kokuhakuWaitTime = 120;
 					}
 					break;
 				}
 			case	statusKokuhakuCount.kokuhakuCount300:
 				{
-					if (KokuhakuWaitTimeSubLoop ()) {
-						LoveResultDisp (false);
-						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
-						CharaTamagochi[KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].transform.Find("fukidashi/comment").gameObject.SetActive(false);
-						CharaTamago [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].GetComponent<SpriteRenderer> ().flipX = false;
+					if (LoveResultDispHeart ()) {												// 告白結果のハートを拡大表示
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount310;
+						kokuhakuWaitTime = 120;
 					}
 					break;
 				}
 			case	statusKokuhakuCount.kokuhakuCount310:
+				{
+					if (KokuhakuWaitTimeSubLoop ()) {
+						LoveResultDisp (false);
+						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
+						CharaTamago [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].GetComponent<SpriteRenderer> ().flipX = false;
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount320;
+					}
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount320:
 				{
 					if (KokuhakuTimeIdou3 (KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4)) {	// 女の子は定位置に戻る
 						CharaTamago [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].GetComponent<SpriteRenderer> ().flipX = true;
@@ -2032,35 +2056,35 @@ namespace Mix2App.MachiCon{
 						if (loveParamFlag) {
 							TamagochiPatanChenge (3, KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4);
 
-							kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount320;
+							kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount330;
 							KokuhakuTimeIdou4Init (KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4);
 							cbTamagoChara [loveParamManNumber].gotoAndPlay ("walk");
 						} else {
 							cbTamagoChara [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].gotoAndPlay ("idle");
-							kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount330;
+							kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount340;
 						}
 					}
 					break;
 				}
-			case	statusKokuhakuCount.kokuhakuCount320:
+			case	statusKokuhakuCount.kokuhakuCount330:
 				{
 					if (KokuhakuTimeIdou4 ()) {													// 告白成功したので女の子の前に男の子は移動する
-						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount330;
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount340;
 						TamagochiPatanChenge (3, loveParamManNumber);
 
 						kokuhakuOkFlag = true;													// 告白成功者がいる
 					}
 					break;
 				}
-			case	statusKokuhakuCount.kokuhakuCount330:
+			case	statusKokuhakuCount.kokuhakuCount340:
 				{
 					if (KokuhakuTimeIdou5 ()) {													// 告白失敗者は定位置に戻る
-						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount340;
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount350;
 					}
 					break;
 				}
 
-			case	statusKokuhakuCount.kokuhakuCount340:
+			case	statusKokuhakuCount.kokuhakuCount350:
 				{
 					kokuhakuManTable [kokuhakuManNumber] = 255;									// 告白済みにする
 					if ((kokuhakuRivalNumber & 16) != 0) {
@@ -2075,13 +2099,13 @@ namespace Mix2App.MachiCon{
 
 					kokuhakuManNumber++;
 					if (kokuhakuManNumber == 4) {
-						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount350;
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount360;
 					} else {
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount010;
 					}
 					break;
 				}
-			case	statusKokuhakuCount.kokuhakuCount350:
+			case	statusKokuhakuCount.kokuhakuCount360:
 				{
 					if (kokuhakuOkFlag) {														// 告白成功者がいる
 						EventLastResult.transform.Find ("yes").gameObject.SetActive (true);
@@ -2096,10 +2120,10 @@ namespace Mix2App.MachiCon{
 						pos.y = -1100.0f;
 						EventLastResult.transform.Find ("no/panel").gameObject.transform.localPosition = pos;
 					}
-					kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount360;
+					kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount370;
 					break;
 				}
-			case	statusKokuhakuCount.kokuhakuCount360:
+			case	statusKokuhakuCount.kokuhakuCount370:
 				{
 					Vector3 pos = new Vector3 (1.0f, 1.0f, 1.0f);
 					if (kokuhakuOkFlag) {														// 告白成功者がいる
@@ -2110,7 +2134,7 @@ namespace Mix2App.MachiCon{
 					pos.y += 15.0f;
 					if (pos.y >= 2300.0f) {
 						pos.y = 2300.0f;
-						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount370;
+						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount380;
 					}
 
 					if (kokuhakuOkFlag) {														// 告白成功者がいる
@@ -2120,26 +2144,26 @@ namespace Mix2App.MachiCon{
 					}
 					break;
 				}
-			case	statusKokuhakuCount.kokuhakuCount370:
+			case	statusKokuhakuCount.kokuhakuCount380:
 				{
 					if (kokuhakuOkFlag) {														// 告白成功者がいる
 						EventLastResult.transform.Find ("yes").gameObject.SetActive (false);
 					} else {																	// 告白成功者がいない
 						EventLastResult.transform.Find ("no").gameObject.SetActive (false);
 					}
-					kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount380;
-					break;
-				}
-			case	statusKokuhakuCount.kokuhakuCount380:
-				{
-					kokuhakuTimeEndFlag = true;													// 告白タイム終了
+					kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount390;
 					break;
 				}
 			case	statusKokuhakuCount.kokuhakuCount390:
 				{
+					kokuhakuTimeEndFlag = true;													// 告白タイム終了
 					break;
 				}
 			case	statusKokuhakuCount.kokuhakuCount400:
+				{
+					break;
+				}
+			case	statusKokuhakuCount.kokuhakuCount410:
 				{
 					break;
 				}
@@ -2257,7 +2281,7 @@ namespace Mix2App.MachiCon{
 		private float idou4SpeedY = 0.0f;
 		private float idou4GoalX = 0.0f;
 		private float idou4GoalY = 0.0f;
-		// num:たまごっち（女の子）の番号（０〜３）
+		// num:たまごっち（女の子）の番号（４〜７）
 		private void KokuhakuTimeIdou4Init(int num){
 			idou4GoalX = posTamago [num].x + 80.0f;												// 女の子の右隣を目標地点にする
 			idou4GoalY = posTamago [num].y;
@@ -2265,7 +2289,6 @@ namespace Mix2App.MachiCon{
 			idou4SpeedX = (idou4GoalX - posTamago [loveParamManNumber].x) / 60.0f;
 			idou4SpeedY = (idou4GoalY - posTamago [loveParamManNumber].y) / 60.0f;
 
-//			CharaTamago [loveParamManNumber].GetComponent<SpriteRenderer> ().sortingOrder = CharaTamago [num].GetComponent<SpriteRenderer> ().sortingOrder;
 			CharaTamagochi [loveParamManNumber].GetComponent<Canvas> ().sortingOrder = CharaTamagochi [num].GetComponent<Canvas> ().sortingOrder;
 
 			if ((playerNumber == num) || (playerNumber == loveParamManNumber)) {
@@ -2627,8 +2650,8 @@ namespace Mix2App.MachiCon{
 
 
 
-		private IEnumerator Wait5(){
-			yield return new WaitForSeconds (5.0f);
+		private IEnumerator AppelTimeWait(){
+			yield return new WaitForSeconds (APPEAL_LIMIT_TIME);
 			buttonFlag = true;
 		}
 
