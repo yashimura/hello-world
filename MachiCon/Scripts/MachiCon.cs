@@ -50,6 +50,7 @@ namespace Mix2App.MachiCon{
 		[SerializeField] private GameObject EventResult;					// 告白結果
 		[SerializeField] private GameObject EventLastResult;				// 最終結果
 		[SerializeField] private GameObject EventEnd;						// おしまい
+		[SerializeField] private GameObject	EventEndMarriage;				// 結婚式へ
 
 		//private object[]		mparam;
 
@@ -113,6 +114,8 @@ namespace Mix2App.MachiCon{
 			machiconJobCount330,
 			machiconJobCount340,
 			machiconJobCount350,
+			machiconJobCount360,
+			machiconJobCount370,
 		}
 
 		private statusKokuhakuCount kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount000;
@@ -675,6 +678,29 @@ namespace Mix2App.MachiCon{
 				{
 					if (WaitTimeSubLoop ()) {
 						if (playerResultFlag) {
+							EventEndMarriage.SetActive (true);									// 自キャラがカップル成立したのでハートフェードを表示する
+							jobCount = statusJobCount.machiconJobCount300;
+						} else {
+							jobCount = statusJobCount.machiconJobCount310;						// 自キャラがカップル成立していないのでそのままシーンチェンジ
+						}
+					}
+					break;
+				}
+			case	statusJobCount.machiconJobCount300:
+				{
+					Vector3 _pos = EventEndMarriage.transform.Find ("panel").gameObject.transform.localPosition;
+					_pos.y += 15.0f;
+					if (_pos.y >= 450.0f) {
+						_pos.y = 450.0f;
+						jobCount = statusJobCount.machiconJobCount310;
+					}
+					EventEndMarriage.transform.Find ("panel").gameObject.transform.localPosition = _pos;
+					break;
+				}
+			case	statusJobCount.machiconJobCount310:
+				{
+					if (WaitTimeSubLoop ()) {
+						if (playerResultFlag) {
 							Debug.Log ("結婚イベントへ・・・");
 							if (muser1.utype == UserType.MIX2) {
 								manager.view.change ("Marriage", mkind, muser1, mkind1, muser2, mkind2);
@@ -687,16 +713,8 @@ namespace Mix2App.MachiCon{
 							manager.view.change("Town");
 						}
 
-						jobCount = statusJobCount.machiconJobCount300;
+						jobCount = statusJobCount.machiconJobCount320;
 					}
-					break;
-				}
-			case	statusJobCount.machiconJobCount300:
-				{
-					break;
-				}
-			case	statusJobCount.machiconJobCount310:
-				{
 					break;
 				}
 			case	statusJobCount.machiconJobCount320:
@@ -715,6 +733,14 @@ namespace Mix2App.MachiCon{
 				{
 					break;
 				}
+			case	statusJobCount.machiconJobCount360:
+				{
+					break;
+				}
+			case	statusJobCount.machiconJobCount370:
+				{
+					break;
+				}
 			}
 
 //			for (int i = 0; i < 8; i++) {								// 各キャラの表示位置を登録
@@ -727,11 +753,11 @@ namespace Mix2App.MachiCon{
 			for (int i = 0; i < 8; i++) {
 				CharaTamagochi [i].gameObject.GetComponent<Image> ().sprite = CharaTamago [i].GetComponent<SpriteRenderer> ().sprite;
 				if (CharaTamago [i].gameObject.GetComponent<SpriteRenderer> ().flipX == true) {
-					CharaTamagochi [i].transform.localScale = new Vector3 (-1.0f, 1.0f, 1.0f);
-					CharaTamagochi [i].transform.Find ("fukidashi").gameObject.transform.localScale = new Vector3 (-1.0f, 1.0f, 1.0f);
+					CharaTamagochi [i].transform.localScale = new Vector3 (-1.25f, 1.25f, 1.0f);
+					CharaTamagochi [i].transform.Find ("fukidashi").gameObject.transform.localScale = new Vector3 (-0.85f, 0.85f, 1.0f);
 				} else {
-					CharaTamagochi [i].transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);
-					CharaTamagochi [i].transform.Find ("fukidashi").gameObject.transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);
+					CharaTamagochi [i].transform.localScale = new Vector3 (1.25f, 1.25f, 1.0f);
+					CharaTamagochi [i].transform.Find ("fukidashi").gameObject.transform.localScale = new Vector3 (0.85f, 0.85f, 1.0f);
 				}
 			}
 
@@ -1178,6 +1204,7 @@ namespace Mix2App.MachiCon{
 				if (fukidashiTamagoWait [i] == 0) {
 					fukidashiTamagoWait [i] = Random.Range (45, 75);
 					switch (Random.Range (0, 12)) {
+/*
 					case	0:
 						{	// 吹き出しケーキを表示
 							CharaTamagochi [i].transform.Find ("fukidashi/cake").gameObject.SetActive (true);
@@ -1192,6 +1219,7 @@ namespace Mix2App.MachiCon{
 							CharaTamagochi [i].transform.Find ("fukidashi/message").gameObject.SetActive (false);
 							break;
 						}
+*/
 					case	3:
 						{
 							CharaTamagochi [i].transform.Find ("fukidashi/cake").gameObject.SetActive (false);
@@ -1252,6 +1280,8 @@ namespace Mix2App.MachiCon{
 								} else {
 									countTableChakusekiTime [i] = Random.Range (30, 90);
 								}
+								posTamago [i].x = posTamagoTargetX [i];
+								posTamago [i].y = posTamagoTargetY [i];
 								posTamagoSpeedX [i] = 0.0f;
 								posTamagoSpeedY [i] = 0.0f;
 							}
@@ -1262,6 +1292,8 @@ namespace Mix2App.MachiCon{
 								} else {
 									countTableChakusekiTime [i] = Random.Range (30, 90);
 								}
+								posTamago [i].x = posTamagoTargetX [i];
+								posTamago [i].y = posTamagoTargetY [i];
 								posTamagoSpeedX [i] = 0.0f;
 								posTamagoSpeedY [i] = 0.0f;
 							}
@@ -1287,10 +1319,10 @@ namespace Mix2App.MachiCon{
 					_posY [i] = posTamago [i].y;
 				}
 
-				_posY[8] = _tablePostionY[0] + 30.0f;
-				_posY[9] = _tablePostionY[1] + 30.0f;
-				_posY[10] = _tablePostionY[2] + 30.0f;
-				_posY[11] = _tablePostionY[3] + 30.0f;
+				_posY[8] = _tablePostionY[0] + 45.0f;
+				_posY[9] = _tablePostionY[1] + 45.0f;
+				_posY[10] = _tablePostionY[2] + 45.0f;
+				_posY[11] = _tablePostionY[3] + 45.0f;
 
 				for (int j = 0; j < 12; j++) {								// たまごっちとテーブルの表示優先順位の変更
 					int k = 0;
@@ -1345,7 +1377,7 @@ namespace Mix2App.MachiCon{
 		private void TamagochiTableHitcheck(int num){
 			for(int i = 0;i < 4;i++){
 				if (((posTamago[num].x - 40.0f) < _tablePostionX[i]) && (_tablePostionX[i] < (posTamago[num].x + 40.0f))) {
-					if (((posTamago[num].y - 12.0f) < (_tablePostionY[i] + 30.0f)) && ((_tablePostionY[i] + 30.0f) < (posTamago[num].y + 12.0f))) {
+					if (((posTamago[num].y - 12.0f) < (_tablePostionY[i] + 45.0f)) && ((_tablePostionY[i] + 45.0f) < (posTamago[num].y + 12.0f))) {
 
 
 //						if (posTamago [num].x < _tablePostionX [i]) {
@@ -1354,10 +1386,10 @@ namespace Mix2App.MachiCon{
 //							posTamago [num].x = _tablePostionX [i] + 41.0f;
 //						}
 
-						if (posTamago [num].y < (_tablePostionY[i] + 30.0f)) {
-							posTamago [num].y = (_tablePostionY[i] + 30.0f) - 13.0f;
+						if (posTamago [num].y < (_tablePostionY[i] + 45.0f)) {
+							posTamago [num].y = (_tablePostionY[i] + 45.0f) - 13.0f;
 						} else {
-							posTamago [num].y = (_tablePostionY[i] + 30.0f) + 13.0f;
+							posTamago [num].y = (_tablePostionY[i] + 45.0f) + 13.0f;
 						}
 
 
@@ -1397,9 +1429,9 @@ namespace Mix2App.MachiCon{
 
 			for (int i = 0; i < 4; i++) {
 				posTamagoTargetTableMan [i].x = _tablePostionX [i] + 70.0f;
-				posTamagoTargetTableMan [i].y = _tablePostionY [i] + 30.0f;
+				posTamagoTargetTableMan [i].y = _tablePostionY [i] + 45.0f;
 				posTamagoTargetTableWoman [i].x = _tablePostionX [i] - 70.0f;
-				posTamagoTargetTableWoman [i].y = _tablePostionY [i] + 30.0f;
+				posTamagoTargetTableWoman [i].y = _tablePostionY [i] + 45.0f;
 			}
 		}
 
@@ -1407,8 +1439,8 @@ namespace Mix2App.MachiCon{
 		private Vector2[] posTamagoTargetTableWoman = new Vector2[4];
 		private int[] posTamagoTargetType = new int[8];
 		private void TamagochiIdouInit(int num){
-			float _randSpeed = Random.Range (45, 90);
-			int _randPoint = Random.Range (0, 7);
+			float _randSpeed = Random.Range(75,110);
+			int _randPoint = Random.Range (0, 12);
 
 			switch (_randPoint) {
 			case	0:
@@ -1425,9 +1457,33 @@ namespace Mix2App.MachiCon{
 					}
 					break;
 				}
+			case	4:
+				{
+					posTamagoTargetX[num] = 160.0f;
+					posTamagoTargetY[num] = 105.0f;
+					break;
+				}
+			case	5:
+				{
+					posTamagoTargetX[num] = -160.0f;
+					posTamagoTargetY[num] = 105.0f;
+					break;
+				}
+			case	6:
+				{
+					posTamagoTargetX[num] = 310.0f;
+					posTamagoTargetY[num] = 15.0f;
+					break;
+				}
+			case	7:
+				{
+					posTamagoTargetX[num] = -310.0f;
+					posTamagoTargetY[num] = 15.0f;
+					break;
+				}
 			default:
 				{
-					int _rand = Random.Range (-30, 30);
+					int _rand = Random.Range (-32, 32);
 					int _rand2 = Random.Range (-20, 2);
 					posTamagoTargetX [num] = _rand * 10;
 					posTamagoTargetY [num] = _rand2 * 10;
@@ -1586,7 +1642,7 @@ namespace Mix2App.MachiCon{
 			EventCurtain.transform.localPosition = pos;
 
 			if (num > 0) {
-				if (EventCurtain.transform.localPosition.y >= 1000.0f) {
+				if (EventCurtain.transform.localPosition.y >= 1200.0f) {
 					return true;
 				}
 			} else {
@@ -2283,7 +2339,7 @@ namespace Mix2App.MachiCon{
 		private float idou4GoalY = 0.0f;
 		// num:たまごっち（女の子）の番号（４〜７）
 		private void KokuhakuTimeIdou4Init(int num){
-			idou4GoalX = posTamago [num].x + 80.0f;												// 女の子の右隣を目標地点にする
+			idou4GoalX = posTamago [num].x + 90.0f;												// 女の子の右隣を目標地点にする
 			idou4GoalY = posTamago [num].y;
 
 			idou4SpeedX = (idou4GoalX - posTamago [loveParamManNumber].x) / 60.0f;

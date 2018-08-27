@@ -11,7 +11,8 @@ using Mix2App.Lib.Utils;
 
 namespace Mix2App.MachiCon{
 	public class Message : MonoBehaviour {
-		[SerializeField] private GameObject EventJikkyou;
+		[SerializeField] private GameObject EventJikkyou1;			// 実況の吹き出し１
+		[SerializeField] private GameObject EventJikkyou2;			// 実況の吹き出し２
 		[SerializeField] private GameObject EventJikkyouText;		// 実況の表示テキスト１
 		[SerializeField] private GameObject EventJikkyouText2;		// 実況の表示テキスト２
 		[SerializeField] private GameObject EventJikkyouAplichi1;	// アプリっちの表示スプライト１
@@ -250,6 +251,10 @@ namespace Mix2App.MachiCon{
 		public void JikkyouMesDisp(JikkyouMesTable flag){
 			int randNum;
 
+			EventJikkyou1.SetActive (true);
+			EventJikkyou2.SetActive (true);
+
+
 			switch (flag) {
 			case	JikkyouMesTable.JikkyouMesDisp01:
 				{
@@ -404,6 +409,10 @@ namespace Mix2App.MachiCon{
 			default:
 				{
 					EventJikkyouText.GetComponent<Text> ().text = "";
+					EventJikkyou1.SetActive (false);
+					EventJikkyou2.SetActive (false);
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [0];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [0];
 					break;
 				}
 			}

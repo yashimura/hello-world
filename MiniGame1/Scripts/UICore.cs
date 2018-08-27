@@ -7,7 +7,7 @@ namespace Mix2App.MiniGame1 {
     public class UICore: MonoBehaviour {
         #region Events
         private UnityEvent GameAbortEvent = new UnityEvent();
-        private UnityEvent GamePauseEvent= new UnityEvent();
+        private UnityEvent GamePauseEvent = new UnityEvent();
         private UnityEvent GameResumeEvent = new UnityEvent();
         private UnityEvent GameStartEvent = new UnityEvent();
 
@@ -38,9 +38,9 @@ namespace Mix2App.MiniGame1 {
             GetBoxAnimationEvent.AddListener(listener);
         }
         #endregion
-        
+
         public void Config() {
-            SelfGameUI.AddBackAction(()=> {
+            SelfGameUI.AddBackAction(() => {
                 SelfGameUI.Hide();
                 GameAbortEvent.Invoke();
                 StartTitleMenu();
@@ -59,20 +59,20 @@ namespace Mix2App.MiniGame1 {
         }
 
 
-        [SerializeField] private TitleMenu TitleMenuPrefab;
-        [SerializeField] private AnimationInsertMenu GameStartAnimationPrefab;
-        [SerializeField] private AnimationInsertMenu GameFinishAnimationPrefab;
-        [SerializeField] private GameResultWindow GameResultWindowPrefab;
+        [SerializeField, Required] private TitleMenu TitleMenuPrefab;
+        [SerializeField, Required] private AnimationInsertMenu GameStartAnimationPrefab;
+        [SerializeField, Required] private AnimationInsertMenu GameFinishAnimationPrefab;
+        [SerializeField, Required] private GameResultWindow GameResultWindowPrefab;
 
-        [SerializeField] private GameUI SelfGameUI;
+        [SerializeField, Required] private GameUI SelfGameUI;
 
         public void ShowFinalScore(int score) {
             SelfGameUI.Hide();
             UIManager.ShowModal(GameFinishAnimationPrefab)
-                .AddEndAnimationAction(()=> {
+                .AddEndAnimationAction(() => {
                     UIManager.ShowModal(GameResultWindowPrefab)
                         .SetScore(score)
-                        .AddCloseAction(()=> {
+                        .AddCloseAction(() => {
                             StartTitleMenu();
                         });
                 });
@@ -80,7 +80,7 @@ namespace Mix2App.MiniGame1 {
 
         private void StartTitleMenu() {
             UIManager.ShowModal(TitleMenuPrefab).
-                AddStartAction(()=> {
+                AddStartAction(() => {
                     GameStartAnimationEvent.Invoke();
                     UIManager.ShowModal(GameStartAnimationPrefab)
                     .AddEndAnimationAction(() => {
@@ -89,14 +89,5 @@ namespace Mix2App.MiniGame1 {
                     });
                 });
         }
-        
-#if UNITY_EDITOR
-        /// <summary>
-        /// Check this component 
-        /// </summary>
-        public virtual void DebugCheck() {
-            
-        }
-#endif
     }
 }

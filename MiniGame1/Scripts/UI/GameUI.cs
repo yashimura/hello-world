@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Mix2App.UI;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
-using Mix2App.UI.Events;
+using Mix2App.UI;
 
 namespace Mix2App.MiniGame1.UI {
     public class GameUI: MonoBehaviour {
         [SerializeField] private int MaxScore = 9999;
         [SerializeField] private int MaxTime = 59;
 
-        [SerializeField] private Text ScoreText;
-        [SerializeField] private Text TimeText;
-        [SerializeField] private Button BackButton;
+        [SerializeField, Required] private Text ScoreText;
+        [SerializeField, Required] private Text TimeText;
+        [SerializeField, Required] private Button BackButton;
 
         public void SetScoreDisplay(int score) {
             if (score > MaxScore)
@@ -42,18 +37,5 @@ namespace Mix2App.MiniGame1.UI {
         public void Hide() {
             this.gameObject.SetActive(false);
         }
-
-#if UNITY_EDITOR
-        public void DebugCheck() {
-            if (ScoreText == null)
-                Debug.LogError("Score Text must be assigned!");
-
-            if (TimeText == null)
-                Debug.LogError("Time Text must be assigned!");
-
-            if (BackButton == null)
-                Debug.LogError("Back Button must be assigned!");
-        }
-#endif
     }
 }

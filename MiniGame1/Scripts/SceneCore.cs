@@ -10,14 +10,16 @@ using Mix2App.Lib.View;
 using Mix2App.Lib.Utils;
 using Mix2App.UI.Events;
 
+using Mix2App.UI;
+
 namespace Mix2App.MiniGame1 {
     public class SceneCore: MonoBehaviour, IReceiver {        
 
         private UnityIntEvent ScoreChangeEvent = new UnityIntEvent();
         private UnityEvent GameFinishEvent = new UnityEvent();
         
-        [SerializeField] private UICore _UICore;
-        [SerializeField] private GameCore _GameCore;
+        [SerializeField, Required] private UICore _UICore;
+        [SerializeField, Required] private GameCore _GameCore;
         
         public void receive(params object[] parameter) {
             _GameCore.AddGetScoreAction(ScoreGetted);
@@ -51,28 +53,9 @@ namespace Mix2App.MiniGame1 {
 
         }
 
+#if false // rapid test
         private void Awake() {
-#if UNITY_EDITOR
-            DebugCheck();
-#endif
-
             receive();
-        }
-
-#if UNITY_EDITOR
-        /// <summary>
-        /// Check this component 
-        /// </summary>
-        public virtual void DebugCheck() {
-            if (_UICore != null) {
-                _UICore.DebugCheck();
-            } else
-                Debug.LogError("UICore must be assigned!", this);
-
-            if (_GameCore != null) {
-                _GameCore.DebugCheck();
-            } else
-                Debug.LogError("GameCore must be assigned!", this);
         }
 #endif
     }

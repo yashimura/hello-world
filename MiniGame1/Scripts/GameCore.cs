@@ -100,14 +100,5 @@ namespace Mix2App.MiniGame1 {
 		public void GameScoreSet(int score){
 			CharacterGetScore (score);
 		}
-#if UNITY_EDITOR
-        /// <summary>
-        /// Check this component 
-        /// </summary>
-        public virtual void DebugCheck() {
-            if (GameItems.Length == 0)
-                Debug.LogError("Please assign some items!", this);
-        }
-#endif
     }
 }

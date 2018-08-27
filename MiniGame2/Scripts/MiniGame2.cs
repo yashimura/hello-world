@@ -305,6 +305,7 @@ namespace Mix2App.MiniGame2{
 		}
 		private void ButtonCloseClick(){
 			Debug.Log ("たまタウンへ・・・");
+			manager.view.change("Town");
 		}
 		private void ButtonHelpClick(){
 			EventHelp.SetActive (true);

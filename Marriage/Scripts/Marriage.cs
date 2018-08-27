@@ -333,12 +333,12 @@ namespace Mix2App.Marriage{
 						posOmedetou = omedetouPosition.transform.localPosition;
 					} else {
 						if(screenModeFlag){
-							posMan1.y = (man_sit.transform.localPosition.y / 48.0f) + 0.5f - 1.0f;
-							posWoman1.y = (man_sit.transform.localPosition.y / 48.0f) + 0.5f - 1.0f;
+							posMan1.y = (man_sit.transform.localPosition.y / 47.0f) + 0.5f - 1.0f;
+							posWoman1.y = (man_sit.transform.localPosition.y / 47.0f) + 0.5f - 1.0f;
 						}
 						else{
-							posMan1.y = (man_sit.transform.localPosition.y / 42.0f) + 0.5f - 1.0f;
-							posWoman1.y = (man_sit.transform.localPosition.y / 42.0f) + 0.5f - 1.0f;
+							posMan1.y = (man_sit.transform.localPosition.y / 43.7f) + 0.5f - 1.0f;
+							posWoman1.y = (man_sit.transform.localPosition.y / 43.7f) + 0.5f - 1.0f;
 						}
 					}
 					break;
@@ -356,15 +356,21 @@ namespace Mix2App.Marriage{
 						posPet1.y = 500.0f;					// ペット１を画面外に
 						posPet2.y = 500.0f;					// ペット２を画面外に
 					} else {
-						posMan1.y = (man_happy.transform.localPosition.y / 47.0f) + 1.2f - 1.0f;
-						posWoman1.y = (woman_happy.transform.localPosition.y / 47.0f) + 1.2f -1.0f;
-
-						posMan2.y = (man_happy.transform.localPosition.y / 47.0f) + 4.25f;
-						posWoman2.y = (woman_happy.transform.localPosition.y / 47.0f) + 4.25f;
-
-						posPet1.y = (man_happy.transform.localPosition.y / 47.0f) + 3.35f;
-						posPet2.y = (woman_happy.transform.localPosition.y / 47.0f) + 3.35f;
-
+						if (screenModeFlag) {
+							posMan1.y = (man_happy.transform.localPosition.y / 46.0f) + 1.2f - 1.0f;
+							posWoman1.y = (woman_happy.transform.localPosition.y / 46.0f) + 1.2f - 1.0f;
+							posMan2.y = (man_happy.transform.localPosition.y / 46.0f) + 4.25f;
+							posWoman2.y = (woman_happy.transform.localPosition.y / 46.0f) + 4.25f;
+							posPet1.y = (man_happy.transform.localPosition.y / 46.0f) + 3.35f;
+							posPet2.y = (woman_happy.transform.localPosition.y / 46.0f) + 3.35f;
+						} else {
+							posMan1.y = (man_happy.transform.localPosition.y / 43.0f) + 1.2f - 1.0f;
+							posWoman1.y = (woman_happy.transform.localPosition.y / 43.0f) + 1.2f - 1.0f;
+							posMan2.y = (man_happy.transform.localPosition.y / 43.0f) + 4.25f;
+							posWoman2.y = (woman_happy.transform.localPosition.y / 43.0f) + 4.25f;
+							posPet1.y = (man_happy.transform.localPosition.y / 43.0f) + 3.35f;
+							posPet2.y = (woman_happy.transform.localPosition.y / 43.0f) + 3.35f;
+						}
 						if (posOmedetou.y != omedetouPosition.transform.localPosition.y) {
 							posMan2.y += ((omedetouPosition.transform.localPosition.y - posOmedetou.y) / 50.0f);
 							posWoman2.y += ((omedetouPosition.transform.localPosition.y - posOmedetou.y) / 50.0f);

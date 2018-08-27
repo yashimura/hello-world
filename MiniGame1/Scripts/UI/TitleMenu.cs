@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Mix2App.UI;
+﻿using Mix2App.UI;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
@@ -10,12 +6,12 @@ using Mix2App.UI.Events;
 
 namespace Mix2App.MiniGame1.UI {
     public class TitleMenu: UIWindow {
-        [SerializeField] private Button StartButton;
-        [SerializeField] private Button HelpButton;
+        [SerializeField, Required] private Button StartButton;
+        [SerializeField, Required] private Button HelpButton;
 
-        [SerializeField] private EventReceiver_AnimationFinished _EndAnimationFinished;
+        [SerializeField, Required] private EventReceiver_AnimationFinished _EndAnimationFinished;
 
-        [SerializeField] private Animator MainWindowAnimator;
+        [SerializeField, Required] private Animator MainWindowAnimator;
 
         private UnityEvent StartEvent = new UnityEvent();
 
@@ -40,13 +36,5 @@ namespace Mix2App.MiniGame1.UI {
                 });
             });
         }
-
-#if UNITY_EDITOR
-        public override void DebugCheck() {
-            base.DebugCheck();
-
-            CheckFieldAssigned(StartButton, HelpButton, _EndAnimationFinished, MainWindowAnimator);
-        }
-#endif
     }
 }

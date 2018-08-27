@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Mix2App.UI;
+﻿using Mix2App.UI;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Events;
 using Mix2App.UI.Events;
 
@@ -22,13 +17,5 @@ namespace Mix2App.MiniGame1.UI {
 
             AddEndAnimationAction(() => { Close(); });
         }
-
-#if UNITY_EDITOR
-        public override void DebugCheck() {
-            base.DebugCheck();
-
-            CheckFieldAssigned(_EndAnimationFinished);
-        }
-#endif
     }
 }

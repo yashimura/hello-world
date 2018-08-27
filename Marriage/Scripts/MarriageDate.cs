@@ -288,11 +288,11 @@ namespace Mix2App.MarriageDate{
 						}
 					} else {
 						if (screenModeFlag) {
-							posMan1.y = (man_sit.transform.localPosition.y / 48.0f) + 0.5f - 1.0f;
-							posWoman1.y = (man_sit.transform.localPosition.y / 48.0f) + 0.5f - 1.0f;
+							posMan1.y = (man_sit.transform.localPosition.y / 47.0f) + 0.5f - 1.0f;
+							posWoman1.y = (man_sit.transform.localPosition.y / 47.0f) + 0.5f - 1.0f;
 						} else {
-							posMan1.y = (man_sit.transform.localPosition.y / 42.0f) + 0.5f - 1.0f;
-							posWoman1.y = (man_sit.transform.localPosition.y / 42.0f) + 0.5f - 1.0f;
+							posMan1.y = (man_sit.transform.localPosition.y / 43.7f) + 0.5f - 1.0f;
+							posWoman1.y = (man_sit.transform.localPosition.y / 43.7f) + 0.5f - 1.0f;
 						}
 					}
 					break;
