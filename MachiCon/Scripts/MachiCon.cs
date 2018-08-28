@@ -283,16 +283,7 @@ namespace Mix2App.MachiCon{
 		private float	countTime1;
 		private int		countTime2;
 		private int		waitTime;
-		private Vector3[] posTamago = new Vector3[8] {
-			new Vector3 (0.0f, -400.0f, 0.0f),
-			new Vector3 (0.0f, -400.0f, 0.0f),
-			new Vector3 (0.0f, -400.0f, 0.0f),
-			new Vector3 (0.0f, -400.0f, 0.0f),
-			new Vector3 (0.0f, -400.0f, 0.0f),
-			new Vector3 (0.0f, -400.0f, 0.0f),
-			new Vector3 (0.0f, -400.0f, 0.0f),
-			new Vector3 (0.0f, -400.0f, 0.0f),
-		};
+		private Vector3[] posTamago = new Vector3[8];
 		private int		posNumber;
 		private bool	soudanJumpFlag = false;
 
@@ -1188,11 +1179,12 @@ namespace Mix2App.MachiCon{
 
 		// アピールタイム動作作業中
 		// 移動予定先
-		//  男の子 テーブルの右側の４箇所かランダム地点
-		//  女の子 テーブルの左側の４箇所かランダム地点
+		//  男の子 テーブルの右側の４箇所かランダム地点かケーキバイキング
+		//  女の子 テーブルの左側の４箇所かランダム地点かケーキバイキング
 		private void ApplealPositionChangeMain(){
 			if (appealTimeCounter == 0) {
 				for (int i = 0; i < 8; i++) {
+					tamagoHitPosition [i] = 0;
 					TamagochiIdouInit (i);
 				}
 			}
@@ -1206,39 +1198,31 @@ namespace Mix2App.MachiCon{
 					switch (Random.Range (0, 12)) {
 /*
 					case	0:
-						{	// 吹き出しケーキを表示
-							CharaTamagochi [i].transform.Find ("fukidashi/cake").gameObject.SetActive (true);
-							CharaTamagochi [i].transform.Find ("fukidashi/heart").gameObject.SetActive (false);
-							CharaTamagochi [i].transform.Find ("fukidashi/message").gameObject.SetActive (false);
+						{	
+							TamagochiFukidashiSet (i, tamagochiFukidashiType.CAKE);		// 吹き出しケーキを表示
 							break;
 						}
 					case	1:
-						{	// 吹き出しハートを表示
-							CharaTamagochi [i].transform.Find ("fukidashi/cake").gameObject.SetActive (false);
-							CharaTamagochi [i].transform.Find ("fukidashi/heart").gameObject.SetActive (true);
-							CharaTamagochi [i].transform.Find ("fukidashi/message").gameObject.SetActive (false);
+						{	
+							TamagochiFukidashiSet (i, tamagochiFukidashiType.HEART);	// 吹き出しハートを表示
 							break;
 						}
-*/
+*/						
 					case	3:
 						{
-							CharaTamagochi [i].transform.Find ("fukidashi/cake").gameObject.SetActive (false);
-							CharaTamagochi [i].transform.Find ("fukidashi/heart").gameObject.SetActive (false);
-							CharaTamagochi [i].transform.Find ("fukidashi/message").gameObject.SetActive (true);
+							TamagochiFukidashiSet (i, tamagochiFukidashiType.MESSAGE);	// 吹き出しメッセージを表示	
 							break;
 						}
 					default:
-						{	// 何も表示しない
-							CharaTamagochi [i].transform.Find ("fukidashi/cake").gameObject.SetActive (false);
-							CharaTamagochi [i].transform.Find ("fukidashi/heart").gameObject.SetActive (false);
-							CharaTamagochi [i].transform.Find ("fukidashi/message").gameObject.SetActive (false);
+						{
+							TamagochiFukidashiSet (i, tamagochiFukidashiType.OFF);		// 吹き出しを消去
 							break;
 						}
 					}
 				}
 			}
 
-			EventAppealTableHeartClear ();										// テーブルハートを消しておく
+			EventAppealTableHeartClear ();												// テーブルハートを消しておく
 
 			if (appealTimeCounter >= 80) {
 				float[] _posY = new float[12];
@@ -1309,6 +1293,7 @@ namespace Mix2App.MachiCon{
 								CharaTamago [i].GetComponent<SpriteRenderer> ().flipX = true;
 							}
 							TamagoPairCheck (i);
+							TamagoCakeCheck (i);
 						} else {
 							TamagochiIdouInit (i);
 						}
@@ -1374,6 +1359,7 @@ namespace Mix2App.MachiCon{
 				cbTamagoChara [num].gotoAndPlay (status);
 			}
 		}
+		private int[] tamagoHitPosition = new int[8];
 		private void TamagochiTableHitcheck(int num){
 			for(int i = 0;i < 4;i++){
 				if (((posTamago[num].x - 40.0f) < _tablePostionX[i]) && (_tablePostionX[i] < (posTamago[num].x + 40.0f))) {
@@ -1388,8 +1374,10 @@ namespace Mix2App.MachiCon{
 
 						if (posTamago [num].y < (_tablePostionY[i] + 45.0f)) {
 							posTamago [num].y = (_tablePostionY[i] + 45.0f) - 13.0f;
+							tamagoHitPosition [num] = -1;
 						} else {
 							posTamago [num].y = (_tablePostionY[i] + 45.0f) + 13.0f;
+							tamagoHitPosition [num] = 1;
 						}
 
 
@@ -1435,12 +1423,25 @@ namespace Mix2App.MachiCon{
 			}
 		}
 
+		private Vector2[] posTamagoTargetCakeTable = new Vector2[] {
+			new Vector2 (160.0f, 105.0f),
+			new Vector2 (-160.0f, 105.0f),
+			new Vector2 (230.0f, 60.0f),
+			new Vector2 (-230.0f, 60.0f),
+			new Vector2 (300.0f, 15.0f),
+			new Vector2 (-300.0f, 15.0f),
+			new Vector2 (370.0f, -50.0f),
+			new Vector2 (-370.0f, -50.0f),
+		};
 		private Vector2[] posTamagoTargetTableMan = new Vector2[4];
 		private Vector2[] posTamagoTargetTableWoman = new Vector2[4];
 		private int[] posTamagoTargetType = new int[8];
 		private void TamagochiIdouInit(int num){
-			float _randSpeed = Random.Range(75,110);
-			int _randPoint = Random.Range (0, 12);
+			float _randSpeed = Random.Range(100,120);
+			int _randPoint;
+
+tamagochiIdouInitLoop:
+			_randPoint = Random.Range (0, 10);
 
 			switch (_randPoint) {
 			case	0:
@@ -1459,26 +1460,9 @@ namespace Mix2App.MachiCon{
 				}
 			case	4:
 				{
-					posTamagoTargetX[num] = 160.0f;
-					posTamagoTargetY[num] = 105.0f;
-					break;
-				}
-			case	5:
-				{
-					posTamagoTargetX[num] = -160.0f;
-					posTamagoTargetY[num] = 105.0f;
-					break;
-				}
-			case	6:
-				{
-					posTamagoTargetX[num] = 310.0f;
-					posTamagoTargetY[num] = 15.0f;
-					break;
-				}
-			case	7:
-				{
-					posTamagoTargetX[num] = -310.0f;
-					posTamagoTargetY[num] = 15.0f;
+					int _rand = Random.Range (0, posTamagoTargetCakeTable.Length);
+					posTamagoTargetX [num] = posTamagoTargetCakeTable [_rand].x;
+					posTamagoTargetY [num] = posTamagoTargetCakeTable [_rand].y;
 					break;
 				}
 			default:
@@ -1487,6 +1471,29 @@ namespace Mix2App.MachiCon{
 					int _rand2 = Random.Range (-20, 2);
 					posTamagoTargetX [num] = _rand * 10;
 					posTamagoTargetY [num] = _rand2 * 10;
+					if ((_randPoint == 5) || (_randPoint == 6)) {
+						int _rand3 = Random.Range (0, 8);
+						switch (_rand3) {
+						case	0:
+							{
+								posTamagoTargetX [num] = 0.0f;
+								posTamagoTargetY [num] = 105.0f;
+								break;
+							}
+						case	1:
+							{
+								posTamagoTargetX [num] = 80.0f;
+								posTamagoTargetY [num] = 105.0f;
+								break;
+							}
+						case	2:
+							{
+								posTamagoTargetX [num] = -80.0f;
+								posTamagoTargetY [num] = 105.0f;
+								break;
+							}
+						}
+					}
 					break;
 				}
 			}
@@ -1501,7 +1508,23 @@ namespace Mix2App.MachiCon{
 				posTamagoTargetY [num] = posTamago [num].y;
 			}
 
-
+			switch (tamagoHitPosition [num]) {
+			case	-1:
+				{
+					if (posTamagoTargetY [num] > posTamago [num].y) {
+						goto tamagochiIdouInitLoop;
+					}
+					break;
+				}
+			case	1:
+				{
+					if (posTamagoTargetY [num] < posTamago [num].y) {
+						goto tamagochiIdouInitLoop;
+					}
+					break;
+				}
+			}
+			tamagoHitPosition [num] = 0;
 
 			if (posTamagoTargetX [num] < posTamago [num].x) {
 				posTamagoIdouXFlag [num] = false;
@@ -1530,6 +1553,23 @@ namespace Mix2App.MachiCon{
 						if ((countTableChakusekiTime [i] != 0) && (posTamagoSpeedX [i] == 0) && (posTamagoSpeedY [i] == 0) && (_target == posTamagoTargetType[i]) && (posTamago[i].x == posTamagoTargetX[i]) && (posTamago[i].y == posTamagoTargetY[i])) {
 							TamagochiAnimeSet (i, "glad1");
 							TamagochiAnimeSet (num, "glad1");
+#if false
+							if (countTableChakusekiTime [num] < countTableChakusekiTime [i]) {
+								if (countTableChakusekiTime [num] != 0) {
+									TamagochiFukidashiSet (num, tamagochiFukidashiType.HEART);		// 吹き出しハートを表示
+									TamagochiFukidashiSet (i, tamagochiFukidashiType.HEART);		// 吹き出しハートを表示
+									fukidashiTamagoWait [num] = countTableChakusekiTime [num];
+									fukidashiTamagoWait [i] = countTableChakusekiTime [num];
+								}
+							} else {
+								if (countTableChakusekiTime [i] != 0) {
+									TamagochiFukidashiSet (num, tamagochiFukidashiType.HEART);		// 吹き出しハートを表示
+									TamagochiFukidashiSet (i, tamagochiFukidashiType.HEART);		// 吹き出しハートを表示
+									fukidashiTamagoWait [num] = countTableChakusekiTime [i];
+									fukidashiTamagoWait [i] = countTableChakusekiTime [i];
+								}
+							}
+#endif
 							_flag = true;
 						}
 					}
@@ -1538,6 +1578,23 @@ namespace Mix2App.MachiCon{
 						if ((countTableChakusekiTime [i] != 0) && (posTamagoSpeedX [i] == 0) && (posTamagoSpeedY [i] == 0) && (_target == posTamagoTargetType[i]) && (posTamago[i].x == posTamagoTargetX[i]) && (posTamago[i].y == posTamagoTargetY[i])) {
 							TamagochiAnimeSet (i, "glad1");
 							TamagochiAnimeSet (num, "glad1");
+#if false
+							if (countTableChakusekiTime [num] < countTableChakusekiTime [i]) {
+								if (countTableChakusekiTime [num] != 0) {
+									TamagochiFukidashiSet (num, tamagochiFukidashiType.HEART);		// 吹き出しハートを表示
+									TamagochiFukidashiSet (i, tamagochiFukidashiType.HEART);		// 吹き出しハートを表示
+									fukidashiTamagoWait [num] = countTableChakusekiTime [num];
+									fukidashiTamagoWait [i] = countTableChakusekiTime [num];
+								}
+							} else {
+								if (countTableChakusekiTime [i] != 0) {
+									TamagochiFukidashiSet (num, tamagochiFukidashiType.HEART);		// 吹き出しハートを表示
+									TamagochiFukidashiSet (i, tamagochiFukidashiType.HEART);		// 吹き出しハートを表示
+									fukidashiTamagoWait [num] = countTableChakusekiTime [i];
+									fukidashiTamagoWait [i] = countTableChakusekiTime [i];
+								}
+							}
+#endif
 							_flag = true;
 						}
 					}
@@ -1569,16 +1626,66 @@ namespace Mix2App.MachiCon{
 				}
 			}
 		}
+		private void TamagoCakeCheck (int num){
+			int _target = posTamagoTargetType [num];
+
+			if ((_target == 4) && (posTamago [num].x == posTamagoTargetX [num]) && (posTamago [num].y == posTamagoTargetY [num]) && (countTableChakusekiTime[num] != 0)) {
+				TamagochiFukidashiSet (num, tamagochiFukidashiType.CAKE);		// 吹き出しケーキを表示
+				fukidashiTamagoWait[num] = countTableChakusekiTime[num];
+			}
+		}
 
 
 
 		private void TamagochiFukidashiOff(){
 			for (int i = 0; i < 8; i++) {
-				CharaTamagochi [i].transform.Find ("fukidashi/cake").gameObject.SetActive (false);			// 吹き出しケーキを消す
-				CharaTamagochi [i].transform.Find ("fukidashi/heart").gameObject.SetActive (false);			// 吹き出しハートを消す
-				CharaTamagochi [i].transform.Find ("fukidashi/message").gameObject.SetActive (false);		// 吹き出しコメントを消す
+				TamagochiFukidashiSet (i, tamagochiFukidashiType.OFF);
 			}
 		}
+
+
+		private enum tamagochiFukidashiType{
+			CAKE,
+			HEART,
+			MESSAGE,
+			OFF,
+		};
+
+		private void TamagochiFukidashiSet(int num,tamagochiFukidashiType type){
+			switch (type) {
+			case	tamagochiFukidashiType.CAKE:
+				{
+					CharaTamagochi [num].transform.Find ("fukidashi/cake").gameObject.SetActive (true);		// 吹き出しケーキを表示
+					CharaTamagochi [num].transform.Find ("fukidashi/heart").gameObject.SetActive (false);	// 吹き出しハートを消す
+					CharaTamagochi [num].transform.Find ("fukidashi/message").gameObject.SetActive (false);	// 吹き出しコメントを消す
+					break;
+				}
+			case	tamagochiFukidashiType.HEART:
+				{
+					CharaTamagochi [num].transform.Find ("fukidashi/cake").gameObject.SetActive (false);	// 吹き出しケーキを消す
+					CharaTamagochi [num].transform.Find ("fukidashi/heart").gameObject.SetActive (true);	// 吹き出しハートを表示
+					CharaTamagochi [num].transform.Find ("fukidashi/message").gameObject.SetActive (false);	// 吹き出しコメントを消す
+					break;
+				}
+			case	tamagochiFukidashiType.MESSAGE:
+				{
+					CharaTamagochi [num].transform.Find ("fukidashi/cake").gameObject.SetActive (false);	// 吹き出しケーキを消す
+					CharaTamagochi [num].transform.Find ("fukidashi/heart").gameObject.SetActive (false);	// 吹き出しハートを消す
+					CharaTamagochi [num].transform.Find ("fukidashi/message").gameObject.SetActive (true);	// 吹き出しコメントを表示
+					break;
+				}
+			case	tamagochiFukidashiType.OFF:
+				{
+					CharaTamagochi [num].transform.Find ("fukidashi/cake").gameObject.SetActive (false);	// 吹き出しケーキを消す
+					CharaTamagochi [num].transform.Find ("fukidashi/heart").gameObject.SetActive (false);	// 吹き出しハートを消す
+					CharaTamagochi [num].transform.Find ("fukidashi/message").gameObject.SetActive (false);	// 吹き出しコメントを消す
+					break;
+				}
+			}
+		}
+
+
+
 
 		// 告白タイムの初期配置
 		private void KokuhakuPositionInit(){
