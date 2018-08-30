@@ -1184,7 +1184,7 @@ namespace Mix2App.MachiCon{
 		private void ApplealPositionChangeMain(){
 			if (appealTimeCounter == 0) {
 				for (int i = 0; i < 8; i++) {
-					tamagoHitPosition [i] = 0;
+					tamagoHitPositionTable [i] = 0;
 					TamagochiIdouInit (i);
 				}
 			}
@@ -1283,6 +1283,7 @@ namespace Mix2App.MachiCon{
 							}
 						}
 						TamagochiTableHitcheck (i);
+						TamagoHitCheck (i);
 					} else {
 						if (countTableChakusekiTime [i] != 0) {
 							countTableChakusekiTime [i]--;
@@ -1359,7 +1360,9 @@ namespace Mix2App.MachiCon{
 				cbTamagoChara [num].gotoAndPlay (status);
 			}
 		}
-		private int[] tamagoHitPosition = new int[8];
+
+//9000
+		private int[] tamagoHitPositionTable = new int[8];
 		private void TamagochiTableHitcheck(int num){
 			for(int i = 0;i < 4;i++){
 				if (((posTamago[num].x - 40.0f) < _tablePostionX[i]) && (_tablePostionX[i] < (posTamago[num].x + 40.0f))) {
@@ -1374,10 +1377,10 @@ namespace Mix2App.MachiCon{
 
 						if (posTamago [num].y < (_tablePostionY[i] + 45.0f)) {
 							posTamago [num].y = (_tablePostionY[i] + 45.0f) - 13.0f;
-							tamagoHitPosition [num] = -1;
+							tamagoHitPositionTable [num] = -1;
 						} else {
 							posTamago [num].y = (_tablePostionY[i] + 45.0f) + 13.0f;
-							tamagoHitPosition [num] = 1;
+							tamagoHitPositionTable [num] = 1;
 						}
 
 
@@ -1390,7 +1393,57 @@ namespace Mix2App.MachiCon{
 				}
 			}
 		}
+//9000
+		// たまごっち同士の当たり判定
+		private void TamagoHitCheck(int num){
+			for (int num2 = 0; num2 < 8; num2++) {
+				if (num == num2) {
+					continue;
+				}
+				if (((posTamago [num].x - 55.0f) < posTamago [num2].x) && (posTamago [num2].x < (posTamago [num].x + 55.0f))) {
+					if (((posTamago [num].y - 15.0f) < posTamago [num2].y) && (posTamago [num2].y < (posTamago [num].y + 15.0f))) {
 
+						float _idouX = Random.Range (0.0f, 1.0f) * 30.0f;
+						float _idouY = Random.Range (0.0f, 1.0f) * 30.0f;
+
+						if (posTamago [num].x < posTamago [num2].x) {
+							posTamagoTargetX [num] = posTamago [num].x - _idouX;
+						} else {
+							posTamagoTargetX [num] = posTamago [num].x + _idouX;
+						}
+
+						if (posTamago [num].y < posTamago [num2].y) {
+							posTamagoTargetY [num] = posTamago [num].y - _idouY;
+						} else {
+							posTamagoTargetY [num] = posTamago [num].y + _idouY;
+						}
+
+						countTableChakusekiTime [num] = Random.Range (20, 40);
+						posTamagoTargetType [num] = 10;
+
+						if (posTamagoTargetX [num] < posTamago [num].x) {
+							posTamagoIdouXFlag [num] = false;
+							posTamagoSpeedX [num] = (posTamago [num].x - posTamagoTargetX [num]) / 30;
+						} else {
+							posTamagoIdouXFlag [num] = true;
+							posTamagoSpeedX [num] = (posTamagoTargetX [num] - posTamago [num].x) / 30;
+						}
+
+						if (posTamagoTargetY [num] < posTamago [num].y) {
+							posTamagoIdouYFlag [num] = false;
+							posTamagoSpeedY [num] = (posTamago [num].y - posTamagoTargetY [num]) / 30;
+						} else {
+							posTamagoIdouYFlag [num] = true;
+							posTamagoSpeedY [num] = (posTamagoTargetY [num] - posTamago [num].y) / 30;
+						}
+
+						break;
+					}
+				}
+			}
+		}
+
+		 
 
 		// テーブルハートを消しておく
 		private void EventAppealTableHeartClear (){
@@ -1441,7 +1494,11 @@ namespace Mix2App.MachiCon{
 			int _randPoint;
 
 tamagochiIdouInitLoop:
-			_randPoint = Random.Range (0, 10);
+			_randPoint = Random.Range (0, 8);
+
+			if (tamagoHitPositionTable[num] != 0) {
+				_randPoint += 5;
+			}
 
 			switch (_randPoint) {
 			case	0:
@@ -1508,7 +1565,7 @@ tamagochiIdouInitLoop:
 				posTamagoTargetY [num] = posTamago [num].y;
 			}
 
-			switch (tamagoHitPosition [num]) {
+			switch (tamagoHitPositionTable [num]) {
 			case	-1:
 				{
 					if (posTamagoTargetY [num] > posTamago [num].y) {
@@ -1524,7 +1581,7 @@ tamagochiIdouInitLoop:
 					break;
 				}
 			}
-			tamagoHitPosition [num] = 0;
+			tamagoHitPositionTable [num] = 0;
 
 			if (posTamagoTargetX [num] < posTamago [num].x) {
 				posTamagoIdouXFlag [num] = false;

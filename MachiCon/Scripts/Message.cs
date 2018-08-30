@@ -17,7 +17,7 @@ namespace Mix2App.MachiCon{
 		[SerializeField] private GameObject EventJikkyouText2;		// 実況の表示テキスト２
 		[SerializeField] private GameObject EventJikkyouAplichi1;	// アプリっちの表示スプライト１
 		[SerializeField] private GameObject EventJikkyouAplichi2;	// アプリっちの表示スプライト２
-		[SerializeField] private Sprite[]	EventJikkyouImage;		// アプリっちの表示スプライトリスト（普通 = 0、ガイド = 1、喜び = 2、笑顔 = 3、驚き = 4、泣き = 5）
+		[SerializeField] private Sprite[]	EventJikkyouImage;		// アプリっちの表示スプライトリスト（普通 = 0、ガイド = 1、喜び = 2、笑顔 = 3、驚き = 4、泣き = 5、普通２ = 6）
 
 		[SerializeField] private GameObject	EventSoudanText;		// アピールタイトル表示テキスト
 
@@ -237,15 +237,72 @@ namespace Mix2App.MachiCon{
 		}
 
 		void Start(){
-			
+			jikkyouCharaAnimeNumber = 0;
+			countTime1 = 0.0f;
+			countTime2 = 0;
 		}
 
 		void Destroy(){
 			
 		}
 
+
+
+		private int jikkyouCharaAnimeNumber;
+		private float countTime1;
+		private int countTime2;
 		void Update(){
 
+			countTime1 += 1.0f * Time.deltaTime;
+			if (countTime1 >= 0.5f) {
+				countTime1 -= 0.5f;
+				countTime2++;
+			}
+
+			switch (jikkyouCharaAnimeNumber) {
+			case	0:
+				{
+					if ((countTime2 & 1) != 0) {
+						EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [0];
+						EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [0];
+					} else {
+						EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [6];
+						EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [6];
+					}
+
+					break;
+				}
+			case	1:
+				{
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [1];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [1];
+					break;
+				}
+			case	2:
+				{
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [2];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [2];
+					break;
+				}
+			case	3:
+				{
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [3];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [3];
+					break;
+				}
+			case	4:
+				{
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [4];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [4];
+					break;
+				}
+			case	5:
+				{
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [5];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [5];
+					break;
+				}
+			}
 		}	
 
 		public void JikkyouMesDisp(JikkyouMesTable flag){
@@ -254,7 +311,6 @@ namespace Mix2App.MachiCon{
 			EventJikkyou1.SetActive (true);
 			EventJikkyou2.SetActive (true);
 
-
 			switch (flag) {
 			case	JikkyouMesTable.JikkyouMesDisp01:
 				{
@@ -262,8 +318,7 @@ namespace Mix2App.MachiCon{
 					randNum = Random.Range (0, JikkyouMesType01.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType01 [randNum];
 
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType01 [randNum]];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType01 [randNum]];
+					jikkyouCharaAnimeNumber =  JikkyouImageType01 [randNum];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp02:
@@ -272,8 +327,7 @@ namespace Mix2App.MachiCon{
 					randNum = Random.Range (0, JikkyouMesType02.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType02 [randNum];
 
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType02 [randNum]];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType02 [randNum]];
+					jikkyouCharaAnimeNumber = JikkyouImageType02 [randNum];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp03:
@@ -282,8 +336,7 @@ namespace Mix2App.MachiCon{
 					randNum = Random.Range (0, JikkyouMesType03.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType03 [randNum];
 
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType03 [randNum]];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType03 [randNum]];
+					jikkyouCharaAnimeNumber = JikkyouImageType03 [randNum];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp04:
@@ -292,8 +345,7 @@ namespace Mix2App.MachiCon{
 					randNum = Random.Range (0, JikkyouMesType04.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType04 [randNum];
 
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType04 [randNum]];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType04 [randNum]];
+					jikkyouCharaAnimeNumber = JikkyouImageType04 [randNum];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp05:
@@ -302,8 +354,7 @@ namespace Mix2App.MachiCon{
 					randNum = Random.Range (0, JikkyouMesType05.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType05 [randNum];
 
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType05 [randNum]];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType05 [randNum]];
+					jikkyouCharaAnimeNumber = JikkyouImageType05 [randNum];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp06:
@@ -312,8 +363,7 @@ namespace Mix2App.MachiCon{
 					randNum = Random.Range (0, JikkyouMesType06.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType06 [randNum];
 
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType06 [randNum]];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType06 [randNum]];
+					jikkyouCharaAnimeNumber = JikkyouImageType06 [randNum];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp07:
@@ -322,8 +372,7 @@ namespace Mix2App.MachiCon{
 					randNum = Random.Range (0, JikkyouMesType07.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType07 [randNum];
 
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType07 [randNum]];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType07 [randNum]];
+					jikkyouCharaAnimeNumber = JikkyouImageType07 [randNum];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp08:
@@ -332,8 +381,7 @@ namespace Mix2App.MachiCon{
 					randNum = Random.Range (0, JikkyouMesType08.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType08 [randNum];
 
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType08 [randNum]];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType08 [randNum]];
+					jikkyouCharaAnimeNumber = JikkyouImageType08 [randNum];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp09:
@@ -342,8 +390,7 @@ namespace Mix2App.MachiCon{
 					randNum = Random.Range (0, JikkyouMesType09.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType09 [randNum];
 
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType09 [randNum]];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType09 [randNum]];
+					jikkyouCharaAnimeNumber = JikkyouImageType09 [randNum];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp10:
@@ -352,8 +399,7 @@ namespace Mix2App.MachiCon{
 					randNum = Random.Range (0, JikkyouMesType10.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType10 [randNum];
 
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType10 [randNum]];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType10 [randNum]];
+					jikkyouCharaAnimeNumber = JikkyouImageType10 [randNum];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp11:
@@ -362,8 +408,7 @@ namespace Mix2App.MachiCon{
 					randNum = Random.Range (0, JikkyouMesType11.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType11 [randNum];
 
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType11 [randNum]];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType11 [randNum]];
+					jikkyouCharaAnimeNumber = JikkyouImageType11 [randNum];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp12:
@@ -372,8 +417,7 @@ namespace Mix2App.MachiCon{
 					randNum = Random.Range (0, JikkyouMesType12.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType12 [randNum];
 
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType12 [randNum]];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType12 [randNum]];
+					jikkyouCharaAnimeNumber = JikkyouImageType12 [randNum];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp13:
@@ -382,8 +426,7 @@ namespace Mix2App.MachiCon{
 					randNum = Random.Range (0, JikkyouMesType13.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType13 [randNum];
 
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType13 [randNum]];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType13 [randNum]];
+					jikkyouCharaAnimeNumber = JikkyouImageType13 [randNum];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp14:
@@ -392,8 +435,7 @@ namespace Mix2App.MachiCon{
 					randNum = Random.Range (0, JikkyouMesType14.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType14 [randNum];
 
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType14 [randNum]];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType14 [randNum]];
+					jikkyouCharaAnimeNumber = JikkyouImageType14 [randNum];
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp15:
@@ -402,8 +444,7 @@ namespace Mix2App.MachiCon{
 					randNum = Random.Range (0, JikkyouMesType15.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType15 [randNum];
 
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [JikkyouImageType15 [randNum]];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [JikkyouImageType15 [randNum]];
+					jikkyouCharaAnimeNumber = JikkyouImageType15 [randNum];
 					break;
 				}
 			default:
@@ -411,8 +452,7 @@ namespace Mix2App.MachiCon{
 					EventJikkyouText.GetComponent<Text> ().text = "";
 					EventJikkyou1.SetActive (false);
 					EventJikkyou2.SetActive (false);
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [0];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [0];
+					jikkyouCharaAnimeNumber = 0;
 					break;
 				}
 			}
