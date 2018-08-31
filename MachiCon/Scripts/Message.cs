@@ -269,7 +269,6 @@ namespace Mix2App.MachiCon{
 						EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [6];
 						EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [6];
 					}
-
 					break;
 				}
 			case	1:

@@ -17,7 +17,6 @@ using Mix2App.Lib.Utils;
 
 namespace Mix2App.MiniGame1{
 	public class MiniGame1 : MonoBehaviour,IReceiver {
-		public ManagerObject manager;//ライブラリ
 		[SerializeField] private GameCore	pgGameCore;
 		[SerializeField] private GameObject[] CharaTamago;					// たまごっち
 		[SerializeField] private GameObject EventTitle;						// タイトル画面
@@ -129,7 +128,7 @@ namespace Mix2App.MiniGame1{
 			//パラメタ詳細は設計書参照
 			if (mparam==null) {
 				mparam = new object[] {
-					manager.player,
+					ManagerObject.instance.player,
 				};
 			}
 			muser1 = (User)mparam[0];		// たまごっち

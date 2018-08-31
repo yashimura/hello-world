@@ -11,8 +11,6 @@ using Mix2App.Lib.Utils;
 
 namespace Mix2App.MarriageDate{
 	public class MarriageDate : MonoBehaviour,IReceiver {
-		public ManagerObject manager;//ライブラリ
-
 		[SerializeField] private GameObject EventDate;
 
 		[SerializeField] private GameObject	EventEnd;				// 原っぱ
@@ -87,9 +85,9 @@ namespace Mix2App.MarriageDate{
 
 		private User muser1;//自分
 		private User muser2;//相手
-//		private int mkind;//結婚種類
-//		private int mkind1;//兄弟種類
-//		private int mkind2;//兄弟種類
+		private int mkind;//結婚種類
+		private int mkind1;//兄弟種類
+		private int mkind2;//兄弟種類
 
 		void Awake(){
 			Debug.Log ("MarriageDate Awake");
@@ -97,9 +95,9 @@ namespace Mix2App.MarriageDate{
 			mparam=null;
 			muser1=null;
 			muser2=null;
-//			mkind=0;
-//			mkind1=0;
-//			mkind2=0;
+			mkind=0;
+			mkind1=0;
+			mkind2=0;
 		}
 
 		public void receive(params object[] parameter){
@@ -115,18 +113,18 @@ namespace Mix2App.MarriageDate{
 			if (mparam==null) {
 				mparam = new object[] {
 					0,
-					manager.player,
+					ManagerObject.instance.player,
 					0,
 					new TestUser(1,UserKind.ANOTHER,UserType.MIX2,23,0,0,1),
 					0
 				};
 			}
 
-//			mkind = (int)mparam[0];
+			mkind = (int)mparam[0];
 			muser1 = (User)mparam[1];		// 右のたまごっち
-//			mkind1 = (int)mparam[2];
+			mkind1 = (int)mparam[2];
 			muser2 = (User)mparam[3];		// 左のたまごっち
-//			mkind2 = (int)mparam[4];
+			mkind2 = (int)mparam[4];
 
 			jobCount = statusJobCount.marriageJobCount000;
 			startEndFlag = false;
@@ -170,8 +168,16 @@ namespace Mix2App.MarriageDate{
 			// 男の子と女の子のたまごっちをここで設定する
 			cbMan1 = manChara1.GetComponent<CharaBehaviour> ();				// 男の子
 			cbWoman1 = womanChara1.GetComponent<CharaBehaviour> ();			// 女の子
-			yield return cbMan1.init (muser1.chara1);
-			yield return cbWoman1.init (muser2.chara1);
+			if (mkind1 == 0) {
+				yield return cbMan1.init (muser1.chara1);
+			} else {
+				yield return cbMan1.init (muser1.chara2);
+			}
+			if (mkind2 == 0) {
+				yield return cbWoman1.init (muser2.chara1);
+			} else {
+				yield return cbWoman1.init (muser2.chara2);
+			}
 
 			startEndFlag = true;
 		}
@@ -329,7 +335,7 @@ namespace Mix2App.MarriageDate{
 				{
 					Debug.Log ("たまタウンへ・・・");
 					jobCount = statusJobCount.marriageJobCount080;
-					manager.view.change("Town");
+					ManagerObject.instance.view.change("Town");
 					break;
 				}
 			case	statusJobCount.marriageJobCount080:

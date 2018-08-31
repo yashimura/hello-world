@@ -14,7 +14,6 @@ using Mix2App.Lib.Utils;
 
 namespace Mix2App.MiniGame2{
 	public class MiniGame2 : MonoBehaviour,IReceiver {
-		public ManagerObject manager;//ライブラリ
 		[SerializeField] private GameObject[] CharaTamagoMain;					// たまごっち
 		[SerializeField] private GameObject[] CharaTamago;						// たまごっち
 		[SerializeField] private GameObject baseSizePanel;
@@ -101,7 +100,7 @@ namespace Mix2App.MiniGame2{
 			//パラメタ詳細は設計書参照
 			if (mparam==null) {
 				mparam = new object[] {
-					manager.player,
+					ManagerObject.instance.player,
 				};
 			}
 			muser1 = (User)mparam[0];		// たまごっち
@@ -305,7 +304,7 @@ namespace Mix2App.MiniGame2{
 		}
 		private void ButtonCloseClick(){
 			Debug.Log ("たまタウンへ・・・");
-			manager.view.change("Town");
+			ManagerObject.instance.view.change("Town");
 		}
 		private void ButtonHelpClick(){
 			EventHelp.SetActive (true);

@@ -16,7 +16,7 @@ using Mix2App.Lib.Net;
 namespace Mix2App.MachiCon{
 	public class MachiCon : MonoBehaviour,IReceiver {
 
-		public ManagerObject manager;//ライブラリ
+//		public ManagerObject manager;//ライブラリ
 
 		[SerializeField] private Message	MesDisp;						// メッセージ関連
 		[SerializeField] private GameObject EventCurtain;					// カーテン
@@ -51,6 +51,11 @@ namespace Mix2App.MachiCon{
 		[SerializeField] private GameObject EventLastResult;				// 最終結果
 		[SerializeField] private GameObject EventEnd;						// おしまい
 		[SerializeField] private GameObject	EventEndMarriage;				// 結婚式へ
+		[SerializeField] private GameObject EventFutago;					// 双子選択
+		[SerializeField] private Button[] EventFutagoButton;				// 双子選択ボタン
+		[SerializeField] private GameObject[] CharaFutago;					// 双子のたまごっち
+		[SerializeField] private GameObject[] CharaFutagoImage;				// 双子のたまごっち（Image）
+		[SerializeField] private GameObject[] CharaFutagoName;				// 双子の名前
 
 		//private object[]		mparam;
 
@@ -63,11 +68,14 @@ namespace Mix2App.MachiCon{
 		private int sceneNumber = 0;					// シーンナンバー
 		//private bool screenMode = false;
 
+		private bool startEndFutagoFlag = false;
+		private bool buttonFutagoFlag = false;
+		private int buttonFutagoNumber = 0;
 
 		private bool kokuhakuTimeEndFlag = true;
 
 		private CharaBehaviour[] cbTamagoChara = new CharaBehaviour[8];
-
+		private CharaBehaviour[] cbFutagoChara = new CharaBehaviour[2];
 
 		// 相性度（０〜１００）（男の子、女の子）
 		private int[,] loveManWoman = new int[4, 4]{ { 40,40,40,40 }, { 40,40,40,40 }, { 40,40,40,40 }, { 40,40,40,40 } };
@@ -76,7 +84,7 @@ namespace Mix2App.MachiCon{
 
 		private readonly float APPEAL_LIMIT_TIME = 5.0f;			// アピールタイムのキー入力待ち時間（秒）
 
-		private statusJobCount	jobCount = statusJobCount.machiconJobCount000;
+		private statusJobCount	jobCount = statusJobCount.machiconJobCount020;
 		private enum statusJobCount{
 			machiconJobCount000,
 			machiconJobCount010,
@@ -114,8 +122,6 @@ namespace Mix2App.MachiCon{
 			machiconJobCount330,
 			machiconJobCount340,
 			machiconJobCount350,
-			machiconJobCount360,
-			machiconJobCount370,
 		}
 
 		private statusKokuhakuCount kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount000;
@@ -172,6 +178,7 @@ namespace Mix2App.MachiCon{
 		private int mkind1;
 		private User muser2;
 		private int mkind2;
+		private int[] mkindTable = new int[8];
 
 		void Awake(){
 			Debug.Log ("MachiCon Awake");
@@ -203,7 +210,9 @@ namespace Mix2App.MachiCon{
 			//パラメタは設計書参照
 			GameCall call = new GameCall(CallLabel.GET_ROOM_INFO);
 			call.AddListener(mgetroominf);
-			manager.connect.send(call);
+//			manager.connect.send(call);
+			ManagerObject.instance.connect.send(call);
+
 		}
 		
 		void mgetroominf(bool success,object data)
@@ -235,8 +244,17 @@ namespace Mix2App.MachiCon{
 			EventSoudanYesNew.GetComponent<Button> ().onClick.AddListener (ButtneYesClick);
 			EventSoudanNoNew.GetComponent<Button> ().onClick.AddListener (ButtonNoClick);
 
-			jobCount = statusJobCount.machiconJobCount000;
+			jobCount = statusJobCount.machiconJobCount020;
 
+
+
+//			muser1.chara2 = new TamaChara (29);
+
+
+
+			for (int i = 0; i < 8; i++) {
+				mkindTable [i] = mpdata.members [i].index;
+			}
 
 			float use_screen_x = Screen.currentResolution.width;
 			float use_screen_y = Screen.currentResolution.height;
@@ -260,19 +278,40 @@ namespace Mix2App.MachiCon{
 			}
 			*/
 
+			if (muser1.chara2 != null) {
+				jobCount = statusJobCount.machiconJobCount000;						// 双子がいる時は、出席者選択画面を開く
+				startEndFutagoFlag = false;
+				EventFutago.SetActive (true);
+				MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
+
+				EventFutagoButton[0].onClick.AddListener (ButtonFutagoChara1);
+				EventFutagoButton[1].onClick.AddListener (ButtonFutagoChara2);
+
+				CharaFutagoName[0].GetComponent<Text>().text = muser1.GetCharaAt (0).cname;
+				CharaFutagoName[1].GetComponent<Text>().text = muser1.GetCharaAt (1).cname;
+
+				for (int i = 0; i < 2; i++) {
+					cbFutagoChara [i] = CharaFutago [i].GetComponent<CharaBehaviour> ();
+				}
+				yield return cbFutagoChara [0].init (muser1.GetCharaAt(0));
+				cbFutagoChara [0].gotoAndPlay ("idle");
+				yield return cbFutagoChara [1].init (muser1.GetCharaAt(1));
+				cbFutagoChara [1].gotoAndPlay ("idle");
+
+				startEndFutagoFlag = true;
+			}
 
 			for (int i = 0; i < 8; i++) {
 				cbTamagoChara [i] = CharaTamago [i].GetComponent<CharaBehaviour> ();
 			}
-			yield return cbTamagoChara[0].init (mpdata.members[0].user.GetCharaAt(mpdata.members[0].index));// 男の子１のたまごっちを登録する
-			yield return cbTamagoChara[1].init (mpdata.members[1].user.GetCharaAt(mpdata.members[1].index));// 男の子２のたまごっちを登録する
-			yield return cbTamagoChara[2].init (mpdata.members[2].user.GetCharaAt(mpdata.members[2].index));// 男の子３のたまごっちを登録する
-			yield return cbTamagoChara[3].init (mpdata.members[3].user.GetCharaAt(mpdata.members[3].index));// 男の子４のたまごっちを登録する
-			yield return cbTamagoChara[4].init (mpdata.members[4].user.GetCharaAt(mpdata.members[4].index));// 女の子１のたまごっちを登録する
-			yield return cbTamagoChara[5].init (mpdata.members[5].user.GetCharaAt(mpdata.members[5].index));// 女の子２のたまごっちを登録する
-			yield return cbTamagoChara[6].init (mpdata.members[6].user.GetCharaAt(mpdata.members[6].index));// 女の子３のたまごっちを登録する
-			yield return cbTamagoChara[7].init (mpdata.members[7].user.GetCharaAt(mpdata.members[7].index));// 女の子４のたまごっちを登録する
-
+			yield return cbTamagoChara[0].init (mpdata.members[0].user.GetCharaAt(mkindTable[0]));// 男の子１のたまごっちを登録する
+			yield return cbTamagoChara[1].init (mpdata.members[1].user.GetCharaAt(mkindTable[1]));// 男の子２のたまごっちを登録する
+			yield return cbTamagoChara[2].init (mpdata.members[2].user.GetCharaAt(mkindTable[2]));// 男の子３のたまごっちを登録する
+			yield return cbTamagoChara[3].init (mpdata.members[3].user.GetCharaAt(mkindTable[3]));// 男の子４のたまごっちを登録する
+			yield return cbTamagoChara[4].init (mpdata.members[4].user.GetCharaAt(mkindTable[4]));// 女の子１のたまごっちを登録する
+			yield return cbTamagoChara[5].init (mpdata.members[5].user.GetCharaAt(mkindTable[5]));// 女の子２のたまごっちを登録する
+			yield return cbTamagoChara[6].init (mpdata.members[6].user.GetCharaAt(mkindTable[6]));// 女の子３のたまごっちを登録する
+			yield return cbTamagoChara[7].init (mpdata.members[7].user.GetCharaAt(mkindTable[7]));// 女の子４のたまごっちを登録する
 
 		}
 	
@@ -292,6 +331,36 @@ namespace Mix2App.MachiCon{
 			switch (jobCount) {
 			case	statusJobCount.machiconJobCount000:
 				{
+					if (startEndFutagoFlag) {
+//						EventFutago.SetActive (true);
+						jobCount = statusJobCount.machiconJobCount010;
+
+						buttonFutagoFlag = false;
+						buttonFutagoNumber = 0;
+					}
+					CharaFutagoImage [0].gameObject.GetComponent<Image> ().sprite = CharaFutago [0].GetComponent<SpriteRenderer> ().sprite;
+					CharaFutagoImage [1].gameObject.GetComponent<Image> ().sprite = CharaFutago [1].GetComponent<SpriteRenderer> ().sprite;
+					break;
+				}
+			case	statusJobCount.machiconJobCount010:
+				{
+					if (buttonFutagoFlag) {
+						jobCount = statusJobCount.machiconJobCount020;
+						EventFutago.SetActive (false);											// 双子選択画面を消す。
+						mkind1 = buttonFutagoNumber;
+						mkindTable[playerNumber] = buttonFutagoNumber;
+						if (buttonFutagoNumber == 0) {
+							cbTamagoChara[playerNumber].init (muser1.GetCharaAt(0));
+						} else {
+							cbTamagoChara[playerNumber].init (muser1.GetCharaAt(1));
+						}
+					}
+					CharaFutagoImage [0].gameObject.GetComponent<Image> ().sprite = CharaFutago [0].GetComponent<SpriteRenderer> ().sprite;
+					CharaFutagoImage [1].gameObject.GetComponent<Image> ().sprite = CharaFutago [1].GetComponent<SpriteRenderer> ().sprite;
+					break;
+				}
+			case	statusJobCount.machiconJobCount020:
+				{
 					countTime1 = 0.0f;
 					countTime2 = 10;
 
@@ -309,10 +378,10 @@ namespace Mix2App.MachiCon{
 						posTamago [i] = new Vector3 (0.0f, -400.0f, 0.0f);						// たまごっちの初期位置
 					}
 
-					jobCount = statusJobCount.machiconJobCount010;
+					jobCount = statusJobCount.machiconJobCount030;
 					break;
 				}
-			case	statusJobCount.machiconJobCount010:
+			case	statusJobCount.machiconJobCount030:
 				{	// カウントダウン
 					countTime1 += 1.0f * Time.deltaTime;
 					EventTitleClock.GetComponent<Image> ().fillAmount = countTime1;
@@ -322,7 +391,7 @@ namespace Mix2App.MachiCon{
 					}
 					EventTitleText.GetComponent<Image> ().sprite = EventTitleSprite [countTime2];
 					if (countTime2 == 0) {
-						jobCount = statusJobCount.machiconJobCount020;
+						jobCount = statusJobCount.machiconJobCount040;
 
 						EventTitle.GetComponent<Animator> ().SetBool ("title", true);
 						waitTime = 60;
@@ -330,48 +399,48 @@ namespace Mix2App.MachiCon{
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount020:
+			case	statusJobCount.machiconJobCount040:
 				{
 					if(WaitTimeSubLoop()){
-						jobCount = statusJobCount.machiconJobCount030;
+						jobCount = statusJobCount.machiconJobCount050;
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount030:
+			case	statusJobCount.machiconJobCount050:
 				{
 					if (EventCurtainPositionChange (10.0f)) {									// カーテンオープン
 						EventTitle.SetActive (false);
 						EventCurtain.SetActive (false);
-						jobCount = statusJobCount.machiconJobCount040;
+						jobCount = statusJobCount.machiconJobCount060;
 						posNumber = 0;
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount040:
+			case	statusJobCount.machiconJobCount060:
 				{	// 入場開始
 					FlameInMessageDisp ();														// 実況開始
 					FlameInDirectionSet ();														// 入場時の向きを設定
 
 					cbTamagoChara [posNumber].gotoAndPlay ("walk");
-					jobCount = statusJobCount.machiconJobCount050;
+					jobCount = statusJobCount.machiconJobCount070;
 					break;
 				}
-			case	statusJobCount.machiconJobCount050:
+			case	statusJobCount.machiconJobCount070:
 				{	// たまごっち入場
 					float pos = FlameInPositionChange ();
 					if (pos >= 0.0f) {
-						jobCount = statusJobCount.machiconJobCount060;
+						jobCount = statusJobCount.machiconJobCount080;
 						waitTime = FlameInPositionChangeJumpTable.Length;						// ジャンプの時間
 						cbTamagoChara [posNumber].gotoAndPlay ("idle");
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount060:
+			case	statusJobCount.machiconJobCount080:
 				{	// ジャンプ
 					waitTime--;
 					FlameInPositionChangeJump ();
 					if (waitTime == 0) {
-						jobCount = statusJobCount.machiconJobCount070;
+						jobCount = statusJobCount.machiconJobCount090;
 						posTamago [posNumber].y = 0.0f;
 						FukidashiMessageSet ();
 						CharaTamagochi[posNumber].transform.Find("fukidashi/comment").gameObject.SetActive(true);
@@ -379,43 +448,43 @@ namespace Mix2App.MachiCon{
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount070:
+			case	statusJobCount.machiconJobCount090:
 				{	// コメント表示
 					if (WaitTimeSubLoop()) {
-						jobCount = statusJobCount.machiconJobCount080;
+						jobCount = statusJobCount.machiconJobCount100;
 						CharaTamagochi[posNumber].transform.Find("fukidashi/comment").gameObject.SetActive(false);
 						waitTime = 40;															// 整列までの移動時間なのでここを変える場合AlignmentPositionChangeのテーブルも変更する事
 						cbTamagoChara [posNumber].gotoAndPlay ("walk");
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount080:
+			case	statusJobCount.machiconJobCount100:
 				{	// 所定位置への整列
 					AlignmentPositionChange ();
 					if (WaitTimeSubLoop()) {
-						jobCount = statusJobCount.machiconJobCount090;
+						jobCount = statusJobCount.machiconJobCount110;
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount090:
+			case	statusJobCount.machiconJobCount110:
 				{	// 整列位置に停止
 					cbTamagoChara [posNumber].gotoAndPlay ("idle");
 					AlignmentPositionChangeFinish ();
 					posNumber++;
 					if (posNumber == 8) {
-						jobCount = statusJobCount.machiconJobCount100;
+						jobCount = statusJobCount.machiconJobCount120;
 						EventCurtain.SetActive (true);
 						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp06);
 						sceneNumber = 0;
 					} else {
-						jobCount = statusJobCount.machiconJobCount040;
+						jobCount = statusJobCount.machiconJobCount060;
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount100:
+			case	statusJobCount.machiconJobCount120:
 				{
 					if (EventCurtainPositionChange (-10.0f)) {									// カーテンクローズ
-						jobCount = statusJobCount.machiconJobCount110;
+						jobCount = statusJobCount.machiconJobCount130;
 
 						EventPhase.SetActive (true);
 						EventPhasePTStar.SetActive (true);
@@ -429,29 +498,13 @@ namespace Mix2App.MachiCon{
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount110:
+			case	statusJobCount.machiconJobCount130:
 				{	// 相談タイム開始
 					EventPhasePTStar.transform.RotateAround (EventPhaseRing.transform.position, new Vector3 (0, 0, 1), 360.0f * Time.deltaTime);
 					if (WaitTimeSubLoop()) {
-						jobCount = statusJobCount.machiconJobCount120;
+						jobCount = statusJobCount.machiconJobCount140;
 						EventPhasePTStar.SetActive (false);
 						EventPhase.GetComponent<Animator> ().SetBool ("phase", true);
-					}
-					break;
-				}
-			case	statusJobCount.machiconJobCount120:
-				{
-					if (EventPhase.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0f) {
-						jobCount = statusJobCount.machiconJobCount130;
-						waitTime = 60;
-					}
-					break;
-				}
-			case	statusJobCount.machiconJobCount130:
-				{
-					if (WaitTimeSubLoop()) {
-						jobCount = statusJobCount.machiconJobCount140;
-						EventPhase.GetComponent<Animator> ().SetBool ("phaseend", true);
 					}
 					break;
 				}
@@ -459,6 +512,22 @@ namespace Mix2App.MachiCon{
 				{
 					if (EventPhase.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0f) {
 						jobCount = statusJobCount.machiconJobCount150;
+						waitTime = 60;
+					}
+					break;
+				}
+			case	statusJobCount.machiconJobCount150:
+				{
+					if (WaitTimeSubLoop()) {
+						jobCount = statusJobCount.machiconJobCount160;
+						EventPhase.GetComponent<Animator> ().SetBool ("phaseend", true);
+					}
+					break;
+				}
+			case	statusJobCount.machiconJobCount160:
+				{
+					if (EventPhase.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0f) {
+						jobCount = statusJobCount.machiconJobCount170;
 						EventPhase.SetActive (false);
 						EventSoudan.SetActive (true);
 						EventSoudanNameSet ();													// 相談する時の相手の名前などを登録する
@@ -475,10 +544,10 @@ namespace Mix2App.MachiCon{
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount150:
+			case	statusJobCount.machiconJobCount170:
 				{
 					if (EventSoudan.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0f) {
-						jobCount = statusJobCount.machiconJobCount160;
+						jobCount = statusJobCount.machiconJobCount180;
 						SoudanMessageDisp ();													// 相談タイトルメッセージ設定
 
 						EventSoudanPartsDisp (true);
@@ -503,10 +572,10 @@ namespace Mix2App.MachiCon{
 					SoudanTamagoCharaSet ();													// 相談シーンのたまごっちのアニメ
 					break;
 				}
-			case	statusJobCount.machiconJobCount160:
+			case	statusJobCount.machiconJobCount180:
 				{
 					if (buttonFlag) {
-						jobCount = statusJobCount.machiconJobCount170;
+						jobCount = statusJobCount.machiconJobCount190;
 						EventSoudan.GetComponent<Animator> ().SetBool ("waite", true);
 						EventSoudanPartsDisp (false);
 
@@ -517,13 +586,13 @@ namespace Mix2App.MachiCon{
 					SoudanTamagoCharaSet ();													// 相談シーンのたまごっちのアニメ
 					break;
 				}
-			case	statusJobCount.machiconJobCount170:
+			case	statusJobCount.machiconJobCount190:
 				{
 					Vector3 pos = EventSoudanTamago.transform.localPosition;
 					pos.y -= 20.0f;
 					EventSoudanTamago.transform.localPosition = pos;							// たまごっちを下降させる
 					if(pos.y <= -300.0f){
-						jobCount = statusJobCount.machiconJobCount180;
+						jobCount = statusJobCount.machiconJobCount200;
 						EventSoudanTamago.transform.Find ("chara").gameObject.SetActive (false);
 						AppealPositionChangeInit ();											// アピールタイム初期表示位置設定
 						TamagochiFukidashiOff ();
@@ -533,17 +602,17 @@ namespace Mix2App.MachiCon{
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount180:
+			case	statusJobCount.machiconJobCount200:
 				{
 					if (WaitTimeSubLoop ()) {
-						jobCount = statusJobCount.machiconJobCount190;
+						jobCount = statusJobCount.machiconJobCount210;
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount190:
+			case	statusJobCount.machiconJobCount210:
 				{
 					if (EventCurtainPositionChange (10.0f)) {									// カーテンオープン
-						jobCount = statusJobCount.machiconJobCount200;
+						jobCount = statusJobCount.machiconJobCount220;
 						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp08);
 						for (int i = 0; i < 8; i++) {
 							CharaTamagochi [i].transform.Find ("fukidashi/message").gameObject.SetActive (true);
@@ -553,10 +622,10 @@ namespace Mix2App.MachiCon{
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount200:
+			case	statusJobCount.machiconJobCount220:
 				{
 					if (WaitTimeSubLoop ()) {
-						jobCount = statusJobCount.machiconJobCount210;
+						jobCount = statusJobCount.machiconJobCount230;
 						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp09);
 						for (int i = 0; i < 8; i++) {
 							CharaTamagochi [i].transform.Find ("fukidashi/message").gameObject.SetActive (false);
@@ -565,7 +634,7 @@ namespace Mix2App.MachiCon{
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount210:
+			case	statusJobCount.machiconJobCount230:
 				{
 					ApplealPositionChangeMain ();												// アピールタイムのキャラ移動
 
@@ -579,18 +648,18 @@ namespace Mix2App.MachiCon{
 						if (sceneNumber < 3) {
 							buttonFlag = false;
 							EventSoudan.SetActive (false);
-							jobCount = statusJobCount.machiconJobCount100;
+							jobCount = statusJobCount.machiconJobCount120;
 						} else {
-							jobCount = statusJobCount.machiconJobCount220;
+							jobCount = statusJobCount.machiconJobCount240;
 						}
 						TamagochiFukidashiOff ();
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount220:
+			case	statusJobCount.machiconJobCount240:
 				{
 					if (EventCurtainPositionChange (-10.0f)) {									// カーテンクローズ
-						jobCount = statusJobCount.machiconJobCount230;
+						jobCount = statusJobCount.machiconJobCount250;
 						waitTime = 60;
 						EventAppeal.SetActive (false);
 						EventAppealTableHeartClear ();											// テーブルハートを消しておく
@@ -600,14 +669,15 @@ namespace Mix2App.MachiCon{
 						//TODO masklistは現在何も反映していないので適宜設定を
 						GameCall call = new GameCall(CallLabel.GET_ROOM_RESULT,maskdatas);
 						call.AddListener(mgetroomres);
-						manager.connect.send(call);
+//						manager.connect.send(call);
+						ManagerObject.instance.connect.send(call);
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount230:
+			case	statusJobCount.machiconJobCount250:
 				{
 					if (WaitTimeSubLoop () && mresult) {
-						jobCount = statusJobCount.machiconJobCount240;
+						jobCount = statusJobCount.machiconJobCount260;
 						EventKokuhaku.SetActive (true);											// 告白タイム表示
 						waitTime = 60;
 						KokuhakuPositionInit ();												// 告白タイム各キャラクターの初期配置
@@ -615,36 +685,36 @@ namespace Mix2App.MachiCon{
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount240:
+			case	statusJobCount.machiconJobCount260:
 				{
 					if (WaitTimeSubLoop ()) {
-						jobCount = statusJobCount.machiconJobCount250;
+						jobCount = statusJobCount.machiconJobCount270;
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount250:
+			case	statusJobCount.machiconJobCount270:
 				{
 					if (EventCurtainPositionChange (10.0f)) {									// カーテンオープン
-						jobCount = statusJobCount.machiconJobCount260;
+						jobCount = statusJobCount.machiconJobCount280;
 						EventKokuhaku.SetActive (false);
 						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp10);
 						kokuhakuTimeEndFlag = false;
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount260:
+			case	statusJobCount.machiconJobCount280:
 				{
 					if (kokuhakuTimeEndFlag) {
 						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp15);		// 告白処理が終了したのでお別れメッセージを表示
-						jobCount = statusJobCount.machiconJobCount270;
+						jobCount = statusJobCount.machiconJobCount290;
 					}
 					KokuhakuTimeMain ();														// 告白処理ループ
 					break;
 				}
-			case	statusJobCount.machiconJobCount270:
+			case	statusJobCount.machiconJobCount290:
 				{
 					if (EventCurtainPositionChange (-10.0f)) {									// カーテンクローズ
-						jobCount = statusJobCount.machiconJobCount280;
+						jobCount = statusJobCount.machiconJobCount300;
 
 						EventEnd.SetActive (true);												// おしまいを表示準備
 						Color color = EventEnd.transform.Find ("text").gameObject.GetComponent<Image> ().color;
@@ -653,67 +723,62 @@ namespace Mix2App.MachiCon{
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount280:
+			case	statusJobCount.machiconJobCount300:
 				{
 					Color color = EventEnd.transform.Find ("text").gameObject.GetComponent<Image> ().color;
 					color.a += 0.02f;															// おしまいをフェードイン
 					if (color.a >= 1.0f) {
 						color.a = 1.0f;
-						jobCount = statusJobCount.machiconJobCount290;
+						jobCount = statusJobCount.machiconJobCount310;
 						waitTime = 30;
 					}
 					EventEnd.transform.Find ("text").gameObject.GetComponent<Image> ().color = color;
-					break;
-				}
-			case	statusJobCount.machiconJobCount290:
-				{
-					if (WaitTimeSubLoop ()) {
-						if (playerResultFlag) {
-							EventEndMarriage.SetActive (true);									// 自キャラがカップル成立したのでハートフェードを表示する
-							jobCount = statusJobCount.machiconJobCount300;
-						} else {
-							jobCount = statusJobCount.machiconJobCount310;						// 自キャラがカップル成立していないのでそのままシーンチェンジ
-						}
-					}
-					break;
-				}
-			case	statusJobCount.machiconJobCount300:
-				{
-					Vector3 _pos = EventEndMarriage.transform.Find ("panel").gameObject.transform.localPosition;
-					_pos.y += 15.0f;
-					if (_pos.y >= 450.0f) {
-						_pos.y = 450.0f;
-						jobCount = statusJobCount.machiconJobCount310;
-					}
-					EventEndMarriage.transform.Find ("panel").gameObject.transform.localPosition = _pos;
 					break;
 				}
 			case	statusJobCount.machiconJobCount310:
 				{
 					if (WaitTimeSubLoop ()) {
 						if (playerResultFlag) {
-							Debug.Log ("結婚イベントへ・・・");
-							if (muser1.utype == UserType.MIX2) {
-								manager.view.change ("Marriage", mkind, muser1, mkind1, muser2, mkind2);
-							} else {
-								Debug.Log ("みーつユーザー以外なので、デートイベントへ後で変更すること");
-								manager.view.change ("Marriage", mkind, muser1, mkind1, muser2, mkind2);
-							}
+							EventEndMarriage.SetActive (true);									// 自キャラがカップル成立したのでハートフェードを表示する
+							jobCount = statusJobCount.machiconJobCount320;
 						} else {
-							Debug.Log ("たまタウンへ・・・");
-							manager.view.change("Town");
+							jobCount = statusJobCount.machiconJobCount330;						// 自キャラがカップル成立していないのでそのままシーンチェンジ
 						}
-
-						jobCount = statusJobCount.machiconJobCount320;
 					}
 					break;
 				}
 			case	statusJobCount.machiconJobCount320:
 				{
+					Vector3 _pos = EventEndMarriage.transform.Find ("panel").gameObject.transform.localPosition;
+					_pos.y += 15.0f;
+					if (_pos.y >= 450.0f) {
+						_pos.y = 450.0f;
+						jobCount = statusJobCount.machiconJobCount330;
+					}
+					EventEndMarriage.transform.Find ("panel").gameObject.transform.localPosition = _pos;
 					break;
 				}
 			case	statusJobCount.machiconJobCount330:
 				{
+					if (WaitTimeSubLoop ()) {
+						if (playerResultFlag) {
+							Debug.Log ("結婚イベントへ・・・");
+							if (muser1.utype == UserType.MIX2) {
+//								manager.view.change ("Marriage", mkind, muser1, mkind1, muser2, mkind2);
+								ManagerObject.instance.view.change("Marriage",mkind,muser1,mkind1,muser2,mkind2);
+							} else {
+								Debug.Log ("みーつユーザー以外なので、デートイベントへ後で変更すること");
+//								manager.view.change ("Marriage", mkind, muser1, mkind1, muser2, mkind2);
+								ManagerObject.instance.view.change("Marriage",mkind,muser1,mkind1,muser2,mkind2);
+							}
+						} else {
+							Debug.Log ("たまタウンへ・・・");
+//							manager.view.change("Town");
+							ManagerObject.instance.view.change("Town");
+						}
+
+						jobCount = statusJobCount.machiconJobCount340;
+					}
 					break;
 				}
 			case	statusJobCount.machiconJobCount340:
@@ -721,14 +786,6 @@ namespace Mix2App.MachiCon{
 					break;
 				}
 			case	statusJobCount.machiconJobCount350:
-				{
-					break;
-				}
-			case	statusJobCount.machiconJobCount360:
-				{
-					break;
-				}
-			case	statusJobCount.machiconJobCount370:
 				{
 					break;
 				}
@@ -751,9 +808,6 @@ namespace Mix2App.MachiCon{
 					CharaTamagochi [i].transform.Find ("fukidashi").gameObject.transform.localScale = new Vector3 (0.85f, 0.85f, 1.0f);
 				}
 			}
-
-
-
 		}
 
 		private bool WaitTimeSubLoop(){
@@ -792,7 +846,7 @@ namespace Mix2App.MachiCon{
 			string mesTamago = "";
 			string mesRet = "\n";
 
-			mesTamago = mpdata.members [posNumber].user.GetCharaAt (mpdata.members [posNumber].index).cname + mpdata.members [posNumber].user.GetCharaAt (mpdata.members [posNumber].index).wend;
+			mesTamago = mpdata.members [posNumber].user.GetCharaAt (mkindTable[posNumber]).cname + mpdata.members [posNumber].user.GetCharaAt (mkindTable[posNumber]).wend;
 			mesAvater = mpdata.members [posNumber].user.nickname;
 
 			if (mesTamago == "" || mesTamago == null) {
@@ -859,7 +913,7 @@ namespace Mix2App.MachiCon{
 			string mesNo = "の";
 			string mesTo = "さん";
 
-			mesTamago = mpdata.members [targetNum].user.GetCharaAt (mpdata.members [targetNum].index).cname;
+			mesTamago = mpdata.members [targetNum].user.GetCharaAt (mkindTable[targetNum]).cname;
 			mesAvater = mpdata.members [targetNum].user.nickname;
 
 			if (mesTamago == "" || mesTamago == null) {
@@ -897,7 +951,7 @@ namespace Mix2App.MachiCon{
 		// 告白された事に対する返事のメッセージ（肯定、否定）
 		// num:告白された女の子の番号（０〜３）、msgFlag:メッセージの種類（true:肯定、false:否定）
 		private void FukidashiMessageKokuhakuReturn(int num,bool msgFlag){
-			string _gobiMes = mpdata.members [num + 4].user.GetCharaAt (mpdata.members [num + 4].index).wend;
+			string _gobiMes = mpdata.members [num + 4].user.GetCharaAt (mkindTable[num + 4]).wend;
 
 			if (msgFlag) {		// 告白肯定のメッセージ
 				CharaTamagochi [num + 4].transform.Find ("fukidashi/comment/text").gameObject.GetComponent<Text> ().text = MesDisp.KokuhakuMesDisp (Message.KokuhakuMesTable.KokuhakuMesDispOK,_gobiMes);
@@ -983,7 +1037,7 @@ namespace Mix2App.MachiCon{
 
 		// 相談時のタイトルメッセージ
 		private void SoudanMessageDisp(){
-			string _gobi = mpdata.members [playerNumber].user.GetCharaAt (mpdata.members [playerNumber].index).wend;
+			string _gobi = mpdata.members [playerNumber].user.GetCharaAt (mkindTable[playerNumber]).wend;
 
 			UserType ut = mpdata.members [playerNumber].user.utype;
 
@@ -1305,10 +1359,10 @@ namespace Mix2App.MachiCon{
 					_posY [i] = posTamago [i].y;
 				}
 
-				_posY[8] = _tablePostionY[0] + 45.0f;
-				_posY[9] = _tablePostionY[1] + 45.0f;
-				_posY[10] = _tablePostionY[2] + 45.0f;
-				_posY[11] = _tablePostionY[3] + 45.0f;
+				_posY[8] = _tablePostionY[0];
+				_posY[9] = _tablePostionY[1];
+				_posY[10] = _tablePostionY[2];
+				_posY[11] = _tablePostionY[3];
 
 				for (int j = 0; j < 12; j++) {								// たまごっちとテーブルの表示優先順位の変更
 					int k = 0;
@@ -1366,7 +1420,7 @@ namespace Mix2App.MachiCon{
 		private void TamagochiTableHitcheck(int num){
 			for(int i = 0;i < 4;i++){
 				if (((posTamago[num].x - 40.0f) < _tablePostionX[i]) && (_tablePostionX[i] < (posTamago[num].x + 40.0f))) {
-					if (((posTamago[num].y - 12.0f) < (_tablePostionY[i] + 45.0f)) && ((_tablePostionY[i] + 45.0f) < (posTamago[num].y + 12.0f))) {
+					if (((posTamago[num].y - 12.0f) < (_tablePostionY[i])) && ((_tablePostionY[i]) < (posTamago[num].y + 12.0f))) {
 
 
 //						if (posTamago [num].x < _tablePostionX [i]) {
@@ -1375,11 +1429,11 @@ namespace Mix2App.MachiCon{
 //							posTamago [num].x = _tablePostionX [i] + 41.0f;
 //						}
 
-						if (posTamago [num].y < (_tablePostionY[i] + 45.0f)) {
-							posTamago [num].y = (_tablePostionY[i] + 45.0f) - 13.0f;
+						if (posTamago [num].y < (_tablePostionY[i])) {
+							posTamago [num].y = (_tablePostionY[i]) - 13.0f;
 							tamagoHitPositionTable [num] = -1;
 						} else {
-							posTamago [num].y = (_tablePostionY[i] + 45.0f) + 13.0f;
+							posTamago [num].y = (_tablePostionY[i]) + 13.0f;
 							tamagoHitPositionTable [num] = 1;
 						}
 
@@ -1462,17 +1516,16 @@ namespace Mix2App.MachiCon{
 			_tablePostionX[2] = EventAppeal.transform.Find ("table3").gameObject.transform.localPosition.x;
 			_tablePostionX[3] = EventAppeal.transform.Find ("table4").gameObject.transform.localPosition.x;
 
-			_tablePostionY[0] = EventAppeal.transform.Find ("table1").gameObject.transform.localPosition.y;
-			_tablePostionY[1] = EventAppeal.transform.Find ("table2").gameObject.transform.localPosition.y;
-			_tablePostionY[2] = EventAppeal.transform.Find ("table3").gameObject.transform.localPosition.y;
-			_tablePostionY[3] = EventAppeal.transform.Find ("table4").gameObject.transform.localPosition.y;
-
+			_tablePostionY[0] = EventAppeal.transform.Find ("table1").gameObject.transform.localPosition.y + 35.0f;
+			_tablePostionY[1] = EventAppeal.transform.Find ("table2").gameObject.transform.localPosition.y + 35.0f;
+			_tablePostionY[2] = EventAppeal.transform.Find ("table3").gameObject.transform.localPosition.y + 35.0f;
+			_tablePostionY[3] = EventAppeal.transform.Find ("table4").gameObject.transform.localPosition.y + 35.0f;
 
 			for (int i = 0; i < 4; i++) {
 				posTamagoTargetTableMan [i].x = _tablePostionX [i] + 70.0f;
-				posTamagoTargetTableMan [i].y = _tablePostionY [i] + 45.0f;
+				posTamagoTargetTableMan [i].y = _tablePostionY [i];
 				posTamagoTargetTableWoman [i].x = _tablePostionX [i] - 70.0f;
-				posTamagoTargetTableWoman [i].y = _tablePostionY [i] + 45.0f;
+				posTamagoTargetTableWoman [i].y = _tablePostionY [i];
 			}
 		}
 
@@ -1490,7 +1543,7 @@ namespace Mix2App.MachiCon{
 		private Vector2[] posTamagoTargetTableWoman = new Vector2[4];
 		private int[] posTamagoTargetType = new int[8];
 		private void TamagochiIdouInit(int num){
-			float _randSpeed = Random.Range(100,120);
+			float _randSpeed = Random.Range(120,180);
 			int _randPoint;
 
 tamagochiIdouInitLoop:
@@ -1871,7 +1924,7 @@ tamagochiIdouInitLoop:
 			string tamagoMes = "";
 
 
-			tamagoMes = mpdata.members [targetNumber].user.GetCharaAt (mpdata.members [targetNumber].index).cname;
+			tamagoMes = mpdata.members [targetNumber].user.GetCharaAt (mkindTable[targetNumber]).cname;
 			avaterMes = mpdata.members [targetNumber].user.nickname;
 
 			if (tamagoMes == "" || tamagoMes == null) {
@@ -1965,10 +2018,10 @@ tamagochiIdouInitLoop:
 					kokuhakuManNumber = 0;
 					kokuhakuOkFlag = false;
 
-					kokuhakuManMessage [0] = MesDisp.KokuhakuMesDispMan (mpdata.members [0].user.GetCharaAt (mpdata.members [0].index).wend);	// 告白宣言メッセージをここで決定
-					kokuhakuManMessage [1] = MesDisp.KokuhakuMesDispMan (mpdata.members [1].user.GetCharaAt (mpdata.members [1].index).wend);
-					kokuhakuManMessage [2] = MesDisp.KokuhakuMesDispMan (mpdata.members [2].user.GetCharaAt (mpdata.members [2].index).wend);
-					kokuhakuManMessage [3] = MesDisp.KokuhakuMesDispMan (mpdata.members [3].user.GetCharaAt (mpdata.members [3].index).wend);
+					kokuhakuManMessage [0] = MesDisp.KokuhakuMesDispMan (mpdata.members [0].user.GetCharaAt (mkindTable[0]).wend);	// 告白宣言メッセージをここで決定
+					kokuhakuManMessage [1] = MesDisp.KokuhakuMesDispMan (mpdata.members [1].user.GetCharaAt (mkindTable[1]).wend);
+					kokuhakuManMessage [2] = MesDisp.KokuhakuMesDispMan (mpdata.members [2].user.GetCharaAt (mkindTable[2]).wend);
+					kokuhakuManMessage [3] = MesDisp.KokuhakuMesDispMan (mpdata.members [3].user.GetCharaAt (mkindTable[3]).wend);
 					break;
 				}
 			case	statusKokuhakuCount.kokuhakuCount010:
@@ -2516,12 +2569,12 @@ tamagochiIdouInitLoop:
 				if (playerNumber == num) 
 				{
 					muser2 = mpdata.members[loveParamManNumber].user;
-					mkind2 = mpdata.members[loveParamManNumber].index;
+					mkind2 = mkindTable[loveParamManNumber];
 				}
 				else
 				{
 					muser2 = mpdata.members[num].user;
-					mkind2 = mpdata.members[num].index;
+					mkind2 = mkindTable[num];
 				}
 			}
 		}
@@ -2867,6 +2920,18 @@ tamagochiIdouInitLoop:
 
 			return retFlag;
 		}
+
+
+		private void ButtonFutagoChara1(){
+			buttonFutagoFlag = true;
+			buttonFutagoNumber = 0;
+		}
+		private void ButtonFutagoChara2(){
+			buttonFutagoFlag = true;
+			buttonFutagoNumber = 1;
+		}
+
+
 
 
 

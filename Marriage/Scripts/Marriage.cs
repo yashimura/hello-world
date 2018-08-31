@@ -12,8 +12,6 @@ using Mix2App.Lib.Utils;
 namespace Mix2App.Marriage{
 	public class Marriage : MonoBehaviour,IReceiver {
 
-		public ManagerObject manager;//ライブラリ
-
 		[SerializeField] private GameObject CameraObj;
 		[SerializeField] private GameObject CameraObjMarriage;
 		[SerializeField] private GameObject CameraObjWait;
@@ -123,7 +121,7 @@ namespace Mix2App.Marriage{
 			if (mparam==null) {
 				mparam = new object[] {
 					0,
-					manager.player,
+					ManagerObject.instance.player,
 					0,
 					new TestUser(1,UserKind.ANOTHER,UserType.MIX2,23,0,0,1),
 					0
@@ -134,7 +132,7 @@ namespace Mix2App.Marriage{
 			muser1 = (User)mparam[1];
 			mkind1 = (int)mparam[2];
 			muser2 = (User)mparam[3];
-			mkind1 = (int)mparam[4];
+			mkind2 = (int)mparam[4];
 
 			jobCount = statusJobCount.marriageJobCount000;
 			startEndFlag = false;
@@ -187,10 +185,22 @@ namespace Mix2App.Marriage{
 			cbMan2 = manChara2.GetComponent<CharaBehaviour> ();				// 男の子の双子
 			cbWoman1 = womanChara1.GetComponent<CharaBehaviour> ();			// 女の子
 			cbWoman2 = womanChara2.GetComponent<CharaBehaviour> ();			// 女の子の双子
-			yield return cbMan1.init (muser1.chara1);
-			if (muser1.chara2!=null) yield return cbMan2.init (muser1.chara2);
-			yield return cbWoman1.init (muser2.chara1);
-			if (muser2.chara2!=null) yield return cbWoman2.init (muser2.chara2);
+			if (mkind1 == 0) {
+				yield return cbMan1.init (muser1.chara1);
+				if (muser1.chara2 != null)
+					yield return cbMan2.init (muser1.chara2);
+			} else {
+				yield return cbMan1.init (muser1.chara2);
+				yield return cbMan2.init (muser1.chara1);
+			}
+			if (mkind2 == 0) {
+				yield return cbWoman1.init (muser2.chara1);
+				if (muser2.chara2 != null)
+					yield return cbWoman2.init (muser2.chara2);
+			} else {
+				yield return cbWoman1.init (muser2.chara2);
+				yield return cbWoman2.init (muser2.chara1);
+			}
 
 			// ペットをここで設定する
 
@@ -239,7 +249,7 @@ namespace Mix2App.Marriage{
 							mBleSuccess=0;
 							GameCall call = new GameCall(CallLabel.BLE_KEKKON, mkind, muser1, mkind1, muser2, mkind2);
 							call.AddListener(mblekekkon);
-							manager.connect.send(call);
+							ManagerObject.instance.connect.send(call);
 							
 						}
 					}
@@ -333,12 +343,12 @@ namespace Mix2App.Marriage{
 						posOmedetou = omedetouPosition.transform.localPosition;
 					} else {
 						if(screenModeFlag){
-							posMan1.y = (man_sit.transform.localPosition.y / 47.0f) + 0.5f - 1.0f;
-							posWoman1.y = (man_sit.transform.localPosition.y / 47.0f) + 0.5f - 1.0f;
+							posMan1.y = (man_sit.transform.localPosition.y / 47.0f) - 0.5f;
+							posWoman1.y = (man_sit.transform.localPosition.y / 47.0f) - 0.5f;
 						}
 						else{
-							posMan1.y = (man_sit.transform.localPosition.y / 43.7f) + 0.5f - 1.0f;
-							posWoman1.y = (man_sit.transform.localPosition.y / 43.7f) + 0.5f - 1.0f;
+							posMan1.y = (man_sit.transform.localPosition.y / 43.7f) - 0.5f;
+							posWoman1.y = (man_sit.transform.localPosition.y / 43.7f) - 0.5f;
 						}
 					}
 					break;
@@ -357,17 +367,17 @@ namespace Mix2App.Marriage{
 						posPet2.y = 500.0f;					// ペット２を画面外に
 					} else {
 						if (screenModeFlag) {
-							posMan1.y = (man_happy.transform.localPosition.y / 46.0f) + 1.2f - 1.0f;
-							posWoman1.y = (woman_happy.transform.localPosition.y / 46.0f) + 1.2f - 1.0f;
-							posMan2.y = (man_happy.transform.localPosition.y / 46.0f) + 4.25f;
-							posWoman2.y = (woman_happy.transform.localPosition.y / 46.0f) + 4.25f;
+							posMan1.y = (man_happy.transform.localPosition.y / 46.0f) + 0.2f;
+							posWoman1.y = (woman_happy.transform.localPosition.y / 46.0f) + 0.2f;
+							posMan2.y = (man_happy.transform.localPosition.y / 46.0f) + 3.25f;
+							posWoman2.y = (woman_happy.transform.localPosition.y / 46.0f) + 3.25f;
 							posPet1.y = (man_happy.transform.localPosition.y / 46.0f) + 3.35f;
 							posPet2.y = (woman_happy.transform.localPosition.y / 46.0f) + 3.35f;
 						} else {
-							posMan1.y = (man_happy.transform.localPosition.y / 43.0f) + 1.2f - 1.0f;
-							posWoman1.y = (woman_happy.transform.localPosition.y / 43.0f) + 1.2f - 1.0f;
-							posMan2.y = (man_happy.transform.localPosition.y / 43.0f) + 4.25f;
-							posWoman2.y = (woman_happy.transform.localPosition.y / 43.0f) + 4.25f;
+							posMan1.y = (man_happy.transform.localPosition.y / 43.0f) + 0.2f;
+							posWoman1.y = (woman_happy.transform.localPosition.y / 43.0f) + 0.2f;
+							posMan2.y = (man_happy.transform.localPosition.y / 43.0f) + 3.25f;
+							posWoman2.y = (woman_happy.transform.localPosition.y / 43.0f) + 3.25f;
 							posPet1.y = (man_happy.transform.localPosition.y / 43.0f) + 3.35f;
 							posPet2.y = (woman_happy.transform.localPosition.y / 43.0f) + 3.35f;
 						}
@@ -404,7 +414,7 @@ namespace Mix2App.Marriage{
 						if (mBleSuccess==1) {
 							//通信成功時ははホーム画面へ
 							jobCount=statusJobCount.marriageJobCount100;
-							manager.view.change("Home");
+							ManagerObject.instance.view.change("Home");
 						} else {
 							//通信失敗時は最初からやりなおし
 							waitCount = 1;
