@@ -17,7 +17,7 @@ namespace Mix2App.MachiCon{
 		[SerializeField] private GameObject EventJikkyouText2;		// 実況の表示テキスト２
 		[SerializeField] private GameObject EventJikkyouAplichi1;	// アプリっちの表示スプライト１
 		[SerializeField] private GameObject EventJikkyouAplichi2;	// アプリっちの表示スプライト２
-		[SerializeField] private Sprite[]	EventJikkyouImage;		// アプリっちの表示スプライトリスト（普通 = 0、ガイド = 1、喜び = 2、笑顔 = 3、驚き = 4、泣き = 5、普通２ = 6）
+		[SerializeField] private Sprite[]	EventJikkyouImage;		// アプリっちの表示スプライトリスト（普通 = 0、ガイド = 1、喜び = 2、笑顔 = 3、驚き = 4、泣き = 5、普通２ = 6、困る = 7）
 
 		[SerializeField] private GameObject	EventSoudanText;		// アピールタイトル表示テキスト
 
@@ -27,177 +27,211 @@ namespace Mix2App.MachiCon{
 
 		// 開始時	
 		private readonly string[] JikkyouMesType01 = new string[]{
-			"レディース エ～ンド ジェントルマン！\nようこそ たまキュン♥パーティへ！",
-			"すてきな であいのばしょ・・・\nたまキュン♥パーティへ ようこそ！",
-			"イエ～イ♪ はっぴ～か～い！\nたまキュン♥パーティはじまる よ！",
+			"レディース エ～ンド ジェントルマン！\nようこそ たまキュン♥パーティーへ！",
+			"すてきな であいのばしょ・・・\nたまキュン♥パーティーへ ようこそ！",
+			"イエ～イ♪ ハッピ～か～い！\nたまキュン♥パーティーはじまる よ！",
 		};
-		private int[] JikkyouImageType01 = new int[]{			// ガイド、ガイド、ガイド
-			1,1,1,
+		private JikkyouImageTable[] JikkyouImageType01 = new JikkyouImageTable[]{			// ガイド、ガイド、ガイド
+			JikkyouImageTable.GUIDE,
+			JikkyouImageTable.GUIDE,
+			JikkyouImageTable.GUIDE,
 		};
 		// 男の子１人目入場時
 		private readonly string[] JikkyouMesType02 = new string[]{
 			"カムヒア～！\nまずは このダンディから にゅうじょうだ！",
-			"さっそく\nステキなだんしを よんでみよう！",
+			"さっそく ステキなだんしを よんでみよう！",
 		};
-		private int[] JikkyouImageType02 = new int[]{			// 喜び、喜び
-			2,2,
+		private JikkyouImageTable[] JikkyouImageType02 = new JikkyouImageTable[]{			// 喜び、喜び
+			JikkyouImageTable.HAPPY,
+			JikkyouImageTable.HAPPY,
 		};
 		// 男の子２～４人目入場時
 		private readonly string[] JikkyouMesType03 = new string[]{
-			"おつぎは\nどんなイケメンボーイだい！？	",
+			"おつぎは どんなイケメンボーイだい！？",
 			"う～ん なかなかのステキオーラ！\nつぎいってみよう！",
 		};
-		private int[] JikkyouImageType03 = new int[]{			// 普通、笑顔
-			0,3,
+		private JikkyouImageTable[] JikkyouImageType03 = new JikkyouImageTable[]{			// 普通、笑顔
+			JikkyouImageTable.NORMAL,
+			JikkyouImageTable.SMILE,
 		};
 		// 女の子１人目入場時
 		private readonly string[] JikkyouMesType04 = new string[]{
-			"おつぎは\nかわいいプリンセスの とうじょう だ！",
+			"おつぎは かわいいプリンセスの とうじょう だ！",
 			"おまたせ！\nガールズのみなさん でばんですよ！",
 		};
-		private int[] JikkyouImageType04 = new int[]{			// 喜び、喜び
-			2,2,
+		private JikkyouImageTable[] JikkyouImageType04 = new JikkyouImageTable[]{			// 喜び、喜び
+			JikkyouImageTable.HAPPY,
+			JikkyouImageTable.HAPPY,
 		};
 		// 女の子２～４人目入場時
 		private readonly string[] JikkyouMesType05 = new string[]{
 			"キラキラかがやいてまぶしいねっ！\nつぎいってみよう！",
-			"きた～っ！\nかわゆい このこのにゅうじょう だ！",
+			"きた～っ！\nかわゆい このこのにゅうじょうだ！",
 		};
-		private int[] JikkyouImageType05 = new int[]{			// 笑顔、笑顔
-			3,3,
+		private JikkyouImageTable[] JikkyouImageType05 = new JikkyouImageTable[]{			// 笑顔、笑顔
+			JikkyouImageTable.SMILE,
+			JikkyouImageTable.SMILE,
 		};
 		// 全員入場
 		private readonly string[] JikkyouMesType06 = new string[]{
-			"このメンバーで\nたまキュン♥パーティのスタートだ！",
+			"このメンバーで たまキュン♥パーティーのスタートだ！",
 			"まずは そうだんタイムスタート！",
 		};
-		private int[] JikkyouImageType06 = new int[]{			// 喜び、ガイド
-			2,1,
+		private JikkyouImageTable[] JikkyouImageType06 = new JikkyouImageTable[]{			// 喜び、ガイド
+			JikkyouImageTable.HAPPY,
+			JikkyouImageTable.GUIDE,
 		};
 		// 相談待ち
 		private readonly string[] JikkyouMesType07 = new string[]{
-			"どんな そうだんを してるのかな？",
-			"だれに こくはくするか・・・\nみんな なやむよね！",
+			"どんなそうだんを してるのかな？",
+			"だれに こくはくするか・・・みんな なやむよね！",
 		};
-		private int[] JikkyouImageType07 = new int[]{			// 普通、普通
-			0,0,
+		private JikkyouImageTable[] JikkyouImageType07 = new JikkyouImageTable[]{			// 普通、普通
+			JikkyouImageTable.NORMAL,
+			JikkyouImageTable.NORMAL,
 		};
 		// アピールタイム開始時
 		private readonly string[] JikkyouMesType08 = new string[]{
-			"おまたせしました！\nアピールタ～イム！",
+			"おまたせしました！アピールタ～イム！",
 			"じゅんびはOK？\nアピールタイムのスタートだ！",
 		};
-		private int[] JikkyouImageType08 = new int[]{			// 喜び、笑顔
-			2,3,
+		private JikkyouImageTable[] JikkyouImageType08 = new JikkyouImageTable[]{			// 喜び、笑顔
+			JikkyouImageTable.HAPPY,
+			JikkyouImageTable.SMILE,
 		};
 		// アピールタイム中
 		private readonly string[] JikkyouMesType09 = new string[]{
 			"おーっと！\nきになる あのこに モーレツアピール！",
-			"なごやかな ふんいきに\nなってきました！",
+			"ステキなであいは ビビッ！とくるものです",
+			"さてさて\nステキなカップルが たんじょうするといいですね～",
+			"たまごっち しょくん！\nリラックス！リラックスですよ～",
+			"みんな どんなはなしで もりあがっているのでしょう！？\nわたくし わけもなくドキドキしております",
 		};
-		private int[] JikkyouImageType09 = new int[]{			// 驚き、笑顔
-			4,3,
+		private JikkyouImageTable[] JikkyouImageType09 = new JikkyouImageTable[]{			// 驚く、笑顔、喜ぶ、ガイド、困る
+			JikkyouImageTable.SURPRISE,
+			JikkyouImageTable.SMILE,
+			JikkyouImageTable.HAPPY,
+			JikkyouImageTable.GUIDE,
+			JikkyouImageTable.TROUBLE,
 		};
 		// 告白開始
 		private readonly string[] JikkyouMesType10 = new string[]{
-			"ゆうきを だして！\nこ～くは～くタ～イム！",
+			"ゆうきを だして！こ～くは～くタ～イム！",
 			"おまちかね！？\nドッキドキの こくはくタイム！",
 		};
-		private int[] JikkyouImageType10 = new int[]{			// 喜び、喜び
-			2,2,
+		private JikkyouImageTable[] JikkyouImageType10 = new JikkyouImageTable[]{			// 喜び、喜び
+			JikkyouImageTable.HAPPY,
+			JikkyouImageTable.HAPPY,
 		};
 		// キャラ告白後
 		private readonly string[] JikkyouMesType11 = new string[]{
 			"いったぁ～！\nこれぞ うんめいの しゅんかん！",
-			"このストレートなおもいは\nかのじょにとどくのか！？",
+			"このストレートなおもいは かのじょにとどくのか！？",
 		};
-		private int[] JikkyouImageType11 = new int[]{			// 笑顔、普通
-			3,0,
+		private JikkyouImageTable[] JikkyouImageType11 = new JikkyouImageTable[]{			// 笑顔、普通
+			JikkyouImageTable.SMILE,
+			JikkyouImageTable.NORMAL,
 		};
 		// ちょっとまった！後
 		private readonly string[] JikkyouMesType12 = new string[]{
-			"きたぁ～！！\nライバルの とうじょうだ！",
+			"きたぁ～！！ライバルの とうじょうだ！",
 			"ここでくるのか！\nこいの ゆくえはいかに！",
 		};
-		private int[] JikkyouImageType12 = new int[]{			// 驚き、驚き
-			4,4,
+		private JikkyouImageTable[] JikkyouImageType12 = new JikkyouImageTable[]{			// 驚き、驚き
+			JikkyouImageTable.SURPRISE,
+			JikkyouImageTable.SURPRISE,
 		};
 		// 告白成功後
 		private readonly string[] JikkyouMesType13 = new string[]{
-			"おめでとう！\nステキなカップルの たんじょうです！",
-			"なんと！\nまさかの こくはくOK これはよそうがい！",
+			"おめでとう！！\nステキなカップルの たんじょうです！",
+			"なんと！まさかの こくはくOK\nこれはよそうがい！",
 		};
-		private int[] JikkyouImageType13 = new int[]{			// 喜び、笑顔
-			2,3,
+		private JikkyouImageTable[] JikkyouImageType13 = new JikkyouImageTable[]{			// 喜び、笑顔
+			JikkyouImageTable.HAPPY,
+			JikkyouImageTable.SMILE,
 		};
 		// 告白失敗後
 		private readonly string[] JikkyouMesType14 = new string[]{
-			"あわわっ・・・\nこれは おどろき もものき さんしょのき！",
-			"ざんねん！\nおたがい よくがんばり ました！",
+			"あわわっ・・・これは おどろき もものき さんしょのき！",
+			"ざんねん！\nおたがい よくがんばりました！",
 		};
-		private int[] JikkyouImageType14 = new int[]{			// 驚き、泣き
-			4,5,
+		private JikkyouImageTable[] JikkyouImageType14 = new JikkyouImageTable[]{			// 驚き、泣き
+			JikkyouImageTable.SURPRISE,
+			JikkyouImageTable.CRY,
 		};
 		// お疲れ様
 		private readonly string[] JikkyouMesType15 = new string[]{
-			"またの おこしを おまちしてま～す！",
-			"ではまた おあいしましょう！\nアプリっちでした！",
+			"またのおこしを おまちしてま～す！",
+			"ではまた おあいしましょう！アプリっちでした！",
 		};
-		private int[] JikkyouImageType15 = new int[]{			// 笑顔、笑顔
-			3,3,
+		private JikkyouImageTable[] JikkyouImageType15 = new JikkyouImageTable[]{			// 笑顔、笑顔
+			JikkyouImageTable.SMILE,
+			JikkyouImageTable.SMILE,
 		};
 			
 		// 相談タイム用男の子みーつユーザー
 		private readonly string[] SoudanTimeMesManType01 = new string[] {
 			"このコが すきかもしれない（＋語尾）",
-			"このコに こくはくしたい（＋語尾）",
+			"このコが きになる（＋語尾）",
 			"このコを みているとドキドキする（＋語尾）",
 		};
 		// 相談タイム用女の子みーつユーザー
 		private readonly string[] SoudanTimeMesWomanType01 = new string[] {
-			"このかた わたしのことがすきかも（＋語尾）",
+			"きっと すきになる（＋語尾）",
 			"こくはくされたら どうする（＋語尾）",
-			"むねの たかまりが とまらない（＋語尾）",
+			"このコと なかよくしたい（＋語尾）",
 		};
 		// 相談タイム用男の子みーつユーザー以外
 		private readonly string[] SoudanTimeMesManType02 = new string[] {
-			"このコが きになりますか？",
-			"このコに こくはくしたいですか？",
-			"このコを みているとドキドキしますか",
+			"このコが きになる？",
+			"このコのこと どうおもう？",
+			"このコと なかよくしたい？",
 		};
 		// 相談タイム用女の子みーつユーザー以外
 		private readonly string[] SoudanTimeMesWomanType02 = new string[] {
-			"このコと なかよくしたいですか？",
-			"このコに こくはくしてほしいですか？",
-			"このコと カップルになれるといいですね",
+			"このコとなら なかよくできそう？",
+			"このコに こくはくしてほしい？",
+			"このコと カップルになれるといいね！",
 		};
 
 		// 告白宣言メッセージ
 		private readonly string[] KokuhakuAttackMesType01 = new string[] {
-			"すき（＋語尾） けっこんして（＋語尾）",
-			"ひとめぼれ（＋語尾） けっこんして（＋語尾）",
-			"もうあなたしかかんがえられない（＋語尾）",
-			"ぜったいしあわせにする（＋語尾）",
+			"すきです！けっこんしたい（＋語尾）",
+			"ひとめぼれ・・・けっこんしたい（＋語尾）",
+			"もう あなたしかいない（＋語尾）",
+			"しあわせにすると やくそくする（＋語尾）",
 			"いっしょになってほしい（＋語尾）",
 		};
 
 		// 告白受諾メッセージ
 		private readonly string[] KokuhakuReturnMesType01 = new string[]{
-			"ありがとう・・・（＋語尾）",
-			"こちらこそおねがいします（＋語尾）",
-			"わたしもだいすき（＋語尾）",
-			"なかよくしてください（＋語尾）",
-			"すこしかんげきしちゃった（＋語尾）",
+			"わたしも いっしょにいたい（＋語尾）",
+			"むねのドキドキが とまらない（＋語尾）",
+			"わたしも けっこんしたい（＋語尾）",
+			"なかよくしてほしい（＋語尾）",
+			"かんげきしちゃった（＋語尾）",
 		};
 		// 告白拒否メッセージ
 		private readonly string[] KokuhakuReturnMesType02 = new string[]{
-			"ごめんなさい・・・（＋語尾）",
-			"ほかにすきなひとがいるの（＋語尾）",
-			"すこしかんがえさせてください（＋語尾）",
-			"おともだちでいましょう（＋語尾）",
-			"ほんとうにごめんなさい（＋語尾）",
+			"あきらめてほしい（＋語尾）",
+			"ほかに すきなひとがいる（＋語尾）",
+			"すこし かんがえたい（＋語尾）",
+			"おともだちならいい（＋語尾）",
+			"あなたと けっこんできない（＋語尾）",
 		};
 
+
+		private enum JikkyouImageTable{
+			NORMAL,					// 普通
+			GUIDE,					// ガイド
+			HAPPY,					// 喜び
+			SMILE,					// 笑顔
+			SURPRISE,				// 驚き
+			CRY,					// 泣き
+			TROUBLE,				// 困る
+
+			NORMAL2,				// 普通２
+		};
 
 		public enum JikkyouMesTable{
 			JikkyouMesDisp01,		// 開始時
@@ -248,7 +282,7 @@ namespace Mix2App.MachiCon{
 
 
 
-		private int jikkyouCharaAnimeNumber;
+		private JikkyouImageTable jikkyouCharaAnimeNumber;
 		private float countTime1;
 		private int countTime2;
 		void Update(){
@@ -260,8 +294,9 @@ namespace Mix2App.MachiCon{
 			}
 
 			switch (jikkyouCharaAnimeNumber) {
-			case	0:
-				{
+			case	JikkyouImageTable.NORMAL:
+			case	JikkyouImageTable.NORMAL2:
+				{	// 普通
 					if ((countTime2 & 1) != 0) {
 						EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [0];
 						EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [0];
@@ -271,36 +306,43 @@ namespace Mix2App.MachiCon{
 					}
 					break;
 				}
-			case	1:
-				{
+			case	JikkyouImageTable.GUIDE:
+				{	// ガイド
 					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [1];
 					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [1];
 					break;
 				}
-			case	2:
-				{
+			case	JikkyouImageTable.HAPPY:
+				{	// 喜び
 					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [2];
 					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [2];
 					break;
 				}
-			case	3:
-				{
+			case	JikkyouImageTable.SMILE:
+				{	// 笑顔
 					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [3];
 					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [3];
 					break;
 				}
-			case	4:
-				{
+			case	JikkyouImageTable.SURPRISE:
+				{	// 驚き
 					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [4];
 					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [4];
 					break;
 				}
-			case	5:
-				{
+			case	JikkyouImageTable.CRY:
+				{	// 泣き
 					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [5];
 					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [5];
 					break;
 				}
+			case	JikkyouImageTable.TROUBLE:
+				{	// 困る
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [7];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [7];
+					break;
+				}
+					
 			}
 		}	
 

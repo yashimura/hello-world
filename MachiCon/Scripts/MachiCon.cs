@@ -15,9 +15,6 @@ using Mix2App.Lib.Net;
 
 namespace Mix2App.MachiCon{
 	public class MachiCon : MonoBehaviour,IReceiver {
-
-//		public ManagerObject manager;//ライブラリ
-
 		[SerializeField] private Message	MesDisp;						// メッセージ関連
 		[SerializeField] private GameObject EventCurtain;					// カーテン
 		[SerializeField] private GameObject EventTitle;						// たまキュンパーティータイトル
@@ -190,6 +187,11 @@ namespace Mix2App.MachiCon{
 			muser1=null;
 			muser2=null;
 			maskdatas = new AskData[3];
+			for (int i = 0; i < maskdatas.Length; i++) {
+				maskdatas [i].askIndex = 0;
+				maskdatas [i].askUid = 0;
+				maskdatas [i].result = 2;
+			}
 		}
 
 		public void receive(params object[] parameter){
@@ -210,7 +212,6 @@ namespace Mix2App.MachiCon{
 			//パラメタは設計書参照
 			GameCall call = new GameCall(CallLabel.GET_ROOM_INFO);
 			call.AddListener(mgetroominf);
-//			manager.connect.send(call);
 			ManagerObject.instance.connect.send(call);
 
 		}
@@ -223,14 +224,15 @@ namespace Mix2App.MachiCon{
 			StartCoroutine(mstart());
 		}
 
+		private PartyResultData prdata;
 		void mgetroomres(bool success,object data)
 		{
 			mresult=true;
 			// dataの内容は設計書参照
 			// dataを変更したいときはConnectManagerDriverのGetRoomResult()を変更する
-			PartyResultData prdata = (PartyResultData)data;
-			loveManWoman = prdata.fixs;
-			loveManWomanFix = prdata.loves;
+			prdata = (PartyResultData)data;
+			loveManWoman = prdata.loves;
+			loveManWomanFix = prdata.fixs;
 		}
 
 		IEnumerator mstart()
@@ -631,6 +633,7 @@ namespace Mix2App.MachiCon{
 							CharaTamagochi [i].transform.Find ("fukidashi/message").gameObject.SetActive (false);
 						}
 						waitTime = 900;
+//						waitTime = 9000;
 					}
 					break;
 				}
@@ -669,7 +672,6 @@ namespace Mix2App.MachiCon{
 						//TODO masklistは現在何も反映していないので適宜設定を
 						GameCall call = new GameCall(CallLabel.GET_ROOM_RESULT,maskdatas);
 						call.AddListener(mgetroomres);
-//						manager.connect.send(call);
 						ManagerObject.instance.connect.send(call);
 					}
 					break;
@@ -764,16 +766,13 @@ namespace Mix2App.MachiCon{
 						if (playerResultFlag) {
 							Debug.Log ("結婚イベントへ・・・");
 							if (muser1.utype == UserType.MIX2) {
-//								manager.view.change ("Marriage", mkind, muser1, mkind1, muser2, mkind2);
 								ManagerObject.instance.view.change("Marriage",mkind,muser1,mkind1,muser2,mkind2);
 							} else {
 								Debug.Log ("みーつユーザー以外なので、デートイベントへ後で変更すること");
-//								manager.view.change ("Marriage", mkind, muser1, mkind1, muser2, mkind2);
 								ManagerObject.instance.view.change("Marriage",mkind,muser1,mkind1,muser2,mkind2);
 							}
 						} else {
 							Debug.Log ("たまタウンへ・・・");
-//							manager.view.change("Town");
 							ManagerObject.instance.view.change("Town");
 						}
 
@@ -1892,6 +1891,10 @@ tamagochiIdouInitLoop:
 					break;
 				}
 			}
+
+			maskdatas [sceneNumber].askIndex = targetNumber;							// 相談相手ののメンバーindex(0～7)
+			maskdatas [sceneNumber].askUid = mpdata.members [targetNumber].user.id;		// 相談相手のユーザーID
+			maskdatas [sceneNumber].result = 2;											// 相談返答 時間切れ:2
 		}
 
 		// flag:表示フラグ（true:表示、false:非表示）
@@ -2997,6 +3000,19 @@ tamagochiIdouInitLoop:
 				}
 			}
 			loveManWoman [manNumber, womanNumber] += Num;
+
+
+
+			int _result;
+			if (Num == 10) {
+				_result = 1;
+			} else {
+				_result = 0;
+			}
+
+			maskdatas [sceneNumber].askIndex = targetNumber;							// 相談相手ののメンバーindex(0～7)
+			maskdatas [sceneNumber].askUid = mpdata.members [targetNumber].user.id;		// 相談相手のユーザーID
+			maskdatas [sceneNumber].result = _result;									// 相談返答 はい:1、いいえ:0
 		}
 	}
 }

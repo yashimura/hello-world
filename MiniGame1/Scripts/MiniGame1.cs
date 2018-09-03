@@ -33,6 +33,7 @@ namespace Mix2App.MiniGame1{
 		[SerializeField] private GameObject ButtonTakuhai;					// アイテム入手 宅配ボタン
 		[SerializeField] private GameObject ButtonTojiru;					// アイテム入手 閉じるボタン
 		[SerializeField] private GameObject ButtonModoru;					// 結果 戻るボタン
+		[SerializeField] private GameObject ButtonHelpModoru;				// 遊び方説明画面 戻るボタン
 
 		[SerializeField] private GameObject baseSizePanel;
 
@@ -51,6 +52,10 @@ namespace Mix2App.MiniGame1{
 		};
 		private bool startEndFlag = false;
 		private int waitCount = 0;
+		private int nowScore;													// 得点
+		private float nowTime1;													// 残り時間（カウントダウン用）
+		private int	nowTime2;													// 残り時間（制限時間）
+
 		private int charaAnimeFlag = 0;										// 0:idel,1:r-idou,2:l-idou
 		private int itemIdouFlag = 0;										// 0;init,1:d-idou,2:
 		private int itemGetNumber = 0;
@@ -139,6 +144,7 @@ namespace Mix2App.MiniGame1{
 			ButtonStart.GetComponent<Button> ().onClick.AddListener (ButtonStartClick);
 			ButtonClose.GetComponent<Button> ().onClick.AddListener (ButtonCloseClick);
 			ButtonHelp.GetComponent<Button> ().onClick.AddListener (ButtonHelpClick);
+			ButtonHelpModoru.GetComponent<Button> ().onClick.AddListener (ButtonHelpModoruClick);
 			ButtonYameru.GetComponent<Button> ().onClick.AddListener (ButtonYameruClick);
 			ButtonTakuhai.GetComponent<Button> ().onClick.AddListener (ButtonTakuhaiClick);
 			ButtonTojiru.GetComponent<Button> ().onClick.AddListener (ButtonTojiruClick);
@@ -190,6 +196,9 @@ namespace Mix2App.MiniGame1{
 						EventTitle.SetActive (true);
 						jobCount = statusJobCount.minigame1JobCount010;
 						TamagoCharaPositionInit ();
+						nowScore = 0;
+						nowTime1 = 0.0f;
+						nowTime2 = 50;									// 制限時間
 					}
 					break;
 				}
@@ -263,13 +272,13 @@ namespace Mix2App.MiniGame1{
 						for (int i = 0; i < 3; i++) {
 							cbCharaTamago [i].gotoAndPlay ("idle");
 						}
-						TamagoAnimeSprite (EventResult);							// たまごっちのアニメをImage,SpriteRendererに反映する
+						TamagoAnimeSprite2 (EventResult);							// たまごっちのアニメをImage,SpriteRendererに反映する
 					}
 					break;
 				}
 			case statusJobCount.minigame1JobCount070:
 				{
-					TamagoAnimeSprite (EventResult);								// たまごっちのアニメをImage,SpriteRendererに反映する
+					TamagoAnimeSprite2 (EventResult);								// たまごっちのアニメをImage,SpriteRendererに反映する
 							
 					if (ResultMainLoop ()) {										// 結果画面処理
 						jobCount = statusJobCount.minigame1JobCount000;
@@ -305,9 +314,15 @@ namespace Mix2App.MiniGame1{
 
 		private void ButtonCloseClick(){
 			Debug.Log ("たまタウンへ・・・");
+			ManagerObject.instance.view.change("Town");
 		}
 
 		private void ButtonHelpClick(){
+			EventHelp.SetActive (true);
+		}
+
+		private void ButtonHelpModoruClick(){
+			EventHelp.SetActive (false);
 		}
 
 		private void ButtonYameruClick(){
@@ -315,6 +330,7 @@ namespace Mix2App.MiniGame1{
 		}
 
 		private void ButtonTakuhaiClick(){
+			Debug.Log ("宅配サービスへ・・・");
 		}
 
 		private void ButtonTojiruClick(){
@@ -331,7 +347,11 @@ namespace Mix2App.MiniGame1{
 			obj.transform.Find ("chara2").gameObject.GetComponent<Image> ().sprite = CharaTamago [1].GetComponent<SpriteRenderer> ().sprite;
 			obj.transform.Find ("chara3").gameObject.GetComponent<Image> ().sprite = CharaTamago [2].GetComponent<SpriteRenderer> ().sprite;
 		}
-			
+		private void TamagoAnimeSprite2(GameObject obj){
+			obj.transform.Find ("chara").gameObject.GetComponent<Image> ().sprite = CharaTamago [0].GetComponent<SpriteRenderer> ().sprite;
+			obj.transform.Find ("chara2").gameObject.GetComponent<Image> ().sprite = CharaTamago [1].GetComponent<SpriteRenderer> ().sprite;
+			obj.transform.Find ("chara3").gameObject.GetComponent<Image> ().sprite = CharaTamago [2].GetComponent<SpriteRenderer> ().sprite;
+		}
 
 
 		// ゲームメイン初期化
@@ -491,6 +511,8 @@ namespace Mix2App.MiniGame1{
 						posScore.y = pos.y + 10.0f;
 						scoreYIdouNumber = scoreYIdouTable.Length;
 						scoreObj.GetComponent<Text> ().text = gameitem.Score.ToString ();
+
+						nowScore += gameitem.Score;
 //						pgGameCore.GameScoreSet (gameitem.Score);
 
 						itemIdouFlag = 0;
@@ -531,6 +553,23 @@ namespace Mix2App.MiniGame1{
 
 			itemObj.transform.localPosition = posItem;								// 落下アイテムの座標を設定
 			scoreObj.transform.localPosition = posScore;							// スコア表示の座標を設定
+
+			nowTime1 += 1.0f * Time.deltaTime;
+			if (nowTime1 >= 1.0f) {
+				nowTime1 -= 1.0f;
+				if (nowTime2 == 0) {
+					gameMainLoopFlag = true;
+				} else {
+					nowTime2--;
+				}
+			}
+
+			EventGame.transform.Find ("points/Text").gameObject.GetComponent<Text> ().text = nowScore.ToString ();
+			EventResult.transform.Find ("points/Text").gameObject.GetComponent<Text> ().text = nowScore.ToString ();
+			EventGame.transform.Find ("timer/Text").gameObject.GetComponent<Text> ().text = nowTime2.ToString ();
+
+
+
 
 			return gameMainLoopFlag;
 		}
@@ -634,6 +673,10 @@ namespace Mix2App.MiniGame1{
 				{
 					if (ResultWaitTimeSubLoop ()) {															// スコアなどを見せる
 						resultLoopCount = statusResult.resultJobCount040;
+						if (nowScore < 50) {
+							resultItemGetFlag = true;														// ５０点未満ならアイテム入手できないのでそのまま終了
+							resultLoopCount = statusResult.resultJobCount090;
+						}
 					}
 					break;
 				}
@@ -733,7 +776,7 @@ namespace Mix2App.MiniGame1{
 			new Vector2 (   0.0f, -227.0f),		// ゲーム画面のプレイヤーキャラの初期位置
 			new Vector2 (-235.0f, -124.0f),		// ゲーム画面の応援キャラ１の初期位置
 			new Vector2 ( 236.0f,  -97.0f),		// ゲーム画面の応援キャラ２の初期位置
-			new Vector2 (  60.0f, -230.0f),		// 結果画面のプレイヤーキャラの初期位置
+			new Vector2 (  60.0f, -175.0f),		// 結果画面のプレイヤーキャラの初期位置
 			new Vector2 (-202.0f, -175.0f),		// 結果画面の応援キャラ１の初期位置
 			new Vector2 ( -88.0f, -175.0f),		// 結果画面の応援キャラ２の初期位置
 			new Vector2 (   0.0f,  420.0f),		// 結果画面の宝箱の初期位置

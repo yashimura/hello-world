@@ -38,13 +38,13 @@ namespace Mix2App.MarriageDate{
 
 
 	
-		private readonly string[] manMessageTable = new string[]{
-			"きょうはありがとう（＋語尾）",
-			"またあそぼう（＋語尾）",
+		private readonly string[] manMessageTable = new string[]{		// 男の子のメッセージ
+			"またいっしょに\nあそんでほしい（＋語尾）",
+			"また あいたい（＋語尾）",
 		};
-		private readonly string[] womanMessageTable = new string[]{
-			"これからもよろしく（＋語尾）",
-			"たのしかった（＋語尾）",
+		private readonly string[] womanMessageTable = new string[]{		// 女の子のメッセージ
+			"これからも\nなかよくしたい（＋語尾）",
+			"さそってくれて\nうれしかった（＋語尾）",
 		};
 
 
@@ -368,8 +368,16 @@ namespace Mix2App.MarriageDate{
 		}
 
 		private void EventEndMessageSet(){
-			man_text.GetComponent<Text> ().text = manMessageTable [Random.Range (0, manMessageTable.Length)].Replace ("（＋語尾）", muser1.chara1.wend);
-			woman_text.GetComponent<Text> ().text = womanMessageTable [Random.Range (0, womanMessageTable.Length)].Replace ("（＋語尾）", muser2.chara1.wend);
+			if (mkind1 == 0) {
+				man_text.GetComponent<Text> ().text = manMessageTable [Random.Range (0, manMessageTable.Length)].Replace ("（＋語尾）", muser1.chara1.wend);
+			} else {
+				man_text.GetComponent<Text> ().text = manMessageTable [Random.Range (0, manMessageTable.Length)].Replace ("（＋語尾）", muser1.chara2.wend);
+			}
+			if (mkind2 == 0) {
+				woman_text.GetComponent<Text> ().text = womanMessageTable [Random.Range (0, womanMessageTable.Length)].Replace ("（＋語尾）", muser2.chara1.wend);
+			} else {
+				woman_text.GetComponent<Text> ().text = womanMessageTable [Random.Range (0, womanMessageTable.Length)].Replace ("（＋語尾）", muser2.chara2.wend);
+			}
 		}
 
 		private void TamagochiAnimeRandomChenge(CharaBehaviour cb){
