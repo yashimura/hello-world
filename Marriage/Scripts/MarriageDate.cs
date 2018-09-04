@@ -294,11 +294,11 @@ namespace Mix2App.MarriageDate{
 						}
 					} else {
 						if (screenModeFlag) {
-							posMan1.y = (man_sit.transform.localPosition.y / 47.0f) + 0.5f - 1.0f;
-							posWoman1.y = (man_sit.transform.localPosition.y / 47.0f) + 0.5f - 1.0f;
+							posMan1.y = (man_sit.transform.localPosition.y / 47.0f) - 0.5f;
+							posWoman1.y = (man_sit.transform.localPosition.y / 47.0f) - 0.5f;
 						} else {
-							posMan1.y = (man_sit.transform.localPosition.y / 43.7f) + 0.5f - 1.0f;
-							posWoman1.y = (man_sit.transform.localPosition.y / 43.7f) + 0.5f - 1.0f;
+							posMan1.y = (man_sit.transform.localPosition.y / 43.7f) - 0.5f;
+							posWoman1.y = (man_sit.transform.localPosition.y / 43.7f) - 0.5f;
 						}
 					}
 					break;
@@ -306,8 +306,8 @@ namespace Mix2App.MarriageDate{
 			case	statusJobCount.marriageJobCount050:
 				{
 					if ((manXposition == man_walk3.transform.localPosition.x) && (womanXposition == woman_walk3.transform.localPosition.x)) {
-						posMan1.y = (EventEnd.transform.Find("bg1").gameObject.transform.localPosition.y / 47.0f) + 1.7f - 1.0f;
-						posWoman1.y = (EventEnd.transform.Find("bg1").gameObject.transform.localPosition.y / 47.0f) + 1.7f - 1.0f;
+						posMan1.y = (EventEnd.transform.Find("bg1").gameObject.transform.localPosition.y / 47.0f) + 0.7f;
+						posWoman1.y = (EventEnd.transform.Find("bg1").gameObject.transform.localPosition.y / 47.0f) + 0.7f;
 						posMan1.x = 2.0f;
 						posWoman1.x = -2.0f;
 					} else {
@@ -368,16 +368,22 @@ namespace Mix2App.MarriageDate{
 		}
 
 		private void EventEndMessageSet(){
+			string _gobiMan, _gobiWoman;
+
 			if (mkind1 == 0) {
-				man_text.GetComponent<Text> ().text = manMessageTable [Random.Range (0, manMessageTable.Length)].Replace ("（＋語尾）", muser1.chara1.wend);
+				_gobiMan = muser1.chara1.wend;
 			} else {
-				man_text.GetComponent<Text> ().text = manMessageTable [Random.Range (0, manMessageTable.Length)].Replace ("（＋語尾）", muser1.chara2.wend);
+				_gobiMan = muser1.chara2.wend;
 			}
+
 			if (mkind2 == 0) {
-				woman_text.GetComponent<Text> ().text = womanMessageTable [Random.Range (0, womanMessageTable.Length)].Replace ("（＋語尾）", muser2.chara1.wend);
+				_gobiWoman = muser2.chara1.wend;
 			} else {
-				woman_text.GetComponent<Text> ().text = womanMessageTable [Random.Range (0, womanMessageTable.Length)].Replace ("（＋語尾）", muser2.chara2.wend);
+				_gobiWoman = muser2.chara2.wend;
 			}
+
+			man_text.GetComponent<Text> ().text = manMessageTable [Random.Range (0, manMessageTable.Length)].Replace ("（＋語尾）", _gobiMan);
+			woman_text.GetComponent<Text> ().text = womanMessageTable [Random.Range (0, womanMessageTable.Length)].Replace ("（＋語尾）", _gobiWoman);
 		}
 
 		private void TamagochiAnimeRandomChenge(CharaBehaviour cb){

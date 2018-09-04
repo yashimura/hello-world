@@ -209,10 +209,23 @@ namespace Mix2App.Marriage{
 			if (muser1.pet!=null) yield return pbPet1.init (muser1.pet);
 			if (muser2.pet!=null) yield return pbPet2.init (muser2.pet);
 
-			// 男の子に双子がいなければ、cbMan2.SetActive(false);
-			// 女の子に双子がいなければ、cbWoman2.SetActive(false);
-			// 男の子にペットがいなければ、pbPet1.SetActive(false);
-			// 女の子にペットがいなければ、pbPet2.SeteActive(false);
+
+
+
+			if ((mkind1 == 0) && (muser1.chara2 == null)) {
+				manChara2.transform.localScale = new Vector3 (0, 0, 0);		// 男の子の親族は出席しないので表示を消す。
+			}
+			if ((mkind2 == 0) && (muser2.chara2 == null)) {
+				womanChara2.transform.localScale = new Vector3 (0, 0, 0);	// 女の子の親族は出席しないので表示を消す。
+			}
+			if (muser1.pet == null) {
+				petChara1.transform.localScale = new Vector3 (0, 0, 0);		// 男の子のペットは出席しないので表示を消す。
+			}
+			if (muser2.pet == null) {
+				petChara2.transform.localScale = new Vector3 (0, 0, 0);		// 女の子のペットは出席しないので表示を消す。
+			}
+
+
 
 			startEndFlag = true;
 		}

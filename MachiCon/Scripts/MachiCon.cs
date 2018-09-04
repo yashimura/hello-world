@@ -651,9 +651,9 @@ namespace Mix2App.MachiCon{
 						if (sceneNumber < 3) {
 							buttonFlag = false;
 							EventSoudan.SetActive (false);
-							jobCount = statusJobCount.machiconJobCount120;
+							jobCount = statusJobCount.machiconJobCount120;						// アピールタイム再開
 						} else {
-							jobCount = statusJobCount.machiconJobCount240;
+							jobCount = statusJobCount.machiconJobCount240;						// アピールタイム終了
 						}
 						TamagochiFukidashiOff ();
 					}
@@ -1277,7 +1277,7 @@ namespace Mix2App.MachiCon{
 
 			EventAppealTableHeartClear ();												// テーブルハートを消しておく
 
-			if (appealTimeCounter >= 80) {
+			if (appealTimeCounter >= 0) {
 				float[] _posY = new float[12];
 
 				for (int i = 0; i < 8; i++) {
@@ -1414,7 +1414,6 @@ namespace Mix2App.MachiCon{
 			}
 		}
 
-//9000
 		private int[] tamagoHitPositionTable = new int[8];
 		private void TamagochiTableHitcheck(int num){
 			for(int i = 0;i < 4;i++){
@@ -1446,7 +1445,7 @@ namespace Mix2App.MachiCon{
 				}
 			}
 		}
-//9000
+
 		// たまごっち同士の当たり判定
 		private void TamagoHitCheck(int num){
 			for (int num2 = 0; num2 < 8; num2++) {
