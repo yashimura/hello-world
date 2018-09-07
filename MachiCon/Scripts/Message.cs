@@ -27,9 +27,9 @@ namespace Mix2App.MachiCon{
 
 		// 開始時	
 		private readonly string[] JikkyouMesType01 = new string[]{
-			"レディース エ～ンド ジェントルマン！\nようこそ たまキュン♥パーティーへ！",
-			"すてきな であいのばしょ・・・\nたまキュン♥パーティーへ ようこそ！",
-			"イエ～イ♪ ハッピ～か～い！\nたまキュン♥パーティーはじまる よ！",
+			"レディース エ～ンド ジェントルマン！\nようこそ たまキュン♥パーティーへ！ しんこうのアプリっちぷり～！",
+			"すてきな であいのばしょ・・・\nたまキュン♥パーティーへ ようこそぷり！",
+			"イエ～イ♪ ハッピ～ぷり～？\nたまキュン♥パーティーはじまるぷり！",
 		};
 		private JikkyouImageTable[] JikkyouImageType01 = new JikkyouImageTable[]{			// ガイド、ガイド、ガイド
 			JikkyouImageTable.GUIDE,
@@ -38,8 +38,8 @@ namespace Mix2App.MachiCon{
 		};
 		// 男の子１人目入場時
 		private readonly string[] JikkyouMesType02 = new string[]{
-			"カムヒア～！\nまずは このダンディから にゅうじょうだ！",
-			"さっそく ステキなだんしを よんでみよう！",
+			"カモ～ン！\nまずは このさわやかたまごっちから にゅうじょうぷり！",
+			"さっそく ステキなだんしを よんでみようぷり！",
 		};
 		private JikkyouImageTable[] JikkyouImageType02 = new JikkyouImageTable[]{			// 喜び、喜び
 			JikkyouImageTable.HAPPY,
@@ -47,8 +47,8 @@ namespace Mix2App.MachiCon{
 		};
 		// 男の子２～４人目入場時
 		private readonly string[] JikkyouMesType03 = new string[]{
-			"おつぎは どんなイケメンボーイだい！？",
-			"う～ん なかなかのステキオーラ！\nつぎいってみよう！",
+			"おつぎは どんなイケメンボーイぷり！？",
+			"う～ん なかなかのステキオーラ！\nつぎいってみようぷり！",
 		};
 		private JikkyouImageTable[] JikkyouImageType03 = new JikkyouImageTable[]{			// 普通、笑顔
 			JikkyouImageTable.NORMAL,
@@ -56,8 +56,8 @@ namespace Mix2App.MachiCon{
 		};
 		// 女の子１人目入場時
 		private readonly string[] JikkyouMesType04 = new string[]{
-			"おつぎは かわいいプリンセスの とうじょう だ！",
-			"おまたせ！\nガールズのみなさん でばんですよ！",
+			"おつぎは かわいいぷりぷりプリンセスの とうじょうぷり！",
+			"おまたせ！\nガールズのみなさん でばんぷり～！",
 		};
 		private JikkyouImageTable[] JikkyouImageType04 = new JikkyouImageTable[]{			// 喜び、喜び
 			JikkyouImageTable.HAPPY,
@@ -65,8 +65,8 @@ namespace Mix2App.MachiCon{
 		};
 		// 女の子２～４人目入場時
 		private readonly string[] JikkyouMesType05 = new string[]{
-			"キラキラかがやいてまぶしいねっ！\nつぎいってみよう！",
-			"きた～っ！\nかわゆい このこのにゅうじょうだ！",
+			"キラキラかがやいてまぶしいぷりっ！\nつぎいってみようぷり！",
+			"きた～っ！\nかわゆい このこのにゅうじょうぷり！",
 		};
 		private JikkyouImageTable[] JikkyouImageType05 = new JikkyouImageTable[]{			// 笑顔、笑顔
 			JikkyouImageTable.SMILE,
@@ -74,8 +74,8 @@ namespace Mix2App.MachiCon{
 		};
 		// 全員入場
 		private readonly string[] JikkyouMesType06 = new string[]{
-			"このメンバーで たまキュン♥パーティーのスタートだ！",
-			"まずは そうだんタイムスタート！",
+			"このメンバーで たまキュン♥パーティーのスタートぷり！",
+			"まずは そうだんタイムスタートぷり！",
 		};
 		private JikkyouImageTable[] JikkyouImageType06 = new JikkyouImageTable[]{			// 喜び、ガイド
 			JikkyouImageTable.HAPPY,
@@ -83,8 +83,8 @@ namespace Mix2App.MachiCon{
 		};
 		// 相談待ち
 		private readonly string[] JikkyouMesType07 = new string[]{
-			"どんなそうだんを してるのかな？",
-			"だれに こくはくするか・・・みんな なやむよね！",
+			"どんな そうだんを してるのぷり？",
+			"だれに こくはくするか・・・みんな なやんでるぷり？",
 		};
 		private JikkyouImageTable[] JikkyouImageType07 = new JikkyouImageTable[]{			// 普通、普通
 			JikkyouImageTable.NORMAL,
@@ -92,8 +92,8 @@ namespace Mix2App.MachiCon{
 		};
 		// アピールタイム開始時
 		private readonly string[] JikkyouMesType08 = new string[]{
-			"おまたせしました！アピールタ～イム！",
-			"じゅんびはOK？\nアピールタイムのスタートだ！",
+			"おまたせぷり！アピールタ～イムぷり～！",
+			"じゅんびはOKぷり？\nアピールタイムのスタートぷり～！",
 		};
 		private JikkyouImageTable[] JikkyouImageType08 = new JikkyouImageTable[]{			// 喜び、笑顔
 			JikkyouImageTable.HAPPY,
@@ -101,11 +101,11 @@ namespace Mix2App.MachiCon{
 		};
 		// アピールタイム中
 		private readonly string[] JikkyouMesType09 = new string[]{
-			"おーっと！\nきになる あのこに モーレツアピール！",
-			"ステキなであいは ビビッ！とくるものです",
-			"さてさて\nステキなカップルが たんじょうするといいですね～",
-			"たまごっち しょくん！\nリラックス！リラックスですよ～",
-			"みんな どんなはなしで もりあがっているのでしょう！？\nわたくし わけもなくドキドキしております",
+			"おーっと！\nきになる あのこに モーレツアピールぷり！",
+			"ステキなであいは ビビッ！とくるものぷり～",
+			"さてさて\nステキなカップルが たんじょうするといいぷり♥～",
+			"パーティーさんかのみなさ～ん！\nリラックス！リラックスぷり～",
+			"みんな どんなはなしで もりあがってるぷり～！？\nわたくし わけもなくドキドキしちゃってるぷり！",
 		};
 		private JikkyouImageTable[] JikkyouImageType09 = new JikkyouImageTable[]{			// 驚く、笑顔、喜ぶ、ガイド、困る
 			JikkyouImageTable.SURPRISE,
@@ -116,8 +116,8 @@ namespace Mix2App.MachiCon{
 		};
 		// 告白開始
 		private readonly string[] JikkyouMesType10 = new string[]{
-			"ゆうきを だして！こ～くは～くタ～イム！",
-			"おまちかね！？\nドッキドキの こくはくタイム！",
+			"ゆうきを だして！こ～くは～くタ～イムぷり～！",
+			"おまちかね！？\nドッキドキの こくはくタイムぷり～！",
 		};
 		private JikkyouImageTable[] JikkyouImageType10 = new JikkyouImageTable[]{			// 喜び、喜び
 			JikkyouImageTable.HAPPY,
@@ -125,8 +125,8 @@ namespace Mix2App.MachiCon{
 		};
 		// キャラ告白後
 		private readonly string[] JikkyouMesType11 = new string[]{
-			"いったぁ～！\nこれぞ うんめいの しゅんかん！",
-			"このストレートなおもいは かのじょにとどくのか！？",
+			"いったぁ～！\nこれぞ うんめいの しゅんかんぷり！",
+			"このストレートなおもいは かのじょにとどくぷり！？",
 		};
 		private JikkyouImageTable[] JikkyouImageType11 = new JikkyouImageTable[]{			// 笑顔、普通
 			JikkyouImageTable.SMILE,
@@ -134,8 +134,8 @@ namespace Mix2App.MachiCon{
 		};
 		// ちょっとまった！後
 		private readonly string[] JikkyouMesType12 = new string[]{
-			"きたぁ～！！ライバルの とうじょうだ！",
-			"ここでくるのか！\nこいの ゆくえはいかに！",
+			"きたぁ～！！ライバルの とうじょうぷり！",
+			"ここでくるぷり？\nこいの ゆくえはいかに～！",
 		};
 		private JikkyouImageTable[] JikkyouImageType12 = new JikkyouImageTable[]{			// 驚き、驚き
 			JikkyouImageTable.SURPRISE,
@@ -143,8 +143,8 @@ namespace Mix2App.MachiCon{
 		};
 		// 告白成功後
 		private readonly string[] JikkyouMesType13 = new string[]{
-			"おめでとう！！\nステキなカップルの たんじょうです！",
-			"なんと！まさかの こくはくOK\nこれはよそうがい！",
+			"おめでとう！\nステキなカップルの たんじょうぷり！",
+			"なんと！まさかの こくはくOKぷり！\nこれはよそうがいぷり～！",
 		};
 		private JikkyouImageTable[] JikkyouImageType13 = new JikkyouImageTable[]{			// 喜び、笑顔
 			JikkyouImageTable.HAPPY,
@@ -152,8 +152,8 @@ namespace Mix2App.MachiCon{
 		};
 		// 告白失敗後
 		private readonly string[] JikkyouMesType14 = new string[]{
-			"あわわっ・・・これは おどろき もものき さんしょのき！",
-			"ざんねん！\nおたがい よくがんばりました！",
+			"あわわっ・・・\nこれは ビックリぷりぷりぷり～！",
+			"ざんねん！\nおたがい よくがんばったぷり！",
 		};
 		private JikkyouImageTable[] JikkyouImageType14 = new JikkyouImageTable[]{			// 驚き、泣き
 			JikkyouImageTable.SURPRISE,
@@ -161,8 +161,8 @@ namespace Mix2App.MachiCon{
 		};
 		// お疲れ様
 		private readonly string[] JikkyouMesType15 = new string[]{
-			"またのおこしを おまちしてま～す！",
-			"ではまた おあいしましょう！アプリっちでした！",
+			"またのおこしを おまちしてますぷり～！",
+			"ではまた おあいしましょうぷり～！",
 		};
 		private JikkyouImageTable[] JikkyouImageType15 = new JikkyouImageTable[]{			// 笑顔、笑顔
 			JikkyouImageTable.SMILE,
@@ -342,7 +342,6 @@ namespace Mix2App.MachiCon{
 					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [7];
 					break;
 				}
-					
 			}
 		}	
 
@@ -354,8 +353,7 @@ namespace Mix2App.MachiCon{
 
 			switch (flag) {
 			case	JikkyouMesTable.JikkyouMesDisp01:
-				{
-					// 開始時	
+				{	// 開始時	
 					randNum = Random.Range (0, JikkyouMesType01.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType01 [randNum];
 
@@ -363,8 +361,7 @@ namespace Mix2App.MachiCon{
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp02:
-				{
-					// 男の子１人目入場時
+				{	// 男の子１人目入場時
 					randNum = Random.Range (0, JikkyouMesType02.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType02 [randNum];
 
@@ -372,8 +369,7 @@ namespace Mix2App.MachiCon{
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp03:
-				{
-					// 男の子２～４人目入場時
+				{	// 男の子２～４人目入場時
 					randNum = Random.Range (0, JikkyouMesType03.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType03 [randNum];
 
@@ -381,8 +377,7 @@ namespace Mix2App.MachiCon{
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp04:
-				{
-					// 女の子１人目入場時
+				{	// 女の子１人目入場時
 					randNum = Random.Range (0, JikkyouMesType04.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType04 [randNum];
 
@@ -390,8 +385,7 @@ namespace Mix2App.MachiCon{
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp05:
-				{
-					// 女の子２～４人目入場時
+				{	// 女の子２～４人目入場時
 					randNum = Random.Range (0, JikkyouMesType05.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType05 [randNum];
 
@@ -399,8 +393,7 @@ namespace Mix2App.MachiCon{
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp06:
-				{
-					// 全員入場
+				{	// 全員入場
 					randNum = Random.Range (0, JikkyouMesType06.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType06 [randNum];
 
@@ -408,8 +401,7 @@ namespace Mix2App.MachiCon{
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp07:
-				{
-					// 相談待ち
+				{	// 相談待ち
 					randNum = Random.Range (0, JikkyouMesType07.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType07 [randNum];
 
@@ -426,8 +418,7 @@ namespace Mix2App.MachiCon{
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp09:
-				{
-					// アピールタイム中
+				{	// アピールタイム中
 					randNum = Random.Range (0, JikkyouMesType09.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType09 [randNum];
 
@@ -435,8 +426,7 @@ namespace Mix2App.MachiCon{
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp10:
-				{
-					// 告白開始
+				{	// 告白開始
 					randNum = Random.Range (0, JikkyouMesType10.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType10 [randNum];
 
@@ -444,8 +434,7 @@ namespace Mix2App.MachiCon{
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp11:
-				{
-					// キャラ告白後
+				{	// キャラ告白後
 					randNum = Random.Range (0, JikkyouMesType11.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType11 [randNum];
 
@@ -453,8 +442,7 @@ namespace Mix2App.MachiCon{
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp12:
-				{
-					// ちょっとまった！後
+				{	// ちょっとまった！後
 					randNum = Random.Range (0, JikkyouMesType12.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType12 [randNum];
 
@@ -462,8 +450,7 @@ namespace Mix2App.MachiCon{
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp13:
-				{
-					// 告白成功後
+				{	// 告白成功後
 					randNum = Random.Range (0, JikkyouMesType13.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType13 [randNum];
 
@@ -471,8 +458,7 @@ namespace Mix2App.MachiCon{
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp14:
-				{
-					// 告白失敗後
+				{	// 告白失敗後
 					randNum = Random.Range (0, JikkyouMesType14.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType14 [randNum];
 
@@ -480,8 +466,7 @@ namespace Mix2App.MachiCon{
 					break;
 				}
 			case	JikkyouMesTable.JikkyouMesDisp15:
-				{
-					// お疲れ様
+				{	// お疲れ様
 					randNum = Random.Range (0, JikkyouMesType15.Length);
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType15 [randNum];
 
@@ -512,20 +497,17 @@ namespace Mix2App.MachiCon{
 					break;
 				}
 			case	SoudanMesTable.SoudanMesDispWoman1:
-				{
-					// みーつユーザー女の子
+				{	// みーつユーザー女の子
 					EventSoudanText.GetComponent<Text> ().text = SoudanTimeMesWomanType01 [Random.Range (0, SoudanTimeMesWomanType01.Length)].Replace("（＋語尾）",_gobi);
 					break;
 				}
 			case	SoudanMesTable.SoudanMesDispMan2:
-				{
-					// みーつユーザー以外男の子
+				{	// みーつユーザー以外男の子
 					EventSoudanText.GetComponent<Text> ().text = SoudanTimeMesManType02 [Random.Range (0, SoudanTimeMesManType02.Length)];
 					break;
 				}
 			case	SoudanMesTable.SoudanMesDispWoman2:
-				{
-					// みーつユーザー以外女の子
+				{	// みーつユーザー以外女の子
 					EventSoudanText.GetComponent<Text> ().text = SoudanTimeMesWomanType02 [Random.Range (0, SoudanTimeMesWomanType02.Length)];
 					break;
 				}
@@ -550,14 +532,12 @@ namespace Mix2App.MachiCon{
 
 			switch (flag) {
 			case	KokuhakuMesTable.KokuhakuMesDispOK:
-				{
-					// 告白受諾メッセージ
+				{	// 告白受諾メッセージ
 					retMes = KokuhakuReturnMesType01 [Random.Range (0, KokuhakuReturnMesType01.Length)].Replace("（＋語尾）",_gobi);
 					break;
 				}
 			case	KokuhakuMesTable.KokuhakuMesDispNo:
-				{
-					// 告白拒否メッセージ
+				{	// 告白拒否メッセージ
 					retMes = KokuhakuReturnMesType02 [Random.Range (0, KokuhakuReturnMesType02.Length)].Replace("（＋語尾）",_gobi);
 					break;
 				}

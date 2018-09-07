@@ -431,7 +431,7 @@ namespace Mix2App.MiniGame1{
 			switch (charaAnimeFlag) {
 			case	1:																// 右移動
 				{
-					pos.x += 2.5f;
+					pos.x += (2.5f * (60 * Time.deltaTime));
 					if (pos.x >= 330.0f) {
 						pos.x = 330.0f;												// 画面端に来たら停止
 						cbCharaTamago [0].gotoAndPlay ("idle");
@@ -441,7 +441,7 @@ namespace Mix2App.MiniGame1{
 				}
 			case	2:																// 左移動
 				{
-					pos.x -= 2.5f;
+					pos.x -= (2.5f * (60 * Time.deltaTime));
 					if (pos.x <= -330.0f) {
 						pos.x = -330.0f;											// 画面端に来たら停止
 						cbCharaTamago [0].gotoAndPlay ("idle");
@@ -493,7 +493,7 @@ namespace Mix2App.MiniGame1{
 				}
 			case	1:																// 落下アイテムの落下処理
 				{
-					posItem.y -= itemDownSpeed;
+					posItem.y -= (itemDownSpeed * (60 * Time.deltaTime));
 					if (posItem.y <= -195.0f) {
 						posItem.y = -195.0f;										// 地面に落ちたのでアイテムは消える
 						itemIdouFlag = 2;
@@ -767,6 +767,7 @@ namespace Mix2App.MiniGame1{
 			}
 			return false;
 		}
+
 
 
 		private Vector2[] tamagoCharaPositionInitTable = new Vector2[] {

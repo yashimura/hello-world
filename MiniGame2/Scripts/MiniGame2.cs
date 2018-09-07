@@ -48,7 +48,7 @@ namespace Mix2App.MiniGame2{
 
 		private object[]		mparam;
 
-		private CharaBehaviour[] cbCharaTamagoMain = new CharaBehaviour[3];		// プレイヤーとゲスト
+		private CharaBehaviour[] cbCharaTamagoMain = new CharaBehaviour[3];		// プレイヤーとゲスト２名
 		private CharaBehaviour[] cbCharaTamago = new CharaBehaviour[12];		// お客様
 //		private bool startEndFlag = false;
 		private bool screenModeFlag = true;
