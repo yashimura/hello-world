@@ -253,7 +253,7 @@ namespace Mix2App.MachiCon{
 
 
 
-//			muser1.chara2 = new TamaChara (29);
+			muser1.chara2 = new TamaChara (29);
 
 
 
@@ -300,9 +300,9 @@ namespace Mix2App.MachiCon{
 					cbFutagoChara [i] = CharaFutago [i].GetComponent<CharaBehaviour> ();
 				}
 				yield return cbFutagoChara [0].init (muser1.GetCharaAt(0));
-				cbFutagoChara [0].gotoAndPlay ("idle");
+				cbFutagoChara [0].gotoAndPlay (MotionLabel.IDLE);
 				yield return cbFutagoChara [1].init (muser1.GetCharaAt(1));
-				cbFutagoChara [1].gotoAndPlay ("idle");
+				cbFutagoChara [1].gotoAndPlay (MotionLabel.IDLE);
 
 				startEndFutagoFlag = true;
 			}
@@ -427,7 +427,7 @@ namespace Mix2App.MachiCon{
 					FlameInMessageDisp ();														// 実況開始
 					FlameInDirectionSet ();														// 入場時の向きを設定
 
-					cbTamagoChara [posNumber].gotoAndPlay ("walk");
+					cbTamagoChara [posNumber].gotoAndPlay (MotionLabel.WALK);
 					jobCount = statusJobCount.machiconJobCount070;
 					break;
 				}
@@ -437,7 +437,7 @@ namespace Mix2App.MachiCon{
 					if (pos >= 0.0f) {
 						jobCount = statusJobCount.machiconJobCount080;
 						waitTime = FlameInPositionChangeJumpTable.Length;						// ジャンプの時間
-						cbTamagoChara [posNumber].gotoAndPlay ("idle");
+						cbTamagoChara [posNumber].gotoAndPlay (MotionLabel.IDLE);
 					}
 					break;
 				}
@@ -459,7 +459,7 @@ namespace Mix2App.MachiCon{
 					if (WaitTimeSubLoop()) {
 						jobCount = statusJobCount.machiconJobCount100;
 						CharaTamagochi[posNumber].transform.Find("fukidashi/comment").gameObject.SetActive(false);
-						cbTamagoChara [posNumber].gotoAndPlay ("walk");
+						cbTamagoChara [posNumber].gotoAndPlay (MotionLabel.WALK);
 					}
 					break;
 				}
@@ -472,7 +472,7 @@ namespace Mix2App.MachiCon{
 				}
 			case	statusJobCount.machiconJobCount110:
 				{	// 整列位置に停止
-					cbTamagoChara [posNumber].gotoAndPlay ("idle");
+					cbTamagoChara [posNumber].gotoAndPlay (MotionLabel.IDLE);
 					AlignmentPositionChangeFinish ();
 					posNumber++;
 					if (posNumber == 8) {
@@ -542,7 +542,7 @@ namespace Mix2App.MachiCon{
 						EventSoudanTamago.transform.localPosition = pos;
 						soudanJumpFlag = false;
 						for (int i = 0; i < 8; i++) {
-							cbTamagoChara [i].gotoAndPlay ("idle");
+							cbTamagoChara [i].gotoAndPlay (MotionLabel.IDLE);
 						}
 						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
 					}
@@ -1240,7 +1240,7 @@ namespace Mix2App.MachiCon{
 				posTamago [i].x = pos [i, 0];
 				posTamago [i].y = pos [i, 1];
 
-				cbTamagoChara [i].gotoAndPlay ("idle");
+				cbTamagoChara [i].gotoAndPlay (MotionLabel.IDLE);
 
 				CharaTamagochi [i].GetComponent<Canvas> ().sortingOrder = 1;
 			}
@@ -1330,7 +1330,7 @@ namespace Mix2App.MachiCon{
 				float[] _posY = new float[12];
 				for (int i = 0; i < 8; i++) {
 					if ((posTamagoSpeedX [i] != 0.0f) || (posTamagoSpeedY [i] != 0.0f)) {
-						TamagochiAnimeSet (i, "walk");
+						TamagochiAnimeSet (i, MotionLabel.WALK);
 
 						if (posTamagoIdouXFlag [i]) {
 							posTamago [i].x += (posTamagoSpeedX [i] * (60 * Time.deltaTime));
@@ -1372,7 +1372,7 @@ namespace Mix2App.MachiCon{
 					} else {
 						if (countTableChakusekiTime [i] != 0) {
 							countTableChakusekiTime [i]--;
-							TamagochiAnimeSet (i, "idle");
+							TamagochiAnimeSet (i, MotionLabel.IDLE);
 							if (i < 4) {
 								CharaTamago [i].GetComponent<SpriteRenderer> ().flipX = false;
 							} else {
@@ -1679,8 +1679,8 @@ namespace Mix2App.MachiCon{
 				if (num < 4) {
 					for (int i = 4; i < 8; i++) {
 						if ((countTableChakusekiTime [i] != 0) && (posTamagoSpeedX [i] == 0) && (posTamagoSpeedY [i] == 0) && (_target == posTamagoTargetType[i]) && (posTamago[i].x == posTamagoTargetX[i]) && (posTamago[i].y == posTamagoTargetY[i])) {
-							TamagochiAnimeSet (i, "glad1");
-							TamagochiAnimeSet (num, "glad1");
+							TamagochiAnimeSet (i, MotionLabel.GLAD1);
+							TamagochiAnimeSet (num, MotionLabel.GLAD1);
 #if false
 							if (countTableChakusekiTime [num] < countTableChakusekiTime [i]) {
 								if (countTableChakusekiTime [num] != 0) {
@@ -1704,8 +1704,8 @@ namespace Mix2App.MachiCon{
 				} else {
 					for (int i = 0; i < 4; i++) {
 						if ((countTableChakusekiTime [i] != 0) && (posTamagoSpeedX [i] == 0) && (posTamagoSpeedY [i] == 0) && (_target == posTamagoTargetType[i]) && (posTamago[i].x == posTamagoTargetX[i]) && (posTamago[i].y == posTamagoTargetY[i])) {
-							TamagochiAnimeSet (i, "glad1");
-							TamagochiAnimeSet (num, "glad1");
+							TamagochiAnimeSet (i, MotionLabel.GLAD1);
+							TamagochiAnimeSet (num, MotionLabel.GLAD1);
 #if false
 							if (countTableChakusekiTime [num] < countTableChakusekiTime [i]) {
 								if (countTableChakusekiTime [num] != 0) {
@@ -1854,7 +1854,7 @@ namespace Mix2App.MachiCon{
 				posTamago [i].x = pos [i, 0];
 				posTamago [i].y = pos [i, 1];
 
-				cbTamagoChara [i].gotoAndPlay ("idle");
+				cbTamagoChara [i].gotoAndPlay (MotionLabel.IDLE);
 			}
 
 			CharaTamagochi [0].GetComponent<Canvas> ().sortingOrder = 1;
@@ -2089,7 +2089,7 @@ namespace Mix2App.MachiCon{
 							kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount140;		// ライバル出現なし
 						} else {
 							kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount050;		// ライバル出現あり
-							cbTamagoChara [kokuhakuManNumber].gotoAndPlay ("shock");
+							cbTamagoChara [kokuhakuManNumber].gotoAndPlay (MotionLabel.SHOCK);
 						}
 					}
 					break;
@@ -2128,7 +2128,7 @@ namespace Mix2App.MachiCon{
 						KokuhakuRivalWaitStop (2, true);										// ちょっと待ったを表示（初期化込み）
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount090;			// ３番目のたまごっちがライバルとして行動
 						if ((kokuhakuRivalNumber & 16) != 0) {
-							cbTamagoChara [1].gotoAndPlay ("shock");
+							cbTamagoChara [1].gotoAndPlay (MotionLabel.SHOCK);
 						}
 					} else {
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount110;
@@ -2159,10 +2159,10 @@ namespace Mix2App.MachiCon{
 						KokuhakuRivalWaitStop (3, true);										// ちょっと待ったを表示（初期化込み）
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount120;			// ４番目のたまごっちがライバルとして行動
 						if ((kokuhakuRivalNumber & 16) != 0) {
-							cbTamagoChara [1].gotoAndPlay ("shock");
+							cbTamagoChara [1].gotoAndPlay (MotionLabel.SHOCK);
 						}
 						if ((kokuhakuRivalNumber & 32) != 0) {
-							cbTamagoChara [2].gotoAndPlay ("shock");
+							cbTamagoChara [2].gotoAndPlay (MotionLabel.SHOCK);
 						}
 					} else {
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount140;
@@ -2353,9 +2353,9 @@ namespace Mix2App.MachiCon{
 
 							kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount330;
 							KokuhakuTimeIdou4Init (KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4);
-							cbTamagoChara [loveParamManNumber].gotoAndPlay ("walk");
+							cbTamagoChara [loveParamManNumber].gotoAndPlay (MotionLabel.WALK);
 						} else {
-							cbTamagoChara [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].gotoAndPlay ("idle");
+							cbTamagoChara [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].gotoAndPlay (MotionLabel.IDLE);
 							kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount340;
 						}
 					}
@@ -2510,7 +2510,7 @@ namespace Mix2App.MachiCon{
 				}
 			}
 			if (posTamago [num].x == posTable [num, 0]) {
-				cbTamagoChara [num].gotoAndPlay ("walk");
+				cbTamagoChara [num].gotoAndPlay (MotionLabel.WALK);
 			}
 			posTamago [num].x += (posTable [num, 2] * (60 * Time.deltaTime));
 			return false;
@@ -2536,7 +2536,7 @@ namespace Mix2App.MachiCon{
 				}
 			}
 			if (posTamago [num].x == posTable [num, 0]) {
-				cbTamagoChara [num].gotoAndPlay ("walk");
+				cbTamagoChara [num].gotoAndPlay (MotionLabel.WALK);
 			}
 			posTamago [num].x += (posTable [num, 2] * (60 * Time.deltaTime));
 			return false;
@@ -2566,7 +2566,7 @@ namespace Mix2App.MachiCon{
 				}
 			}
 			if (posTamago [num].x == posTable [num, 0]) {
-				cbTamagoChara [num].gotoAndPlay ("walk");
+				cbTamagoChara [num].gotoAndPlay (MotionLabel.WALK);
 			}
 			posTamago [num].x += (posTable [num, 2] * (60 * Time.deltaTime));
 			return false;
@@ -2705,17 +2705,17 @@ namespace Mix2App.MachiCon{
 					switch (Random.Range (0, 3)) {
 					case	0:
 						{
-							cbTamagoChara [tamagoNum].gotoAndPlay ("glad2");					// 喜び２
+							cbTamagoChara [tamagoNum].gotoAndPlay (MotionLabel.GLAD2);			// 喜び２
 							break;
 						}
 					case	1:
 						{
-							cbTamagoChara [tamagoNum].gotoAndPlay ("shy1");						// 照れ１
+							cbTamagoChara [tamagoNum].gotoAndPlay (MotionLabel.SHY1);			// 照れ１
 							break;
 						}
 					case	2:
 						{
-							cbTamagoChara [tamagoNum].gotoAndPlay ("shy3");						// 照れ３
+							cbTamagoChara [tamagoNum].gotoAndPlay (MotionLabel.SHY3);			// 照れ３
 							break;
 						}
 					}
@@ -2726,12 +2726,12 @@ namespace Mix2App.MachiCon{
 					switch (Random.Range (0, 2)) {
 					case	0:
 						{
-							cbTamagoChara [tamagoNum].gotoAndPlay ("shy1");						// 照れ１
+							cbTamagoChara [tamagoNum].gotoAndPlay (MotionLabel.SHY1);			// 照れ１
 							break;
 						}
 					case	1:
 						{
-							cbTamagoChara [tamagoNum].gotoAndPlay ("shy2");						// 照れ２
+							cbTamagoChara [tamagoNum].gotoAndPlay (MotionLabel.SHY2);			// 照れ２
 							break;
 						}
 					}
@@ -2742,17 +2742,17 @@ namespace Mix2App.MachiCon{
 					switch (Random.Range (0, 3)) {
 					case	0:
 						{
-							cbTamagoChara [tamagoNum].gotoAndPlay ("glad1");					// 喜び１
+							cbTamagoChara [tamagoNum].gotoAndPlay (MotionLabel.GLAD1);			// 喜び１
 							break;
 						}
 					case	1:
 						{
-							cbTamagoChara [tamagoNum].gotoAndPlay ("glad2");					// 喜び２
+							cbTamagoChara [tamagoNum].gotoAndPlay (MotionLabel.GLAD2);			// 喜び２
 							break;
 						}
 					case	2:
 						{
-							cbTamagoChara [tamagoNum].gotoAndPlay ("glad3");					// 喜び３
+							cbTamagoChara [tamagoNum].gotoAndPlay (MotionLabel.GLAD3);			// 喜び３
 							break;
 						}
 					}
@@ -2763,22 +2763,22 @@ namespace Mix2App.MachiCon{
 					switch (Random.Range (0, 4)) {
 					case	0:
 						{
-							cbTamagoChara [tamagoNum].gotoAndPlay ("glad1");					// 喜び１
+							cbTamagoChara [tamagoNum].gotoAndPlay (MotionLabel.GLAD1);			// 喜び１
 							break;
 						}
 					case	1:
 						{
-							cbTamagoChara [tamagoNum].gotoAndPlay ("glad2");					// 喜び２
+							cbTamagoChara [tamagoNum].gotoAndPlay (MotionLabel.GLAD2);			// 喜び２
 							break;
 						}
 					case	2:
 						{
-							cbTamagoChara [tamagoNum].gotoAndPlay ("shy1");						// 照れ１
+							cbTamagoChara [tamagoNum].gotoAndPlay (MotionLabel.SHY1);			// 照れ１
 							break;
 						}
 					case	3:
 						{
-							cbTamagoChara [tamagoNum].gotoAndPlay ("shy2");						// 照れ２
+							cbTamagoChara [tamagoNum].gotoAndPlay (MotionLabel.SHY2);			// 照れ２
 							break;
 						}
 					}
@@ -2832,7 +2832,7 @@ namespace Mix2App.MachiCon{
 		private void KokuhakuRivalWaitStop(int num,bool flag){
 			if (flag) {
 				EventWaitStop.SetActive (true);													// ちょっと待ったの帯を表示
-				cbTamagoChara [num].gotoAndPlay ("anger");
+				cbTamagoChara [num].gotoAndPlay (MotionLabel.ANGER);
 				MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp12);
 				kokuhakuWaitTime = 120;
 			}
@@ -2857,7 +2857,7 @@ namespace Mix2App.MachiCon{
 			else{
 				// 告白失敗
 				loveParamFlag = false;
-				cbTamagoChara [kokuhakuManTable [kokuhakuManNumber]].gotoAndPlay ("cry");
+				cbTamagoChara [kokuhakuManTable [kokuhakuManNumber]].gotoAndPlay (MotionLabel.CRY);
 				loveParamManCryFlag [kokuhakuManTable [kokuhakuManNumber]] = true;
 			}
 				
@@ -2871,7 +2871,7 @@ namespace Mix2App.MachiCon{
 					}
 					else{
 						// 告白失敗
-						cbTamagoChara [1].gotoAndPlay ("cry");
+						cbTamagoChara [1].gotoAndPlay (MotionLabel.CRY);
 						loveParamManCryFlag [1] = true;
 					}
 				}
@@ -2884,7 +2884,7 @@ namespace Mix2App.MachiCon{
 					}
 					else{
 						// 告白失敗
-						cbTamagoChara [2].gotoAndPlay ("cry");
+						cbTamagoChara [2].gotoAndPlay (MotionLabel.CRY);
 						loveParamManCryFlag [2] = true;
 					}
 				}
@@ -2897,7 +2897,7 @@ namespace Mix2App.MachiCon{
 					}
 					else{
 						// 告白失敗
-						cbTamagoChara [3].gotoAndPlay ("cry");
+						cbTamagoChara [3].gotoAndPlay (MotionLabel.CRY);
 						loveParamManCryFlag [3] = true;
 					}
 				}
