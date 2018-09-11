@@ -158,36 +158,36 @@ namespace Mix2App.MiniGame2{
 			}
 
 			yield return cbCharaTamagoMain [0].init (muser1.chara1);
-			TamagochiMainAnimeSet (0, MotionLabel.IDLE);
+			TamagochiMainAnimeSet (0, "idle");
 			yield return cbCharaTamagoMain [1].init (new TamaChara (17));
-			TamagochiMainAnimeSet (1, MotionLabel.IDLE);
+			TamagochiMainAnimeSet (1, "idle");
 			yield return cbCharaTamagoMain [2].init (new TamaChara (18));
-			TamagochiMainAnimeSet (2, MotionLabel.IDLE);
+			TamagochiMainAnimeSet (2, "idle");
 
 			yield return cbCharaTamago[0].init (new TamaChara (19));
-			TamagochiAnimeSet (0, MotionLabel.IDLE);
+			TamagochiAnimeSet (0, "idle");
 			yield return cbCharaTamago[1].init (new TamaChara (20));
-			TamagochiAnimeSet (1, MotionLabel.IDLE);
+			TamagochiAnimeSet (1, "idle");
 			yield return cbCharaTamago[2].init (new TamaChara (21));
-			TamagochiAnimeSet (2, MotionLabel.IDLE);
+			TamagochiAnimeSet (2, "idle");
 			yield return cbCharaTamago[3].init (new TamaChara (22));
-			TamagochiAnimeSet (3, MotionLabel.IDLE);
+			TamagochiAnimeSet (3, "idle");
 			yield return cbCharaTamago[4].init (new TamaChara (23));
-			TamagochiAnimeSet (4, MotionLabel.IDLE);
+			TamagochiAnimeSet (4, "idle");
 			yield return cbCharaTamago[5].init (new TamaChara (24));
-			TamagochiAnimeSet (5, MotionLabel.IDLE);
+			TamagochiAnimeSet (5, "idle");
 			yield return cbCharaTamago[6].init (new TamaChara (25));
-			TamagochiAnimeSet (6, MotionLabel.IDLE);
+			TamagochiAnimeSet (6, "idle");
 			yield return cbCharaTamago[7].init (new TamaChara (26));
-			TamagochiAnimeSet (7, MotionLabel.IDLE);
+			TamagochiAnimeSet (7, "idle");
 			yield return cbCharaTamago[8].init (new TamaChara (27));
-			TamagochiAnimeSet (8, MotionLabel.IDLE);
+			TamagochiAnimeSet (8, "idle");
 			yield return cbCharaTamago[9].init (new TamaChara (28));
-			TamagochiAnimeSet (9, MotionLabel.IDLE);
+			TamagochiAnimeSet (9, "idle");
 			yield return cbCharaTamago[10].init (new TamaChara (29));
-			TamagochiAnimeSet (10, MotionLabel.IDLE);
+			TamagochiAnimeSet (10, "idle");
 			yield return cbCharaTamago[11].init (new TamaChara (30));
-			TamagochiAnimeSet (11, MotionLabel.IDLE);
+			TamagochiAnimeSet (11, "idle");
 
 //			startEndFlag = true;
 		}
@@ -264,7 +264,7 @@ namespace Mix2App.MiniGame2{
 						}
 						for (int i = 0; i < CharaTamagoMain.Length; i++) {			// プレイヤーとゲストを消す
 							CharaTamagoMain [i].transform.localPosition = new Vector3 (-50.0f, 0.0f, 1.0f);
-							TamagochiMainAnimeSet (i, MotionLabel.IDLE);
+							TamagochiMainAnimeSet (i, "idle");
 						}
 
 						resultLoopCount = statusResult.resultJobCount000;
@@ -371,7 +371,7 @@ namespace Mix2App.MiniGame2{
 			}
 			for (int i = 0; i < CharaTamagoMain.Length; i++) {
 				CharaTamagoMain [i].SetActive (true);
-				TamagochiMainAnimeSet (i, MotionLabel.IDLE);
+				TamagochiMainAnimeSet (i, "idle");
 			}
 
 			for (int i = 0; i < 3; i++) {
@@ -417,7 +417,7 @@ namespace Mix2App.MiniGame2{
 						if (_idouTable [num, 0] != 255.0f) {
 							pos.x += 0.125f;
 							pos.y += 0.125f;
-							TamagochiAnimeSet (num, MotionLabel.WALK, true);
+							TamagochiAnimeSet (num, "walk", true);
 
 							if (pos.x >= _idouTable [num, 0]) {
 								pos.x = _idouTable [num, 0];
@@ -425,7 +425,7 @@ namespace Mix2App.MiniGame2{
 								tamagochiIdouFlag [num] = 1;
 							}
 						} else {
-							TamagochiAnimeSet (num, MotionLabel.IDLE);
+							TamagochiAnimeSet (num, "idle");
 						}
 						break;
 					}
@@ -433,13 +433,13 @@ namespace Mix2App.MiniGame2{
 					{
 						if (_idouTable [num, 2] != 255.0f) {
 							pos.x += 0.125f;
-							TamagochiAnimeSet (num, MotionLabel.WALK, true);
+							TamagochiAnimeSet (num, "walk", true);
 							if (pos.x >= _idouTable [num, 2]) {
 								pos.x = _idouTable [num, 2];
 								tamagochiIdouFlag [num] = 2;
 							}
 						} else {
-							TamagochiAnimeSet (num, MotionLabel.IDLE);
+							TamagochiAnimeSet (num, "idle");
 						}
 						break;
 					}
@@ -447,13 +447,13 @@ namespace Mix2App.MiniGame2{
 					{
 						if (_idouTable [num, 5] != 255.0f) {
 							pos.y += 0.125f;
-							TamagochiAnimeSet (num, MotionLabel.WALK, false);
+							TamagochiAnimeSet (num, "walk", false);
 							if (pos.y >= _idouTable [num, 5]) {
 								pos.y = _idouTable [num, 5];
 								tamagochiIdouFlag [num] = 3;
 							}
 						} else {
-							TamagochiAnimeSet (num, MotionLabel.IDLE);
+							TamagochiAnimeSet (num, "idle");
 						}
 						break;
 					}
@@ -461,14 +461,14 @@ namespace Mix2App.MiniGame2{
 					{
 						if (_idouTable [num, 6] != 255.0f) {
 							pos.x -= 0.125f;
-							TamagochiAnimeSet (num, MotionLabel.WALK, false);
+							TamagochiAnimeSet (num, "walk", false);
 							if (pos.x <= _idouTable [num, 6]) {
 								pos.x = _idouTable [num, 6];
 								tamagochiIdouFlag [num] = 4;
-								TamagochiAnimeSet (num, MotionLabel.IDLE);
+								TamagochiAnimeSet (num, "idle");
 							}
 						} else {
-							TamagochiAnimeSet (num, MotionLabel.IDLE);
+							TamagochiAnimeSet (num, "idle");
 						}
 						break;
 					}
@@ -507,9 +507,9 @@ namespace Mix2App.MiniGame2{
 					tamagoGameIdouWork [tamagochiIdouTable [0]].speedY = (tamagoGameIdouWork [tamagochiIdouTable [0]].targetY - _pos.y) / tamagoIdouTime2;
 
 					if (tamagoGameIdouWork [tamagochiIdouTable [0]].targetX <= _pos.x) {
-						TamagochiAnimeSet (tamagochiIdouTable [0], MotionLabel.WALK, false);
+						TamagochiAnimeSet (tamagochiIdouTable [0], "walk", false);
 					} else {
-						TamagochiAnimeSet (tamagochiIdouTable [0], MotionLabel.WALK, true);
+						TamagochiAnimeSet (tamagochiIdouTable [0], "walk", true);
 					}
 
 					for (int num = 1; num < 12; num++) {
@@ -522,9 +522,9 @@ namespace Mix2App.MiniGame2{
 						tamagoGameIdouWork [tamagochiIdouTable [num]].speedY = (tamagoGameIdouWork [tamagochiIdouTable [num]].targetY - _pos.y) / tamagoIdouTime;
 
 						if (tamagoGameIdouWork [tamagochiIdouTable [num]].targetX <= _pos.x) {
-							TamagochiAnimeSet (tamagochiIdouTable [num], MotionLabel.WALK, false);
+							TamagochiAnimeSet (tamagochiIdouTable [num], "walk", false);
 						} else {
-							TamagochiAnimeSet (tamagochiIdouTable [num], MotionLabel.WALK, true);
+							TamagochiAnimeSet (tamagochiIdouTable [num], "walk", true);
 						}
 					}
 
@@ -578,7 +578,7 @@ namespace Mix2App.MiniGame2{
 							_pos.x = tamagoGameIdouWork [tamagochiIdouTable [num]].targetX;
 							_pos.y = tamagoGameIdouWork [tamagochiIdouTable [num]].targetY;
 							CharaTamago [tamagochiIdouTable [num]].transform.localPosition = _pos;
-							TamagochiAnimeSet (tamagochiIdouTable [num], MotionLabel.IDLE);
+							TamagochiAnimeSet (tamagochiIdouTable [num], "idle");
 						}
 
 						int _hzn = tamagochiIdouTable [0];
@@ -599,22 +599,22 @@ namespace Mix2App.MiniGame2{
 		private void TamagochiMainAnimeSet(int num,string status){
 			string _status = status;
 			switch(_status){
-			case	MotionLabel.GLAD1:
+			case	"glad1":
 				{
 					switch (Random.Range (0, 3)) {
 					case	0:
 						{
-							_status = MotionLabel.GLAD1;
+							_status = "glad1";
 							break;
 						}
 					case	1:
 						{
-							_status = MotionLabel.GLAD2;
+							_status = "glad2";
 							break;
 						}
 					default:
 						{
-							_status = MotionLabel.GLAD3;
+							_status = "glad3";
 							break;
 						}
 					}
@@ -629,22 +629,22 @@ namespace Mix2App.MiniGame2{
 		private void TamagochiAnimeSet(int num,string status,bool flag = false){
 			string _status = status;
 			switch(_status){
-			case	MotionLabel.GLAD1:
+			case	"glad1":
 				{
 					switch (Random.Range (0, 3)) {
 					case	0:
 						{
-							_status = MotionLabel.GLAD1;
+							_status = "glad1";
 							break;
 						}
 					case	1:
 						{
-							_status = MotionLabel.GLAD2;
+							_status = "glad2";
 							break;
 						}
 					default:
 						{
-							_status = MotionLabel.GLAD3;
+							_status = "glad3";
 							break;
 						}
 					}
@@ -708,7 +708,7 @@ namespace Mix2App.MiniGame2{
 			gameMainLoopFlag = false;
 			fukidashiOff ();
 			for (int i = 0; i < 3; i++) {
-				TamagochiMainAnimeSet (i, MotionLabel.IDLE);
+				TamagochiMainAnimeSet (i, "idle");
 			}
 		}
 
@@ -775,13 +775,13 @@ namespace Mix2App.MiniGame2{
 						if (fukidashiHantei ()) {
 							gameJobCount = statusGameCount.minigame2GameCount030;
 							for (int i = 0; i < 3; i++) {
-								TamagochiMainAnimeSet (i, MotionLabel.GLAD1);
+								TamagochiMainAnimeSet (i, "glad1");
 							}
-							TamagochiAnimeSet (tamagochiIdouTable[0], MotionLabel.GLAD1);
+							TamagochiAnimeSet (tamagochiIdouTable[0], "glad1");
 							ScoreInit ();
 						} else {
 							gameJobCount = statusGameCount.minigame2GameCount100;
-							TamagochiMainAnimeSet (0, MotionLabel.SHOCK);
+							TamagochiMainAnimeSet (0, "shock");
 						}
 					}
 					break;
@@ -792,7 +792,7 @@ namespace Mix2App.MiniGame2{
 						gameJobCount = statusGameCount.minigame2GameCount040;
 						fukidashiOff ();
 						for (int i = 0; i < 3; i++) {
-							TamagochiMainAnimeSet (i, MotionLabel.IDLE);
+							TamagochiMainAnimeSet (i, "idle");
 						}
 					}
 					break;
@@ -1146,7 +1146,7 @@ namespace Mix2App.MiniGame2{
 						EventResult.transform.Find ("Button_blue_modoru").gameObject.SetActive (true);		// 戻るボタンを表示する
 						if (nowScore >= 50) {
 							for (int i = 0; i < 3; i++) {													// ５０点以上ならアイテム入手したのでたまごっちを喜ばす
-								TamagochiMainAnimeSet (i, MotionLabel.GLAD1);
+								TamagochiMainAnimeSet (i, "glad1");
 							}
 						}
 							

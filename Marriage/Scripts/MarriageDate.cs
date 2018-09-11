@@ -57,17 +57,15 @@ namespace Mix2App.MarriageDate{
 		private CharaBehaviour	cbMan1;								// 男の子キャラ
 		private CharaBehaviour	cbWoman1;							// 女の子キャラ
 
-		private Vector3 posMan1 = new Vector3(-17.0f,-1.5f,0.0f);
-		private Vector3 posWoman1 = new Vector3 (-19.0f, -1.5f, 0.0f);
-
 		private bool startEndFlag = false;
 		private int waitCount;
-		private bool screenModeFlag = false;
 
 		private float manXposition = 0.0f;
 		private float womanXposition = 0.0f;
 
-
+		private bool whileParkFlag;
+		private bool whileBeachFlag;
+		private bool whileEndFlag;
 
 		private statusJobCount	jobCount = statusJobCount.marriageJobCount000;
 		private enum statusJobCount{
@@ -147,12 +145,10 @@ namespace Mix2App.MarriageDate{
 			man_walk3.SetActive (false);
 			woman_walk3.SetActive (false);
 
-			EventPark.SetActive (true);
+			EventPark.SetActive (false);
 			EventBeach.SetActive (false);
 			EventGarden.SetActive (false);
 			EventEnd.SetActive (false);
-
-
 
 
 
@@ -172,12 +168,9 @@ namespace Mix2App.MarriageDate{
 
 			if ((num > 1.33f) && (num < 1.34f)) {
 				EventDate.GetComponent<Transform> ().transform.localScale = new Vector3 (1.4f, 1.4f, 1.0f);
-				screenModeFlag = true;
 			} else {
 				EventDate.GetComponent<Transform> ().transform.localScale = new Vector3 (1.45f, 1.45f, 1.0f);
-				screenModeFlag = false;
 			}
-
 
 			// 男の子と女の子のたまごっちをここで設定する
 			cbMan1 = manChara1.GetComponent<CharaBehaviour> ();				// 男の子
@@ -219,19 +212,16 @@ namespace Mix2App.MarriageDate{
 			case	statusJobCount.marriageJobCount010:
 				{
 					MarriageJobTypeOpening ();
-					EventPark.GetComponent<Transform> ().transform.localScale = new Vector3 (3.897114f, 3.897114f, 3.897114f);
-					EventBeach.GetComponent<Transform> ().transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
-					EventGarden.GetComponent<Transform> ().transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
-					EventEnd.GetComponent<Transform> ().transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
+					EventPark.SetActive (true);
 					jobCount = statusJobCount.marriageJobCount020;
+					whileParkFlag = true;
+					StartCoroutine ("EventParkCharaIdou");
 
 					Debug.Log ("遊園地");
 
 					// 右向きに散歩
 					cbMan1.gotoAndPlay (MotionLabel.WALK);
 					cbWoman1.gotoAndPlay (MotionLabel.WALK);
-					cbMan1.GetComponent<SpriteRenderer> ().flipX = true;
-					cbWoman1.GetComponent<SpriteRenderer> ().flipX = true;
 
 					posInit ();
 					break;
@@ -241,27 +231,24 @@ namespace Mix2App.MarriageDate{
 					if (EventPark.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0f) {
 						jobCount = statusJobCount.marriageJobCount030;
 						panelWhiteA = 0.0f;
-					} else {
-						posMan1.x = (man_walk1.transform.localPosition.x / 10.0f) - 0.75f;
-						posWoman1.x = (woman_walk1.transform.localPosition.x / 10.0f) - 0.75f;
 					}
 					break;
 				}
 			case	statusJobCount.marriageJobCount030:
 				{
 					if (WhiteOut ()) {
-						EventPark.GetComponent<Transform> ().transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
-						EventBeach.GetComponent<Transform> ().transform.localScale = new Vector3 (0.8574491f, 0.8574491f, 0.0f);
+						EventPark.SetActive (false);
 						EventBeach.SetActive (true);
+						whileParkFlag = false;
 						jobCount = statusJobCount.marriageJobCount040;
+						whileBeachFlag = true;
+						StartCoroutine ("EventBeachCharaIdou");
 
 						Debug.Log ("海岸");
 
 						// 左向きに散歩
 						cbMan1.gotoAndPlay (MotionLabel.WALK);
 						cbWoman1.gotoAndPlay (MotionLabel.WALK);
-						cbMan1.GetComponent<SpriteRenderer> ().flipX = false;
-						cbWoman1.GetComponent<SpriteRenderer> ().flipX = false;
 					}
 					break;
 				}
@@ -270,8 +257,6 @@ namespace Mix2App.MarriageDate{
 					if (WhiteIn ()) {
 						jobCount = statusJobCount.marriageJobCount050;
 					}
-					posMan1.x = (man_walk2.transform.localPosition.x / 66.0f) + 1.8f;
-					posWoman1.x = (woman_walk2.transform.localPosition.x / 66.0f) + 1.3f;
 					break;
 				}
 			case	statusJobCount.marriageJobCount050:
@@ -279,29 +264,22 @@ namespace Mix2App.MarriageDate{
 					if (EventBeach.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0) {
 						panelWhiteA = 0.0f;
 						jobCount = statusJobCount.marriageJobCount060;
-					} else {
-						posMan1.x = (man_walk2.transform.localPosition.x / 66.0f) + 1.8f;
-						posWoman1.x = (woman_walk2.transform.localPosition.x / 66.0f) + 1.3f;
 					}
 					break;
 				}
 			case	statusJobCount.marriageJobCount060:
 				{
 					if (WhiteOut ()) {
-						EventBeach.GetComponent<Transform> ().transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
-						EventGarden.GetComponent<Transform> ().transform.localScale = new Vector3 (1.5f, 1.5f, 0.0f);
+						EventBeach.SetActive (false);
 						EventGarden.SetActive (true);
 						jobCount = statusJobCount.marriageJobCount070;
+						whileBeachFlag = false;
 
 						Debug.Log ("庭園");
 
 						// ベンチに向き合って座る
-						posMan1.x = 1.0f;
-						posWoman1.x = -1.0f;
-						cbMan1.gotoAndPlay (MotionLabel.SIT);
-						cbWoman1.gotoAndPlay (MotionLabel.SIT);
-						cbMan1.GetComponent<SpriteRenderer> ().flipX = false;
-						cbWoman1.GetComponent<SpriteRenderer> ().flipX = true;
+						cbMan1.gotoAndPlay (MotionLabel.SIT2);
+						cbWoman1.gotoAndPlay (MotionLabel.SIT2);
 					}
 					break;
 				}
@@ -310,13 +288,6 @@ namespace Mix2App.MarriageDate{
 					if (WhiteIn ()) {
 						jobCount = statusJobCount.marriageJobCount080;
 					}
-					if (screenModeFlag) {
-						posMan1.y = (man_sit.transform.localPosition.y / 44.0f) - 0.5f;
-						posWoman1.y = (man_sit.transform.localPosition.y / 44.0f) - 0.5f;
-					} else {
-						posMan1.y = (man_sit.transform.localPosition.y / 43.7f) - 0.5f;
-						posWoman1.y = (man_sit.transform.localPosition.y / 43.7f) - 0.5f;
-					}
 					break;
 				}
 			case	statusJobCount.marriageJobCount080:
@@ -324,22 +295,13 @@ namespace Mix2App.MarriageDate{
 					if (EventGarden.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0f) {
 						panelWhiteA = 0.0f;
 						jobCount = statusJobCount.marriageJobCount090;
-					} else {
-						if (screenModeFlag) {
-							posMan1.y = (man_sit.transform.localPosition.y / 44.0f) - 0.5f;
-							posWoman1.y = (man_sit.transform.localPosition.y / 44.0f) - 0.5f;
-						} else {
-							posMan1.y = (man_sit.transform.localPosition.y / 43.7f) - 0.5f;
-							posWoman1.y = (man_sit.transform.localPosition.y / 43.7f) - 0.5f;
-						}
 					}
 					break;
 				}
 			case	statusJobCount.marriageJobCount090:
 				{
 					if (WhiteOut ()) {
-						EventGarden.GetComponent<Transform> ().transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
-						EventEnd.GetComponent<Transform> ().transform.localScale = new Vector3 (1.566228f, 1.566228f, 0.0f);
+						EventGarden.SetActive (false);
 						EventEnd.SetActive (true);
 						jobCount = statusJobCount.marriageJobCount100;
 
@@ -347,8 +309,6 @@ namespace Mix2App.MarriageDate{
 
 						TamagochiAnimeRandomChenge (cbMan1);
 						TamagochiAnimeRandomChenge (cbWoman1);
-						cbMan1.GetComponent<SpriteRenderer> ().flipX = false;
-						cbWoman1.GetComponent<SpriteRenderer> ().flipX = true;
 
 						manXposition = man_walk3.transform.localPosition.x;
 						womanXposition = woman_walk3.transform.localPosition.x;
@@ -357,13 +317,12 @@ namespace Mix2App.MarriageDate{
 
 						{
 							Vector3 pos = EventEnd.transform.Find ("serif_1").gameObject.transform.localPosition;
-							pos.x -= 20.0f - 5.0f;
+							pos.x -= 23.0f;
 							EventEnd.transform.Find ("serif_1").gameObject.transform.localPosition = pos;
-
-							pos = EventEnd.transform.Find ("serif 2").gameObject.transform.localPosition;
-							pos.x = -5.0f;
-							EventEnd.transform.Find ("serif 2").gameObject.transform.localPosition = pos;
 						}
+
+						whileEndFlag = true;
+						StartCoroutine ("EventEndCharaIdou");
 					}
 					break;
 				}
@@ -371,26 +330,13 @@ namespace Mix2App.MarriageDate{
 				{
 					if (WhiteIn ()) {
 						jobCount = statusJobCount.marriageJobCount110;
-						posMan1.y = (EventEnd.transform.Find ("bg1").gameObject.transform.localPosition.y / 47.0f) + 0.7f;
-						posWoman1.y = (EventEnd.transform.Find ("bg1").gameObject.transform.localPosition.y / 47.0f) + 0.7f;
-						posMan1.x = 2.0f;
-						posWoman1.x = -2.0f;
 					}
 					break;
 				}
 			case	statusJobCount.marriageJobCount110:
 				{
-					if ((manXposition == man_walk3.transform.localPosition.x) && (womanXposition == woman_walk3.transform.localPosition.x)) {
-						posMan1.y = (EventEnd.transform.Find ("bg1").gameObject.transform.localPosition.y / 47.0f) + 0.7f;
-						posWoman1.y = (EventEnd.transform.Find ("bg1").gameObject.transform.localPosition.y / 47.0f) + 0.7f;
-						posMan1.x = 2.0f;
-						posWoman1.x = -2.0f;
-					} else {
+					if((manXposition != man_walk3.transform.localPosition.x) || (womanXposition != woman_walk3.transform.localPosition.x)){
 						jobCount = statusJobCount.marriageJobCount120;
-						cbMan1.GetComponent<SpriteRenderer> ().flipX = true;
-						cbWoman1.GetComponent<SpriteRenderer> ().flipX = false;
-						cbMan1.gotoAndPlay (MotionLabel.WALK);
-						cbWoman1.gotoAndPlay (MotionLabel.WALK);
 					}
 					break;
 				}
@@ -400,23 +346,20 @@ namespace Mix2App.MarriageDate{
 						jobCount = statusJobCount.marriageJobCount130;
 						panelWhiteA = 0.0f;
 					}
-					posMan1.x += (0.025f * (60 * Time.deltaTime));
-					posWoman1.x -= (0.025f * (60 * Time.deltaTime));
 					break;
 				}
 			case	statusJobCount.marriageJobCount130:
 				{
 					if (WhiteOut ()) {
 						jobCount = statusJobCount.marriageJobCount140;
+						whileEndFlag = false;
 					}
-					posMan1.x += (0.025f * (60 * Time.deltaTime));
-					posWoman1.x -= (0.025f * (60 * Time.deltaTime));
 					break;
 				}
 			case	statusJobCount.marriageJobCount140:
 				{
 					Debug.Log ("たまタウンへ・・・");
-					jobCount = statusJobCount.marriageJobCount140;
+					jobCount = statusJobCount.marriageJobCount150;
 					ManagerObject.instance.view.change ("Town");
 					break;
 				}
@@ -425,8 +368,17 @@ namespace Mix2App.MarriageDate{
 					break;
 				}
 			}
-			manChara1.transform.localPosition = posMan1;
-			womanChara1.transform.localPosition = posWoman1;
+
+
+			EventPark.transform.Find ("Chara/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
+			EventPark.transform.Find ("Chara/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
+			EventBeach.transform.Find ("Chara/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
+			EventBeach.transform.Find ("Chara/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
+
+			EventGarden.transform.Find ("bg1/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
+			EventGarden.transform.Find ("bg1/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
+			EventEnd.transform.Find ("bg1/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
+			EventEnd.transform.Find ("bg1/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
 		}
 
 
@@ -436,8 +388,8 @@ namespace Mix2App.MarriageDate{
 
 
 		private void posInit(){
-			posMan1 = new Vector3 (-7.0f, -1.5f - 1.0f, 0.0f);
-			posWoman1 = new Vector3 (-9.0f, -1.5f - 1.0f, 0.0f);
+			manChara1.transform.localPosition = new Vector3 (500, 0, 0);
+			womanChara1.transform.localPosition = new Vector3 (500, 0, 0);
 		}
 
 		private void EventEndMessageSet(){
@@ -481,7 +433,7 @@ namespace Mix2App.MarriageDate{
 		}
 
 		private bool WhiteOut(){
-			panelWhiteA += (10.0f * (60 * Time.deltaTime));
+			panelWhiteA += (4.0f * (60 * Time.deltaTime));
 			if(panelWhiteA >= 255.0f){
 				panelWhiteA = 255.0f;
 			}
@@ -493,7 +445,7 @@ namespace Mix2App.MarriageDate{
 		}
 
 		private bool WhiteIn(){
-			panelWhiteA -= (10.0f * (60 * Time.deltaTime));
+			panelWhiteA -= (4.0f * (60 * Time.deltaTime));
 			if(panelWhiteA <= 0.0f){
 				panelWhiteA = 0.0f;
 			}
@@ -504,6 +456,53 @@ namespace Mix2App.MarriageDate{
 			return false;
 		}
 
+		private IEnumerator EventParkCharaIdou(){
+			while (whileParkFlag) {
+				Vector3 _pos = EventPark.transform.Find ("Chara").gameObject.transform.localPosition;
+				_pos.x += (0.075f * (60 * Time.deltaTime));
+				EventPark.transform.Find ("Chara").gameObject.transform.localPosition = _pos;
+				yield return null;
+			}
+		}
+
+		private IEnumerator EventBeachCharaIdou(){
+			while (whileBeachFlag) {
+				Vector3 _pos = EventBeach.transform.Find ("Chara").gameObject.transform.localPosition;
+				_pos.x -= (0.6f * (60 * Time.deltaTime));
+				EventBeach.transform.Find ("Chara").gameObject.transform.localPosition = _pos;
+				yield return null;
+			}
+		}
+
+		private IEnumerator EventEndCharaIdou(){
+			Vector3 _posMan = EventEnd.transform.Find ("bg1/manChara").gameObject.transform.localPosition;
+			Vector3 _posWoman = EventEnd.transform.Find("bg1/womanChara").gameObject.transform.localPosition;
+
+			while (true) {
+				if ((manXposition == man_walk3.transform.localPosition.x) && (womanXposition == woman_walk3.transform.localPosition.x)) {
+					yield return null;
+				} else {
+					break;
+				}
+			}
+
+			yield return new WaitForSeconds (0.5f);
+
+			EventEnd.transform.Find ("bg1/manChara").gameObject.transform.localScale = new Vector3 (-0.5f, 0.5f, 0);
+			EventEnd.transform.Find ("bg1/womanChara").gameObject.transform.localScale = new Vector3 (0.5f, 0.5f, 0);
+			cbMan1.gotoAndPlay (MotionLabel.WALK);
+			cbWoman1.gotoAndPlay (MotionLabel.WALK);
+
+			while (whileEndFlag) {
+				_posMan.x += (0.8f * (60 * Time.deltaTime));
+				_posWoman.x -= (0.8f * (60 * Time.deltaTime));
+
+				EventEnd.transform.Find ("bg1/manChara").gameObject.transform.localPosition = _posMan;
+				EventEnd.transform.Find ("bg1/womanChara").gameObject.transform.localPosition = _posWoman;
+			
+				yield return null;
+			}
+		}
 
 
 

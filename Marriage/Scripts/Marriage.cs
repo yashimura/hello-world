@@ -82,20 +82,19 @@ namespace Mix2App.Marriage{
 		private PetBehaviour	pbPet1;								// ペット１
 		private PetBehaviour	pbPet2;								// ペット２
 
-		private Vector3 posMan1 = new Vector3(-7.0f,-1.5f,0.0f);
-		private Vector3 posWoman1 = new Vector3 (-9.0f, -1.5f, 0.0f);
-		private Vector3 posMan2 = new Vector3 (1.2f, 50.0f, 0.0f);
-		private Vector3 posWoman2 = new Vector3 (-1.2f, 50.0f, 0.0f);
-		private Vector3 posOmedetou = new Vector3 (0.0f, 0.0f, 0.0f);
-		private Vector3 posPet1 = new Vector3 (0.0f, 0.0f, 0.0f);
-		private Vector3 posPet2 = new Vector3 (0.0f, 0.0f, 0.0f);
+		private Vector3 posOmedetou;
+
 
 		private bool startEndFlag = false;
 		private int waitCount;
 		private bool waitFlag = false;
-		private bool screenModeFlag = false;
 
 		private bool jyunbiButtonFlag = false;
+		private bool _CoroutineFlagStart;
+		private bool _CoroutineFlagTown;
+		private bool _CoroutineFlagPark;
+		private bool _CoroutineFlagBeach;
+		private bool _CoroutineFlagFinale;
 
 		private float eggBarScale;
 
@@ -188,8 +187,6 @@ namespace Mix2App.Marriage{
 			}
 
 
-			// 表示位置初期化
-			posInit ();
 
 			jyunbiButtonFlag = false;
 			ButtonJyunbi.onClick.AddListener (ButtonJyunbiClick);
@@ -218,9 +215,9 @@ namespace Mix2App.Marriage{
 			if ((num > 1.33f) && (num < 1.34f)) {
 				EventMarriage.GetComponent<Transform> ().transform.localScale = new Vector3 (1.4f, 1.4f, 1.0f);
 				EventWait.GetComponent<Transform> ().transform.localScale = new Vector3 (2.0f, 2.0f, 1.0f);
-				screenModeFlag = true;
 			} else {
-				screenModeFlag = false;
+				EventMarriage.GetComponent<Transform> ().transform.localScale = new Vector3 (1.4f, 1.4f, 1.0f);
+				EventWait.GetComponent<Transform> ().transform.localScale = new Vector3 (2.0f, 2.0f, 1.0f);
 			}
 
 			// 男の子と女の子のたまごっちをここで設定する
@@ -254,7 +251,6 @@ namespace Mix2App.Marriage{
 			if (muser2.pet!=null) yield return pbPet2.init (muser2.pet);
 
 
-
 			if ((mkind1 == 0) && (muser1.chara2 == null)) {
 				manChara2.transform.localScale = new Vector3 (0, 0, 0);		// 男の子の親族は出席しないので表示を消す。
 			}
@@ -267,8 +263,6 @@ namespace Mix2App.Marriage{
 			if (muser2.pet == null) {
 				petChara2.transform.localScale = new Vector3 (0, 0, 0);		// 女の子のペットは出席しないので表示を消す。
 			}
-
-
 
 			startEndFlag = true;
 		}
@@ -288,9 +282,6 @@ namespace Mix2App.Marriage{
 			else mBleSuccess = 2;
 		}
 
-		private float _posMan;
-		private float _posWoman;
-
 		void Update () {
 			switch (jobCount) {
 			case	statusJobCount.marriageJobCount000:
@@ -299,6 +290,20 @@ namespace Mix2App.Marriage{
 					EventJyunbi.SetActive (true);
 					EventSippai.SetActive (false);
 					EventSeikou.SetActive (false);
+/*
+					if ((mkind1 == 0) && (muser1.chara2 == null)) {
+						EventFinale.transform.Find("bg/manChara2").gameObject.SetActive(false);		// 男の子の親族は出席しないので表示を消しておく
+					}
+					if ((mkind2 == 0) && (muser2.chara2 == null)) {
+						EventFinale.transform.Find("bg/womanChara2").gameObject.SetActive(false);	// 女の子の親族は出席しないので表示を消しておく
+					}
+					if (muser1.pet == null) {
+						EventFinale.transform.Find("bg/manPet").gameObject.SetActive(false);		// 男の子のペットは出席しないので表示を消しておく
+					}
+					if (muser2.pet == null) {
+						EventFinale.transform.Find("bg/womanPet").gameObject.SetActive(false);		// 女の子のペットは出席しないので表示を消しておく
+					}
+*/
 					jobCount = statusJobCount.marriageJobCount010;
 					break;
 				}
@@ -347,8 +352,8 @@ namespace Mix2App.Marriage{
 					jobCount = statusJobCount.marriageJobCount040;
 					Debug.Log ("草原");
 
-					_posMan = 550.0f;
-					_posWoman = -550.0f;
+					_CoroutineFlagStart = true;
+					StartCoroutine ("StartCharaIdou");
 					break;
 				}
 			case	statusJobCount.marriageJobCount040:
@@ -357,57 +362,16 @@ namespace Mix2App.Marriage{
 						EventStart.GetComponent<Transform> ().transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
 						EventTown.GetComponent<Transform> ().transform.localScale = new Vector3 (0.8574497f, 0.8574497f, 0.0f);
 						jobCount = statusJobCount.marriageJobCount050;
+						_CoroutineFlagStart = false;
 
 						Debug.Log ("たまタウン");
+
+						_CoroutineFlagTown = true;
+						StartCoroutine ("TownCharaIdou");
 
 						// 左向きに散歩
 						cbMan1.gotoAndPlay (MotionLabel.WALK);
 						cbWoman1.gotoAndPlay (MotionLabel.WALK);
-						cbMan1.GetComponent<SpriteRenderer> ().flipX = false;
-						cbWoman1.GetComponent<SpriteRenderer> ().flipX = false;
-
-						posMan1.y = -3.5f;
-						posWoman1.y = -3.5f;
-
-					} else {
-
-						EventStart.transform.Find ("bg1/manChara").gameObject.transform.localPosition = new Vector3 (_posMan, 0, 0);
-						EventStart.transform.Find ("bg1/womanChara").gameObject.transform.localPosition = new Vector3 (_posWoman, 0, 0);
-
-						_posMan -= (1.0f * (60 * Time.deltaTime));
-						_posWoman += (1.0f * (60 * Time.deltaTime));
-
-						if ((_posMan <= 200.0f)) {
-							if (cbMan1.nowlabel != MotionLabel.SHY4) {
-								cbMan1.gotoAndPlay (MotionLabel.SHY4);
-								cbWoman1.gotoAndPlay (MotionLabel.SHY4);
-							}
-						}
-
-						if (_posMan <= 55.0f) {
-							_posMan = 55.0f;
-							_posWoman = -55.0f;
-
-							if (cbMan1.nowlabel != MotionLabel.IDLE) {
-								cbMan1.gotoAndPlay (MotionLabel.IDLE);
-								cbWoman1.gotoAndPlay (MotionLabel.IDLE);
-							}
-						}
-
-						EventStart.transform.Find ("bg1/manChara").gameObject.GetComponent<Image> ().sprite = cbMan1.GetComponent<SpriteRenderer> ().sprite;
-						EventStart.transform.Find ("bg1/womanChara").gameObject.GetComponent<Image> ().sprite = cbWoman1.GetComponent<SpriteRenderer> ().sprite;
-						posMan1.y = -500.0f;
-						posWoman1.y = -500.0f;
-/*						
-						if(screenModeFlag){
-							posMan1.y = (EventStart.transform.Find ("bg1").gameObject.transform.localPosition.y / 57.0f) - 12.0f;
-							posWoman1.y = (EventStart.transform.Find ("bg1").gameObject.transform.localPosition.y / 57.0f) - 13.0f;
-						}
-						else{
-							posMan1.y = (EventStart.transform.Find ("bg1").gameObject.transform.localPosition.y / 47.0f) + 0.7f;
-							posWoman1.y = (EventStart.transform.Find ("bg1").gameObject.transform.localPosition.y / 47.0f) + 0.7f;
-						}
-*/
 					}
 					break;
 				}
@@ -417,19 +381,16 @@ namespace Mix2App.Marriage{
 						EventTown.GetComponent<Transform> ().transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
 						EventPark.GetComponent<Transform> ().transform.localScale = new Vector3 (3.897114f, 3.897114f, 3.897114f);
 						jobCount = statusJobCount.marriageJobCount060;
+						_CoroutineFlagTown = false;
 
 						Debug.Log ("遊園地");
+
+						_CoroutineFlagPark = true;
+						StartCoroutine ("ParkCharaIdou");
 
 						// 右向きに散歩
 						cbMan1.gotoAndPlay (MotionLabel.WALK);
 						cbWoman1.gotoAndPlay (MotionLabel.WALK);
-						cbMan1.GetComponent<SpriteRenderer> ().flipX = true;
-						cbWoman1.GetComponent<SpriteRenderer> ().flipX = true;
-
-						posInit ();
-					} else {
-						posMan1.x = (man_walk0.transform.localPosition.x / 66.0f) + 1.8f - 0.8f;
-						posWoman1.x = (woman_walk0.transform.localPosition.x / 66.0f) + 1.3f;
 					}
 					break;
 				}
@@ -439,17 +400,16 @@ namespace Mix2App.Marriage{
 						EventPark.GetComponent<Transform> ().transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
 						EventBeach.GetComponent<Transform> ().transform.localScale = new Vector3 (0.8574491f, 0.8574491f, 0.0f);
 						jobCount = statusJobCount.marriageJobCount070;
+						_CoroutineFlagPark = false;
 
 						Debug.Log ("海岸");
 
+						_CoroutineFlagBeach = true;
+						StartCoroutine ("BeachCharaIdou");
+
 						// 左向きに散歩
-						cbMan1.gotoAndPlay (MotionLabel.WALK);
-						cbWoman1.gotoAndPlay (MotionLabel.WALK);
-						cbMan1.GetComponent<SpriteRenderer> ().flipX = false;
-						cbWoman1.GetComponent<SpriteRenderer> ().flipX = false;
-					} else {
-						posMan1.x = (man_walk1.transform.localPosition.x / 10.0f) - 0.75f;
-						posWoman1.x = (woman_walk1.transform.localPosition.x / 10.0f) - 0.75f + 2.0f;
+						cbMan1.gotoAndPlay (MotionLabel.SHY4);
+						cbWoman1.gotoAndPlay (MotionLabel.SHY4);
 					}
 					break;
 				}
@@ -459,19 +419,13 @@ namespace Mix2App.Marriage{
 						EventBeach.GetComponent<Transform> ().transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
 						EventGarden.GetComponent<Transform> ().transform.localScale = new Vector3 (1.5f, 1.5f, 0.0f);
 						jobCount = statusJobCount.marriageJobCount080;
+						_CoroutineFlagBeach = false;
 
 						Debug.Log ("庭園");
 
 						// ベンチに向き合って座る
-						posMan1.x = 1.0f;
-						posWoman1.x = -1.0f;
-						cbMan1.gotoAndPlay (MotionLabel.SIT);
-						cbWoman1.gotoAndPlay (MotionLabel.SIT);
-						cbMan1.GetComponent<SpriteRenderer> ().flipX = false;
-						cbWoman1.GetComponent<SpriteRenderer> ().flipX = true;
-					} else {
-						posMan1.x = (man_walk2.transform.localPosition.x / 66.0f) + 1.8f - 0.8f;
-						posWoman1.x = (woman_walk2.transform.localPosition.x / 66.0f) + 1.3f;
+						cbMan1.gotoAndPlay (MotionLabel.SIT2);
+						cbWoman1.gotoAndPlay (MotionLabel.SIT2);
 					}
 					break;
 				}
@@ -484,30 +438,17 @@ namespace Mix2App.Marriage{
 
 						Debug.Log ("結婚式");
 
+						posOmedetou = omedetouPosition.transform.localPosition;
+						_CoroutineFlagFinale = true;
+						StartCoroutine ("FinaleCharaIdou");
+
 						// 結婚式場で整列
-						cbMan1.gotoAndPlay (MotionLabel.IDLE);
-						cbWoman1.gotoAndPlay (MotionLabel.IDLE);
+						cbMan1.gotoAndPlay (MotionLabel.SHY1);
+						cbWoman1.gotoAndPlay (MotionLabel.SHY1);
 						cbMan2.gotoAndPlay (MotionLabel.IDLE);
 						cbWoman2.gotoAndPlay (MotionLabel.IDLE);
 						pbPet1.gotoAndPlay (MotionLabel.IDLE);
 						pbPet2.gotoAndPlay (MotionLabel.IDLE);
-						cbMan1.GetComponent<SpriteRenderer> ().flipX = false;
-						cbWoman1.GetComponent<SpriteRenderer> ().flipX = true;
-						cbMan2.GetComponent<SpriteRenderer> ().flipX = false;
-						cbWoman2.GetComponent<SpriteRenderer> ().flipX = true;
-						pbPet1.GetComponent<SpriteRenderer> ().flipX = false;
-						pbPet2.GetComponent<SpriteRenderer> ().flipX = true;
-
-						posOmedetou = omedetouPosition.transform.localPosition;
-					} else {
-						if(screenModeFlag){
-							posMan1.y = (man_sit.transform.localPosition.y / 44.0f) - 0.5f;
-							posWoman1.y = (man_sit.transform.localPosition.y / 44.0f) - 0.5f;
-						}
-						else{
-							posMan1.y = (man_sit.transform.localPosition.y / 43.7f) - 0.5f;
-							posWoman1.y = (man_sit.transform.localPosition.y / 43.7f) - 0.5f;
-						}
 					}
 					break;
 				}
@@ -515,37 +456,7 @@ namespace Mix2App.Marriage{
 				{
 					if (EventFinale.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0f) {
 						jobCount = statusJobCount.marriageJobCount100;
-
-						posMan1.y = 500.0f;					// 男の子を画面外に
-						posMan2.y = 500.0f;					// 女の子を画面外に
-						posWoman1.y = 500.0f;				// 男の子の双子を画面外に
-						posWoman2.y = 500.0f;				// 女の子の双子を画面外に
-
-						posPet1.y = 500.0f;					// ペット１を画面外に
-						posPet2.y = 500.0f;					// ペット２を画面外に
-					} else {
-						if (screenModeFlag) {
-							posMan1.y = (man_happy.transform.localPosition.y / 51.0f) + 0.2f - 1.0f;
-							posWoman1.y = (woman_happy.transform.localPosition.y / 51.0f) + 0.2f - 1.0f;
-							posMan2.y = (man_happy.transform.localPosition.y / 51.0f) + 3.25f - 2.8f;
-							posWoman2.y = (woman_happy.transform.localPosition.y / 51.0f) + 3.25f - 2.8f;
-							posPet1.y = (man_happy.transform.localPosition.y / 51.0f) + 3.35f - 2.8f;
-							posPet2.y = (woman_happy.transform.localPosition.y / 51.0f) + 3.35f - 2.8f;
-						} else {
-							posMan1.y = (man_happy.transform.localPosition.y / 51.0f) + 0.2f - 1.0f;
-							posWoman1.y = (woman_happy.transform.localPosition.y / 51.0f) + 0.2f - 1.0f;
-							posMan2.y = (man_happy.transform.localPosition.y / 51.0f) + 3.25f - 2.8f;
-							posWoman2.y = (woman_happy.transform.localPosition.y / 51.0f) + 3.25f - 2.8f;
-							posPet1.y = (man_happy.transform.localPosition.y / 51.0f) + 3.35f - 2.8f;
-							posPet2.y = (woman_happy.transform.localPosition.y / 51.0f) + 3.35f - 2.8f;
-						}
-						if (posOmedetou.y != omedetouPosition.transform.localPosition.y) {
-							posMan2.y += ((omedetouPosition.transform.localPosition.y - posOmedetou.y) / 50.0f);
-							posWoman2.y += ((omedetouPosition.transform.localPosition.y - posOmedetou.y) / 50.0f);
-
-							posPet1.y += ((omedetouPosition.transform.localPosition.y - posOmedetou.y) / 80.0f);
-							posPet2.y += ((omedetouPosition.transform.localPosition.y - posOmedetou.y) / 80.0f);
-						}
+						_CoroutineFlagFinale = false;
 					}
 					break;
 				}
@@ -619,13 +530,28 @@ namespace Mix2App.Marriage{
 				}
 			}
 
-			manChara1.transform.localPosition = posMan1;
-			manChara2.transform.localPosition = posMan2;
-			womanChara1.transform.localPosition = posWoman1;
-			womanChara2.transform.localPosition = posWoman2;
+			EventStart.transform.Find ("bg1/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
+			EventStart.transform.Find ("bg1/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
 
-			petChara1.transform.localPosition = posPet1;
-			petChara2.transform.localPosition = posPet2;
+			EventTown.transform.Find ("Chara/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
+			EventTown.transform.Find ("Chara/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
+
+			EventPark.transform.Find ("Chara/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
+			EventPark.transform.Find ("Chara/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
+
+			EventBeach.transform.Find ("Chara/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
+			EventBeach.transform.Find ("Chara/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
+
+			EventGarden.transform.Find ("bg1/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
+			EventGarden.transform.Find ("bg1/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
+
+			EventFinale.transform.Find ("bg/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
+			EventFinale.transform.Find ("bg/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
+			EventFinale.transform.Find ("bg/manChara2").gameObject.GetComponent<Image> ().sprite = manChara2.GetComponent<SpriteRenderer> ().sprite;
+			EventFinale.transform.Find ("bg/womanChara2").gameObject.GetComponent<Image> ().sprite = womanChara2.GetComponent<SpriteRenderer> ().sprite;
+			EventFinale.transform.Find ("bg/manPet").gameObject.GetComponent<Image> ().sprite = petChara1.GetComponent<SpriteRenderer> ().sprite;
+			EventFinale.transform.Find ("bg/womanPet").gameObject.GetComponent<Image> ().sprite = petChara2.GetComponent<SpriteRenderer> ().sprite;
+
 		}
 
 
@@ -651,15 +577,153 @@ namespace Mix2App.Marriage{
 			PanelWhite.GetComponent<Image> ().color = new Color (1.0f, 1.0f, 1.0f, panelWhiteA / 255.0f);
 		}
 
-		private void posInit(){
-			posMan1 = new Vector3 (-7.0f, -1.5f - 1.0f, 0.0f);
-			posWoman1 = new Vector3 (-9.0f, -1.5f - 1.0f, 0.0f);
-			posMan2 = new Vector3 (1.2f, 50.0f, 0.0f);
-			posWoman2 = new Vector3 (-1.2f, 50.0f, 0.0f);
 
-			posPet1 = new Vector3 (1.1f, 50.0f, 0.0f);
-			posPet2 = new Vector3 (-1.1f, 50.0f, 0.0f);
+
+		private IEnumerator StartCharaIdou(){
+			float _posMan;
+			float _posWoman;
+
+			_posMan = 550.0f;
+			_posWoman = -550.0f;
+
+			while (_CoroutineFlagStart) {
+				EventStart.transform.Find ("bg1/manChara").gameObject.transform.localPosition = new Vector3 (_posMan, 0, 0);
+				EventStart.transform.Find ("bg1/womanChara").gameObject.transform.localPosition = new Vector3 (_posWoman, 0, 0);
+
+				_posMan -= (1.0f * (60 * Time.deltaTime));
+				_posWoman += (1.0f * (60 * Time.deltaTime));
+
+				if ((_posMan <= 200.0f)) {
+					if (cbMan1.nowlabel != MotionLabel.SHY4) {
+						cbMan1.gotoAndPlay (MotionLabel.SHY4);
+						cbWoman1.gotoAndPlay (MotionLabel.SHY4);
+					}
+				}
+
+				if (_posMan <= 55.0f) {
+					_posMan = 55.0f;
+					_posWoman = -55.0f;
+					if (cbMan1.nowlabel != MotionLabel.IDLE) {
+						cbMan1.gotoAndPlay (MotionLabel.IDLE);
+						cbWoman1.gotoAndPlay (MotionLabel.IDLE);
+					}
+				}
+
+				yield return null;
+			}
 		}
+
+		private IEnumerator TownCharaIdou(){
+			while (_CoroutineFlagTown) {
+				Vector3 _pos = EventTown.transform.Find ("Chara").gameObject.transform.localPosition;
+				_pos.x -= (0.6f * (60 * Time.deltaTime));
+				EventTown.transform.Find ("Chara").gameObject.transform.localPosition = _pos;
+				yield return null;
+			}
+		}
+
+		private IEnumerator ParkCharaIdou(){
+			while(_CoroutineFlagPark){
+				Vector3 _pos = EventPark.transform.Find ("Chara").gameObject.transform.localPosition;
+				_pos.x += (0.075f * (60 * Time.deltaTime));
+				EventPark.transform.Find ("Chara").gameObject.transform.localPosition = _pos;
+				yield return null;
+			}
+		}
+
+		private IEnumerator BeachCharaIdou(){
+			while (_CoroutineFlagBeach) {
+				Vector3 _pos = EventBeach.transform.Find ("Chara").gameObject.transform.localPosition;
+				_pos.x -= (0.6f * (60 * Time.deltaTime));
+				EventBeach.transform.Find ("Chara").gameObject.transform.localPosition = _pos;
+				yield return null;
+			}
+		}
+
+		private Vector3 _posCharaMan;
+		private Vector3 _posCharaWoman;
+		private IEnumerator FinaleCharaIdou(){
+			Vector3 _posCharaMan2;
+			Vector3 _posCharaWoman2;
+			Vector3 _posPet1;
+			Vector3 _posPet2;
+			float	_posCharaMan2y;
+			float	_posCharaWoman2y;
+			float	_posPet1y;
+			float	_posPet2y;
+
+			_posCharaMan = EventFinale.transform.Find ("bg/manChara").gameObject.transform.localPosition;
+			_posCharaWoman = EventFinale.transform.Find ("bg/womanChara").gameObject.transform.localPosition;
+			_posCharaMan2 = EventFinale.transform.Find ("bg/manChara2").gameObject.transform.localPosition;
+			_posCharaWoman2 = EventFinale.transform.Find ("bg/womanChara2").gameObject.transform.localPosition;
+			_posPet1 = EventFinale.transform.Find ("bg/manPet").gameObject.transform.localPosition;
+			_posPet2 = EventFinale.transform.Find ("bg/womanPet").gameObject.transform.localPosition;
+
+			_posCharaMan2y = _posCharaMan2.y;
+			_posCharaWoman2y = _posCharaWoman2.y;
+			_posPet1y = _posPet1.y;
+			_posPet2y = _posPet2.y;
+
+			StartCoroutine ("FinaleCharaKiss");
+
+			while (_CoroutineFlagFinale) {
+				if (posOmedetou.y != omedetouPosition.transform.localPosition.y) {
+					_posCharaMan2.y = _posCharaMan2y + ((omedetouPosition.transform.localPosition.y - posOmedetou.y) / 2.0f);
+					_posCharaWoman2.y = _posCharaWoman2y + ((omedetouPosition.transform.localPosition.y - posOmedetou.y) / 2.0f);
+
+					_posPet1.y = _posPet1y + ((omedetouPosition.transform.localPosition.y - posOmedetou.y) / 3.0f);
+					_posPet2.y = _posPet2y + ((omedetouPosition.transform.localPosition.y - posOmedetou.y) / 3.0f);
+				} else {
+					_posCharaMan2.y = _posCharaMan2y;
+					_posCharaWoman2.y = _posCharaWoman2y;
+					_posPet1.y = _posPet1y;
+					_posPet2.y = _posPet2y;
+				}
+
+				EventFinale.transform.Find ("bg/manChara").gameObject.transform.localPosition = _posCharaMan;
+				EventFinale.transform.Find ("bg/womanChara").gameObject.transform.localPosition = _posCharaWoman;
+				EventFinale.transform.Find ("bg/manChara2").gameObject.transform.localPosition = _posCharaMan2;
+				EventFinale.transform.Find ("bg/womanChara2").gameObject.transform.localPosition = _posCharaWoman2;
+				EventFinale.transform.Find ("bg/manPet").gameObject.transform.localPosition = _posPet1;
+				EventFinale.transform.Find ("bg/womanPet").gameObject.transform.localPosition = _posPet2;
+
+				yield return null;
+			}
+		}
+		private IEnumerator FinaleCharaKiss(){
+			float	_time1;
+			int 	_time2;
+
+			yield return new WaitForSeconds (9.0f);
+
+			_time1 = 0.0f;
+			_time2 = 2;
+
+			while (_CoroutineFlagFinale) {
+				_time1 += 1.0f * Time.deltaTime;
+				if (_time1 >= 1.0f) {
+					_time1 -= 1.0f;
+					_time2--;
+					if (_time2 == 0) {
+						break;
+					}
+				}
+				_posCharaMan.x -= (0.2f * (60 * Time.deltaTime));
+				_posCharaWoman.x += (0.2f * (60 * Time.deltaTime));
+
+				yield return null;
+			}
+
+			cbMan1.gotoAndPlay (MotionLabel.SIT2);
+			cbWoman2.gotoAndPlay (MotionLabel.SIT2);
+
+			yield return new WaitForSeconds (2.0f);
+
+			cbMan1.gotoAndPlay (MotionLabel.KISS);
+			cbWoman2.gotoAndPlay (MotionLabel.KISS);
+		}
+
+
 
 		private void ButtonJyunbiClick(){
 			jyunbiButtonFlag = true;
@@ -684,7 +748,7 @@ namespace Mix2App.Marriage{
 				if (EventEgg2.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0f) {
 					break;
 				}
-				yield return new WaitForSeconds(0.01f);
+				yield return null;
 			}
 			EventEgg1.SetActive (true);
 			EventEgg2.SetActive (false);
