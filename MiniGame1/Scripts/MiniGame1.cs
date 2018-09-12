@@ -221,9 +221,9 @@ namespace Mix2App.MiniGame1{
 						posTamago [i].x = pos [i, 0];
 						posTamago [i].y = pos [i, 1];
 					}
-					cbCharaTamago [0].gotoAndPlay ("idle");
-					cbCharaTamago [1].gotoAndPlay ("idle");
-					cbCharaTamago [2].gotoAndPlay ("sit");
+					cbCharaTamago [0].gotoAndPlay (MotionLabel.IDLE);
+					cbCharaTamago [1].gotoAndPlay (MotionLabel.IDLE);
+					cbCharaTamago [2].gotoAndPlay (MotionLabel.SIT);
 					TamagoAnimeSprite (EventStart);									// たまごっちのアニメをImage,SpriteRendererに反映する
 					break;
 				}
@@ -270,7 +270,7 @@ namespace Mix2App.MiniGame1{
 						resultMainLoopFlag = false;
 						ResultMainLoop ();											// 結果画面処理
 						for (int i = 0; i < 3; i++) {
-							cbCharaTamago [i].gotoAndPlay ("idle");
+							cbCharaTamago [i].gotoAndPlay (MotionLabel.IDLE);
 						}
 						TamagoAnimeSprite2 (EventResult);							// たまごっちのアニメをImage,SpriteRendererに反映する
 					}
@@ -396,16 +396,16 @@ namespace Mix2App.MiniGame1{
 
 				if (ray.direction.x * 600 >= pos.x) {
 					if (charaAnimeFlag != 1) {
-						if (cbCharaTamago [0].nowlabel != "walk") {
-							cbCharaTamago [0].gotoAndPlay ("walk");
+						if (cbCharaTamago [0].nowlabel != MotionLabel.WALK) {
+							cbCharaTamago [0].gotoAndPlay (MotionLabel.WALK);
 						}
 						charaObj.GetComponent<SpriteRenderer> ().flipX = true;
 						charaAnimeFlag = 1;
 					}
 				} else {
 					if (charaAnimeFlag != 2) {
-						if (cbCharaTamago [0].nowlabel != "walk") {
-							cbCharaTamago [0].gotoAndPlay ("walk");
+						if (cbCharaTamago [0].nowlabel != MotionLabel.WALK) {
+							cbCharaTamago [0].gotoAndPlay (MotionLabel.WALK);
 						}
 						charaObj.GetComponent<SpriteRenderer> ().flipX = false;
 						charaAnimeFlag = 2;
@@ -434,7 +434,7 @@ namespace Mix2App.MiniGame1{
 					pos.x += (2.5f * (60 * Time.deltaTime));
 					if (pos.x >= 330.0f) {
 						pos.x = 330.0f;												// 画面端に来たら停止
-						cbCharaTamago [0].gotoAndPlay ("idle");
+						cbCharaTamago [0].gotoAndPlay (MotionLabel.IDLE);
 						charaAnimeFlag = 0;
 					}
 					break;
@@ -444,7 +444,7 @@ namespace Mix2App.MiniGame1{
 					pos.x -= (2.5f * (60 * Time.deltaTime));
 					if (pos.x <= -330.0f) {
 						pos.x = -330.0f;											// 画面端に来たら停止
-						cbCharaTamago [0].gotoAndPlay ("idle");
+						cbCharaTamago [0].gotoAndPlay (MotionLabel.IDLE);
 						charaAnimeFlag = 0;
 					}
 					break;
@@ -502,7 +502,7 @@ namespace Mix2App.MiniGame1{
 					if (HitCheck (pos, posItem)) {									// たまごっちとアイテムの当たり判定
 						if (gameitem.Score < 0) {
 							gameMainLoopFlag = true;								// お邪魔アイテムに触ったので終了
-							cbCharaTamago [0].gotoAndPlay ("shock");
+							cbCharaTamago [0].gotoAndPlay (MotionLabel.SHOCK);
 							break;
 						}
 
