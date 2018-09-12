@@ -290,7 +290,7 @@ namespace Mix2App.Marriage{
 					EventJyunbi.SetActive (true);
 					EventSippai.SetActive (false);
 					EventSeikou.SetActive (false);
-/*
+
 					if ((mkind1 == 0) && (muser1.chara2 == null)) {
 						EventFinale.transform.Find("bg/manChara2").gameObject.SetActive(false);		// 男の子の親族は出席しないので表示を消しておく
 					}
@@ -303,7 +303,7 @@ namespace Mix2App.Marriage{
 					if (muser2.pet == null) {
 						EventFinale.transform.Find("bg/womanPet").gameObject.SetActive(false);		// 女の子のペットは出席しないので表示を消しておく
 					}
-*/
+
 					jobCount = statusJobCount.marriageJobCount010;
 					break;
 				}
