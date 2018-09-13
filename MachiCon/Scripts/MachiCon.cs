@@ -372,14 +372,6 @@ namespace Mix2App.MachiCon{
 
 					MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp01);
 
-					CharaTamagochi [0].GetComponent<Canvas> ().sortingOrder = 4;
-					CharaTamagochi [1].GetComponent<Canvas> ().sortingOrder = 3;
-					CharaTamagochi [2].GetComponent<Canvas> ().sortingOrder = 2;
-					CharaTamagochi [3].GetComponent<Canvas> ().sortingOrder = 1;
-					CharaTamagochi [4].GetComponent<Canvas> ().sortingOrder = 4;
-					CharaTamagochi [5].GetComponent<Canvas> ().sortingOrder = 3;
-					CharaTamagochi [6].GetComponent<Canvas> ().sortingOrder = 2;
-					CharaTamagochi [7].GetComponent<Canvas> ().sortingOrder = 1;
 					for (int i = 0; i < 8; i++) {
 						posTamago [i] = new Vector3 (0.0f, -400.0f, 0.0f);						// たまごっちの初期位置
 					}
@@ -432,6 +424,7 @@ namespace Mix2App.MachiCon{
 			case	statusJobCount.machiconJobCount070:
 				{	// たまごっち入場
 					StartCoroutine ("OpenningTamagoIdou");										// 画面下から入場して整列位置に停止するまで
+
 					jobCount = statusJobCount.machiconJobCount080;
 					break;
 				}
@@ -2685,6 +2678,8 @@ namespace Mix2App.MachiCon{
 			Vector3 _pos = new Vector3 (0.0f, 0.0f, 0.0f);
 			_openningTamagoIdouFlag = false;
 
+			StartCoroutine ("OpenningTamagoSort");
+
 			cbTamagoChara [posNumber].gotoAndPlay (MotionLabel.WALK);
 			switch (posNumber) {
 			case	0:
@@ -2789,6 +2784,35 @@ namespace Mix2App.MachiCon{
 
 			_openningTamagoIdouFlag = true;
 		}
+		private IEnumerator OpenningTamagoSort(){
+			float[] _posY = new float[8];
+
+			while (true) {
+				if (_openningTamagoIdouFlag) {
+					break;
+				}
+
+				for (int i = 0; i < 8; i++) {
+					_posY[i] = posTamago [i].y;
+				}
+
+				for (int j = 0; j < 8; j++) {								// たまごっちの表示優先順位の変更
+					int k = 0;
+					float _checkPos = -1000.0f;
+					for (int i = 0; i < 8; i++) {
+						if (_checkPos <= _posY [i]) {
+							_checkPos = _posY [i];
+							k = i;
+						}
+					}
+					_posY [k] = -1000.0f;
+					CharaTamagochi [k].GetComponent<Canvas> ().sortingOrder = j + 1;
+				}
+
+				yield return null;
+			}
+		}
+
 
 		private bool _kokuhakuHeartJumpFlag;
 		private IEnumerator KokuhakuHaertJump(){

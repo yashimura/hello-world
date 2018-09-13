@@ -530,6 +530,32 @@ namespace Mix2App.Marriage{
 				}
 			}
 
+
+			TamagochiImageMove (EventStart, manChara1, "bg1/manChara");
+			TamagochiImageMove (EventStart, womanChara1, "bg1/womanChara");
+
+			TamagochiImageMove (EventTown, manChara1, "Chara/manChara");
+			TamagochiImageMove (EventTown, womanChara1, "Chara/womanChara");
+
+			TamagochiImageMove (EventPark, manChara1, "Chara/manChara");
+			TamagochiImageMove (EventPark, womanChara1, "Chara/womanChara");
+
+			TamagochiImageMove (EventBeach, manChara1, "Chara/manChara");
+			TamagochiImageMove (EventBeach, womanChara1, "Chara/womanChara");
+
+			TamagochiImageMove (EventGarden, manChara1, "bg1/manChara");
+			TamagochiImageMove (EventGarden, womanChara1, "bg1/womanChara");
+
+			TamagochiImageMove (EventFinale, manChara1, "bg/manChara");
+			TamagochiImageMove (EventFinale, womanChara1, "bg/womanChara");
+			TamagochiImageMove (EventFinale, manChara2, "bg/manChara2");
+			TamagochiImageMove (EventFinale, womanChara2, "bg/womanChara2");
+
+			TamagochiPetImageMove (EventFinale, petChara1, "bg/manPet");
+			TamagochiPetImageMove (EventFinale, petChara2, "bg/womanPet");
+
+
+/*
 			EventStart.transform.Find ("bg1/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
 			EventStart.transform.Find ("bg1/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
 
@@ -551,7 +577,7 @@ namespace Mix2App.Marriage{
 			EventFinale.transform.Find ("bg/womanChara2").gameObject.GetComponent<Image> ().sprite = womanChara2.GetComponent<SpriteRenderer> ().sprite;
 			EventFinale.transform.Find ("bg/manPet").gameObject.GetComponent<Image> ().sprite = petChara1.GetComponent<SpriteRenderer> ().sprite;
 			EventFinale.transform.Find ("bg/womanPet").gameObject.GetComponent<Image> ().sprite = petChara2.GetComponent<SpriteRenderer> ().sprite;
-
+*/
 		}
 
 
@@ -721,6 +747,44 @@ namespace Mix2App.Marriage{
 
 			cbMan1.gotoAndPlay (MotionLabel.KISS);
 			cbWoman2.gotoAndPlay (MotionLabel.KISS);
+		}
+
+
+
+		private void TamagochiImageMove(GameObject toObj,GameObject fromObj,string toStr){
+			for (int i = 0; i < fromObj.transform.Find ("Layers").transform.childCount; i++) {
+				toObj.transform.Find (toStr + "/Layers/" + fromObj.transform.Find ("Layers").transform.GetChild (i).name).gameObject.transform.SetSiblingIndex (i);
+			}
+
+			toObj.transform.Find (toStr + "/Layers/Layer0").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer0").gameObject.GetComponent<Image> ().sprite;
+			toObj.transform.Find (toStr + "/Layers/Layer1").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer1").gameObject.GetComponent<Image> ().sprite;
+			toObj.transform.Find (toStr + "/Layers/Layer2").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer2").gameObject.GetComponent<Image> ().sprite;
+			toObj.transform.Find (toStr + "/Layers/Layer3").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer3").gameObject.GetComponent<Image> ().sprite;
+
+			toObj.transform.Find (toStr + "/Layers/Layer0").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer0").gameObject.transform.localPosition;
+			toObj.transform.Find (toStr + "/Layers/Layer1").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer1").gameObject.transform.localPosition;
+			toObj.transform.Find (toStr + "/Layers/Layer2").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer2").gameObject.transform.localPosition;
+			toObj.transform.Find (toStr + "/Layers/Layer3").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localPosition;
+
+			toObj.transform.Find (toStr + "/Layers/Layer0").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer0").gameObject.transform.localScale;
+			toObj.transform.Find (toStr + "/Layers/Layer1").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer1").gameObject.transform.localScale;
+			toObj.transform.Find (toStr + "/Layers/Layer2").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer2").gameObject.transform.localScale;
+			toObj.transform.Find (toStr + "/Layers/Layer3").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localScale;
+		}
+
+		private void TamagochiPetImageMove(GameObject toObj,GameObject fromObj,string toStr){
+			for (int i = 0; i < fromObj.transform.Find ("Layers").transform.childCount; i++) {
+				toObj.transform.Find (toStr + "/Layers/" + fromObj.transform.Find ("Layers").transform.GetChild (i).name).gameObject.transform.SetSiblingIndex (i);
+			}
+
+			toObj.transform.Find (toStr + "/Layers/Layer").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer").gameObject.GetComponent<Image> ().sprite;
+			toObj.transform.Find (toStr + "/Layers/Layer (1)").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer (1)").gameObject.GetComponent<Image> ().sprite;
+
+			toObj.transform.Find (toStr + "/Layers/Layer").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer").gameObject.transform.localPosition;
+			toObj.transform.Find (toStr + "/Layers/Layer (1)").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer (1)").gameObject.transform.localPosition;
+
+			toObj.transform.Find (toStr + "/Layers/Layer").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer").gameObject.transform.localScale;
+			toObj.transform.Find (toStr + "/Layers/Layer (1)").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer (1)").gameObject.transform.localScale;
 		}
 
 

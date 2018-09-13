@@ -198,14 +198,13 @@ namespace Mix2App.MarriageDate{
 			switch (jobCount) {
 			case	statusJobCount.marriageJobCount000:
 				{
-//					if (startEndFlag) {
-					waitCount--;
-					if (waitCount == 0) {
-						jobCount = statusJobCount.marriageJobCount010;
-						cbMan1.gotoAndPlay (MotionLabel.WALK);
-						cbWoman1.gotoAndPlay (MotionLabel.WALK);
-
-//						}
+					if (startEndFlag) {
+						waitCount--;
+						if (waitCount == 0) {
+							jobCount = statusJobCount.marriageJobCount010;
+							cbMan1.gotoAndPlay (MotionLabel.WALK);
+							cbWoman1.gotoAndPlay (MotionLabel.WALK);
+						}
 					}
 					break;
 				}
@@ -223,7 +222,6 @@ namespace Mix2App.MarriageDate{
 					cbMan1.gotoAndPlay (MotionLabel.WALK);
 					cbWoman1.gotoAndPlay (MotionLabel.WALK);
 
-					posInit ();
 					break;
 				}
 			case	statusJobCount.marriageJobCount020:
@@ -370,29 +368,25 @@ namespace Mix2App.MarriageDate{
 			}
 
 
-			EventPark.transform.Find ("Chara/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
-			EventPark.transform.Find ("Chara/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
-			EventBeach.transform.Find ("Chara/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
-			EventBeach.transform.Find ("Chara/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
 
-			EventGarden.transform.Find ("bg1/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
-			EventGarden.transform.Find ("bg1/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
-			EventEnd.transform.Find ("bg1/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
-			EventEnd.transform.Find ("bg1/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
+			TamagochiImageMove (EventPark, manChara1, "Chara/manChara");
+			TamagochiImageMove (EventPark, womanChara1, "Chara/womanChara");
+
+			TamagochiImageMove (EventBeach, manChara1, "Chara/manChara");
+			TamagochiImageMove (EventBeach, womanChara1, "Chara/womanChara");
+
+			TamagochiImageMove (EventGarden, manChara1, "bg1/manChara");
+			TamagochiImageMove (EventGarden, womanChara1, "bg1/womanChara");
+
+			TamagochiImageMove (EventEnd, manChara1, "bg1/manChara");
+			TamagochiImageMove (EventEnd, womanChara1, "bg1/womanChara");
 		}
-
-
+			
 		private void MarriageJobTypeOpening(){
 			EventDate.SetActive (true);
 		}
 
-
-		private void posInit(){
-			manChara1.transform.localPosition = new Vector3 (500, 0, 0);
-			womanChara1.transform.localPosition = new Vector3 (500, 0, 0);
-		}
-
-		private void EventEndMessageSet(){
+				private void EventEndMessageSet(){
 			string _gobiMan, _gobiWoman;
 
 			if (mkind1 == 0) {
@@ -488,8 +482,8 @@ namespace Mix2App.MarriageDate{
 
 			yield return new WaitForSeconds (0.5f);
 
-			EventEnd.transform.Find ("bg1/manChara").gameObject.transform.localScale = new Vector3 (-0.5f, 0.5f, 0);
-			EventEnd.transform.Find ("bg1/womanChara").gameObject.transform.localScale = new Vector3 (0.5f, 0.5f, 0);
+			EventEnd.transform.Find ("bg1/manChara").gameObject.transform.localScale = new Vector3 (-1.9f, 1.9f, 0);
+			EventEnd.transform.Find ("bg1/womanChara").gameObject.transform.localScale = new Vector3 (1.9f, 1.9f, 0);
 			cbMan1.gotoAndPlay (MotionLabel.WALK);
 			cbWoman1.gotoAndPlay (MotionLabel.WALK);
 
@@ -502,6 +496,29 @@ namespace Mix2App.MarriageDate{
 			
 				yield return null;
 			}
+		}
+
+
+
+		private void TamagochiImageMove(GameObject toObj,GameObject fromObj,string toStr){
+			for (int i = 0; i < fromObj.transform.Find ("Layers").transform.childCount; i++) {
+				toObj.transform.Find (toStr + "/Layers/" + fromObj.transform.Find ("Layers").transform.GetChild (i).name).gameObject.transform.SetSiblingIndex (i);
+			}
+
+			toObj.transform.Find (toStr + "/Layers/Layer0").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer0").gameObject.GetComponent<Image> ().sprite;
+			toObj.transform.Find (toStr + "/Layers/Layer1").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer1").gameObject.GetComponent<Image> ().sprite;
+			toObj.transform.Find (toStr + "/Layers/Layer2").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer2").gameObject.GetComponent<Image> ().sprite;
+			toObj.transform.Find (toStr + "/Layers/Layer3").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer3").gameObject.GetComponent<Image> ().sprite;
+
+			toObj.transform.Find (toStr + "/Layers/Layer0").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer0").gameObject.transform.localPosition;
+			toObj.transform.Find (toStr + "/Layers/Layer1").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer1").gameObject.transform.localPosition;
+			toObj.transform.Find (toStr + "/Layers/Layer2").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer2").gameObject.transform.localPosition;
+			toObj.transform.Find (toStr + "/Layers/Layer3").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localPosition;
+
+			toObj.transform.Find (toStr + "/Layers/Layer0").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer0").gameObject.transform.localScale;
+			toObj.transform.Find (toStr + "/Layers/Layer1").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer1").gameObject.transform.localScale;
+			toObj.transform.Find (toStr + "/Layers/Layer2").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer2").gameObject.transform.localScale;
+			toObj.transform.Find (toStr + "/Layers/Layer3").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localScale;
 		}
 
 
