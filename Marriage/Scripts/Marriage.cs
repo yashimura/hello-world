@@ -125,6 +125,12 @@ namespace Mix2App.Marriage{
 		private int mkind2;//兄弟種類
 		private int mBleSuccess;//結婚通信結果
 
+		private bool man2AttendFlag;
+		private bool woman2AttendFlag;
+		private bool manPetAttendFlag;
+		private bool womanPetAttendFlag;
+
+
 		void Awake(){
 			Debug.Log ("Marriage Awake");
 			mparam=null;
@@ -186,6 +192,10 @@ namespace Mix2App.Marriage{
 				petChara [i].SetActive (false);
 			}
 
+			man2AttendFlag = false;
+			woman2AttendFlag = false;
+			manPetAttendFlag = false;
+			womanPetAttendFlag = false;
 
 
 			jyunbiButtonFlag = false;
@@ -228,41 +238,61 @@ namespace Mix2App.Marriage{
 			cbWoman2 = womanChara2.GetComponent<CharaBehaviour> ();			// 女の子の双子
 			if (mkind1 == 0) {
 				yield return cbMan1.init (muser1.chara1);
-				if (muser1.chara2 != null)
+				if (muser1.chara2 != null) {
 					yield return cbMan2.init (muser1.chara2);
+					man2AttendFlag = true;
+				}
 			} else {
 				yield return cbMan1.init (muser1.chara2);
 				yield return cbMan2.init (muser1.chara1);
+				man2AttendFlag = true;
 			}
 			if (mkind2 == 0) {
 				yield return cbWoman1.init (muser2.chara1);
-				if (muser2.chara2 != null)
+				if (muser2.chara2 != null) {
 					yield return cbWoman2.init (muser2.chara2);
+					woman2AttendFlag = true;
+				}
 			} else {
 				yield return cbWoman1.init (muser2.chara2);
 				yield return cbWoman2.init (muser2.chara1);
+				woman2AttendFlag = true;
 			}
 
 			// ペットをここで設定する
 
 			pbPet1 = petChara1.GetComponent<PetBehaviour> ();				// 男の子のペット
 			pbPet2 = petChara2.GetComponent<PetBehaviour> ();				// 女の子のペット
-			if (muser1.pet!=null) yield return pbPet1.init (muser1.pet);
-			if (muser2.pet!=null) yield return pbPet2.init (muser2.pet);
+			if (muser1.pet != null) {
+				yield return pbPet1.init (muser1.pet);
+				manPetAttendFlag = true;
+			}
+			if (muser2.pet != null) {
+				yield return pbPet2.init (muser2.pet);
+				womanPetAttendFlag = true;
+			}
 
 
-			if ((mkind1 == 0) && (muser1.chara2 == null)) {
-				manChara2.transform.localScale = new Vector3 (0, 0, 0);		// 男の子の親族は出席しないので表示を消す。
+			if (!man2AttendFlag) {
+				manChara2.transform.localScale = new Vector3 (0, 0, 0);						// 男の子の親族は出席しないので表示を消しておく
+				EventFinale.transform.Find("bg/manChara2").gameObject.SetActive(false);		// 男の子の親族は出席しないので表示を消しておく
 			}
-			if ((mkind2 == 0) && (muser2.chara2 == null)) {
-				womanChara2.transform.localScale = new Vector3 (0, 0, 0);	// 女の子の親族は出席しないので表示を消す。
+			if (!woman2AttendFlag) {
+				womanChara2.transform.localScale = new Vector3 (0, 0, 0);					// 女の子の親族は出席しないので表示を消しておく
+				EventFinale.transform.Find("bg/womanChara2").gameObject.SetActive(false);	// 女の子の親族は出席しないので表示を消しておく
 			}
-			if (muser1.pet == null) {
-				petChara1.transform.localScale = new Vector3 (0, 0, 0);		// 男の子のペットは出席しないので表示を消す。
+			if (!manPetAttendFlag) {
+				petChara1.transform.localScale = new Vector3 (0, 0, 0);						// 男の子のペットは出席しないので表示を消しておく
+				EventFinale.transform.Find("bg/manPet").gameObject.SetActive(false);		// 男の子のペットは出席しないので表示を消しておく
 			}
-			if (muser2.pet == null) {
-				petChara2.transform.localScale = new Vector3 (0, 0, 0);		// 女の子のペットは出席しないので表示を消す。
+			if (!womanPetAttendFlag) {
+				petChara2.transform.localScale = new Vector3 (0, 0, 0);						// 女の子のペットは出席しないので表示を消しておく
+				EventFinale.transform.Find("bg/womanPet").gameObject.SetActive(false);		// 女の子のペットは出席しないので表示を消しておく
 			}
+
+
+
+
 
 			startEndFlag = true;
 		}
@@ -291,19 +321,6 @@ namespace Mix2App.Marriage{
 					EventSippai.SetActive (false);
 					EventSeikou.SetActive (false);
 
-					if ((mkind1 == 0) && (muser1.chara2 == null)) {
-						EventFinale.transform.Find("bg/manChara2").gameObject.SetActive(false);		// 男の子の親族は出席しないので表示を消しておく
-					}
-					if ((mkind2 == 0) && (muser2.chara2 == null)) {
-						EventFinale.transform.Find("bg/womanChara2").gameObject.SetActive(false);	// 女の子の親族は出席しないので表示を消しておく
-					}
-					if (muser1.pet == null) {
-						EventFinale.transform.Find("bg/manPet").gameObject.SetActive(false);		// 男の子のペットは出席しないので表示を消しておく
-					}
-					if (muser2.pet == null) {
-						EventFinale.transform.Find("bg/womanPet").gameObject.SetActive(false);		// 女の子のペットは出席しないので表示を消しておく
-					}
-
 					jobCount = statusJobCount.marriageJobCount010;
 					break;
 				}
@@ -322,7 +339,7 @@ namespace Mix2App.Marriage{
 
 			case	statusJobCount.marriageJobCount020:
 				{
-//					if (startEndFlag) {
+					if (startEndFlag) {
 						waitCount--;
 						if (waitCount == 0) {
 							StartCoroutine ("WaitMain");
@@ -332,13 +349,12 @@ namespace Mix2App.Marriage{
 							cbWoman1.gotoAndPlay (MotionLabel.WALK);
 
 							//裏でBLE通信する※パラメタは設計書参照
-							mBleSuccess=0;
-							GameCall call = new GameCall(CallLabel.BLE_KEKKON, mkind, muser1, mkind1, muser2, mkind2);
-							call.AddListener(mblekekkon);
-							ManagerObject.instance.connect.send(call);
-							
+							mBleSuccess = 0;
+							GameCall call = new GameCall (CallLabel.BLE_KEKKON, mkind, muser1, mkind1, muser2, mkind2);
+							call.AddListener (mblekekkon);
+							ManagerObject.instance.connect.send (call);
 						}
-//					}
+					}
 					break;
 				}
 			case	statusJobCount.marriageJobCount030:
@@ -445,10 +461,21 @@ namespace Mix2App.Marriage{
 						// 結婚式場で整列
 						cbMan1.gotoAndPlay (MotionLabel.SHY1);
 						cbWoman1.gotoAndPlay (MotionLabel.SHY1);
-						cbMan2.gotoAndPlay (MotionLabel.IDLE);
-						cbWoman2.gotoAndPlay (MotionLabel.IDLE);
-						pbPet1.gotoAndPlay (MotionLabel.IDLE);
-						pbPet2.gotoAndPlay (MotionLabel.IDLE);
+
+
+						if (man2AttendFlag) {
+							cbMan2.gotoAndPlay (MotionLabel.IDLE);
+						}
+						if (woman2AttendFlag) {
+							cbWoman2.gotoAndPlay (MotionLabel.IDLE);
+						}
+						if (manPetAttendFlag) {
+							pbPet1.gotoAndPlay (MotionLabel.IDLE);
+						}
+						if (womanPetAttendFlag) {
+							pbPet2.gotoAndPlay (MotionLabel.IDLE);
+						}
+
 					}
 					break;
 				}
@@ -613,8 +640,8 @@ namespace Mix2App.Marriage{
 			_posWoman = -550.0f;
 
 			while (_CoroutineFlagStart) {
-				EventStart.transform.Find ("bg1/manChara").gameObject.transform.localPosition = new Vector3 (_posMan, 0, 0);
-				EventStart.transform.Find ("bg1/womanChara").gameObject.transform.localPosition = new Vector3 (_posWoman, 0, 0);
+				EventStart.transform.Find ("bg1/manChara").gameObject.transform.localPosition = new Vector3 (_posMan, 50, 0);
+				EventStart.transform.Find ("bg1/womanChara").gameObject.transform.localPosition = new Vector3 (_posWoman, 50, 0);
 
 				_posMan -= (1.0f * (60 * Time.deltaTime));
 				_posWoman += (1.0f * (60 * Time.deltaTime));
@@ -626,12 +653,12 @@ namespace Mix2App.Marriage{
 					}
 				}
 
-				if (_posMan <= 55.0f) {
-					_posMan = 55.0f;
-					_posWoman = -55.0f;
-					if (cbMan1.nowlabel != MotionLabel.IDLE) {
-						cbMan1.gotoAndPlay (MotionLabel.IDLE);
-						cbWoman1.gotoAndPlay (MotionLabel.IDLE);
+				if (_posMan <= 57.0f) {
+					_posMan = 57.0f;
+					_posWoman = -57.0f;
+					if (cbMan1.nowlabel != MotionLabel.SHY3) {
+						cbMan1.gotoAndPlay (MotionLabel.SHY3);
+						cbWoman1.gotoAndPlay (MotionLabel.SHY3);
 					}
 				}
 
@@ -717,74 +744,76 @@ namespace Mix2App.Marriage{
 			}
 		}
 		private IEnumerator FinaleCharaKiss(){
-			float	_time1;
-			int 	_time2;
-
 			yield return new WaitForSeconds (9.0f);
 
-			_time1 = 0.0f;
-			_time2 = 2;
+			Vector3 _posMan = new Vector3 (57.0f, -120.0f, 0);
+			Vector3 _posWoman = new Vector3 (-57.0f, -120.0f, 0);
 
 			while (_CoroutineFlagFinale) {
-				_time1 += 1.0f * Time.deltaTime;
-				if (_time1 >= 1.0f) {
-					_time1 -= 1.0f;
-					_time2--;
-					if (_time2 == 0) {
-						break;
-					}
+				_posCharaMan = Vector3.MoveTowards (_posCharaMan, _posMan, (5.0f * Time.deltaTime));
+				_posCharaWoman = Vector3.MoveTowards (_posCharaWoman, _posMan, (5.0f * Time.deltaTime));
+				if (_posCharaMan.x == _posMan.x) {
+					break;
 				}
-				_posCharaMan.x -= (0.2f * (60 * Time.deltaTime));
-				_posCharaWoman.x += (0.2f * (60 * Time.deltaTime));
-
 				yield return null;
 			}
 
 			cbMan1.gotoAndPlay (MotionLabel.SIT2);
-			cbWoman2.gotoAndPlay (MotionLabel.SIT2);
+			cbWoman1.gotoAndPlay (MotionLabel.SIT2);
 
 			yield return new WaitForSeconds (2.0f);
 
 			cbMan1.gotoAndPlay (MotionLabel.KISS);
-			cbWoman2.gotoAndPlay (MotionLabel.KISS);
+			cbWoman1.gotoAndPlay (MotionLabel.KISS);
+
 		}
 
 
 
 		private void TamagochiImageMove(GameObject toObj,GameObject fromObj,string toStr){
 			for (int i = 0; i < fromObj.transform.Find ("Layers").transform.childCount; i++) {
-				toObj.transform.Find (toStr + "/Layers/" + fromObj.transform.Find ("Layers").transform.GetChild (i).name).gameObject.transform.SetSiblingIndex (i);
+				toObj.transform.Find (toStr + "/CharaImg/Layers/" + fromObj.transform.Find ("Layers").transform.GetChild (i).name).gameObject.transform.SetSiblingIndex (i);
 			}
 
-			toObj.transform.Find (toStr + "/Layers/Layer0").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer0").gameObject.GetComponent<Image> ().sprite;
-			toObj.transform.Find (toStr + "/Layers/Layer1").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer1").gameObject.GetComponent<Image> ().sprite;
-			toObj.transform.Find (toStr + "/Layers/Layer2").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer2").gameObject.GetComponent<Image> ().sprite;
-			toObj.transform.Find (toStr + "/Layers/Layer3").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer3").gameObject.GetComponent<Image> ().sprite;
+			toObj.transform.Find (toStr + "/CharaImg").gameObject.GetComponent<Image> ().enabled = false;
+			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer0").gameObject.GetComponent<Image> ().enabled = true;
+			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer1").gameObject.GetComponent<Image> ().enabled = true;
+			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer2").gameObject.GetComponent<Image> ().enabled = true;
+			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer3").gameObject.GetComponent<Image> ().enabled = true;
 
-			toObj.transform.Find (toStr + "/Layers/Layer0").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer0").gameObject.transform.localPosition;
-			toObj.transform.Find (toStr + "/Layers/Layer1").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer1").gameObject.transform.localPosition;
-			toObj.transform.Find (toStr + "/Layers/Layer2").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer2").gameObject.transform.localPosition;
-			toObj.transform.Find (toStr + "/Layers/Layer3").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localPosition;
+			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer0").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer0").gameObject.GetComponent<Image> ().sprite;
+			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer1").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer1").gameObject.GetComponent<Image> ().sprite;
+			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer2").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer2").gameObject.GetComponent<Image> ().sprite;
+			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer3").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer3").gameObject.GetComponent<Image> ().sprite;
 
-			toObj.transform.Find (toStr + "/Layers/Layer0").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer0").gameObject.transform.localScale;
-			toObj.transform.Find (toStr + "/Layers/Layer1").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer1").gameObject.transform.localScale;
-			toObj.transform.Find (toStr + "/Layers/Layer2").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer2").gameObject.transform.localScale;
-			toObj.transform.Find (toStr + "/Layers/Layer3").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localScale;
+			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer0").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer0").gameObject.transform.localPosition;
+			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer1").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer1").gameObject.transform.localPosition;
+			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer2").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer2").gameObject.transform.localPosition;
+			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer3").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localPosition;
+
+			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer0").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer0").gameObject.transform.localScale;
+			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer1").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer1").gameObject.transform.localScale;
+			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer2").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer2").gameObject.transform.localScale;
+			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer3").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localScale;
 		}
 
 		private void TamagochiPetImageMove(GameObject toObj,GameObject fromObj,string toStr){
 			for (int i = 0; i < fromObj.transform.Find ("Layers").transform.childCount; i++) {
-				toObj.transform.Find (toStr + "/Layers/" + fromObj.transform.Find ("Layers").transform.GetChild (i).name).gameObject.transform.SetSiblingIndex (i);
+				toObj.transform.Find (toStr + "/PetImg/Layers/" + fromObj.transform.Find ("Layers").transform.GetChild (i).name).gameObject.transform.SetSiblingIndex (i);
 			}
 
-			toObj.transform.Find (toStr + "/Layers/Layer").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer").gameObject.GetComponent<Image> ().sprite;
-			toObj.transform.Find (toStr + "/Layers/Layer (1)").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer (1)").gameObject.GetComponent<Image> ().sprite;
+			toObj.transform.Find (toStr + "/PetImg").gameObject.GetComponent<Image> ().enabled = false;
+			toObj.transform.Find (toStr + "/PetImg/Layers/Layer").gameObject.GetComponent<Image> ().enabled = true;
+			toObj.transform.Find (toStr + "/PetImg/Layers/Layer (1)").gameObject.GetComponent<Image> ().enabled = true;
 
-			toObj.transform.Find (toStr + "/Layers/Layer").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer").gameObject.transform.localPosition;
-			toObj.transform.Find (toStr + "/Layers/Layer (1)").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer (1)").gameObject.transform.localPosition;
+			toObj.transform.Find (toStr + "/PetImg/Layers/Layer").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer").gameObject.GetComponent<Image> ().sprite;
+			toObj.transform.Find (toStr + "/PetImg/Layers/Layer (1)").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer (1)").gameObject.GetComponent<Image> ().sprite;
 
-			toObj.transform.Find (toStr + "/Layers/Layer").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer").gameObject.transform.localScale;
-			toObj.transform.Find (toStr + "/Layers/Layer (1)").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer (1)").gameObject.transform.localScale;
+			toObj.transform.Find (toStr + "/PetImg/Layers/Layer").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer").gameObject.transform.localPosition;
+			toObj.transform.Find (toStr + "/PetImg/Layers/Layer (1)").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer (1)").gameObject.transform.localPosition;
+
+			toObj.transform.Find (toStr + "/PetImg/Layers/Layer").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer").gameObject.transform.localScale;
+			toObj.transform.Find (toStr + "/PetImg/Layers/Layer (1)").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer (1)").gameObject.transform.localScale;
 		}
 
 

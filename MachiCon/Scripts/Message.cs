@@ -229,8 +229,6 @@ namespace Mix2App.MachiCon{
 			SURPRISE,				// 驚き
 			CRY,					// 泣き
 			TROUBLE,				// 困る
-
-			NORMAL2,				// 普通２
 		};
 
 		public enum JikkyouMesTable{
@@ -272,79 +270,340 @@ namespace Mix2App.MachiCon{
 
 		void Start(){
 			jikkyouCharaAnimeNumber = 0;
-			countTime1 = 0.0f;
+			countBaseTime1 = 0.0f;
+			countBaseTime2 = 0.0f;
+			countTime1 = 0;
 			countTime2 = 0;
+			countTime3 = 0;
+			SurpriseFlag = false;
 		}
 
 		void Destroy(){
-			
+			SurpriseFlag = false;
 		}
 
 
 
 		private JikkyouImageTable jikkyouCharaAnimeNumber;
-		private float countTime1;
+		private bool SurpriseFlag;
+		private float countBaseTime1;
+		private float countBaseTime2;
+		private int countTime1;
 		private int countTime2;
+		private int countTime3;
+
+		private Coroutine retImage,retSprite;
+
 		void Update(){
 
-			countTime1 += 1.0f * Time.deltaTime;
-			if (countTime1 >= 0.5f) {
-				countTime1 -= 0.5f;
+			countBaseTime1 += 1.0f * Time.deltaTime;
+			if (countBaseTime1 >= 0.5f) {
+				countBaseTime1 -= 0.5f;
+				countTime1++;
 				countTime2++;
+				if (countTime2 > 10) {
+					countTime2 = 0;
+				}
 			}
 
+			countBaseTime2 += 1.0f * Time.deltaTime;
+			if (countBaseTime2 >= 0.2f) {
+				countBaseTime2 -= 0.2f;
+				countTime3++;
+			}
+
+			if (jikkyouCharaAnimeNumber != JikkyouImageTable.SURPRISE) {
+				if (SurpriseFlag) {
+					StopCoroutine (retImage);
+					StopCoroutine (retSprite);
+				}
+				SurpriseFlag = false;
+			}
+
+			if (!SurpriseFlag) {
+				EventJikkyouAplichi1.transform.localScale = new Vector3 (40.0f, 40.0f, 1.0f);
+				EventJikkyouAplichi2.transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);
+
+				EventJikkyouAplichi1.transform.eulerAngles = new Vector3 (0.0f, 0.0f, 0.0f);
+				EventJikkyouAplichi2.transform.eulerAngles = new Vector3 (0.0f, 0.0f, 0.0f);
+
+				EventJikkyouAplichi1.transform.localPosition = new Vector3 (0.0f, 10.5f, 0.0f);
+				EventJikkyouAplichi2.transform.localPosition = new Vector3 (-352.0f, 253.0f, 0.0f);
+			}
 			switch (jikkyouCharaAnimeNumber) {
 			case	JikkyouImageTable.NORMAL:
-			case	JikkyouImageTable.NORMAL2:
 				{	// 普通
-					if ((countTime2 & 1) != 0) {
-						EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [0];
-						EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [0];
-					} else {
-						EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [6];
-						EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [6];
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [5];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [5];
+					switch (countTime2) {
+					case	0:
+					case	2:
+						{
+							EventJikkyouAplichi1.transform.localPosition = new Vector3 (0.0f, 10.5f + 0.2f, 0.0f);
+							EventJikkyouAplichi2.transform.localPosition = new Vector3 (-352.0f, 253.0f + 1.0f, 0.0f);
+							break;
+						}
+					case	1:
+					case	3:
+						{
+							EventJikkyouAplichi1.transform.localPosition = new Vector3 (0.0f, 10.5f - 0.2f, 0.0f);
+							EventJikkyouAplichi2.transform.localPosition = new Vector3 (-352.0f, 253.0f - 1.0f, 0.0f);
+							break;
+						}
+					case	4:
+						{
+							break;
+						}
+					case	5:
+					case	7:
+						{
+							EventJikkyouAplichi1.transform.localPosition = new Vector3 (0.0f, 10.5f + 0.2f, 0.0f);
+							EventJikkyouAplichi2.transform.localPosition = new Vector3 (-352.0f, 253.0f + 1.0f, 0.0f);
+							EventJikkyouAplichi1.transform.localScale = new Vector3 (-40.0f, 40.0f, 1.0f);
+							EventJikkyouAplichi2.transform.localScale = new Vector3 (-1.0f, 1.0f, 1.0f);
+							break;
+						}
+					case	6:
+					case	8:
+						{
+							EventJikkyouAplichi1.transform.localPosition = new Vector3 (0.0f, 10.5f - 0.2f, 0.0f);
+							EventJikkyouAplichi2.transform.localPosition = new Vector3 (-352.0f, 253.0f - 1.0f, 0.0f);
+							EventJikkyouAplichi1.transform.localScale = new Vector3 (-40.0f, 40.0f, 1.0f);
+							EventJikkyouAplichi2.transform.localScale = new Vector3 (-1.0f, 1.0f, 1.0f);
+							break;
+						}
+					case	9:
+						{
+							EventJikkyouAplichi1.transform.localScale = new Vector3 (-40.0f, 40.0f, 1.0f);
+							EventJikkyouAplichi2.transform.localScale = new Vector3 (-1.0f, 1.0f, 1.0f);
+							break;
+						}
 					}
+
 					break;
 				}
 			case	JikkyouImageTable.GUIDE:
 				{	// ガイド
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [1];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [1];
+					if ((countTime1 & 1) != 0) {
+						EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [4];
+						EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [4];
+					} else {
+						EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [5];
+						EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [5];
+					}
 					break;
 				}
 			case	JikkyouImageTable.HAPPY:
 				{	// 喜び
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [2];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [2];
+					if ((countTime1 & 1) != 0) {
+						EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [6];
+						EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [6];
+					} else {
+						EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [5];
+						EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [5];
+					}
 					break;
 				}
 			case	JikkyouImageTable.SMILE:
 				{	// 笑顔
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [3];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [3];
+					switch (countTime1 & 3) {
+					case	0:
+						{
+							EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [2];
+							EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [2];
+							break;
+						}
+					case	1:
+						{
+							EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [3];
+							EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [3];
+							break;
+						}
+					case	2:
+						{
+							EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [2];
+							EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [2];
+							EventJikkyouAplichi1.transform.localScale = new Vector3 (-40.0f, 40.0f, 1.0f);
+							EventJikkyouAplichi2.transform.localScale = new Vector3 (-1.0f, 1.0f, 1.0f);
+							break;
+						}
+					case	3:
+						{
+							EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [3];
+							EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [3];
+							EventJikkyouAplichi1.transform.localScale = new Vector3 (-40.0f, 40.0f, 1.0f);
+							EventJikkyouAplichi2.transform.localScale = new Vector3 (-1.0f, 1.0f, 1.0f);
+							break;
+						}
+					}
 					break;
 				}
 			case	JikkyouImageTable.SURPRISE:
 				{	// 驚き
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [4];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [4];
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [8];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [8];
+
+					if (!SurpriseFlag) {
+						SurpriseFlag = true;
+						retImage = StartCoroutine ("SurpriseIdouLoopImage");
+						retSprite = StartCoroutine ("SurpriseIdouLoopSpriteRenderer");
+					}
 					break;
 				}
 			case	JikkyouImageTable.CRY:
 				{	// 泣き
-					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [5];
-					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [5];
+					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [9];
+					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [9];
+
+					if ((countTime3 & 1) != 0) {
+						EventJikkyouAplichi1.transform.eulerAngles = new Vector3 (0.0f, 0.0f, 1.0f);
+						EventJikkyouAplichi2.transform.eulerAngles = new Vector3 (0.0f, 0.0f, 1.0f);
+					} else {
+						EventJikkyouAplichi1.transform.eulerAngles = new Vector3 (0.0f, 0.0f, -1.0f);
+						EventJikkyouAplichi2.transform.eulerAngles = new Vector3 (0.0f, 0.0f, -1.0f);
+					}
+
 					break;
 				}
 			case	JikkyouImageTable.TROUBLE:
 				{	// 困る
+					if ((countTime1 & 1) != 0) {
+						EventJikkyouAplichi1.transform.localScale = new Vector3 (-40.0f, 40.0f, 1.0f);
+						EventJikkyouAplichi2.transform.localScale = new Vector3 (-1.0f, 1.0f, 1.0f);
+					}
 					EventJikkyouAplichi1.GetComponent<SpriteRenderer> ().sprite = EventJikkyouImage [7];
 					EventJikkyouAplichi2.GetComponent<Image> ().sprite = EventJikkyouImage [7];
 					break;
 				}
 			}
 		}	
+			
 
+		private IEnumerator SurpriseIdouLoopImage(){
+			Vector3 _pos = new Vector3 (-352.0f, 253.0f, 0.0f);
+
+			yield return new WaitForSeconds (0.1f);
+
+			_pos.y += 30.0f;
+			while (true) {
+				EventJikkyouAplichi2.transform.localPosition = Vector3.MoveTowards (EventJikkyouAplichi2.transform.localPosition, _pos, 200.0f * Time.deltaTime);
+				if (EventJikkyouAplichi2.transform.localPosition.y == _pos.y) {
+					break;
+				}
+				yield return null;
+			}
+			_pos.y += 5.0f;
+			while (true) {
+				EventJikkyouAplichi2.transform.localPosition = Vector3.MoveTowards (EventJikkyouAplichi2.transform.localPosition, _pos, 25.0f * Time.deltaTime);
+				if (EventJikkyouAplichi2.transform.localPosition.y == _pos.y) {
+					break;
+				}
+				yield return null;
+			}
+			_pos.y -= 5.0f;
+			while (true) {
+				EventJikkyouAplichi2.transform.localPosition = Vector3.MoveTowards (EventJikkyouAplichi2.transform.localPosition, _pos, 25.0f * Time.deltaTime);
+				if (EventJikkyouAplichi2.transform.localPosition.y == _pos.y) {
+					break;
+				}
+				yield return null;
+			}
+			_pos.y -= 30.0f;
+			while (true) {
+				EventJikkyouAplichi2.transform.localPosition = Vector3.MoveTowards (EventJikkyouAplichi2.transform.localPosition, _pos, 200.0f * Time.deltaTime);
+				if (EventJikkyouAplichi2.transform.localPosition.y == _pos.y) {
+					break;
+				}
+				yield return null;
+			}
+
+			for (int i = 0; i < 2; i++) {
+				_pos.y += 5.0f;
+				while (true) {
+					EventJikkyouAplichi2.transform.localPosition = Vector3.MoveTowards (EventJikkyouAplichi2.transform.localPosition, _pos, 50.0f * Time.deltaTime);
+					if (EventJikkyouAplichi2.transform.localPosition.y == _pos.y) {
+						break;
+					}
+					yield return null;
+				}
+				_pos.y -= 5.0f;
+				while (true) {
+					EventJikkyouAplichi2.transform.localPosition = Vector3.MoveTowards (EventJikkyouAplichi2.transform.localPosition, _pos, 50.0f * Time.deltaTime);
+					if (EventJikkyouAplichi2.transform.localPosition.y == _pos.y) {
+						break;
+					}
+					yield return null;
+				}
+			}
+
+			while (SurpriseFlag) {
+				yield return null;
+			}
+		}
+		private IEnumerator SurpriseIdouLoopSpriteRenderer(){
+			Vector3 _pos = new Vector3 (0.0f, 10.5f, 0.0f);
+
+			yield return new WaitForSeconds (0.1f);
+
+			_pos.y += 7.0f;
+			while (true) {
+				EventJikkyouAplichi1.transform.localPosition = Vector3.MoveTowards (EventJikkyouAplichi1.transform.localPosition, _pos, 50.0f * Time.deltaTime);
+				if (EventJikkyouAplichi1.transform.localPosition.y == _pos.y) {
+					break;
+				}
+				yield return null;
+			}
+			_pos.y += 1.0f;
+			while (true) {
+				EventJikkyouAplichi1.transform.localPosition = Vector3.MoveTowards (EventJikkyouAplichi1.transform.localPosition, _pos, 10.0f * Time.deltaTime);
+				if (EventJikkyouAplichi1.transform.localPosition.y == _pos.y) {
+					break;
+				}
+				yield return null;
+			}
+			_pos.y -= 1.0f;
+			while (true) {
+				EventJikkyouAplichi1.transform.localPosition = Vector3.MoveTowards (EventJikkyouAplichi1.transform.localPosition, _pos, 10.0f * Time.deltaTime);
+				if (EventJikkyouAplichi1.transform.localPosition.y == _pos.y) {
+					break;
+				}
+				yield return null;
+			}
+			_pos.y -= 7.0f;
+			while (true) {
+				EventJikkyouAplichi1.transform.localPosition = Vector3.MoveTowards (EventJikkyouAplichi1.transform.localPosition, _pos, 50.0f * Time.deltaTime);
+				if (EventJikkyouAplichi1.transform.localPosition.y == _pos.y) {
+					break;
+				}
+				yield return null;
+			}
+
+			for (int i = 0; i < 2; i++) {
+				_pos.y += 0.5f;
+				while (true) {
+					EventJikkyouAplichi1.transform.localPosition = Vector3.MoveTowards (EventJikkyouAplichi1.transform.localPosition, _pos, 5.0f * Time.deltaTime);
+					if (EventJikkyouAplichi1.transform.localPosition.y == _pos.y) {
+						break;
+					}
+					yield return null;
+				}
+				_pos.y -= 0.5f;
+				while (true) {
+					EventJikkyouAplichi1.transform.localPosition = Vector3.MoveTowards (EventJikkyouAplichi1.transform.localPosition, _pos, 5.0f * Time.deltaTime);
+					if (EventJikkyouAplichi1.transform.localPosition.y == _pos.y) {
+						break;
+					}
+					yield return null;
+				}
+			}
+				
+			while (SurpriseFlag) {
+				yield return null;
+			}
+		}
+
+
+		private int JikkyouMesDisp09Flag = 0;
 		public void JikkyouMesDisp(JikkyouMesTable flag){
 			int randNum;
 
@@ -419,7 +678,13 @@ namespace Mix2App.MachiCon{
 				}
 			case	JikkyouMesTable.JikkyouMesDisp09:
 				{	// アピールタイム中
-					randNum = Random.Range (0, JikkyouMesType09.Length);
+					while (true) {
+						randNum = Random.Range (0, JikkyouMesType09.Length);
+						if (randNum != JikkyouMesDisp09Flag) {
+							JikkyouMesDisp09Flag = randNum;
+							break;
+						}
+					}
 					EventJikkyouText.GetComponent<Text> ().text = JikkyouMesType09 [randNum];
 
 					jikkyouCharaAnimeNumber = JikkyouImageType09 [randNum];
@@ -478,7 +743,7 @@ namespace Mix2App.MachiCon{
 					EventJikkyouText.GetComponent<Text> ().text = "";
 					EventJikkyou1.SetActive (false);
 					EventJikkyou2.SetActive (false);
-					jikkyouCharaAnimeNumber = 0;
+					jikkyouCharaAnimeNumber = JikkyouImageTable.NORMAL;
 					break;
 				}
 			}
@@ -548,6 +813,10 @@ namespace Mix2App.MachiCon{
 				}
 			}
 			return retMes;
+		}
+
+		public void KokuhakuCurtainJikkyouOnOff(bool flag){
+			EventJikkyouAplichi2.SetActive (flag);
 		}
 
 	}
