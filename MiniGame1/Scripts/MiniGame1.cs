@@ -45,11 +45,6 @@ namespace Mix2App.MiniGame1{
 
 
 		private CharaBehaviour[] cbCharaTamago = new CharaBehaviour[3];		// 
-		private Vector3[] posTamago = new Vector3[3] {
-			new Vector3 (0.0f, -10.0f, 0.0f),
-			new Vector3 (0.0f, -10.0f, 0.0f),
-			new Vector3 (0.0f, -10.0f, 0.0f),
-		};
 		private bool startEndFlag = false;
 		private int waitCount = 0;
 		private int nowScore;													// 得点
@@ -165,9 +160,9 @@ namespace Mix2App.MiniGame1{
 			}
 
 			if ((num > 1.33f) && (num < 1.34f)) {
-				baseSizePanel.GetComponent<Transform> ().transform.localScale = new Vector3 (1.15f, 1.15f, 1.0f);	// 3:4の時のみ画面を拡大表示
+				baseSizePanel.GetComponent<Transform> ().transform.localScale = new Vector3 (1.25f, 1.25f, 1.0f);	// 3:4の時のみ画面を拡大表示
 			} else {
-				baseSizePanel.GetComponent<Transform> ().transform.localScale = new Vector3 (1.15f, 1.15f, 1.0f);	// 3:4の時以外の画面を拡大表示
+				baseSizePanel.GetComponent<Transform> ().transform.localScale = new Vector3 (1.25f, 1.25f, 1.0f);	// 3:4の時以外の画面を拡大表示
 			}
 
 
@@ -208,23 +203,14 @@ namespace Mix2App.MiniGame1{
 				}
 			case statusJobCount.minigame1JobCount020:
 				{
-					float[,] pos = new float[3, 2] {
-						{  0.0f, -12.8f },											// プレイヤーの初期位置（ダミーなので画面外に）
-						{ -4.7f, -11.5f },											// 応援キャラ１の初期位置（ダミーなので画面外に）
-						{  5.0f, -10.9f },											// 応援キャラ２の初期位置（ダミーなので画面外に）
-					};
 					EventTitle.SetActive (false);
 					EventStart.SetActive (true);
 					jobCount = statusJobCount.minigame1JobCount030;
 
-					for (int i = 0; i < 3; i++) {
-						posTamago [i].x = pos [i, 0];
-						posTamago [i].y = pos [i, 1];
-					}
 					cbCharaTamago [0].gotoAndPlay (MotionLabel.IDLE);
 					cbCharaTamago [1].gotoAndPlay (MotionLabel.IDLE);
 					cbCharaTamago [2].gotoAndPlay (MotionLabel.SIT);
-					TamagoAnimeSprite (EventStart);									// たまごっちのアニメをImage,SpriteRendererに反映する
+					TamagoAnimeSprite (EventStart);									// たまごっちのアニメを反映する
 					break;
 				}
 			case statusJobCount.minigame1JobCount030:
@@ -234,9 +220,9 @@ namespace Mix2App.MiniGame1{
 						EventStart.SetActive (false);
 						EventGame.SetActive (true);
 						GameMainInit ();
-						TamagoAnimeSprite (EventGame);								// たまごっちのアニメをImage,SpriteRendererに反映する
+						TamagoAnimeSprite (EventGame);								// たまごっちのアニメを反映する
 					}
-					TamagoAnimeSprite (EventStart);									// たまごっちのアニメをImage,SpriteRendererに反映する
+					TamagoAnimeSprite (EventStart);									// たまごっちのアニメを反映する
 					break;
 				}
 			case statusJobCount.minigame1JobCount040:
@@ -250,7 +236,7 @@ namespace Mix2App.MiniGame1{
 				}
 			case statusJobCount.minigame1JobCount050:
 				{
-					TamagoAnimeSprite (EventGame);									// たまごっちのアニメをImage,SpriteRendererに反映する
+					TamagoAnimeSprite (EventGame);									// たまごっちのアニメを反映する
 					waitCount--;
 					if (waitCount == 0) {											// 驚きを見せるためのウエィト
 						jobCount = statusJobCount.minigame1JobCount060;
@@ -272,13 +258,13 @@ namespace Mix2App.MiniGame1{
 						for (int i = 0; i < 3; i++) {
 							cbCharaTamago [i].gotoAndPlay (MotionLabel.IDLE);
 						}
-						TamagoAnimeSprite2 (EventResult);							// たまごっちのアニメをImage,SpriteRendererに反映する
+						TamagoAnimeSprite (EventResult);							// たまごっちのアニメを反映する
 					}
 					break;
 				}
 			case statusJobCount.minigame1JobCount070:
 				{
-					TamagoAnimeSprite2 (EventResult);								// たまごっちのアニメをImage,SpriteRendererに反映する
+					TamagoAnimeSprite (EventResult);								// たまごっちのアニメを反映する
 							
 					if (ResultMainLoop ()) {										// 結果画面処理
 						jobCount = statusJobCount.minigame1JobCount000;
@@ -343,14 +329,9 @@ namespace Mix2App.MiniGame1{
 
 		// たまごっちのアニメをImage,SpriteRendererに反映する
 		private void TamagoAnimeSprite(GameObject obj){
-			obj.transform.Find ("chara").gameObject.GetComponent<SpriteRenderer> ().sprite = CharaTamago [0].GetComponent<SpriteRenderer> ().sprite;
-			obj.transform.Find ("chara2").gameObject.GetComponent<Image> ().sprite = CharaTamago [1].GetComponent<SpriteRenderer> ().sprite;
-			obj.transform.Find ("chara3").gameObject.GetComponent<Image> ().sprite = CharaTamago [2].GetComponent<SpriteRenderer> ().sprite;
-		}
-		private void TamagoAnimeSprite2(GameObject obj){
-			obj.transform.Find ("chara").gameObject.GetComponent<Image> ().sprite = CharaTamago [0].GetComponent<SpriteRenderer> ().sprite;
-			obj.transform.Find ("chara2").gameObject.GetComponent<Image> ().sprite = CharaTamago [1].GetComponent<SpriteRenderer> ().sprite;
-			obj.transform.Find ("chara3").gameObject.GetComponent<Image> ().sprite = CharaTamago [2].GetComponent<SpriteRenderer> ().sprite;
+			TamagochiImageMove (obj, CharaTamago [0], "tamago/chara/");
+			TamagochiImageMove (obj, CharaTamago [1], "tamago/chara2/");
+			TamagochiImageMove (obj, CharaTamago [2], "tamago/chara3/");
 		}
 
 
@@ -388,7 +369,7 @@ namespace Mix2App.MiniGame1{
 		private bool gameMainLoopFlag = false;
 		// ゲームメイン処理
 		private bool GameMainLoop(){
-			GameObject charaObj = EventGame.transform.Find ("chara").gameObject;	// 操作キャラのGameObjectを抽出
+			GameObject charaObj = EventGame.transform.Find ("tamago/chara").gameObject;	// 操作キャラのGameObjectを抽出
 			Vector3 pos = charaObj.transform.localPosition;							// 操作キャラの座標を抽出
 
 			if (Input.GetMouseButtonDown (0)) {				
@@ -399,7 +380,7 @@ namespace Mix2App.MiniGame1{
 						if (cbCharaTamago [0].nowlabel != MotionLabel.WALK) {
 							cbCharaTamago [0].gotoAndPlay (MotionLabel.WALK);
 						}
-						charaObj.GetComponent<SpriteRenderer> ().flipX = true;
+						charaObj.transform.localScale = new Vector3 (-1.0f, 1.0f, 1.0f);
 						charaAnimeFlag = 1;
 					}
 				} else {
@@ -407,7 +388,7 @@ namespace Mix2App.MiniGame1{
 						if (cbCharaTamago [0].nowlabel != MotionLabel.WALK) {
 							cbCharaTamago [0].gotoAndPlay (MotionLabel.WALK);
 						}
-						charaObj.GetComponent<SpriteRenderer> ().flipX = false;
+						charaObj.transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);
 						charaAnimeFlag = 2;
 					}
 				}
@@ -508,7 +489,7 @@ namespace Mix2App.MiniGame1{
 
 						posScore.x = pos.x;											// アイテムをゲットしたので得点を表示する
 						posScore.y = pos.y - 26.0f;
-						posScore.y = pos.y + 10.0f;
+//						posScore.y = pos.y + 10.0f;
 						scoreYIdouNumber = scoreYIdouTable.Length;
 						scoreObj.GetComponent<Text> ().text = gameitem.Score.ToString ();
 
@@ -577,7 +558,7 @@ namespace Mix2App.MiniGame1{
 		// たまごっちとアイテムの当たり判定
 		private bool HitCheck(Vector3 tamagoPos,Vector3 itemPos){
 			if (((tamagoPos.x - 50.0f) < itemPos.x) && (itemPos.x < (tamagoPos.x + 50.0f))) {
-				if (((tamagoPos.y - 100.0f) < itemPos.y) && (itemPos.y < (tamagoPos.y + 100.0f))) {
+				if (((tamagoPos.y - 50.0f) < itemPos.y) && (itemPos.y < (tamagoPos.y + 50.0f))) {
 					return true;
 				}
 			}
@@ -744,18 +725,18 @@ namespace Mix2App.MiniGame1{
 
 			if (resultTamagoYJumpCount != 0) {																// 落ちて来た宝箱に跳ね飛ばされるたまごっち達
 				resultTamagoYJumpCount--;
-				pos = EventResult.transform.Find ("chara").gameObject.transform.localPosition;
+				pos = EventResult.transform.Find ("tamago/chara").gameObject.transform.localPosition;
 				pos.x += 2.0f;
 				pos.y += tamagoYJumpTable [resultTamagoYJumpCount];
-				EventResult.transform.Find ("chara").gameObject.transform.localPosition = pos;
-				pos = EventResult.transform.Find ("chara2").gameObject.transform.localPosition;
+				EventResult.transform.Find ("tamago/chara").gameObject.transform.localPosition = pos;
+				pos = EventResult.transform.Find ("tamago/chara2").gameObject.transform.localPosition;
 				pos.x -= 2.0f;
 				pos.y += tamagoYJumpTable [resultTamagoYJumpCount];
-				EventResult.transform.Find ("chara2").gameObject.transform.localPosition = pos;
-				pos = EventResult.transform.Find ("chara3").gameObject.transform.localPosition;
+				EventResult.transform.Find ("tamago/chara2").gameObject.transform.localPosition = pos;
+				pos = EventResult.transform.Find ("tamago/chara3").gameObject.transform.localPosition;
 				pos.x -= 2.0f;
 				pos.y += tamagoYJumpTable [resultTamagoYJumpCount];
-				EventResult.transform.Find ("chara3").gameObject.transform.localPosition = pos;
+				EventResult.transform.Find ("tamago/chara3").gameObject.transform.localPosition = pos;
 			}
 
 			return resultMainLoopFlag;
@@ -771,30 +752,30 @@ namespace Mix2App.MiniGame1{
 
 
 		private Vector2[] tamagoCharaPositionInitTable = new Vector2[] {
-			new Vector2 (   0.0f, -227.0f),		// スタート画面のプレイヤーキャラの初期位置
-			new Vector2 (-235.0f, -124.0f),		// スタート画面の応援キャラ１の初期位置
-			new Vector2 ( 236.0f,  -97.0f),		// スタート画面の応援キャラ２の初期位置
-			new Vector2 (   0.0f, -227.0f),		// ゲーム画面のプレイヤーキャラの初期位置
-			new Vector2 (-235.0f, -124.0f),		// ゲーム画面の応援キャラ１の初期位置
-			new Vector2 ( 236.0f,  -97.0f),		// ゲーム画面の応援キャラ２の初期位置
-			new Vector2 (  60.0f, -175.0f),		// 結果画面のプレイヤーキャラの初期位置
-			new Vector2 (-202.0f, -175.0f),		// 結果画面の応援キャラ１の初期位置
-			new Vector2 ( -88.0f, -175.0f),		// 結果画面の応援キャラ２の初期位置
+			new Vector2 (   0.0f, -180.0f),		// スタート画面のプレイヤーキャラの初期位置
+			new Vector2 (-235.0f, -125.0f),		// スタート画面の応援キャラ１の初期位置
+			new Vector2 ( 236.0f,  -90.0f),		// スタート画面の応援キャラ２の初期位置
+			new Vector2 (   0.0f, -180.0f),		// ゲーム画面のプレイヤーキャラの初期位置
+			new Vector2 (-235.0f, -125.0f),		// ゲーム画面の応援キャラ１の初期位置
+			new Vector2 ( 236.0f,  -90.0f),		// ゲーム画面の応援キャラ２の初期位置
+			new Vector2 (  60.0f, -180.0f),		// 結果画面のプレイヤーキャラの初期位置
+			new Vector2 (-200.0f, -180.0f),		// 結果画面の応援キャラ１の初期位置
+			new Vector2 ( -90.0f, -180.0f),		// 結果画面の応援キャラ２の初期位置
 			new Vector2 (   0.0f,  420.0f),		// 結果画面の宝箱の初期位置
 			new Vector2 (   0.0f,  420.0f),		// 結果画面のメッセージの初期位置
 			new Vector2 (   0.0f,  418.0f),		// ゲーム画面の落下アイテムの初期位置
 			new Vector2 (   0.0f,  999.0f),		// ゲーム画面のスコアの初期位置
 		};
 		private void TamagoCharaPositionInit(){
-			TamagoCharaPositionInitSub (EventStart.transform.Find ("chara").gameObject, 0);
-			TamagoCharaPositionInitSub (EventStart.transform.Find ("chara2").gameObject, 1);
-			TamagoCharaPositionInitSub (EventStart.transform.Find ("chara3").gameObject, 2);
-			TamagoCharaPositionInitSub (EventGame.transform.Find ("chara").gameObject, 3);
-			TamagoCharaPositionInitSub (EventGame.transform.Find ("chara2").gameObject, 4);
-			TamagoCharaPositionInitSub (EventGame.transform.Find ("chara3").gameObject, 5);
-			TamagoCharaPositionInitSub (EventResult.transform.Find ("chara").gameObject, 6);
-			TamagoCharaPositionInitSub (EventResult.transform.Find ("chara2").gameObject, 7);
-			TamagoCharaPositionInitSub (EventResult.transform.Find ("chara3").gameObject, 8);
+			TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara").gameObject, 0);
+			TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara2").gameObject, 1);
+			TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara3").gameObject, 2);
+			TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara").gameObject, 3);
+			TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara2").gameObject, 4);
+			TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara3").gameObject, 5);
+			TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara").gameObject, 6);
+			TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara2").gameObject, 7);
+			TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara3").gameObject, 8);
 			TamagoCharaPositionInitSub (EventResult.transform.Find ("treasure").gameObject, 9);
 			TamagoCharaPositionInitSub (EventResult.transform.Find ("result_text").gameObject, 10);
 			TamagoCharaPositionInitSub (EventGame.transform.Find ("item").gameObject, 11);
@@ -809,6 +790,38 @@ namespace Mix2App.MiniGame1{
 			obj.transform.localPosition = pos;
 		}
 
+
+
+		private void TamagochiImageMove(GameObject toObj,GameObject fromObj,string toStr){
+			for (int i = 0; i < fromObj.transform.Find ("Layers").transform.childCount; i++) {
+				toObj.transform.Find (toStr + "CharaImg/Layers/" + fromObj.transform.Find ("Layers").transform.GetChild (i).name).gameObject.transform.SetSiblingIndex (i);
+			}
+
+			toObj.transform.Find (toStr + "CharaImg").gameObject.GetComponent<Image> ().enabled = false;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer0").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer0").gameObject.GetComponent<Image> ().enabled;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer1").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer1").gameObject.GetComponent<Image> ().enabled;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer2").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer2").gameObject.GetComponent<Image> ().enabled;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer3").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer3").gameObject.GetComponent<Image> ().enabled;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer4").gameObject.GetComponent<Image> ().enabled;
+
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer0").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer0").gameObject.GetComponent<Image> ().sprite;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer1").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer1").gameObject.GetComponent<Image> ().sprite;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer2").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer2").gameObject.GetComponent<Image> ().sprite;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer3").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer3").gameObject.GetComponent<Image> ().sprite;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer4").gameObject.GetComponent<Image> ().sprite;
+
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer0").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer0").gameObject.transform.localPosition;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer1").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer1").gameObject.transform.localPosition;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer2").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer2").gameObject.transform.localPosition;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer3").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localPosition;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer4").gameObject.transform.localPosition;
+
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer0").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer0").gameObject.transform.localScale;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer1").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer1").gameObject.transform.localScale;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer2").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer2").gameObject.transform.localScale;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer3").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localScale;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer4").gameObject.transform.localScale;
+		}
 
 
 	}

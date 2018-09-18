@@ -744,14 +744,14 @@ namespace Mix2App.MachiCon{
 						if (playerResultFlag) {
 							Debug.Log ("結婚イベントへ・・・");
 							if (muser1.utype == UserType.MIX2) {
-								ManagerObject.instance.view.change("Marriage",mkind,muser1,mkind1,muser2,mkind2);
+								ManagerObject.instance.view.change(SceneLabel.MARRIAGE,mkind,muser1,mkind1,muser2,mkind2);
 							} else {
-								Debug.Log ("みーつユーザー以外なので、デートイベントへ後で変更すること");
-								ManagerObject.instance.view.change("Marriage",mkind,muser1,mkind1,muser2,mkind2);
+								Debug.Log ("みーつユーザー以外なので、デートイベントへ・・・");
+								ManagerObject.instance.view.change(SceneLabel.MARRIAGE,mkind,muser1,mkind1,muser2,mkind2);
 							}
 						} else {
 							Debug.Log ("たまタウンへ・・・");
-							ManagerObject.instance.view.change("Town");
+							ManagerObject.instance.view.change (SceneLabel.TOWN);
 						}
 
 						jobCount = statusJobCount.machiconJobCount320;
@@ -2709,6 +2709,7 @@ namespace Mix2App.MachiCon{
 
 
 
+		// 画面下から入場して整列位置に停止するまで
 		private bool _openningTamagoIdouFlag;
 		private IEnumerator OpenningTamagoIdou(){
 			Vector3[] _openningTamagoPositionTable = new Vector3[] {
@@ -2747,7 +2748,7 @@ namespace Mix2App.MachiCon{
 				}
 			}
 
-			while (true) {																		// 画面下から入場
+			while (true) {																		// 画面下から画面中央まで入場
 				posTamago [posNumber] = Vector3.MoveTowards (posTamago [posNumber], _pos, (200.0f * Time.deltaTime));
 				if (posTamago [posNumber].y == _pos.y) {
 					break;
@@ -2777,13 +2778,12 @@ namespace Mix2App.MachiCon{
 				yield return null;
 			}
 
-			FukidashiMessageSet ();
+			FukidashiMessageSet ();																// 自己紹介メッセージ登録
 			CharaTamagochi[posNumber].transform.Find("fukidashi/comment").gameObject.SetActive(true);
-
 			yield return new WaitForSeconds (2.0f);
-
 			CharaTamagochi[posNumber].transform.Find("fukidashi/comment").gameObject.SetActive(false);
-			cbTamagoChara [posNumber].gotoAndPlay (MotionLabel.WALK);
+
+			cbTamagoChara [posNumber].gotoAndPlay (MotionLabel.WALK);							// 整列位置に移動
 			switch (posNumber) {
 			case	0:
 			case	1:
@@ -2862,7 +2862,7 @@ namespace Mix2App.MachiCon{
 
 
 		private bool _kokuhakuHeartJumpFlag;
-		private IEnumerator KokuhakuHaertJump(){
+		private IEnumerator KokuhakuHaertJump(){									// 少しだけその場でジャンプ
 			Vector3 _pos = posTamago [loveParamManNumber];
 
 			_kokuhakuHeartJumpFlag = true;
@@ -2902,7 +2902,7 @@ namespace Mix2App.MachiCon{
 			_pos = posTamago [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4];
 			TamagoEffect.transform.Find ("Heart").gameObject.transform.localPosition = _pos;
 
-			while (true) {
+			while (true) {														// ハートを拡大
 				_scale.x += (0.04f * (60 * Time.deltaTime));
 				if (_scale.x >= 1.0f) {
 					_scale.x = 1.0f;
@@ -2916,7 +2916,7 @@ namespace Mix2App.MachiCon{
 				yield return null;
 			}
 
-			while (true) {
+			while (true) {														// ハートを女の子から男の子へ飛ばす
 				_pos = Vector3.MoveTowards (_pos, posTamago [loveParamManNumber], (200.0f * Time.deltaTime));
 				TamagoEffect.transform.Find ("Heart").gameObject.transform.localPosition = _pos;
 				if (_pos.x >= posTamago [loveParamManNumber].x) {
@@ -2926,7 +2926,7 @@ namespace Mix2App.MachiCon{
 			}
 
 			StartCoroutine ("KokuhakuHaertJump");
-			while (true) {
+			while (true) {														// ハートを縮小
 				_scale.x -= (0.04f * (60 * Time.deltaTime));
 				if (_scale.x <= 0.0f) {
 					_scale.x = 0.0f;
@@ -2947,6 +2947,7 @@ namespace Mix2App.MachiCon{
 				yield return null;
 			}
 
+			// 画面中央に男の子と女の子を集合させる
 			cbTamagoChara [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].gotoAndPlay (MotionLabel.SHY4);
 			cbTamagoChara [loveParamManNumber].gotoAndPlay (MotionLabel.SHY4);
 			_pos = new Vector3 (-45.0f, -20.0f, 0.0f);
@@ -3125,25 +3126,30 @@ namespace Mix2App.MachiCon{
 			}
 
 			toObj.transform.Find (toStr + "CharaImg").gameObject.GetComponent<Image> ().enabled = false;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer0").gameObject.GetComponent<Image> ().enabled = true;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer1").gameObject.GetComponent<Image> ().enabled = true;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer2").gameObject.GetComponent<Image> ().enabled = true;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer3").gameObject.GetComponent<Image> ().enabled = true;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer0").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer0").gameObject.GetComponent<Image> ().enabled;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer1").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer1").gameObject.GetComponent<Image> ().enabled;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer2").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer2").gameObject.GetComponent<Image> ().enabled;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer3").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer3").gameObject.GetComponent<Image> ().enabled;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer4").gameObject.GetComponent<Image> ().enabled;
 
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer0").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer0").gameObject.GetComponent<Image> ().sprite;
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer1").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer1").gameObject.GetComponent<Image> ().sprite;
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer2").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer2").gameObject.GetComponent<Image> ().sprite;
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer3").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer3").gameObject.GetComponent<Image> ().sprite;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer4").gameObject.GetComponent<Image> ().sprite;
 
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer0").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer0").gameObject.transform.localPosition;
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer1").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer1").gameObject.transform.localPosition;
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer2").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer2").gameObject.transform.localPosition;
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer3").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localPosition;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer4").gameObject.transform.localPosition;
 
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer0").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer0").gameObject.transform.localScale;
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer1").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer1").gameObject.transform.localScale;
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer2").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer2").gameObject.transform.localScale;
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer3").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localScale;
+			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer4").gameObject.transform.localScale;
+
 		}
 
 
