@@ -160,9 +160,9 @@ namespace Mix2App.MiniGame1{
 			}
 
 			if ((num > 1.33f) && (num < 1.34f)) {
-				baseSizePanel.GetComponent<Transform> ().transform.localScale = new Vector3 (1.25f, 1.25f, 1.0f);	// 3:4の時のみ画面を拡大表示
+				baseSizePanel.GetComponent<Transform> ().transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);	// 3:4の時のみ画面を拡大表示
 			} else {
-				baseSizePanel.GetComponent<Transform> ().transform.localScale = new Vector3 (1.25f, 1.25f, 1.0f);	// 3:4の時以外の画面を拡大表示
+				baseSizePanel.GetComponent<Transform> ().transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);	// 3:4の時以外の画面を拡大表示
 			}
 
 
@@ -380,7 +380,7 @@ namespace Mix2App.MiniGame1{
 						if (cbCharaTamago [0].nowlabel != MotionLabel.WALK) {
 							cbCharaTamago [0].gotoAndPlay (MotionLabel.WALK);
 						}
-						charaObj.transform.localScale = new Vector3 (-1.0f, 1.0f, 1.0f);
+						charaObj.transform.localScale = new Vector3 (-2.0f, 2.0f, 1.0f);
 						charaAnimeFlag = 1;
 					}
 				} else {
@@ -388,7 +388,7 @@ namespace Mix2App.MiniGame1{
 						if (cbCharaTamago [0].nowlabel != MotionLabel.WALK) {
 							cbCharaTamago [0].gotoAndPlay (MotionLabel.WALK);
 						}
-						charaObj.transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);
+						charaObj.transform.localScale = new Vector3 (2.0f, 2.0f, 1.0f);
 						charaAnimeFlag = 2;
 					}
 				}
@@ -412,9 +412,9 @@ namespace Mix2App.MiniGame1{
 			switch (charaAnimeFlag) {
 			case	1:																// 右移動
 				{
-					pos.x += (2.5f * (60 * Time.deltaTime));
-					if (pos.x >= 330.0f) {
-						pos.x = 330.0f;												// 画面端に来たら停止
+					pos.x += (4.0f * (60 * Time.deltaTime));
+					if (pos.x >= 600.0f) {
+						pos.x = 600.0f;												// 画面端に来たら停止
 						cbCharaTamago [0].gotoAndPlay (MotionLabel.IDLE);
 						charaAnimeFlag = 0;
 					}
@@ -422,9 +422,9 @@ namespace Mix2App.MiniGame1{
 				}
 			case	2:																// 左移動
 				{
-					pos.x -= (2.5f * (60 * Time.deltaTime));
-					if (pos.x <= -330.0f) {
-						pos.x = -330.0f;											// 画面端に来たら停止
+					pos.x -= (4.0f * (60 * Time.deltaTime));
+					if (pos.x <= -600.0f) {
+						pos.x = -600.0f;											// 画面端に来たら停止
 						cbCharaTamago [0].gotoAndPlay (MotionLabel.IDLE);
 						charaAnimeFlag = 0;
 					}
@@ -452,7 +452,7 @@ namespace Mix2App.MiniGame1{
 					int number = 0;
 
 					posItem.y = 418;
-					posItem.x = (Random.Range (-33, 33) * 10);
+					posItem.x = (Random.Range (-59, 59) * 10);
 					itemIdouFlag = 1;
 					itemXbase = posItem.x;
 					itemYNumber = 0;
@@ -475,8 +475,8 @@ namespace Mix2App.MiniGame1{
 			case	1:																// 落下アイテムの落下処理
 				{
 					posItem.y -= (itemDownSpeed * (60 * Time.deltaTime));
-					if (posItem.y <= -195.0f) {
-						posItem.y = -195.0f;										// 地面に落ちたのでアイテムは消える
+					if (posItem.y <= -350.0f) {
+						posItem.y = -350.0f;										// 地面に落ちたのでアイテムは消える
 						itemIdouFlag = 2;
 					}
 
@@ -752,18 +752,18 @@ namespace Mix2App.MiniGame1{
 
 
 		private Vector2[] tamagoCharaPositionInitTable = new Vector2[] {
-			new Vector2 (   0.0f, -180.0f),		// スタート画面のプレイヤーキャラの初期位置
-			new Vector2 (-235.0f, -125.0f),		// スタート画面の応援キャラ１の初期位置
-			new Vector2 ( 236.0f,  -90.0f),		// スタート画面の応援キャラ２の初期位置
-			new Vector2 (   0.0f, -180.0f),		// ゲーム画面のプレイヤーキャラの初期位置
-			new Vector2 (-235.0f, -125.0f),		// ゲーム画面の応援キャラ１の初期位置
-			new Vector2 ( 236.0f,  -90.0f),		// ゲーム画面の応援キャラ２の初期位置
-			new Vector2 (  60.0f, -180.0f),		// 結果画面のプレイヤーキャラの初期位置
-			new Vector2 (-200.0f, -180.0f),		// 結果画面の応援キャラ１の初期位置
-			new Vector2 ( -90.0f, -180.0f),		// 結果画面の応援キャラ２の初期位置
-			new Vector2 (   0.0f,  420.0f),		// 結果画面の宝箱の初期位置
-			new Vector2 (   0.0f,  420.0f),		// 結果画面のメッセージの初期位置
-			new Vector2 (   0.0f,  418.0f),		// ゲーム画面の落下アイテムの初期位置
+			new Vector2 (   0.0f, -320.0f),		// スタート画面のプレイヤーキャラの初期位置
+			new Vector2 (-450.0f, -200.0f),		// スタート画面の応援キャラ１の初期位置
+			new Vector2 ( 450.0f, -150.0f),		// スタート画面の応援キャラ２の初期位置
+			new Vector2 (   0.0f, -320.0f),		// ゲーム画面のプレイヤーキャラの初期位置
+			new Vector2 (-450.0f, -200.0f),		// ゲーム画面の応援キャラ１の初期位置
+			new Vector2 ( 450.0f, -150.0f),		// ゲーム画面の応援キャラ２の初期位置
+			new Vector2 ( 120.0f, -320.0f),		// 結果画面のプレイヤーキャラの初期位置
+			new Vector2 (-280.0f, -320.0f),		// 結果画面の応援キャラ１の初期位置
+			new Vector2 (-120.0f, -320.0f),		// 結果画面の応援キャラ２の初期位置
+			new Vector2 (   0.0f,  700.0f),		// 結果画面の宝箱の初期位置
+			new Vector2 (   0.0f,  700.0f),		// 結果画面のメッセージの初期位置
+			new Vector2 (   0.0f,  500.0f),		// ゲーム画面の落下アイテムの初期位置
 			new Vector2 (   0.0f,  999.0f),		// ゲーム画面のスコアの初期位置
 		};
 		private void TamagoCharaPositionInit(){

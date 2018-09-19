@@ -55,6 +55,7 @@ namespace Mix2App.Marriage{
 		[SerializeField] private GameObject petChara2;				// 女の子のペット
 
 		[SerializeField] private GameObject PanelWhite;
+		[SerializeField] private GameObject PanelWhite2;
 
 		[SerializeField] private GameObject EventNet;				// 通信画面一式
 		[SerializeField] private GameObject EventJyunbi;			// たまごっちみーつ準備画面
@@ -105,10 +106,20 @@ namespace Mix2App.Marriage{
 			marriageJobCount020,
 			marriageJobCount030,
 			marriageJobCount040,
+			marriageJobCount041,
+			marriageJobCount042,
 			marriageJobCount050,
+			marriageJobCount051,
+			marriageJobCount052,
 			marriageJobCount060,
+			marriageJobCount061,
+			marriageJobCount062,
 			marriageJobCount070,
+			marriageJobCount071,
+			marriageJobCount072,
 			marriageJobCount080,
+			marriageJobCount081,
+			marriageJobCount082,
 			marriageJobCount090,
 			marriageJobCount100,
 			marriageJobCount110, 
@@ -204,6 +215,12 @@ namespace Mix2App.Marriage{
 			ButtonSeikou.onClick.AddListener (ButtonSeikouClick);
 			EventEgg1.transform.Find("Image").gameObject.GetComponent<Button>().onClick.AddListener (ButtonEggClick);
 
+			EventStart.SetActive (false);
+			EventTown.SetActive (false);
+			EventPark.SetActive (false);
+			EventBeach.SetActive (false);
+			EventGarden.SetActive (false);
+			EventFinale.SetActive (false);
 
 
 
@@ -360,24 +377,29 @@ namespace Mix2App.Marriage{
 			case	statusJobCount.marriageJobCount030:
 				{
 					MarriageJobTypeOpening ();
-					EventStart.GetComponent<Transform> ().transform.localScale = new Vector3 (3.897087f, 3.897087f, 3.897113f);
-					EventTown.GetComponent<Transform> ().transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
-					EventBeach.GetComponent<Transform> ().transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
-					EventGarden.GetComponent<Transform> ().transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
-					EventFinale.GetComponent<Transform> ().transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
+					EventStart.SetActive (true);
 					jobCount = statusJobCount.marriageJobCount040;
 					Debug.Log ("草原");
 
 					_CoroutineFlagStart = true;
 					StartCoroutine ("StartCharaIdou");
+					StartCoroutine ("StartHeartIdou");
 					break;
 				}
 			case	statusJobCount.marriageJobCount040:
 				{
 					if (EventStart.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0f) {
-						EventStart.GetComponent<Transform> ().transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
-						EventTown.GetComponent<Transform> ().transform.localScale = new Vector3 (0.8574497f, 0.8574497f, 0.0f);
-						jobCount = statusJobCount.marriageJobCount050;
+						jobCount = statusJobCount.marriageJobCount041;
+						panelWhiteA = 0.0f;
+					}
+					break;
+				}
+			case	statusJobCount.marriageJobCount041:
+				{
+					if (WhiteOut ()) {
+						EventStart.SetActive (false);
+						EventTown.SetActive (true);
+						jobCount = statusJobCount.marriageJobCount042;
 						_CoroutineFlagStart = false;
 
 						Debug.Log ("たまタウン");
@@ -391,12 +413,27 @@ namespace Mix2App.Marriage{
 					}
 					break;
 				}
+			case	statusJobCount.marriageJobCount042:
+				{
+					if (WhiteIn ()) {
+						jobCount = statusJobCount.marriageJobCount050;
+					}
+					break;
+				}
 			case	statusJobCount.marriageJobCount050:
 				{
 					if (EventTown.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0f) {
-						EventTown.GetComponent<Transform> ().transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
-						EventPark.GetComponent<Transform> ().transform.localScale = new Vector3 (3.897114f, 3.897114f, 3.897114f);
-						jobCount = statusJobCount.marriageJobCount060;
+						jobCount = statusJobCount.marriageJobCount051;
+						panelWhiteA = 0.0f;
+					}
+					break;
+				}
+			case	statusJobCount.marriageJobCount051:
+				{
+					if (WhiteOut ()) {
+						EventTown.SetActive (false);
+						EventPark.SetActive (true);
+						jobCount = statusJobCount.marriageJobCount052;
 						_CoroutineFlagTown = false;
 
 						Debug.Log ("遊園地");
@@ -410,12 +447,27 @@ namespace Mix2App.Marriage{
 					}
 					break;
 				}
+			case	statusJobCount.marriageJobCount052:
+				{
+					if (WhiteIn ()) {
+						jobCount = statusJobCount.marriageJobCount060;
+					}
+					break;
+				}
 			case	statusJobCount.marriageJobCount060:
 				{
 					if (EventPark.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0f) {
-						EventPark.GetComponent<Transform> ().transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
-						EventBeach.GetComponent<Transform> ().transform.localScale = new Vector3 (0.8574491f, 0.8574491f, 0.0f);
-						jobCount = statusJobCount.marriageJobCount070;
+						jobCount = statusJobCount.marriageJobCount061;
+						panelWhiteA = 0.0f;
+					}
+					break;
+				}
+			case	statusJobCount.marriageJobCount061:
+				{
+					if (WhiteOut ()) {
+						EventPark.SetActive (false);
+						EventBeach.SetActive (true);
+						jobCount = statusJobCount.marriageJobCount062;
 						_CoroutineFlagPark = false;
 
 						Debug.Log ("海岸");
@@ -429,12 +481,27 @@ namespace Mix2App.Marriage{
 					}
 					break;
 				}
+			case	statusJobCount.marriageJobCount062:
+				{
+					if (WhiteIn ()) {
+						jobCount = statusJobCount.marriageJobCount070;
+					}
+					break;
+				}
 			case	statusJobCount.marriageJobCount070:
 				{
 					if (EventBeach.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0) {
-						EventBeach.GetComponent<Transform> ().transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
-						EventGarden.GetComponent<Transform> ().transform.localScale = new Vector3 (1.5f, 1.5f, 0.0f);
-						jobCount = statusJobCount.marriageJobCount080;
+						jobCount = statusJobCount.marriageJobCount071;
+						panelWhiteA = 0.0f;
+					}
+					break;
+				}
+			case	statusJobCount.marriageJobCount071:
+				{
+					if (WhiteOut ()) {
+						EventBeach.SetActive (false);
+						EventGarden.SetActive (true);
+						jobCount = statusJobCount.marriageJobCount072;
 						_CoroutineFlagBeach = false;
 
 						Debug.Log ("庭園");
@@ -445,22 +512,36 @@ namespace Mix2App.Marriage{
 					}
 					break;
 				}
+			case	statusJobCount.marriageJobCount072:
+				{
+					if (WhiteIn ()) {
+						jobCount = statusJobCount.marriageJobCount080;
+					}
+					break;
+				}
 			case	statusJobCount.marriageJobCount080:
 				{
 					if (EventGarden.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0f) {
-						EventGarden.GetComponent<Transform> ().transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
-						EventFinale.GetComponent<Transform> ().transform.localScale = new Vector3 (1.3f, 1.3f, 0.0f);
-						jobCount = statusJobCount.marriageJobCount090;
+						jobCount = statusJobCount.marriageJobCount081;
+						panelWhiteA = 0.0f;
+					}
+					break;
+				}
+			case	statusJobCount.marriageJobCount081:
+				{
+					if (WhiteOut ()) {
+						EventGarden.SetActive (false);
+						EventFinale.SetActive (true);
+						jobCount = statusJobCount.marriageJobCount082;
 
 						Debug.Log ("結婚式");
+
+						cbMan1.gotoAndPlay (MotionLabel.SHY1);
+						cbWoman1.gotoAndPlay (MotionLabel.SHY1);
 
 						posOmedetou = omedetouPosition.transform.localPosition;
 						_CoroutineFlagFinale = true;
 						StartCoroutine ("FinaleCharaIdou");
-
-						// 結婚式場で整列
-						cbMan1.gotoAndPlay (MotionLabel.SHY1);
-						cbWoman1.gotoAndPlay (MotionLabel.SHY1);
 
 
 						if (man2AttendFlag) {
@@ -476,6 +557,13 @@ namespace Mix2App.Marriage{
 							pbPet2.gotoAndPlay (MotionLabel.IDLE);
 						}
 
+					}
+					break;
+				}
+			case	statusJobCount.marriageJobCount082:
+				{
+					if (WhiteIn ()) {
+						jobCount = statusJobCount.marriageJobCount090;
 					}
 					break;
 				}
@@ -635,8 +723,8 @@ namespace Mix2App.Marriage{
 			float _posMan;
 			float _posWoman;
 
-			_posMan = 550.0f;
-			_posWoman = -550.0f;
+			_posMan = 650.0f;
+			_posWoman = -650.0f;
 
 			while (_CoroutineFlagStart) {
 				EventStart.transform.Find ("bg1/manChara").gameObject.transform.localPosition = new Vector3 (_posMan, 50, 0);
@@ -664,6 +752,45 @@ namespace Mix2App.Marriage{
 				yield return null;
 			}
 		}
+
+		private IEnumerator StartHeartIdou(){
+			EventStart.transform.Find ("heartPG").gameObject.SetActive (false);
+			EventStart.transform.Find ("heartPG").transform.localPosition = new Vector3 (3.0f, -15.0f, 0.0f);
+			while (true) {
+				if ((EventStart.transform.Find ("bg1/manChara").gameObject.transform.localPosition.x == 57.0f) && (EventStart.transform.Find ("bg1/womanChara").gameObject.transform.localPosition.x == -57.0f)) {
+					break;
+				}
+				yield return null;
+			}
+			for (int i = 0; i < 4; i++) {
+				EventStart.transform.Find ("heartPG").gameObject.SetActive (true);
+				StartCoroutine (StartHeartScaleUp (0.01f));
+				while (true) {
+					Vector3 _pos = new Vector3 (0.0f, 5.0f, 0.0f);
+					EventStart.transform.Find ("heartPG").transform.localPosition = Vector3.MoveTowards (EventStart.transform.Find ("heartPG").transform.localPosition, _pos, 12 * Time.deltaTime);
+					if (EventStart.transform.Find ("heartPG").transform.localPosition.y == _pos.y) {
+						break;
+					}
+					yield return null;
+				}
+				EventStart.transform.Find ("heartPG").gameObject.SetActive (false);
+				EventStart.transform.Find ("heartPG").transform.localPosition = new Vector3 (3.0f, -15.0f, 0.0f);
+				yield return new WaitForSeconds (0.8f);
+			}
+		}
+		private IEnumerator StartHeartScaleUp(float _size){
+			EventStart.transform.Find("heartPG").transform.localScale = new Vector3 (_size,_size, 1.0f);
+			while (true) {
+				_size += 0.01f;
+				if (_size >= 0.1f) {
+					EventStart.transform.Find ("heartPG").transform.localScale = new Vector3 (0.1f, 0.1f, 1.0f);
+					break;
+				}
+				EventStart.transform.Find ("heartPG").transform.localScale = new Vector3 (_size, _size, 1.0f);
+				yield return null;
+			}
+		}
+
 
 		private IEnumerator TownCharaIdou(){
 			while (_CoroutineFlagTown) {
@@ -762,10 +889,39 @@ namespace Mix2App.Marriage{
 
 			yield return new WaitForSeconds (2.0f);
 
-			cbMan1.gotoAndPlay (MotionLabel.KISS);
-			cbWoman1.gotoAndPlay (MotionLabel.KISS);
+//			cbMan1.gotoAndPlay (MotionLabel.KISS);
+//			cbWoman1.gotoAndPlay (MotionLabel.KISS);
+			cbMan1.gotoAndStop(MotionLabel.KISS);
+			cbWoman1.gotoAndStop (MotionLabel.KISS);
+
+
 
 		}
+
+		private bool WhiteOut(){
+			panelWhiteA += (4.0f * (60 * Time.deltaTime));
+			if(panelWhiteA >= 255.0f){
+				panelWhiteA = 255.0f;
+			}
+			PanelWhite2.GetComponent<Image> ().color = new Color (1.0f, 1.0f, 1.0f, panelWhiteA / 255.0f);
+			if (panelWhiteA == 255.0f) {
+				return true;
+			}
+			return false;
+		}
+
+		private bool WhiteIn(){
+			panelWhiteA -= (4.0f * (60 * Time.deltaTime));
+			if(panelWhiteA <= 0.0f){
+				panelWhiteA = 0.0f;
+			}
+			PanelWhite2.GetComponent<Image> ().color = new Color (1.0f, 1.0f, 1.0f, panelWhiteA / 255.0f);
+			if (panelWhiteA == 0.0f) {
+				return true;
+			}
+			return false;
+		}
+
 
 
 

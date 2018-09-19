@@ -747,7 +747,7 @@ namespace Mix2App.MachiCon{
 								ManagerObject.instance.view.change(SceneLabel.MARRIAGE,mkind,muser1,mkind1,muser2,mkind2);
 							} else {
 								Debug.Log ("みーつユーザー以外なので、デートイベントへ・・・");
-								ManagerObject.instance.view.change(SceneLabel.MARRIAGE,mkind,muser1,mkind1,muser2,mkind2);
+								ManagerObject.instance.view.change(SceneLabel.MARRIAGE_DATE,mkind,muser1,mkind1,muser2,mkind2);
 							}
 						} else {
 							Debug.Log ("たまタウンへ・・・");
