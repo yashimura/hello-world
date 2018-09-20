@@ -38,6 +38,7 @@ namespace Mix2App.MarriageDate{
 
 		[SerializeField] private GameObject EventWhite;
 
+		[SerializeField] private Sprite[] StampImage;			// スタンプイメージ
 	
 		private readonly string[] manMessageTable = new string[]{		// 男の子のメッセージ
 			"またいっしょに\nあそんでほしい（＋語尾）",
@@ -321,6 +322,7 @@ namespace Mix2App.MarriageDate{
 
 						whileEndFlag = true;
 						StartCoroutine ("EventEndCharaIdou");
+						StartCoroutine ("EventEndFukidashiCheck");
 					}
 					break;
 				}
@@ -386,7 +388,7 @@ namespace Mix2App.MarriageDate{
 			EventDate.SetActive (true);
 		}
 
-				private void EventEndMessageSet(){
+		private void EventEndMessageSet(){
 			string _gobiMan, _gobiWoman;
 
 			if (mkind1 == 0) {
@@ -403,6 +405,19 @@ namespace Mix2App.MarriageDate{
 
 			man_text.GetComponent<Text> ().text = manMessageTable [Random.Range (0, manMessageTable.Length)].Replace ("（＋語尾）", _gobiMan);
 			woman_text.GetComponent<Text> ().text = womanMessageTable [Random.Range (0, womanMessageTable.Length)].Replace ("（＋語尾）", _gobiWoman);
+
+			EventEnd.transform.Find("bg1/manChara/fukidashi/stamp").gameObject.GetComponent<Image>().sprite = StampImage[Random.Range(0,StampImage.Length)];
+			EventEnd.transform.Find("bg1/womanChara/fukidashi/stamp").gameObject.GetComponent<Image>().sprite = StampImage[Random.Range(0,StampImage.Length)];
+
+			if (muser1.utype != UserType.MIX2) {
+				EventEnd.transform.Find ("serif_1").gameObject.SetActive (false);
+			}
+
+			if (muser2.utype != UserType.MIX2) {
+				EventEnd.transform.Find ("serif 2").gameObject.SetActive (false);
+			}
+			EventEnd.transform.Find ("bg1/manChara/fukidashi").gameObject.SetActive (false);
+			EventEnd.transform.Find ("bg1/womanChara/fukidashi").gameObject.SetActive (false);
 		}
 
 		private void TamagochiAnimeRandomChenge(CharaBehaviour cb){
@@ -497,6 +512,28 @@ namespace Mix2App.MarriageDate{
 				yield return null;
 			}
 		}
+		private IEnumerator EventEndFukidashiCheck(){
+			while (whileEndFlag) {
+				if (muser1.utype != UserType.MIX2) {
+					if (man_text.GetComponent<Text> ().enabled == true) {
+						EventEnd.transform.Find ("bg1/manChara/fukidashi").gameObject.SetActive (true);
+					} else {
+						EventEnd.transform.Find ("bg1/manChara/fukidashi").gameObject.SetActive (false);
+					}
+				}
+
+				if (muser2.utype != UserType.MIX2) {
+					if (woman_text.GetComponent<Text> ().enabled == true) {
+						EventEnd.transform.Find ("bg1/womanChara/fukidashi").gameObject.SetActive (true);
+					} else {
+						EventEnd.transform.Find ("bg1/womanChara/fukidashi").gameObject.SetActive (false);
+					}
+				}
+
+				yield return null;
+			}
+		}
+
 
 
 

@@ -558,7 +558,7 @@ namespace Mix2App.MiniGame1{
 		// たまごっちとアイテムの当たり判定
 		private bool HitCheck(Vector3 tamagoPos,Vector3 itemPos){
 			if (((tamagoPos.x - 50.0f) < itemPos.x) && (itemPos.x < (tamagoPos.x + 50.0f))) {
-				if (((tamagoPos.y - 50.0f) < itemPos.y) && (itemPos.y < (tamagoPos.y + 50.0f))) {
+				if (((tamagoPos.y - 100.0f) < itemPos.y) && (itemPos.y < (tamagoPos.y + 100.0f))) {
 					return true;
 				}
 			}
@@ -664,8 +664,8 @@ namespace Mix2App.MiniGame1{
 			case	statusResult.resultJobCount040:{
 					pos = EventResult.transform.Find ("treasure").gameObject.transform.localPosition;		// 落下する宝箱の座標を抽出
 					pos.y -= 25;
-					if (pos.y <= -180) {
-						pos.y = -180;
+					if (pos.y <= EventResult.transform.Find ("treasure_open").gameObject.transform.localPosition.y) {
+						pos.y = EventResult.transform.Find ("treasure_open").gameObject.transform.localPosition.y;
 						resultLoopCount = statusResult.resultJobCount050;
 						resultLoopWait = treasureRotationTable.Length;
 						resultTamagoYJumpCount = tamagoYJumpTable.Length;

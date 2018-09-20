@@ -16,7 +16,6 @@ namespace Mix2App.MiniGame2{
 	public class MiniGame2 : MonoBehaviour,IReceiver {
 		[SerializeField] private GameObject[] CharaTamagoMain;					// たまごっち
 		[SerializeField] private GameObject[] CharaTamago;						// たまごっち
-		[SerializeField] private GameObject baseSizePanel;
 		[SerializeField] private GameObject EventTitle;							// タイトル画面
 		[SerializeField] private GameObject EventStart;							// スタート画面
 		[SerializeField] private GameObject	EventGame;							// ゲーム画面
@@ -57,7 +56,7 @@ namespace Mix2App.MiniGame2{
 		private float nowTime1;													// 残り時間（カウントダウン用）
 		private int	nowTime2;													// 残り時間（制限時間）
 
-		private readonly float MENU_IDOU_SPEED = 25.0f;							// メニューの移動速度
+		private readonly float MENU_IDOU_SPEED = 30.0f;							// メニューの移動速度
 		private readonly int GAME_PLAY_TIME = 60;								// ゲームプレイ制限時間
 		private readonly int GAME_SCORE_POINT1 = 10;							// ２択時の得点
 		private readonly int GAME_SCORE_POINT2 = 20;							// ４択時の得点
@@ -143,10 +142,8 @@ namespace Mix2App.MiniGame2{
 			}
 
 			if ((num > 1.33f) && (num < 1.34f)) {
-				baseSizePanel.GetComponent<Transform> ().transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);		// 3:4の時のみ画面を拡大表示
 				screenModeFlag = true;
 			} else {
-				baseSizePanel.GetComponent<Transform> ().transform.localScale = new Vector3 (1.15f, 1.15f, 1.0f);	// 3:4の以外の時の画面を拡大表示
 				screenModeFlag = false;
 			}
 
@@ -263,10 +260,10 @@ namespace Mix2App.MiniGame2{
 						EventResult.SetActive (true);
 
 						for (int i = 0; i < CharaTamago.Length; i++) {				// お客さん達を消す
-							CharaTamago [i].transform.localPosition = new Vector3 (-50.0f, 0.0f, 1.0f);
+							CharaTamago [i].transform.localPosition = new Vector3 (5000.0f, 5000.0f, 0.0f);
 						}
 						for (int i = 0; i < CharaTamagoMain.Length; i++) {			// プレイヤーとゲストを消す
-							CharaTamagoMain [i].transform.localPosition = new Vector3 (-50.0f, 0.0f, 1.0f);
+							CharaTamagoMain [i].transform.localPosition = new Vector3 (5000.0f, 5000.0f, 0.0f);
 							TamagochiMainAnimeSet (i, MotionLabel.IDLE);
 						}
 
@@ -364,9 +361,9 @@ namespace Mix2App.MiniGame2{
 		private int[] tamagochiIdouFlag = new int[12];
 		private void TamagochiLoopInit(){
 			Vector2[] _initTable = new Vector2[] {
-				new Vector2 (0.0f, 4.0f),
-				new Vector2 (-2.3f, 4.0f),
-				new Vector2 (2.3f, 4.0f),
+				new Vector2 (0.0f, 380.0f),
+				new Vector2 (-300.0f, 380.0f),
+				new Vector2 (300.0f, 380.0f),
 			};
 
 			for (int i = 0; i < CharaTamago.Length; i++) {
@@ -393,26 +390,26 @@ namespace Mix2App.MiniGame2{
 
 		private IEnumerator TamagochiStartPositionSet(int num,int num2){
 			Vector3[] _idouPosTable = new Vector3[]{
-				new Vector3(2.0f,-1.0f,0.0f),
-				new Vector3(4.0f,-1.0f,0.0f),
-				new Vector3(6.0f,-1.0f,0.0f),
-				new Vector3(6.0f,-3.0f,0.0f),
-				new Vector3(4.0f,-3.0f,0.0f),
-				new Vector3(2.0f,-3.0f,0.0f),
-				new Vector3(0.0f,-3.0f,0.0f),
-				new Vector3(-2.0f,-3.0f,0.0f),		// 0	
-				new Vector3(-4.0f,-5.0f,0.0f),
-				new Vector3(-6.0f,-7.0f,0.0f),
-				new Vector3(-8.0f,-9.0f,0.0f),
-				new Vector3(-10.0f,-11.0f,0.0f),
-				new Vector3(-12.0f,-13.0f,0.0f),
-				new Vector3(-14.0f,-15.0f,0.0f),
-				new Vector3(-16.0f,-17.0f,0.0f),
-				new Vector3(-18.0f,-19.0f,0.0f),
-				new Vector3(-20.0f,-21.0f,0.0f),
-				new Vector3(-22.0f,-23.0f,0.0f),
-				new Vector3(-24.0f,-25.0f,0.0f),
-				new Vector3(-26.0f,-27.0f,0.0f),
+				new Vector3(250.0f,-250.0f,0.0f),
+				new Vector3(500.0f,-250.0f,0.0f),
+				new Vector3(750.0f,-250.0f,0.0f),
+				new Vector3(750.0f,-550.0f,0.0f),
+				new Vector3(500.0f,-550.0f,0.0f),
+				new Vector3(250.0f,-550.0f,0.0f),
+				new Vector3(0.0f,-550.0f,0.0f),
+				new Vector3(-250.0f,-550.0f,0.0f),		// 0	
+				new Vector3(-500.0f,-850.0f,0.0f),
+				new Vector3(-750.0f,-1150.0f,0.0f),
+				new Vector3(-1000.0f,-1450.0f,0.0f),
+				new Vector3(-1250.0f,-1750.0f,0.0f),
+				new Vector3(-1500.0f,-2050.0f,0.0f),
+				new Vector3(-1750.0f,-2350.0f,0.0f),
+				new Vector3(-2000.0f,-2650.0f,0.0f),
+				new Vector3(-2250.0f,-2950.0f,0.0f),
+				new Vector3(-2500.0f,-3250.0f,0.0f),
+				new Vector3(-2750.0f,-3550.0f,0.0f),
+				new Vector3(-3000.0f,-3850.0f,0.0f),
+				new Vector3(-3250.0f,-4150.0f,0.0f),
 			};
 
 			CharaTamago [num].transform.localPosition = _idouPosTable [num2 + 1];
@@ -420,7 +417,7 @@ namespace Mix2App.MiniGame2{
 				while (true) {
 					TamagochiAnimeFlipSet (num, MotionLabel.WALK, _idouPosTable [num2 - i]);
 
-					CharaTamago [num].transform.localPosition = Vector3.MoveTowards (CharaTamago [num].transform.localPosition, _idouPosTable [num2 - i], 5 * Time.deltaTime);
+					CharaTamago [num].transform.localPosition = Vector3.MoveTowards (CharaTamago [num].transform.localPosition, _idouPosTable [num2 - i], 700 * Time.deltaTime);
 					if ((CharaTamago [num].transform.localPosition.x == _idouPosTable [num2 - i].x) && (CharaTamago [num].transform.localPosition.y == _idouPosTable [num2 - i].y)) {
 						break;
 					}
@@ -438,7 +435,7 @@ namespace Mix2App.MiniGame2{
 		private int _NextCounter;
 		private bool _NextFlag;
 		private IEnumerator TamagochiNextIdou(){
-			_NextPos [tamagochiIdouTable [0]] = new Vector3 (-4.0f, -1.0f, 0.0f);
+			_NextPos [tamagochiIdouTable [0]] = new Vector3 (-500.0f, -250.0f, 0.0f);
 
 			for (int i = 1; i < 12; i++) {
 				_NextPos [i] = CharaTamago [tamagochiIdouTable [i - 1]].transform.localPosition;
@@ -455,17 +452,17 @@ namespace Mix2App.MiniGame2{
 		private IEnumerator TamagoNextIdou0(int num,Vector3 pos){
 			while(true){
 				TamagochiAnimeFlipSet (num, MotionLabel.WALK, pos);
-				CharaTamago [num].transform.localPosition = Vector3.MoveTowards (CharaTamago [num].transform.localPosition, pos, 10 * Time.deltaTime);
+				CharaTamago [num].transform.localPosition = Vector3.MoveTowards (CharaTamago [num].transform.localPosition, pos, 700 * Time.deltaTime);
 				if((CharaTamago[num].transform.localPosition.x == pos.x) && (CharaTamago[num].transform.localPosition.y == pos.y)){
 					break;
 				}
 				yield return null;
 			}
 			_NextCounter++;
-			Vector3 pos2 = new Vector3 (-7.0f, -10.0f, 0.0f);
+			Vector3 pos2 = new Vector3 (-1000.0f, -1500.0f, 0.0f);
 			while(true){
 				TamagochiAnimeFlipSet (num, MotionLabel.WALK, pos2);
-				CharaTamago [num].transform.localPosition = Vector3.MoveTowards (CharaTamago [num].transform.localPosition, pos2, 10 * Time.deltaTime);
+				CharaTamago [num].transform.localPosition = Vector3.MoveTowards (CharaTamago [num].transform.localPosition, pos2, 700 * Time.deltaTime);
 				if((CharaTamago[num].transform.localPosition.x == pos2.x) && (CharaTamago[num].transform.localPosition.y == pos2.y)){
 					break;
 				}
@@ -476,7 +473,7 @@ namespace Mix2App.MiniGame2{
 		private IEnumerator TamagoNextIdou(int num,Vector3 pos){
 			while(true){
 				TamagochiAnimeFlipSet (num, MotionLabel.WALK, pos);
-				CharaTamago [num].transform.localPosition = Vector3.MoveTowards (CharaTamago [num].transform.localPosition, pos, 10 * Time.deltaTime);
+				CharaTamago [num].transform.localPosition = Vector3.MoveTowards (CharaTamago [num].transform.localPosition, pos, 700 * Time.deltaTime);
 				if((CharaTamago[num].transform.localPosition.x == pos.x) && (CharaTamago[num].transform.localPosition.y == pos.y)){
 					break;
 				}
@@ -605,9 +602,9 @@ namespace Mix2App.MiniGame2{
 				cbCharaTamago [num].gotoAndPlay (_status);
 			}
 			if (flag) {
-				CharaTamago [num].transform.localScale = new Vector3 (-0.05f, 0.05f, 1.0f);
+				CharaTamago [num].transform.localScale = new Vector3 (-6.0f, 6.0f, 1.0f);
 			} else {
-				CharaTamago [num].transform.localScale = new Vector3 (0.05f, 0.05f, 1.0f);
+				CharaTamago [num].transform.localScale = new Vector3 (6.0f, 6.0f, 1.0f);
 			}
 		}
 		private void TamagochiAnimeFlipSet(int _num,string _anime,Vector3 pos){
@@ -658,7 +655,7 @@ namespace Mix2App.MiniGame2{
 		}
 
 		private void GameMainInit(){
-			posMenu.x = 1000.0f;
+			posMenu.x = 1500.0f;
 			EventGameMenu.transform.localPosition = posMenu;
 			seikaiCount = 0;
 			menuCount = 2;
@@ -713,14 +710,14 @@ namespace Mix2App.MiniGame2{
 							break;
 						}
 					}
-					posMenu.x = 1000.0f;
+					posMenu.x = 1500.0f;
 					gameJobCount = statusGameCount.minigame2GameCount010;
 
 					break;
 				}
 			case	statusGameCount.minigame2GameCount010:
 				{
-					posMenu.x -= MENU_IDOU_SPEED;
+					posMenu.x -= (MENU_IDOU_SPEED * (60 * Time.deltaTime));
 					if (posMenu.x <= 0.0f) {
 						posMenu.x = 0.0f;
 						gameJobCount = statusGameCount.minigame2GameCount020;
@@ -759,9 +756,9 @@ namespace Mix2App.MiniGame2{
 				}
 			case	statusGameCount.minigame2GameCount040:
 				{
-					posMenu.x -= MENU_IDOU_SPEED;
-					if (posMenu.x <= -1000.0f) {
-						posMenu.x = -1000.0f;
+					posMenu.x -= (MENU_IDOU_SPEED * (60 * Time.deltaTime));
+					if (posMenu.x <= -1500.0f) {
+						posMenu.x = -1500.0f;
 						gameJobCount = statusGameCount.minigame2GameCount050;
 						tamagoGameIdouCount = 0;
 					}
@@ -917,7 +914,7 @@ namespace Mix2App.MiniGame2{
 		private int scoreAnimeWait;
 		private void ScoreInit(){
 			EventGameScore.SetActive (true);
-			EventGameScore.transform.localPosition = new Vector3 (0, 0, 0);
+			EventGameScore.transform.localPosition = new Vector3 (-50.0f, -100.0f, 0);
 			scoreAnimeCount = 0;
 		}
 		private bool ScoreAnime(){
@@ -928,7 +925,7 @@ namespace Mix2App.MiniGame2{
 			case	0:
 				{
 					_pos.y += 5.0f;
-					if (_pos.y >= 50.0f) {
+					if (_pos.y >= -50.0f) {
 						scoreAnimeCount++;
 						scoreAnimeWait = 30;
 					}
@@ -1011,9 +1008,9 @@ namespace Mix2App.MiniGame2{
 					EventResult.transform.Find ("treasure_open").gameObject.SetActive (false);
 					EventResult.transform.Find ("Button_blue_modoru").gameObject.SetActive (false);
 
-					EventResult.transform.Find ("chara").gameObject.transform.localPosition = new Vector3 (60.0f, -185.0f, 0.0f);
-					EventResult.transform.Find ("chara2").gameObject.transform.localPosition = new Vector3 (-202.0f, -185.0f, 0.0f);
-					EventResult.transform.Find ("chara3").gameObject.transform.localPosition = new Vector3 (-88.0f, -185.0f, 0.0f);
+					EventResult.transform.Find ("chara").gameObject.transform.localPosition = new Vector3 (120.0f, -320.0f, 0.0f);
+					EventResult.transform.Find ("chara2").gameObject.transform.localPosition = new Vector3 (-280.0f, -320.0f, 0.0f);
+					EventResult.transform.Find ("chara3").gameObject.transform.localPosition = new Vector3 (-120.0f, -320.0f, 0.0f);
 
 					resultLoopCount = statusResult.resultJobCount010;
 					break;
@@ -1055,8 +1052,8 @@ namespace Mix2App.MiniGame2{
 			case	statusResult.resultJobCount040:{
 					pos = EventResult.transform.Find ("treasure").gameObject.transform.localPosition;		// 落下する宝箱の座標を抽出
 					pos.y -= 25;
-					if (pos.y <= -180) {
-						pos.y = -180;
+					if (pos.y <= EventResult.transform.Find ("treasure_open").gameObject.transform.localPosition.y) {
+						pos.y = EventResult.transform.Find ("treasure_open").gameObject.transform.localPosition.y;
 						resultLoopCount = statusResult.resultJobCount050;
 						resultLoopWait = treasureRotationTable.Length;
 						resultTamagoYJumpCount = tamagoYJumpTable.Length;
@@ -1147,9 +1144,9 @@ namespace Mix2App.MiniGame2{
 		}
 
 		private void TamagoAnimeSprite(){
-			EventResult.transform.Find ("chara").transform.localScale = new Vector3 (1.25f, 1.25f, 1.0f);
-			EventResult.transform.Find ("chara2").transform.localScale = new Vector3 (-1.25f, 1.25f, 1.0f);
-			EventResult.transform.Find ("chara3").transform.localScale = new Vector3 (-1.25f, 1.25f, 1.0f);
+			EventResult.transform.Find ("chara").transform.localScale = new Vector3 (2.0f, 2.0f, 1.0f);
+			EventResult.transform.Find ("chara2").transform.localScale = new Vector3 (-2.0f, 2.0f, 1.0f);
+			EventResult.transform.Find ("chara3").transform.localScale = new Vector3 (-2.0f, 2.0f, 1.0f);
 
 			TamagochiImageMove (EventResult, CharaTamagoMain [0], "chara/");
 			TamagochiImageMove (EventResult, CharaTamagoMain [1], "chara2/");
@@ -1157,8 +1154,8 @@ namespace Mix2App.MiniGame2{
 		}
 
 		private Vector2[] tamagoCharaPositionInitTable = new Vector2[] {
-			new Vector2 (   0.0f,  420.0f),		// 結果画面の宝箱の初期位置
-			new Vector2 (   0.0f,  420.0f),		// 結果画面のメッセージの初期位置
+			new Vector2 (   0.0f,  700.0f),		// 結果画面の宝箱の初期位置
+			new Vector2 (   0.0f,  700.0f),		// 結果画面のメッセージの初期位置
 		};
 		private void TamagoCharaPositionInit(){
 			TamagoCharaPositionInitSub (EventResult.transform.Find ("treasure").gameObject, 0);

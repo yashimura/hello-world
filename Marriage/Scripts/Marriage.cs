@@ -667,31 +667,6 @@ namespace Mix2App.Marriage{
 
 			TamagochiPetImageMove (EventFinale, petChara1, "bg/manPet");
 			TamagochiPetImageMove (EventFinale, petChara2, "bg/womanPet");
-
-
-/*
-			EventStart.transform.Find ("bg1/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
-			EventStart.transform.Find ("bg1/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
-
-			EventTown.transform.Find ("Chara/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
-			EventTown.transform.Find ("Chara/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
-
-			EventPark.transform.Find ("Chara/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
-			EventPark.transform.Find ("Chara/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
-
-			EventBeach.transform.Find ("Chara/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
-			EventBeach.transform.Find ("Chara/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
-
-			EventGarden.transform.Find ("bg1/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
-			EventGarden.transform.Find ("bg1/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
-
-			EventFinale.transform.Find ("bg/manChara").gameObject.GetComponent<Image> ().sprite = manChara1.GetComponent<SpriteRenderer> ().sprite;
-			EventFinale.transform.Find ("bg/womanChara").gameObject.GetComponent<Image> ().sprite = womanChara1.GetComponent<SpriteRenderer> ().sprite;
-			EventFinale.transform.Find ("bg/manChara2").gameObject.GetComponent<Image> ().sprite = manChara2.GetComponent<SpriteRenderer> ().sprite;
-			EventFinale.transform.Find ("bg/womanChara2").gameObject.GetComponent<Image> ().sprite = womanChara2.GetComponent<SpriteRenderer> ().sprite;
-			EventFinale.transform.Find ("bg/manPet").gameObject.GetComponent<Image> ().sprite = petChara1.GetComponent<SpriteRenderer> ().sprite;
-			EventFinale.transform.Find ("bg/womanPet").gameObject.GetComponent<Image> ().sprite = petChara2.GetComponent<SpriteRenderer> ().sprite;
-*/
 		}
 
 
