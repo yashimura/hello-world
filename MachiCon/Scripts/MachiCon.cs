@@ -265,7 +265,7 @@ namespace Mix2App.MachiCon{
 
 
 			// めいんBGMを登録
-			ManagerObject.instance.sound.playBgm (8);
+			ManagerObject.instance.sound.playBgm (11);
 
 			for (int i = 0; i < 8; i++) {
 				mkindTable [i] = mpdata.members [i].index;

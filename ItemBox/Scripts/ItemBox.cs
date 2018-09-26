@@ -140,7 +140,7 @@ public class ItemBox : MonoBehaviour,IReceiver {
 
 
 
-		muser1.utype = UserType.MIX2;
+//		muser1.utype = UserType.MIX2;
 
 
 
