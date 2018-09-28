@@ -476,8 +476,8 @@ namespace Mix2App.Marriage{
 						StartCoroutine ("BeachCharaIdou");
 
 						// 左向きに散歩
-						cbMan1.gotoAndPlay (MotionLabel.SHY4);
-						cbWoman1.gotoAndPlay (MotionLabel.SHY4);
+						cbMan1.gotoAndPlay (MotionLabel.WALK);
+						cbWoman1.gotoAndPlay (MotionLabel.WALK);
 					}
 					break;
 				}
@@ -718,9 +718,9 @@ namespace Mix2App.Marriage{
 				if (_posMan <= 57.0f) {
 					_posMan = 57.0f;
 					_posWoman = -57.0f;
-					if (cbMan1.nowlabel != MotionLabel.SHY3) {
-						cbMan1.gotoAndPlay (MotionLabel.SHY3);
-						cbWoman1.gotoAndPlay (MotionLabel.SHY3);
+					if (cbMan1.nowlabel != MotionLabel.SHY1) {
+						cbMan1.gotoAndPlay (MotionLabel.SHY1);
+						cbWoman1.gotoAndPlay (MotionLabel.SHY1);
 					}
 				}
 

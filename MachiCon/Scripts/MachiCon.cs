@@ -670,7 +670,8 @@ namespace Mix2App.MachiCon{
 						//相談送信、全メンバーの相談処理を完了後、告白結果取得
 						// パラメタは設計書参照
 						//TODO masklistは現在何も反映していないので適宜設定を
-						GameCall call = new GameCall(CallLabel.GET_ROOM_RESULT,maskdatas);
+//						GameCall call = new GameCall(CallLabel.GET_ROOM_RESULT,maskdatas);
+						GameCall call = new GameCall(CallLabel.GET_ROOM_RESULT,mpdata.roomId,maskdatas,mpdata.members);
 						call.AddListener(mgetroomres);
 						ManagerObject.instance.connect.send(call);
 					}
@@ -3128,7 +3129,10 @@ namespace Mix2App.MachiCon{
 		private IEnumerator KokuhakuWomanReturn(){
 			int _num = KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4;
 			Vector3 _pos = _KokuhakuPositionTable [_num];
-				
+			if (loveParamFlag) {
+				// 告白成功した女の子は通常位置より左に整列
+				_pos.x -= 100.0f;
+			}
 			_kokuhakuWomanReturnFlag = false;
 			while (true) {
 				TamagochiAnimeSet (_num, MotionLabel.WALK);
@@ -3144,6 +3148,7 @@ namespace Mix2App.MachiCon{
 			int _num = KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4;
 			Vector3 _pos = _KokuhakuPositionTable [_num];
 			_pos.x += 90.0f;
+			_pos.x -= 100.0f;
 
 			_kokuhakuManGotoWomanFlag = false;
 
