@@ -483,6 +483,8 @@ namespace Mix2App.MachiCon{
 
 						EventAppeal.SetActive (false);
 						EventAppealTableHeartClear ();											// テーブルハートを消しておく
+
+						ManagerObject.instance.sound.playBgm (12);
 					}
 					break;
 				}
@@ -619,6 +621,8 @@ namespace Mix2App.MachiCon{
 						}
 						TablePositionInit ();
 						WaitTimeSecInit (2);
+
+						ManagerObject.instance.sound.playBgm (11);
 					}
 					break;
 				}
@@ -685,6 +689,8 @@ namespace Mix2App.MachiCon{
 						waitTime = 60;
 						KokuhakuPositionInit ();												// 告白タイム各キャラクターの初期配置
 						KokuhakuTimeInit ();													// 男の子の告白する女の子の番号を登録
+
+						ManagerObject.instance.sound.playBgm (13);
 					}
 					break;
 				}
@@ -711,6 +717,8 @@ namespace Mix2App.MachiCon{
 					if (kokuhakuTimeEndFlag) {
 						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp15);		// 告白処理が終了したのでお別れメッセージを表示
 						jobCount = statusJobCount.machiconJobCount290;
+
+						ManagerObject.instance.sound.playBgm (11);
 					}
 					KokuhakuTimeMain ();														// 告白処理ループ
 					break;
@@ -2042,6 +2050,8 @@ namespace Mix2App.MachiCon{
 				{
 					StartCoroutine (KokuhakuAttackIdou(KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4,false,false));	// 告白指定された女の子は一歩前に移動する
 					kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount040;
+
+					ManagerObject.instance.sound.stopBgm ();
 					break;
 				}
 			case	statusKokuhakuCount.kokuhakuCount040:
@@ -2382,6 +2392,8 @@ namespace Mix2App.MachiCon{
 				}
 			case	statusKokuhakuCount.kokuhakuCount390:
 				{
+					ManagerObject.instance.sound.playBgm (11);
+
 					if (kokuhakuOkFlag) {														// 告白成功者がいる
 						EventLastResult.transform.Find ("yes").gameObject.SetActive (true);
 						EventLastResult.transform.Find ("yes/panel").gameObject.SetActive (true);
@@ -2657,6 +2669,8 @@ namespace Mix2App.MachiCon{
 		// num:男の子の番号（０〜３）、flag:初期化フラグ（true:初期化あり、false:初期化なし）
 		private void KokuhakuRivalWaitStop(int num,bool flag){
 			if (flag) {
+				ManagerObject.instance.sound.playSe (7);
+
 				EventWaitStop.SetActive (true);													// ちょっと待ったの帯を表示
 				cbTamagoChara [num].gotoAndPlay (MotionLabel.ANGER);
 				MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp12);
@@ -2735,9 +2749,13 @@ namespace Mix2App.MachiCon{
 				if (loveParamFlag) {
 					// 告白成功
 					EventResult.transform.Find ("yes").gameObject.SetActive (true);
+
+					ManagerObject.instance.sound.playBgm (14);
 				} else {
 					// 告白失敗
 					EventResult.transform.Find ("no").gameObject.SetActive (true);
+
+					ManagerObject.instance.sound.playBgm (15);
 				}
 			} else {
 				Vector3 pos = new Vector3 (0.0f, 0.0f, 0.0f);
@@ -2984,6 +3002,8 @@ namespace Mix2App.MachiCon{
 				yield return null;
 			}
 
+			ManagerObject.instance.sound.playSe (31);
+
 			while (true) {														// ハートを女の子から男の子へ飛ばす
 				_pos = Vector3.MoveTowards (_pos, posTamago [loveParamManNumber], (200.0f * Time.deltaTime));
 				TamagoEffect.transform.Find ("Heart").gameObject.transform.localPosition = _pos;
@@ -2993,6 +3013,7 @@ namespace Mix2App.MachiCon{
 				yield return null;
 			}
 
+			ManagerObject.instance.sound.playSe (24);
 			StartCoroutine ("KokuhakuHaertJump");
 			while (true) {														// ハートを縮小
 				_scale.x -= (0.04f * (60 * Time.deltaTime));

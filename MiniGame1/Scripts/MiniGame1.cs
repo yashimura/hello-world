@@ -145,6 +145,10 @@ namespace Mix2App.MiniGame1{
 			ButtonTojiru.GetComponent<Button> ().onClick.AddListener (ButtonTojiruClick);
 			ButtonModoru.GetComponent<Button> ().onClick.AddListener (ButtonModoruClick);
 
+
+			EventGame.transform.Find ("tamago/chara/buttonLeft").gameObject.GetComponent<Button> ().onClick.AddListener (ButtonLeftIdou);
+			EventGame.transform.Find ("tamago/chara/buttonRight").gameObject.GetComponent<Button> ().onClick.AddListener (ButtonRightIdou);
+
 			float use_screen_x = Screen.currentResolution.width;
 			float use_screen_y = Screen.currentResolution.height;
 			#if UNITY_EDITOR
@@ -335,6 +339,28 @@ namespace Mix2App.MiniGame1{
 		}
 
 
+		private void ButtonLeftIdou(){
+			GameObject charaObj = EventGame.transform.Find ("tamago/chara").gameObject;	// 操作キャラのGameObjectを抽出
+			if (charaAnimeFlag != 2) {
+				if (cbCharaTamago [0].nowlabel != MotionLabel.WALK) {
+					cbCharaTamago [0].gotoAndPlay (MotionLabel.WALK);
+				}
+				charaObj.transform.localScale = new Vector3 (2.0f, 2.0f, 1.0f);
+				charaAnimeFlag = 2;
+			}
+		}
+		private void ButtonRightIdou(){
+			GameObject charaObj = EventGame.transform.Find ("tamago/chara").gameObject;	// 操作キャラのGameObjectを抽出
+			if (charaAnimeFlag != 1) {
+				if (cbCharaTamago [0].nowlabel != MotionLabel.WALK) {
+					cbCharaTamago [0].gotoAndPlay (MotionLabel.WALK);
+				}
+				charaObj.transform.localScale = new Vector3 (-2.0f, 2.0f, 1.0f);
+				charaAnimeFlag = 1;
+			}
+		}
+
+
 		// ゲームメイン初期化
 		private void GameMainInit(){
 			charaAnimeFlag = 0;
@@ -375,7 +401,9 @@ namespace Mix2App.MiniGame1{
 			if (Input.GetMouseButtonDown (0)) {				
 				Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 
-				if (ray.direction.x * 600 >= pos.x) {
+//				Debug.Log (ray.origin.x + "/" + ray.direction.x);
+//				if (ray.direction.x * 600 >= pos.x) {
+				if (ray.direction.x * 1000 >= pos.x) {
 					if (charaAnimeFlag != 1) {
 						if (cbCharaTamago [0].nowlabel != MotionLabel.WALK) {
 							cbCharaTamago [0].gotoAndPlay (MotionLabel.WALK);
@@ -392,6 +420,7 @@ namespace Mix2App.MiniGame1{
 						charaAnimeFlag = 2;
 					}
 				}
+
 				if (charaJumpCheckFlag2 == 0) {
 					if (charaJumpCheckFlag == 0) {
 						charaJumpCheckFlag = 30;
@@ -400,6 +429,9 @@ namespace Mix2App.MiniGame1{
 					}
 				}
 			}	
+
+
+
 
 			if (charaJumpCheckFlag != 0) {
 				charaJumpCheckFlag--;
@@ -624,6 +656,16 @@ namespace Mix2App.MiniGame1{
 					EventResult.transform.Find ("treasure").gameObject.SetActive (false);
 					EventResult.transform.Find ("treasure_open").gameObject.SetActive (false);
 					EventResult.transform.Find ("Button_blue_modoru").gameObject.SetActive (false);
+
+					if (nowScore < 50) {
+						EventResult.transform.Find ("chara").gameObject.transform.localPosition = new Vector3 (250.0f, -320.0f, 0.0f);
+						EventResult.transform.Find ("chara2").gameObject.transform.localPosition = new Vector3 (-400.0f, -320.0f, 0.0f);
+						EventResult.transform.Find ("chara3").gameObject.transform.localPosition = new Vector3 (-250.0f, -320.0f, 0.0f);
+					} else {
+						EventResult.transform.Find ("chara").gameObject.transform.localPosition = new Vector3 (120.0f, -320.0f, 0.0f);
+						EventResult.transform.Find ("chara2").gameObject.transform.localPosition = new Vector3 (-280.0f, -320.0f, 0.0f);
+						EventResult.transform.Find ("chara3").gameObject.transform.localPosition = new Vector3 (-120.0f, -320.0f, 0.0f);
+					}
 					resultLoopCount = statusResult.resultJobCount010;
 					break;
 				}

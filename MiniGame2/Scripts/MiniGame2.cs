@@ -92,8 +92,16 @@ namespace Mix2App.MiniGame2{
 			mparam = parameter;
 		}
 
-		IEnumerator Start(){
+		void Start() {
 			Debug.Log ("MiniGame2 Start");
+
+			StartCoroutine(mstart());
+		}
+
+
+
+		IEnumerator mstart(){
+			Debug.Log ("MiniGame2 mstart");
 
 			//単体動作テスト用
 			//パラメタ詳細は設計書参照
@@ -104,7 +112,7 @@ namespace Mix2App.MiniGame2{
 			}
 			muser1 = (User)mparam[0];		// たまごっち
 
-
+			EventTitle.SetActive (false);
 
 			startEndFlag = false;
 
@@ -387,7 +395,6 @@ namespace Mix2App.MiniGame2{
 		}
 
 		private Vector3[] _idouPos = new Vector3[12];
-
 		private IEnumerator TamagochiStartPositionSet(int num,int num2){
 			Vector3[] _idouPosTable = new Vector3[]{
 				new Vector3(250.0f,-250.0f,0.0f),
@@ -1008,10 +1015,15 @@ namespace Mix2App.MiniGame2{
 					EventResult.transform.Find ("treasure_open").gameObject.SetActive (false);
 					EventResult.transform.Find ("Button_blue_modoru").gameObject.SetActive (false);
 
-					EventResult.transform.Find ("chara").gameObject.transform.localPosition = new Vector3 (120.0f, -320.0f, 0.0f);
-					EventResult.transform.Find ("chara2").gameObject.transform.localPosition = new Vector3 (-280.0f, -320.0f, 0.0f);
-					EventResult.transform.Find ("chara3").gameObject.transform.localPosition = new Vector3 (-120.0f, -320.0f, 0.0f);
-
+					if (nowScore < 50) {
+						EventResult.transform.Find ("chara").gameObject.transform.localPosition = new Vector3 (250.0f, -320.0f, 0.0f);
+						EventResult.transform.Find ("chara2").gameObject.transform.localPosition = new Vector3 (-400.0f, -320.0f, 0.0f);
+						EventResult.transform.Find ("chara3").gameObject.transform.localPosition = new Vector3 (-250.0f, -320.0f, 0.0f);
+					} else {
+						EventResult.transform.Find ("chara").gameObject.transform.localPosition = new Vector3 (120.0f, -320.0f, 0.0f);
+						EventResult.transform.Find ("chara2").gameObject.transform.localPosition = new Vector3 (-280.0f, -320.0f, 0.0f);
+						EventResult.transform.Find ("chara3").gameObject.transform.localPosition = new Vector3 (-120.0f, -320.0f, 0.0f);
+					}
 					resultLoopCount = statusResult.resultJobCount010;
 					break;
 				}
@@ -1169,7 +1181,6 @@ namespace Mix2App.MiniGame2{
 			pos.y = tamagoCharaPositionInitTable [num].y;
 			obj.transform.localPosition = pos;
 		}
-
 
 		private void TamagochiImageMove(GameObject toObj,GameObject fromObj,string toStr){
 			for (int i = 0; i < fromObj.transform.Find ("Layers").transform.childCount; i++) {

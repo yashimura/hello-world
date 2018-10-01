@@ -359,6 +359,8 @@ namespace Mix2App.Marriage{
 					if (startEndFlag) {
 						waitCount--;
 						if (waitCount == 0) {
+							ManagerObject.instance.sound.playBgm (19);
+
 							StartCoroutine ("WaitMain");
 
 							jobCount = statusJobCount.marriageJobCount030;
@@ -535,6 +537,7 @@ namespace Mix2App.Marriage{
 						jobCount = statusJobCount.marriageJobCount082;
 
 						Debug.Log ("結婚式");
+						ManagerObject.instance.sound.playBgm (20,false);
 
 						cbMan1.gotoAndPlay (MotionLabel.SHY1);
 						cbWoman1.gotoAndPlay (MotionLabel.SHY1);
@@ -579,6 +582,8 @@ namespace Mix2App.Marriage{
 				{
 					MarriageJobTypeEnding ();
 
+					ManagerObject.instance.sound.playBgm (20);
+
 					jobCount = statusJobCount.marriageJobCount110;
 					break;
 				}
@@ -616,6 +621,8 @@ namespace Mix2App.Marriage{
 						waitCount--;
 						break;
 					}
+					ManagerObject.instance.sound.playSe (15);
+
 					// 通信成功したので成功画面を表示
 					EventNet.SetActive (true);
 					EventJyunbi.SetActive (false);
@@ -630,6 +637,8 @@ namespace Mix2App.Marriage{
 						waitCount--;
 						break;
 					}
+					ManagerObject.instance.sound.playSe (16);
+
 					// 通信失敗したので失敗画面を表示
 					EventNet.SetActive (true);
 					EventJyunbi.SetActive (false);
@@ -953,12 +962,15 @@ namespace Mix2App.Marriage{
 
 
 		private void ButtonJyunbiClick(){
+			ManagerObject.instance.sound.playSe (13);
 			jyunbiButtonFlag = true;
 		}
 		private void ButtonSippaiClick(){
+			ManagerObject.instance.sound.playSe (17);
 			ManagerObject.instance.view.change(SceneLabel.TOWN);
 		}
 		private void ButtonSeikouClick(){
+			ManagerObject.instance.sound.playSe (17);
 			ManagerObject.instance.view.change(SceneLabel.HOME);
 		}
 		private void ButtonEggClick(){

@@ -104,8 +104,7 @@ public class Friends : MonoBehaviour,IReceiver {
 	void Start() {
 		Debug.Log ("Friends start");
 
-		//ルーム情報取得、メンバーマッチング処理
-		//パラメタは設計書参照
+		// フレンド情報を取得
 		GameCall call = new GameCall (CallLabel.GET_FRIEND_INFO);
 		call.AddListener (mGetFriendInfo);
 		ManagerObject.instance.connect.send (call);
@@ -135,6 +134,17 @@ public class Friends : MonoBehaviour,IReceiver {
 		FriendSetActive (EventNoteMIX2, false);
 		FriendSetActive (EventNoteRenraku, false);
 		FriendSetActive (EventSearch, false);
+
+
+
+		// パパママモードで友達検索を許可しているかどうか
+		if (ManagerObject.instance.app.enabledSearchTarget) {
+			// 友達検索OK
+			EventMenu.transform.Find("Button_kensaku_gray").gameObject.SetActive(false);
+		} else {
+			// 友達検索NO
+			EventMenu.transform.Find("Button_kensaku_gray").gameObject.SetActive(true);
+		}
 
 
 	
@@ -172,8 +182,6 @@ public class Friends : MonoBehaviour,IReceiver {
 		BtnKakuninTojiru.onClick.AddListener(BtnKakuninTojiruClick);			// とじるボタン
 		BtnKakuninYes.onClick.AddListener(BtnKakuninYesClick);					// はいボタン
 		BtnKakuninNo.onClick.AddListener(BtnKakuninNoClick);					// いいえボタン
-
-
 
 
 
@@ -564,10 +572,14 @@ public class Friends : MonoBehaviour,IReceiver {
 
 	// 友達手帳へのボタン
 	private void BtnMenuTechoClick(){
+		ManagerObject.instance.sound.playSe (11);
+
 		FriendNoteChange (friendTabTable.NoteApp);
 	}
 	// 友達検索へのボタン
 	private void BtnMenuSearchClick(){
+		ManagerObject.instance.sound.playSe (11);
+
 		// 探すボタンの監視
 		FriendSearchBtnFlag = true;
 		StartCoroutine ("FriendSearchBtn");
@@ -584,7 +596,9 @@ public class Friends : MonoBehaviour,IReceiver {
 	}
 	// 終了ボタン
 	private void BtnMenuTojiruClick(){
-		Debug.Log ("たまタウンへ・・・？");
+		ManagerObject.instance.sound.playSe (17);
+
+		Debug.Log ("たまタウンへ・・・");
 		ManagerObject.instance.view.change(SceneLabel.TOWN);
 	}
 
@@ -593,19 +607,27 @@ public class Friends : MonoBehaviour,IReceiver {
 	}
 	// 友達手帳MIX2の友達へのボタン
 	private void BtnNoteAppMIX2Click(){
+		ManagerObject.instance.sound.playSe (11);
+
 		FriendNoteChange (friendTabTable.NoteMIX2);
 	}
 	// 友達手帳の連絡帳へのボタン
 	private void BtnNoteAppRenrakuClick(){
+		ManagerObject.instance.sound.playSe (11);
+
 		FriendNoteChange (friendTabTable.NoteRenraku);
 	}
 	// 初期選択画面へのボタン
 	private void BtnNoteAppBackClick(){
+		ManagerObject.instance.sound.playSe (17);
+
 		FriendNoteChange (friendTabTable.NoteBack);
 	}
 
 	// 友達手帳アプリの友達へのボタン
 	private void BtnNoteMIX2AppClick(){
+		ManagerObject.instance.sound.playSe (11);
+
 		FriendNoteChange (friendTabTable.NoteApp);
 	}
 	// 友達手帳MIX2の友達へのボタン（未使用）
@@ -613,19 +635,27 @@ public class Friends : MonoBehaviour,IReceiver {
 	}
 	// 友達手帳の連絡帳へのボタン
 	private void BtnNoteMIX2RenrakuClick(){
+		ManagerObject.instance.sound.playSe (11);
+
 		FriendNoteChange (friendTabTable.NoteRenraku);
 	}
 	// 初期選択画面へのボタン
 	private void BtnNoteMIX2BackClick(){
+		ManagerObject.instance.sound.playSe (17);
+
 		FriendNoteChange (friendTabTable.NoteBack);
 	}
 
 	// 友達手帳アプリの友達へのボタン
 	private void BtnNoteRenrakuAppClick(){
+		ManagerObject.instance.sound.playSe (11);
+
 		FriendNoteChange (friendTabTable.NoteApp);
 	}
 	// 友達手帳MIX2の友達へのボタン
 	private void BtnNoteRenrakuMIX2Click(){
+		ManagerObject.instance.sound.playSe (11);
+
 		FriendNoteChange (friendTabTable.NoteMIX2);
 	}
 	// 友達手帳の連絡帳へのボタン（未使用）
@@ -633,11 +663,15 @@ public class Friends : MonoBehaviour,IReceiver {
 	}
 	// 初期選択画面へのボタン
 	private void BtnNoteRenrakuBackClick(){
+		ManagerObject.instance.sound.playSe (17);
+
 		FriendNoteChange (friendTabTable.NoteBack);
 	}
 
 	// はじめからボタン
 	private void BtnSearchInitClick(){
+		ManagerObject.instance.sound.playSe (11);
+
 		eventSearchInputFieldSet("みーつID を いれてね",false);
 	}
 	private void eventSearchInputFieldSet(string _data,bool _flag){
@@ -655,6 +689,8 @@ public class Friends : MonoBehaviour,IReceiver {
 	}
 	// 探すボタン
 	private void BtnSearchSearchClick(){
+		ManagerObject.instance.sound.playSe (11);
+
 		string _data = EventSearch.transform.Find ("Image/Text").gameObject.GetComponent<InputField> ().text;
 
 		if ((_data == "") || (_data.Length > 9)) {
@@ -673,6 +709,8 @@ public class Friends : MonoBehaviour,IReceiver {
 	}
 	// 初期選択画面へのボタン
 	private void BtnSearchBackClick(){
+		ManagerObject.instance.sound.playSe (17);
+
 		FriendSetActive (EventSearch, false);
 		swipIdouFlag = swipIdouPage.Null;
 		friendListIdouFlag = friendListTable.Null;
@@ -682,6 +720,8 @@ public class Friends : MonoBehaviour,IReceiver {
 
 	// もどるボタン
 	private void BtnResultBackClick(){
+		ManagerObject.instance.sound.playSe (17);
+
 		// 結果画面で表示される可能性のあるパーツを全て消す。
 		EventResult.transform.Find ("0_touroku zumi").gameObject.SetActive (false);
 		EventResult.transform.Find ("1_shinsei shimashita").gameObject.SetActive (false);
@@ -703,18 +743,22 @@ public class Friends : MonoBehaviour,IReceiver {
 	}
 	// とじるボタン
 	private void BtnKakuninTojiruClick(){
+		ManagerObject.instance.sound.playSe (17);
+
 		KakuninModeOff ();
 		mFriendSearchData = null;
 		SearchDataSet ();
 	}
 	// はいボタン
 	private void BtnKakuninYesClick(){
+		ManagerObject.instance.sound.playSe (13);
+
 		KakuninModeOff ();
 
 		switch (YesNoModeFlag) {
 		case	YesNoModeTable.APPLY_FRIEND:
 			{	// フレンド申請
-				int _id = int.Parse (prefabObjSearch [ReqUserNumber].transform.Find ("ID").gameObject.GetComponent<Text> ().text);
+				int _id = int.Parse (prefabObjSearch [ReqUserNumber].transform.Find ("IDbase/ID").gameObject.GetComponent<Text> ().text);
 
 				GameCall call = new GameCall (CallLabel.APPLY_FRIEND, _id);
 				call.AddListener (mApplyFriend);
@@ -749,6 +793,8 @@ public class Friends : MonoBehaviour,IReceiver {
 	}
 	// いいえボタン
 	private void BtnKakuninNoClick(){
+		ManagerObject.instance.sound.playSe (14);
+
 		KakuninModeOff ();
 	}
 
@@ -873,6 +919,9 @@ public class Friends : MonoBehaviour,IReceiver {
 			// 削除ボタンを有効化
 			prefabObjApp [i].transform.Find("Button_sakujo").gameObject.GetComponent<Button> ().onClick.AddListener (() => BtnSakujoReq (ii));
 
+			// プロフィール画面へのボタンを有効化
+			prefabObjApp [i].gameObject.GetComponent<Button> ().onClick.AddListener (() => BtnUserEventNoteApp (ii));
+
 			// 表示位置を登録
 			_Pos.x = prefabObjAppXPosTable [i & 1];
 			_Pos.y = 100.0f - (350.0f * (i >> 1));
@@ -898,6 +947,10 @@ public class Friends : MonoBehaviour,IReceiver {
 			prefabObjMIX2 [i].transform.SetParent (EventNoteMIX2.transform.Find ("daishi/mask/Panel").transform, false);
 			prefabObjMIX2 [i].name = "friendMIX2" + i.ToString ();
 
+			int ii = i + 0;
+			// プロフィール画面へのボタンを有効化
+			prefabObjMIX2 [i].GetComponent<Button> ().onClick.AddListener (() => BtnUserEventNoteMIX2 (ii));
+	
 			// 表示位置を登録
 			_Pos.x = prefabObjMIX2XPosTable [i & 1];
 			_Pos.y = 150.0f - (240.0f * (i >> 1));
@@ -928,6 +981,9 @@ public class Friends : MonoBehaviour,IReceiver {
 			prefabObjRenraku [i].transform.Find("Button_red").gameObject.GetComponent<Button> ().onClick.AddListener (() => BtnFriendOKReq (ii));
 			// ともだちにならないボタンを有効化
 			prefabObjRenraku [i].transform.Find ("Button_blue").gameObject.GetComponent<Button> ().onClick.AddListener (() => BtnFriendNOReq (ii));
+
+			// プロフィール画面へのボタンを有効化
+			prefabObjRenraku [i].GetComponent<Button> ().onClick.AddListener (() => BtnUserEventNoteRenraku (ii));
 
 			// 表示位置を登録
 			_Pos.x = 0.0f;
@@ -970,6 +1026,8 @@ public class Friends : MonoBehaviour,IReceiver {
 		FriendYNNumber = num;
 		string _mes;
 
+		ManagerObject.instance.sound.playSe (11);
+
 		EventKakunin.SetActive (true);
 		EventKakunin.transform.Find ("Text_Arial").gameObject.SetActive (true);
 		EventKakunin.transform.Find ("Text (1)").gameObject.SetActive (true);
@@ -995,6 +1053,8 @@ public class Friends : MonoBehaviour,IReceiver {
 	private void BtnFriendNOReq(int num){
 		FriendYNNumber = num;
 		string _mes;
+
+		ManagerObject.instance.sound.playSe (11);
 
 		EventKakunin.SetActive (true);
 		EventKakunin.transform.Find ("Text_Arial").gameObject.SetActive (true);
@@ -1023,6 +1083,8 @@ public class Friends : MonoBehaviour,IReceiver {
 	private void  BtnSakujoReq(int num){
 		string _mes;
 		SakujoNumber = num;
+
+		ManagerObject.instance.sound.playSe (11);
 
 		EventKakunin.SetActive (true);
 		EventKakunin.transform.Find ("Text_Arial").gameObject.SetActive (true);
@@ -1071,6 +1133,9 @@ public class Friends : MonoBehaviour,IReceiver {
 				// ともだちになりたいボタンを有効化
 				prefabObjSearch [i].transform.Find("Button_red").gameObject.GetComponent<Button> ().onClick.AddListener (() => BtnSearchReq (ii));
 
+				// プロフィール画面へのボタンを有効化
+				prefabObjSearch [i].GetComponent<Button> ().onClick.AddListener (() => BtnUserEventSearch (ii));
+
 				// 表示位置を登録
 				_Pos.x = 0.0f;
 				_Pos.y = 150.0f - (240.0f * i);
@@ -1078,7 +1143,7 @@ public class Friends : MonoBehaviour,IReceiver {
 				prefabObjSearch [i].transform.localPosition = _Pos;
 
 				// みーつIDを登録
-				prefabObjSearch [i].transform.Find ("ID").gameObject.GetComponent<Text> ().text = mFriendSearchData [i].id.ToString ();
+				prefabObjSearch [i].transform.Find ("IDbase/ID").gameObject.GetComponent<Text> ().text = mFriendSearchData [i].id.ToString ();
 				// ユーザー名を登録
 				prefabObjSearch [i].transform.Find ("name_daishi/Text").gameObject.GetComponent<Text> ().text = mFriendSearchData [i].nickname;
 				// たまごっちの名前を登録
@@ -1092,6 +1157,8 @@ public class Friends : MonoBehaviour,IReceiver {
 				StartCoroutine (cbSearchDataSet (i));
 			}
 			SearchNumber = mFriendSearchData.Count;
+
+			EventSearch.transform.Find ("mask/Panel").transform.localPosition = new Vector3 (0.0f, 0.0f, 0.0f);
 		}
 	}
 	private IEnumerator cbSearchDataSet (int num){
@@ -1127,6 +1194,8 @@ public class Friends : MonoBehaviour,IReceiver {
 
 		string _mes;
 
+		ManagerObject.instance.sound.playSe (11);
+
 		EventKakunin.SetActive (true);
 		EventKakunin.transform.Find ("Text_Arial").gameObject.SetActive (true);
 		EventKakunin.transform.Find ("Text (1)").gameObject.SetActive (true);
@@ -1147,7 +1216,6 @@ public class Friends : MonoBehaviour,IReceiver {
 			_mes = _mes + MsgDataTable_3;
 		}
 		EventKakunin.transform.Find ("Text (1)").gameObject.GetComponent<Text> ().text = _mes;
-
 	}
 	// 申請結果
 	private void mApplyFriend(bool success,object data)
@@ -1175,6 +1243,10 @@ public class Friends : MonoBehaviour,IReceiver {
 				_mes = _mes + MsgDataTable_4;
 			}
 			EventResult.transform.Find ("Text 1").gameObject.GetComponent<Text> ().text = _mes;
+
+			// 申請した相手をリストから削除する
+			mFriendSearchData.Remove (mFriendSearchData [ReqUserNumber]);
+			SearchDataSet ();
 		} else {
 			// 失敗
 			int retFlag = (int)data;
@@ -1248,7 +1320,6 @@ public class Friends : MonoBehaviour,IReceiver {
 		} else {
 			// 失敗
 			int retFlag = (int)data;
-			string _mes;
 
 			switch (retFlag) {
 			case	1:
@@ -1328,7 +1399,30 @@ public class Friends : MonoBehaviour,IReceiver {
 		}
 	}
 
+	// キャラとユーザー情報を押したらプロフィール画面へ
+	private void BtnUserEventNoteApp(int num){
+		EventProfileSend (mFriendData.appfriends [num]);
+	}
+	// キャラとユーザー情報を押したらプロフィール画面へ
+	private void BtnUserEventNoteMIX2(int num){
+		EventProfileSend (mFriendData.toyfriends [num]);
+	}
+	// キャラとユーザー情報を押したらプロフィール画面へ
+	private void BtnUserEventNoteRenraku(int num){
+		EventProfileSend (mFriendData.applys [num].user);
+	}
+	// キャラとユーザー情報を押したらプロフィール画面へ
+	private void BtnUserEventSearch(int num){
+		EventProfileSend (mFriendSearchData [num]);
+	}
 
+
+	private void EventProfileSend(User _user){
+		ManagerObject.instance.sound.playSe (11);
+
+		Debug.Log ("プロフィール画面へ・・・" + _user.nickname);
+		ManagerObject.instance.view.add (SceneLabel.PROFILE_TOWN, _user);
+	}
 
 
 }

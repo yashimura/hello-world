@@ -50,15 +50,14 @@ public class ItemBox : MonoBehaviour,IReceiver {
 	[SerializeField] private Sprite[] SuujiBlack;					// 
 	[SerializeField] private Sprite[] SuujiRed;						// 
 
-	[SerializeField] private Sprite[] PresentImage;					//
-
 	[SerializeField] private GameObject WakuPrefab;					// 
 	[SerializeField] private GameObject WakuMIX2Prefab;				// 
 
 
+
 	private object[]		mparam;
 	private User muser1;//自分
-	private PresentData		mpdata;
+	private PresentData		mPresentData;
 
 	private int	gPointMax;
 	private int	gPointNow;
@@ -66,6 +65,7 @@ public class ItemBox : MonoBehaviour,IReceiver {
 	private int itemCountMax;
 	private int itemNumberNow;		// 転送するアイテムの番号
 	private GameObject[]	prefabObj = new GameObject[100];
+
 
 
 	private float[] itemBoxPosXTable = new float[4]{
@@ -97,8 +97,7 @@ public class ItemBox : MonoBehaviour,IReceiver {
 	void Start() {
 		Debug.Log ("ItemBox start");
 
-		//ルーム情報取得、メンバーマッチング処理
-		//パラメタは設計書参照
+		// プレゼントデータを取得
 		GameCall call = new GameCall(CallLabel.GET_PRESENTS);
 		call.AddListener(mGetPresents);
 		ManagerObject.instance.connect.send(call);
@@ -106,7 +105,7 @@ public class ItemBox : MonoBehaviour,IReceiver {
 	void mGetPresents(bool success,object data)
 	{
 		// dataの内容は設計書参照
-		mpdata = (PresentData)data;
+		mPresentData = (PresentData)data;
 		StartCoroutine(mstart());
 	}
 	void mBleSendGift(bool success,object data)
@@ -120,8 +119,8 @@ public class ItemBox : MonoBehaviour,IReceiver {
 				Destroy (prefabObj [i]);
 			}
 
-			mpdata = (PresentData)data;
-			mpdataExpansion ();
+			mPresentData = (PresentData)data;
+			mPresentDataExpansion ();
 			EventTushinOk.SetActive (true);
 		} else {
 			EventTushinNot.SetActive (true);
@@ -144,8 +143,15 @@ public class ItemBox : MonoBehaviour,IReceiver {
 
 
 
-		// mpdataを展開して必要な画面に登録する
-		mpdataExpansion ();
+		EventPresentMIX2.SetActive (true);
+		EventPresent.SetActive (true);
+		PresentSetActive (EventPresent, false);
+		PresentSetActive (EventPresentMIX2, false);
+
+
+
+		// mPresentDataを展開して必要な画面に登録する
+		mPresentDataExpansion ();
 
 
 
@@ -187,7 +193,6 @@ public class ItemBox : MonoBehaviour,IReceiver {
 
 	
 		yield return null;
-
 
 	}
 
@@ -237,7 +242,20 @@ public class ItemBox : MonoBehaviour,IReceiver {
 		}
 	}
 
-//310
+
+	// シーンパーツの表示のON/OFFの代わりにY座標移動で対応
+	private void PresentSetActive(GameObject _obj,bool _flag){
+		Vector3 _pos = new Vector3 (0.0f, 4.0f, 0.0f);
+
+		if (!_flag) {
+			_pos.y = 5000.0f;
+		}
+		_obj.transform.localPosition = _pos;
+	}
+
+
+
+
 	private bool ItemBoxScrollFlag;
 	private float NextYPos;
 	private float[] NextYPosTable = new float[25]{
@@ -324,8 +342,9 @@ public class ItemBox : MonoBehaviour,IReceiver {
 
 			EventDialogKakunin.SetActive (true);
 			EventDialogKakunin.transform.Find ("1").gameObject.SetActive (true);
-			EventDialogKakunin.transform.Find ("1/Image").gameObject.GetComponent<Image> ().sprite = prefabObj [num].transform.Find ("Image").gameObject.GetComponent<Image> ().sprite;
-			EventDialogKakunin.transform.Find ("1/Text").gameObject.GetComponent<Text> ().text = prefabObj [num].transform.Find ("Text").gameObject.GetComponent<Text> ().text;
+
+			ItemBehaviour ibItem = EventDialogKakunin.transform.Find ("1/ItemView").gameObject.GetComponent<ItemBehaviour> ();
+			ibItem.init (mPresentData.items [num]);
 
 			itemNumberNow = num;
 		}
@@ -333,21 +352,24 @@ public class ItemBox : MonoBehaviour,IReceiver {
 
 
 
-
-
+	// 集めたアイテムをみるボタンが押された時
 	private void ButtonPresentClick(){
+		ManagerObject.instance.sound.playSe (11);
+
 		if (muser1.utype == UserType.MIX2) {
-			EventPresentMIX2.SetActive (true);
+			PresentSetActive(EventPresentMIX2,true);
 		} else {
-			EventPresent.SetActive (true);
+			PresentSetActive(EventPresent,true);
 		}
 		swipIdouFlag = true;
 
 		gPointNow = 0;
 		itemNumberNow = -1;
 	}
+	// 集めたごっちポイントをみるボタンが押された時
 	private void ButtonPointClick(){
-		
+		ManagerObject.instance.sound.playSe (11);
+
 		EventPresentPoint.SetActive (true);
 		if (muser1.utype == UserType.MIX2) {
 			ButtonPointSend.gameObject.SetActive (true);
@@ -362,43 +384,82 @@ public class ItemBox : MonoBehaviour,IReceiver {
 		gPointNow = 0;
 		itemNumberNow = -1;
 	}
+	// ルートメニューでとじるが押された時
 	private void ButtonTojiruClick(){
+		ManagerObject.instance.sound.playSe (17);
+
 		Debug.Log ("たまタウンへ・・・");
 		ManagerObject.instance.view.change("Town");
 	}
+	// アイテム一覧でもどるが押された時（みーつ用）
 	private void ButtonPresentBackMIX2Click(){
-		EventPresentMIX2.SetActive (false);
-	}
-	private void ButtonPresentBackClick(){
-		EventPresent.SetActive (false);
+		ManagerObject.instance.sound.playSe (17);
+
+		PresentSetActive(EventPresentMIX2,false);
 		swipIdouFlag = false;
 	}
+	// アイテム一覧でもどるが押された時（みーつ以外用）
+	private void ButtonPresentBackClick(){
+		ManagerObject.instance.sound.playSe (17);
+
+		PresentSetActive(EventPresent,false);
+		swipIdouFlag = false;
+	}
+	// 通信成功画面のもどるボタン
 	private void ButtonBackOKClick(){
+		ManagerObject.instance.sound.playSe (17);
+
 		EventTushinOk.SetActive (false);
 	}
+	// 通信失敗画面のもどるボタン
 	private void ButtonBackNotClick(){
+		ManagerObject.instance.sound.playSe (17);
+
 		EventTushinNot.SetActive (false);
 	}
+	// ごっちポイント表示画面の送るボタン
 	private void ButtonPointSendClick(){
+		ManagerObject.instance.sound.playSe (11);
+
 		gPointNow = 0;
 		pointSendSet ();
 		EventTushinPoint.SetActive (true);
+
+		_btnTushinCheckFlag = true;
+		StartCoroutine ("BtnTushinCheck");
 	}
+	// ごっちポイント表示画面のもどるボタン（MIX2用）
 	private void ButtonPointBackMIX2Click(){
+		ManagerObject.instance.sound.playSe (17);
+
 		EventPresentPoint.SetActive (false);
 	}
+	// ごっちポイント表示画面のもどるボタン（MIX2以外用）
 	private void ButtonPointBackClick(){
+		ManagerObject.instance.sound.playSe (17);
+
 		EventPresentPoint.SetActive (false);
 	}
+	// ごっちポイント送信画面のもどるボタン
 	private void ButtonTushinBackClick(){
+		ManagerObject.instance.sound.playSe (17);
+
 		EventTushinPoint.SetActive (false);
+		EventPresentPoint.SetActive (false);
+		_btnTushinCheckFlag = false;
 	}
+	// ごっちポイント送信画面の送るボタン
 	private void ButtonTushinSendClick(){
+		ManagerObject.instance.sound.playSe (11);
+
 		pointKakuninSet ();
 		EventDialogKakunin.SetActive (true);
 		EventDialogKakunin.transform.Find ("3").gameObject.SetActive (true);
 	}
+	// ごっちポイント送信画面の全部送るボタン
 	private void ButtonTushinSendAllClick(){
+		ManagerObject.instance.sound.playSe (11);
+
 		gPointNow = gPointMax;
 		if (gPointNow >= 10000) {
 			gPointNow = 9999;
@@ -408,12 +469,14 @@ public class ItemBox : MonoBehaviour,IReceiver {
 	}
 
 
-
+	// 確認画面のはいボタン
 	private void ButtonKakuninYesClick(){
 		GameCall call;
 
+		ManagerObject.instance.sound.playSe (13);
+
 		if (itemNumberNow != -1) {
-			call = new GameCall (CallLabel.BLE_SEND_GIFT, mpdata.items [itemNumberNow].iid, 0);
+			call = new GameCall (CallLabel.BLE_SEND_GIFT, mPresentData.items [itemNumberNow].iid, 0);
 		} else {
 			call = new GameCall (CallLabel.BLE_SEND_GIFT, 0, gPointNow);
 		}
@@ -423,7 +486,10 @@ public class ItemBox : MonoBehaviour,IReceiver {
 		ButtonKakuninNoClick ();
 		EventTushinTime.SetActive (true);
 	}
+	// 確認画面のいいえボタン
 	private void ButtonKakuninNoClick(){
+		ManagerObject.instance.sound.playSe (14);
+
 		EventDialogKakunin.transform.Find ("1").gameObject.SetActive (false);
 		EventDialogKakunin.transform.Find ("2").gameObject.SetActive (false);
 		EventDialogKakunin.transform.Find ("3").gameObject.SetActive (false);
@@ -433,28 +499,52 @@ public class ItemBox : MonoBehaviour,IReceiver {
 	private void ButtonErrorTojiruClick(){
 	}
 		
+	// ごっちポイント送信画面の１０００ポイントアップボタン
 	private void ButtonTushinUp1000Click(){
+		ManagerObject.instance.sound.playSe (11);
+
 		pointNowAdd (1000);
 	}
+	// ごっちポイント送信画面の１００ポイントアップボタン
 	private void ButtonTushinUp100Click(){
+		ManagerObject.instance.sound.playSe (11);
+
 		pointNowAdd (100);
 	}
+	// ごっちポイント送信画面の１０ポイントアップボタン
 	private void ButtonTushinUp10Click(){
+		ManagerObject.instance.sound.playSe (11);
+
 		pointNowAdd (10);
 	}
+	// ごっちポイント送信画面の１ポイントアップボタン
 	private void ButtonTushinUp1Click(){
+		ManagerObject.instance.sound.playSe (11);
+
 		pointNowAdd (1);
 	}
+	// ごっちポイント送信画面の１０００ポイントダウンボタン
 	private void ButtonTushinDown1000Click(){
+		ManagerObject.instance.sound.playSe (11);
+
 		pointNowSub (1000);
 	}
+	// ごっちポイント送信画面の１００ポイントダウンボタン
 	private void ButtonTushinDown100Click(){
+		ManagerObject.instance.sound.playSe (11);
+
 		pointNowSub (100);
 	}
+	// ごっちポイント送信画面の１０ポイントダウンボタン
 	private void ButtonTushinDown10Click(){
+		ManagerObject.instance.sound.playSe (11);
+
 		pointNowSub (10);
 	}
+	// ごっちポイント送信画面の１ポイントダウンボタン
 	private void ButtonTushinDown1Click(){
+		ManagerObject.instance.sound.playSe (11);
+
 		pointNowSub (1);
 	}
 
@@ -466,7 +556,6 @@ public class ItemBox : MonoBehaviour,IReceiver {
 		if (gPointNow >= 10000) {
 			gPointNow = 9999;
 		}
-
 		pointSendSet ();
 	}
 	private void pointNowSub(int _point){
@@ -477,14 +566,40 @@ public class ItemBox : MonoBehaviour,IReceiver {
 		pointSendSet ();
 	}
 
+	private bool _btnTushinCheckFlag;
+	private IEnumerator BtnTushinCheck(){
+		while (_btnTushinCheckFlag) {
+			ButtonTushinSend.gameObject.SetActive (true);
+			ButtonTushinSendAll.gameObject.SetActive (true);
+
+			if (gPointMax == 0) {
+				// 所有ごっちポイントが０の時は送るボタン系は全てオフ
+				ButtonTushinSend.gameObject.SetActive (false);
+				ButtonTushinSendAll.gameObject.SetActive (false);
+			} else {
+				if (gPointNow == 0) {
+					// 送信ごっちポイントが０の時は送るボタンはオフ
+					ButtonTushinSend.gameObject.SetActive (false);
+				}
+			}
+
+			yield return null;
+		}
+	}
+		
 
 
 	// PresentDataを展開し、画面に必要なものを抽出する
-	private void mpdataExpansion(){
-		gPointMax = mpdata.gpt;
+	private void mPresentDataExpansion(){
+		Vector3 _pos = new Vector3 (0.0f, 0.0f, 0.0f);
+
+		EventPresent.transform.Find ("mask/panel").transform.localPosition = _pos;
+		EventPresentMIX2.transform.Find ("mask/panel").transform.localPosition = _pos;
+
+		gPointMax = mPresentData.gpt;
 		gPointNow = 0;
 
-		itemCountMax = mpdata.items.Count;
+		itemCountMax = mPresentData.items.Count;
 		if (itemCountMax > 100) {
 			itemCountNow = 100;
 		} else {
@@ -493,7 +608,7 @@ public class ItemBox : MonoBehaviour,IReceiver {
 
 
 
-		PresentItemBoxSet ();				// アイテム一覧画面にプレハブを登録しボタンを登録する
+		PresentItemBoxSet ();				// アイテム一覧画面にプレハブとボタンを登録する
 
 		pointSet (EventPresentPoint);		// プレゼントボックスポイント表示画面（集めたポイント）を登録する
 		pointSet (EventTushinPoint);		// プレゼントボックスポイント転送量決定画面（集めたポイント）を登録する
@@ -523,6 +638,7 @@ public class ItemBox : MonoBehaviour,IReceiver {
 			prefabObj [i].name = "Waku" + i.ToString ();
 			if (muser1.utype == UserType.MIX2) {
 				int ii = i + 0;
+				// アイテム選択ボタンの有効化
 				prefabObj [i].GetComponent<Button> ().onClick.AddListener (() => ButtonWakuClick (ii));
 			}
 
@@ -531,8 +647,8 @@ public class ItemBox : MonoBehaviour,IReceiver {
 			_Pos.z = 0.0f;
 			prefabObj [i].transform.localPosition = _Pos;
 
-			prefabObj [i].transform.Find ("Image").gameObject.GetComponent<Image> ().sprite = PresentImage [mpdata.items [i].iid];
-			prefabObj [i].transform.Find ("Text").gameObject.GetComponent<Text> ().text = mpdata.items [i].title;
+			ItemBehaviour ibItem = prefabObj [i].transform.Find ("ItemView").gameObject.GetComponent<ItemBehaviour> ();
+			ibItem.init (mPresentData.items [i]);
 		}
 
 		if (itemCountMax > 100) {
@@ -563,45 +679,15 @@ public class ItemBox : MonoBehaviour,IReceiver {
 		}
 	}
 
+
+
+	// ごっちポイント表示画面と送信画面の所持ごっちポイント表示
 	private void pointSet (GameObject obj){
-		bool _flag = false;
-
-		if ((gPointMax / 10000) > 0) {
-			obj.transform.Find ("waku/10000").transform.GetComponent<Image> ().sprite = SuujiBlack [gPointMax / 10000];
-			obj.transform.Find ("waku/10000").gameObject.SetActive (true);
-			_flag = true;
-		} else {
-			obj.transform.Find ("waku/10000").gameObject.SetActive (false);
-		}
-
-		if ((((gPointMax % 10000) / 1000) > 0) || (_flag)) {
-			obj.transform.Find ("waku/1000").transform.GetComponent<Image> ().sprite = SuujiBlack [(gPointMax % 10000) / 1000];
-			obj.transform.Find ("waku/1000").gameObject.SetActive (true);
-			_flag = true;
-		} else {
-			obj.transform.Find ("waku/1000").gameObject.SetActive (false);
-		}
-
-		if ((((gPointMax % 1000) / 100) > 0) || (_flag)) {
-			obj.transform.Find ("waku/100").transform.GetComponent<Image> ().sprite = SuujiBlack [(gPointMax % 1000) / 100];
-			obj.transform.Find ("waku/100").gameObject.SetActive (true);
-			_flag = true;
-		} else {
-			obj.transform.Find ("waku/100").gameObject.SetActive (false);
-		}
-
-		if ((((gPointMax % 100) / 10) > 0) || (_flag)) {
-			obj.transform.Find ("waku/10").transform.GetComponent<Image> ().sprite = SuujiBlack [(gPointMax % 100) / 10];
-			obj.transform.Find ("waku/10").gameObject.SetActive (true);
-			_flag = true;
-		} else {
-			obj.transform.Find ("waku/10").gameObject.SetActive (false);
-		}
-
-		obj.transform.Find ("waku/1").transform.GetComponent<Image> ().sprite = SuujiBlack [gPointMax % 10];
-		obj.transform.Find ("waku/1").gameObject.SetActive (true);
+		GotchiBehaviour gbPoint = obj.transform.Find ("waku/GotchiView").gameObject.GetComponent<GotchiBehaviour> ();
+		gbPoint.init (gPointMax);
 	}
 
+	// ごっち送信画面の送るごっちポイント表示
 	private void pointSendSet (){
 		EventTushinPoint.transform.Find ("waku/01000").transform.GetComponent<Image> ().sprite = SuujiBlack [(gPointNow % 10000) / 1000];
 		EventTushinPoint.transform.Find ("waku/00100").transform.GetComponent<Image> ().sprite = SuujiBlack [(gPointNow % 1000) / 100];
@@ -609,34 +695,9 @@ public class ItemBox : MonoBehaviour,IReceiver {
 		EventTushinPoint.transform.Find ("waku/00001").transform.GetComponent<Image> ().sprite = SuujiBlack [(gPointNow % 10)];
 	}
 		
+	// 確認画面のごっちポイント表示
 	private void pointKakuninSet(){
-		bool _flag = false;
-
-		if ((gPointNow / 1000) > 0) {
-			EventDialogKakunin.transform.Find ("3/1000").transform.GetComponent<Image> ().sprite = SuujiBlack [gPointNow / 1000];
-			EventDialogKakunin.transform.Find ("3/1000").gameObject.SetActive (true);
-			_flag = true;
-		} else {
-			EventDialogKakunin.transform.Find ("3/1000").gameObject.SetActive (false);
-		}
-
-		if ((((gPointNow % 1000) / 100) > 0) || (_flag)) {
-			EventDialogKakunin.transform.Find ("3/100").transform.GetComponent<Image> ().sprite = SuujiBlack [(gPointNow % 1000) / 100];
-			EventDialogKakunin.transform.Find ("3/100").gameObject.SetActive (true);
-			_flag = true;
-		} else {
-			EventDialogKakunin.transform.Find ("3/100").gameObject.SetActive (false);
-		}
-
-		if ((((gPointNow % 100) / 10) > 0) || (_flag)) {
-			EventDialogKakunin.transform.Find ("3/10").transform.GetComponent<Image> ().sprite = SuujiBlack [(gPointNow % 100) / 10];
-			EventDialogKakunin.transform.Find ("3/10").gameObject.SetActive (true);
-			_flag = true;
-		} else {
-			EventDialogKakunin.transform.Find ("3/10").gameObject.SetActive (false);
-		}
-
-		EventDialogKakunin.transform.Find ("3/1").transform.GetComponent<Image> ().sprite = SuujiBlack [gPointNow % 10];
-		EventDialogKakunin.transform.Find ("3/1").gameObject.SetActive (true);
+		GotchiBehaviour gbPoint = EventDialogKakunin.transform.Find ("3/GotchiView").gameObject.GetComponent<GotchiBehaviour> ();
+		gbPoint.init (gPointNow);
 	}
 }

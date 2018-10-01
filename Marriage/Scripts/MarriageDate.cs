@@ -205,6 +205,8 @@ namespace Mix2App.MarriageDate{
 							jobCount = statusJobCount.marriageJobCount010;
 							cbMan1.gotoAndPlay (MotionLabel.WALK);
 							cbWoman1.gotoAndPlay (MotionLabel.WALK);
+
+							ManagerObject.instance.sound.playBgm (19);
 						}
 					}
 					break;
