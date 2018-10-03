@@ -63,15 +63,23 @@ public class Friends : MonoBehaviour,IReceiver {
 	private List<User> 		mFriendSearchData;
 
 
-	private GameObject[]	prefabObjApp = new GameObject[10];					// アプリの友達
-	private GameObject[]	prefabObjMIX2 = new GameObject[20];					// 玩具の友達
-	private GameObject[]	prefabObjRenraku = new GameObject[50];				// 友達申請（最大値は不明）
-	private GameObject[]	prefabObjSearch = new GameObject[50];				// 友達検索結果（最大値は不明）
 
-	private CharaBehaviour[] cbApp = new CharaBehaviour[10];
-	private CharaBehaviour[] cbMIX2 = new CharaBehaviour[20];
-	private CharaBehaviour[] cbRenraku = new CharaBehaviour[50];
-	private CharaBehaviour[] cbSearch = new CharaBehaviour[50];
+	private const int APPFRIENDS_MAX = 10;
+	private const int TOYFRIENDS_MAX = 20;
+	private const int RENRAKU_MAX = 50;
+	private const int SEARCH_MAX = 50;
+
+
+
+	private GameObject[]	prefabObjApp = new GameObject[APPFRIENDS_MAX];				// アプリの友達
+	private GameObject[]	prefabObjMIX2 = new GameObject[TOYFRIENDS_MAX];				// 玩具の友達
+	private GameObject[]	prefabObjRenraku = new GameObject[RENRAKU_MAX];				// 友達申請（５０以上申請があったとしても５０件までしか表示しない）
+	private GameObject[]	prefabObjSearch = new GameObject[SEARCH_MAX];				// 友達検索結果（５０以上検索結果があったとしても５０件までしか表示しない）
+
+	private CharaBehaviour[] cbApp = new CharaBehaviour[APPFRIENDS_MAX];
+	private CharaBehaviour[] cbMIX2 = new CharaBehaviour[TOYFRIENDS_MAX];
+	private CharaBehaviour[] cbRenraku = new CharaBehaviour[RENRAKU_MAX];
+	private CharaBehaviour[] cbSearch = new CharaBehaviour[SEARCH_MAX];
 
 
 
@@ -123,7 +131,7 @@ public class Friends : MonoBehaviour,IReceiver {
 				ManagerObject.instance.player,
 			};
 		}
-		muser1 = (User)mparam[0];		// たまごっち
+		muser1 = ManagerObject.instance.player;
 
 		EventNoteApp.SetActive (true);
 		EventNoteMIX2.SetActive (true);
@@ -459,7 +467,7 @@ public class Friends : MonoBehaviour,IReceiver {
 					case	swipIdouPage.App:
 						{
 							_NextPos = EventNoteApp.transform.Find ("daishi/mask/Panel").transform.localPosition.y + 350.0f;
-							int _cnt = mFriendData.appfriends.Count;
+							int _cnt = appfriendsCount;
 							if (_cnt != 0) {
 								_cnt--;
 							}
@@ -469,7 +477,7 @@ public class Friends : MonoBehaviour,IReceiver {
 					case	swipIdouPage.MIX2:
 						{
 							_NextPos = EventNoteMIX2.transform.Find("daishi/mask/Panel").transform.localPosition.y + 240.0f;
-							int _cnt = mFriendData.toyfriends.Count;
+							int _cnt = toyfriendsCount;
 							if(_cnt != 0){
 								_cnt--;
 							}
@@ -479,7 +487,7 @@ public class Friends : MonoBehaviour,IReceiver {
 					case	swipIdouPage.Renraku:
 						{
 							_NextPos = EventNoteRenraku.transform.Find("daishi/mask/Panel").transform.localPosition.y + 240.0f;
-							int _cnt = mFriendData.applys.Count;
+							int _cnt = applysCount;
 							if (_cnt != 0) {
 								_cnt--;
 							}
@@ -598,8 +606,7 @@ public class Friends : MonoBehaviour,IReceiver {
 	private void BtnMenuTojiruClick(){
 		ManagerObject.instance.sound.playSe (17);
 
-		Debug.Log ("たまタウンへ・・・");
-		ManagerObject.instance.view.change(SceneLabel.TOWN);
+		ManagerObject.instance.view.change(SceneLabel.HOME);
 	}
 
 	// 友達手帳アプリの友達へのボタン（未使用）
@@ -887,6 +894,9 @@ public class Friends : MonoBehaviour,IReceiver {
 		-310.0f,310.0f,
 	};
 
+	private int appfriendsCount = 0;
+	private int toyfriendsCount = 0;
+	private int applysCount = 0;
 	// 友達手帳のデータを登録する
 	private void NoteDataSet(){
 		Vector3 _Pos = new Vector3 (0.0f, 0.0f, 0.0f);
@@ -898,18 +908,32 @@ public class Friends : MonoBehaviour,IReceiver {
 		EventNoteMIX2.transform.Find ("daishi/mask/Panel").transform.localPosition = _Pos;
 		EventNoteRenraku.transform.Find ("daishi/mask/Panel").transform.localPosition = _Pos;
 
+
+		appfriendsCount = mFriendData.appfriends.Count;
+		if (appfriendsCount > APPFRIENDS_MAX) {
+			appfriendsCount = APPFRIENDS_MAX;
+		}
+		toyfriendsCount = mFriendData.toyfriends.Count;
+		if (toyfriendsCount > TOYFRIENDS_MAX) {
+			toyfriendsCount = TOYFRIENDS_MAX;
+		}
+		applysCount = mFriendData.applys.Count;
+		if (applysCount > RENRAKU_MAX) {
+			applysCount = RENRAKU_MAX;
+		}
+
 		// アプリのともだちの現状人数
-		EventNoteApp.transform.Find ("daishi/tab1/05").gameObject.GetComponent<Image> ().sprite = ImgNumber [mFriendData.appfriends.Count];
-		EventNoteMIX2.transform.Find ("daishi/tab1/05").gameObject.GetComponent<Image> ().sprite = ImgNumber [mFriendData.appfriends.Count];
-		EventNoteRenraku.transform.Find ("daishi/tab1/05").gameObject.GetComponent<Image> ().sprite = ImgNumber [mFriendData.appfriends.Count];
+		EventNoteApp.transform.Find ("daishi/tab1/05").gameObject.GetComponent<Image> ().sprite = ImgNumber [appfriendsCount];
+		EventNoteMIX2.transform.Find ("daishi/tab1/05").gameObject.GetComponent<Image> ().sprite = ImgNumber [appfriendsCount];
+		EventNoteRenraku.transform.Find ("daishi/tab1/05").gameObject.GetComponent<Image> ().sprite = ImgNumber [appfriendsCount];
 
 		// 玩具のともだちの現状人数
-		EventNoteApp.transform.Find ("daishi/tab2/05").gameObject.GetComponent<Image> ().sprite = ImgNumber [mFriendData.toyfriends.Count];
-		EventNoteMIX2.transform.Find ("daishi/tab2/05").gameObject.GetComponent<Image> ().sprite = ImgNumber [mFriendData.toyfriends.Count];
-		EventNoteRenraku.transform.Find ("daishi/tab2/05").gameObject.GetComponent<Image> ().sprite = ImgNumber [mFriendData.toyfriends.Count];
+		EventNoteApp.transform.Find ("daishi/tab2/05").gameObject.GetComponent<Image> ().sprite = ImgNumber [toyfriendsCount];
+		EventNoteMIX2.transform.Find ("daishi/tab2/05").gameObject.GetComponent<Image> ().sprite = ImgNumber [toyfriendsCount];
+		EventNoteRenraku.transform.Find ("daishi/tab2/05").gameObject.GetComponent<Image> ().sprite = ImgNumber [toyfriendsCount];
 
 		// アプリのともだちパネルセット
-		for (int i = 0; i < mFriendData.appfriends.Count; i++) {
+		for (int i = 0; i < appfriendsCount; i++) {
 			// プレハブを登録
 			prefabObjApp [i] = (GameObject)Instantiate (PrefabApp);
 			prefabObjApp [i].transform.SetParent (EventNoteApp.transform.Find ("daishi/mask/Panel").transform, false);
@@ -941,7 +965,7 @@ public class Friends : MonoBehaviour,IReceiver {
 			StartCoroutine (cbAppDataSet (i));
 		}
 		// 玩具のともだちパネルセット
-		for (int i = 0; i < mFriendData.toyfriends.Count; i++) {
+		for (int i = 0; i < toyfriendsCount; i++) {
 			// プレハブを登録
 			prefabObjMIX2 [i] = (GameObject)Instantiate (PrefabMIX2);
 			prefabObjMIX2 [i].transform.SetParent (EventNoteMIX2.transform.Find ("daishi/mask/Panel").transform, false);
@@ -970,7 +994,7 @@ public class Friends : MonoBehaviour,IReceiver {
 			StartCoroutine (cbMIX2DataSet (i));
 		}
 		// 連絡のともだちパネルセット
-		for (int i = 0; i < mFriendData.applys.Count; i++) {
+		for (int i = 0; i < applysCount; i++) {
 			// プレハブを登録
 			prefabObjRenraku [i] = (GameObject)Instantiate (PrefabRenraku);
 			prefabObjRenraku [i].transform.SetParent (EventNoteRenraku.transform.Find ("daishi/mask/Panel").transform, false);
@@ -1121,9 +1145,14 @@ public class Friends : MonoBehaviour,IReceiver {
 			Vector3 _Pos;
 			string mesRet = "\n";
 			string mesData;
+			int _SearchNumber = mFriendSearchData.Count;
+
+			if (_SearchNumber > SEARCH_MAX) {
+				_SearchNumber = SEARCH_MAX;
+			}
 
 			// ともだち検索パネルセット
-			for (int i = 0; i < mFriendSearchData.Count; i++) {
+			for (int i = 0; i < _SearchNumber; i++) {
 				// プレハブを登録
 				prefabObjSearch [i] = (GameObject)Instantiate (PrefabSearch);
 				prefabObjSearch [i].transform.SetParent (EventSearch.transform.Find ("mask/Panel").transform, false);
@@ -1156,7 +1185,7 @@ public class Friends : MonoBehaviour,IReceiver {
 				// たまごっちキャラを登録
 				StartCoroutine (cbSearchDataSet (i));
 			}
-			SearchNumber = mFriendSearchData.Count;
+			SearchNumber = _SearchNumber;
 
 			EventSearch.transform.Find ("mask/Panel").transform.localPosition = new Vector3 (0.0f, 0.0f, 0.0f);
 		}
@@ -1281,13 +1310,13 @@ public class Friends : MonoBehaviour,IReceiver {
 
 		if (success) {
 			// 成功
-			for (int i = 0; i < mFriendData.appfriends.Count; i++) {
+			for (int i = 0; i < appfriendsCount; i++) {
 				Destroy (prefabObjApp [i]);
 			}
-			for (int i = 0; i < mFriendData.toyfriends.Count; i++) {
+			for (int i = 0; i < toyfriendsCount; i++) {
 				Destroy (prefabObjMIX2 [i]);
 			}
-			for (int i = 0; i < mFriendData.applys.Count; i++) {
+			for (int i = 0; i < applysCount; i++) {
 				Destroy (prefabObjRenraku [i]);
 			}
 
@@ -1304,13 +1333,13 @@ public class Friends : MonoBehaviour,IReceiver {
 
 		if (success) {
 			// 成功
-			for (int i = 0; i < mFriendData.appfriends.Count; i++) {
+			for (int i = 0; i < appfriendsCount; i++) {
 				Destroy (prefabObjApp [i]);
 			}
-			for (int i = 0; i < mFriendData.toyfriends.Count; i++) {
+			for (int i = 0; i < toyfriendsCount; i++) {
 				Destroy (prefabObjMIX2 [i]);
 			}
-			for (int i = 0; i < mFriendData.applys.Count; i++) {
+			for (int i = 0; i < applysCount; i++) {
 				Destroy (prefabObjRenraku [i]);
 			}
 
@@ -1336,13 +1365,13 @@ public class Friends : MonoBehaviour,IReceiver {
 				{	// 既に登録済みの相手
 					FriendReqErrorDisp(mFriendData.applys[FriendYNNumber].user,3);
 
-					for (int i = 0; i < mFriendData.appfriends.Count; i++) {
+					for (int i = 0; i < appfriendsCount; i++) {
 						Destroy (prefabObjApp [i]);
 					}
-					for (int i = 0; i < mFriendData.toyfriends.Count; i++) {
+					for (int i = 0; i < toyfriendsCount; i++) {
 						Destroy (prefabObjMIX2 [i]);
 					}
-					for (int i = 0; i < mFriendData.applys.Count; i++) {
+					for (int i = 0; i < applysCount; i++) {
 						Destroy (prefabObjRenraku [i]);
 					}
 

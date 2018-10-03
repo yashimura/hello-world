@@ -397,26 +397,26 @@ namespace Mix2App.MiniGame2{
 		private Vector3[] _idouPos = new Vector3[12];
 		private IEnumerator TamagochiStartPositionSet(int num,int num2){
 			Vector3[] _idouPosTable = new Vector3[]{
-				new Vector3(250.0f,-250.0f,0.0f),
-				new Vector3(500.0f,-250.0f,0.0f),
-				new Vector3(750.0f,-250.0f,0.0f),
-				new Vector3(750.0f,-550.0f,0.0f),
-				new Vector3(500.0f,-550.0f,0.0f),
-				new Vector3(250.0f,-550.0f,0.0f),
-				new Vector3(0.0f,-550.0f,0.0f),
-				new Vector3(-250.0f,-550.0f,0.0f),		// 0	
-				new Vector3(-500.0f,-850.0f,0.0f),
-				new Vector3(-750.0f,-1150.0f,0.0f),
-				new Vector3(-1000.0f,-1450.0f,0.0f),
-				new Vector3(-1250.0f,-1750.0f,0.0f),
-				new Vector3(-1500.0f,-2050.0f,0.0f),
-				new Vector3(-1750.0f,-2350.0f,0.0f),
-				new Vector3(-2000.0f,-2650.0f,0.0f),
-				new Vector3(-2250.0f,-2950.0f,0.0f),
-				new Vector3(-2500.0f,-3250.0f,0.0f),
-				new Vector3(-2750.0f,-3550.0f,0.0f),
-				new Vector3(-3000.0f,-3850.0f,0.0f),
-				new Vector3(-3250.0f,-4150.0f,0.0f),
+				new Vector3(260.0f,-250.0f,0.0f),
+				new Vector3(510.0f,-250.0f,0.0f),
+				new Vector3(760.0f,-250.0f,0.0f),
+				new Vector3(760.0f,-550.0f,0.0f),
+				new Vector3(510.0f,-550.0f,0.0f),
+				new Vector3(260.0f,-550.0f,0.0f),
+				new Vector3(10.0f,-550.0f,0.0f),
+				new Vector3(-240.0f,-550.0f,0.0f),		// 0	
+				new Vector3(-490.0f,-850.0f,0.0f),
+				new Vector3(-740.0f,-1150.0f,0.0f),
+				new Vector3(-990.0f,-1450.0f,0.0f),
+				new Vector3(-1240.0f,-1750.0f,0.0f),
+				new Vector3(-1490.0f,-2050.0f,0.0f),
+				new Vector3(-1740.0f,-2350.0f,0.0f),
+				new Vector3(-1990.0f,-2650.0f,0.0f),
+				new Vector3(-2240.0f,-2950.0f,0.0f),
+				new Vector3(-2490.0f,-3250.0f,0.0f),
+				new Vector3(-2740.0f,-3550.0f,0.0f),
+				new Vector3(-2990.0f,-3850.0f,0.0f),
+				new Vector3(-3240.0f,-4150.0f,0.0f),
 			};
 
 			CharaTamago [num].transform.localPosition = _idouPosTable [num2 + 1];
@@ -1132,15 +1132,15 @@ namespace Mix2App.MiniGame2{
 			if (resultTamagoYJumpCount != 0) {																// 落ちて来た宝箱に跳ね飛ばされるたまごっち達
 				resultTamagoYJumpCount--;
 				pos = EventResult.transform.Find ("chara").gameObject.transform.localPosition;
-				pos.x += 2.0f;
+				pos.x += 4.0f;
 				pos.y += tamagoYJumpTable [resultTamagoYJumpCount];
 				EventResult.transform.Find ("chara").gameObject.transform.localPosition = pos;
 				pos = EventResult.transform.Find ("chara2").gameObject.transform.localPosition;
-				pos.x -= 2.0f;
+				pos.x -= 4.0f;
 				pos.y += tamagoYJumpTable [resultTamagoYJumpCount];
 				EventResult.transform.Find ("chara2").gameObject.transform.localPosition = pos;
 				pos = EventResult.transform.Find ("chara3").gameObject.transform.localPosition;
-				pos.x -= 2.0f;
+				pos.x -= 4.0f;
 				pos.y += tamagoYJumpTable [resultTamagoYJumpCount];
 				EventResult.transform.Find ("chara3").gameObject.transform.localPosition = pos;
 			}

@@ -146,8 +146,6 @@ namespace Mix2App.MiniGame1{
 			ButtonModoru.GetComponent<Button> ().onClick.AddListener (ButtonModoruClick);
 
 
-			EventGame.transform.Find ("tamago/chara/buttonLeft").gameObject.GetComponent<Button> ().onClick.AddListener (ButtonLeftIdou);
-			EventGame.transform.Find ("tamago/chara/buttonRight").gameObject.GetComponent<Button> ().onClick.AddListener (ButtonRightIdou);
 
 			float use_screen_x = Screen.currentResolution.width;
 			float use_screen_y = Screen.currentResolution.height;
@@ -339,27 +337,6 @@ namespace Mix2App.MiniGame1{
 		}
 
 
-		private void ButtonLeftIdou(){
-			GameObject charaObj = EventGame.transform.Find ("tamago/chara").gameObject;	// 操作キャラのGameObjectを抽出
-			if (charaAnimeFlag != 2) {
-				if (cbCharaTamago [0].nowlabel != MotionLabel.WALK) {
-					cbCharaTamago [0].gotoAndPlay (MotionLabel.WALK);
-				}
-				charaObj.transform.localScale = new Vector3 (2.0f, 2.0f, 1.0f);
-				charaAnimeFlag = 2;
-			}
-		}
-		private void ButtonRightIdou(){
-			GameObject charaObj = EventGame.transform.Find ("tamago/chara").gameObject;	// 操作キャラのGameObjectを抽出
-			if (charaAnimeFlag != 1) {
-				if (cbCharaTamago [0].nowlabel != MotionLabel.WALK) {
-					cbCharaTamago [0].gotoAndPlay (MotionLabel.WALK);
-				}
-				charaObj.transform.localScale = new Vector3 (-2.0f, 2.0f, 1.0f);
-				charaAnimeFlag = 1;
-			}
-		}
-
 
 		// ゲームメイン初期化
 		private void GameMainInit(){
@@ -401,9 +378,7 @@ namespace Mix2App.MiniGame1{
 			if (Input.GetMouseButtonDown (0)) {				
 				Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 
-//				Debug.Log (ray.origin.x + "/" + ray.direction.x);
-//				if (ray.direction.x * 600 >= pos.x) {
-				if (ray.direction.x * 1000 >= pos.x) {
+				if (ray.direction.x * 1100 >= pos.x) {
 					if (charaAnimeFlag != 1) {
 						if (cbCharaTamago [0].nowlabel != MotionLabel.WALK) {
 							cbCharaTamago [0].gotoAndPlay (MotionLabel.WALK);
@@ -768,15 +743,15 @@ namespace Mix2App.MiniGame1{
 			if (resultTamagoYJumpCount != 0) {																// 落ちて来た宝箱に跳ね飛ばされるたまごっち達
 				resultTamagoYJumpCount--;
 				pos = EventResult.transform.Find ("tamago/chara").gameObject.transform.localPosition;
-				pos.x += 2.0f;
+				pos.x += 4.0f;
 				pos.y += tamagoYJumpTable [resultTamagoYJumpCount];
 				EventResult.transform.Find ("tamago/chara").gameObject.transform.localPosition = pos;
 				pos = EventResult.transform.Find ("tamago/chara2").gameObject.transform.localPosition;
-				pos.x -= 2.0f;
+				pos.x -= 4.0f;
 				pos.y += tamagoYJumpTable [resultTamagoYJumpCount];
 				EventResult.transform.Find ("tamago/chara2").gameObject.transform.localPosition = pos;
 				pos = EventResult.transform.Find ("tamago/chara3").gameObject.transform.localPosition;
-				pos.x -= 2.0f;
+				pos.x -= 4.0f;
 				pos.y += tamagoYJumpTable [resultTamagoYJumpCount];
 				EventResult.transform.Find ("tamago/chara3").gameObject.transform.localPosition = pos;
 			}

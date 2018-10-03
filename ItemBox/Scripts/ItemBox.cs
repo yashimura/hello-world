@@ -65,7 +65,7 @@ public class ItemBox : MonoBehaviour,IReceiver {
 	private int itemCountMax;
 	private int itemNumberNow;		// 転送するアイテムの番号
 	private GameObject[]	prefabObj = new GameObject[100];
-
+	private int sendMode;
 
 
 	private float[] itemBoxPosXTable = new float[4]{
@@ -78,8 +78,6 @@ public class ItemBox : MonoBehaviour,IReceiver {
 		-4470.0f,-4780.0f,-5090.0f,-5400.0f,-5710.0f,
 		-6020.0f,-6330.0f,-6640.0f,-6950.0f,-7260.0f,
 	};
-
-
 
 
 
@@ -135,11 +133,11 @@ public class ItemBox : MonoBehaviour,IReceiver {
 				ManagerObject.instance.player,
 			};
 		}
-		muser1 = (User)mparam[0];		// たまごっち
+		muser1 = ManagerObject.instance.player;
 
 
 
-//		muser1.utype = UserType.MIX2;
+//		muser1.utype = UserType.MIX;
 
 
 
@@ -193,7 +191,6 @@ public class ItemBox : MonoBehaviour,IReceiver {
 
 	
 		yield return null;
-
 	}
 
 	void Destroy(){
@@ -217,7 +214,8 @@ public class ItemBox : MonoBehaviour,IReceiver {
 		Up030,
 	};
 	void Update(){
-		if (swipIdouFlag) {
+		// スワイプフラグが立っていてプレゼント画面が表示されている時
+		if((swipIdouFlag) && ((EventPresent.transform.localPosition.y == 4.0f) || (EventPresentMIX2.transform.localPosition.y == 4.0f))){
 			if (Input.GetMouseButtonDown (0)) {
 				StartPos = Input.mousePosition.y;
 			}
@@ -225,10 +223,8 @@ public class ItemBox : MonoBehaviour,IReceiver {
 				if ((StartPos != 0) && (itemBoxIdouFlag == itemBoxIdouTable.Null)) {
 					EndPos = Input.mousePosition.y;
 					if (StartPos > EndPos) {
-//						Debug.Log ("上から下移動" + StartPos.ToString () + "から" + EndPos.ToString ());
 						itemBoxIdouFlag = itemBoxIdouTable.Down010;
 					} else if (StartPos < EndPos) {
-//						Debug.Log ("下から上移動" + StartPos.ToString () + "から" + EndPos.ToString ());
 						itemBoxIdouFlag = itemBoxIdouTable.Up010;
 					}
 				}
@@ -243,6 +239,7 @@ public class ItemBox : MonoBehaviour,IReceiver {
 	}
 
 
+
 	// シーンパーツの表示のON/OFFの代わりにY座標移動で対応
 	private void PresentSetActive(GameObject _obj,bool _flag){
 		Vector3 _pos = new Vector3 (0.0f, 4.0f, 0.0f);
@@ -252,8 +249,7 @@ public class ItemBox : MonoBehaviour,IReceiver {
 		}
 		_obj.transform.localPosition = _pos;
 	}
-
-
+		
 
 
 	private bool ItemBoxScrollFlag;
@@ -338,8 +334,6 @@ public class ItemBox : MonoBehaviour,IReceiver {
 	// アイテム一覧画面のアイテム毎にボタン化しボタンが押されたら確認画面を開く
 	private void ButtonWakuClick(int num){
 		if (itemBoxIdouFlag == itemBoxIdouTable.Null) {
-			Debug.Log ("Button " + num.ToString ());
-
 			EventDialogKakunin.SetActive (true);
 			EventDialogKakunin.transform.Find ("1").gameObject.SetActive (true);
 
@@ -347,6 +341,11 @@ public class ItemBox : MonoBehaviour,IReceiver {
 			ibItem.init (mPresentData.items [num]);
 
 			itemNumberNow = num;
+
+			// アイテム送信予定済み
+			sendMode |= 1;
+
+			swipIdouFlag = false; 
 		}
 	}
 
@@ -365,6 +364,10 @@ public class ItemBox : MonoBehaviour,IReceiver {
 
 		gPointNow = 0;
 		itemNumberNow = -1;
+
+		eventPresentPanelReset ();
+
+		sendMode = 0;
 	}
 	// 集めたごっちポイントをみるボタンが押された時
 	private void ButtonPointClick(){
@@ -383,13 +386,14 @@ public class ItemBox : MonoBehaviour,IReceiver {
 
 		gPointNow = 0;
 		itemNumberNow = -1;
+
+		sendMode = 0;
 	}
 	// ルートメニューでとじるが押された時
 	private void ButtonTojiruClick(){
 		ManagerObject.instance.sound.playSe (17);
 
-		Debug.Log ("たまタウンへ・・・");
-		ManagerObject.instance.view.change("Town");
+		ManagerObject.instance.view.change(SceneLabel.HOME);
 	}
 	// アイテム一覧でもどるが押された時（みーつ用）
 	private void ButtonPresentBackMIX2Click(){
@@ -455,6 +459,9 @@ public class ItemBox : MonoBehaviour,IReceiver {
 		pointKakuninSet ();
 		EventDialogKakunin.SetActive (true);
 		EventDialogKakunin.transform.Find ("3").gameObject.SetActive (true);
+
+		// ごっちポイント送信予定済み
+		sendMode |= 2;
 	}
 	// ごっちポイント送信画面の全部送るボタン
 	private void ButtonTushinSendAllClick(){
@@ -471,33 +478,118 @@ public class ItemBox : MonoBehaviour,IReceiver {
 
 	// 確認画面のはいボタン
 	private void ButtonKakuninYesClick(){
-		GameCall call;
-
 		ManagerObject.instance.sound.playSe (13);
 
-		if (itemNumberNow != -1) {
-			call = new GameCall (CallLabel.BLE_SEND_GIFT, mPresentData.items [itemNumberNow].iid, 0);
-		} else {
-			call = new GameCall (CallLabel.BLE_SEND_GIFT, 0, gPointNow);
-		}
-		call.AddListener(mBleSendGift);
-		ManagerObject.instance.connect.send(call);
+		switch (sendMode) {
+		case	1:
+			{	// アイテム送信の確認のはいが押された時（まだ、ごっちポイントは決定していない時）
+				kakuninMenuOFF ();
+				EventDialogKakunin.transform.Find ("2").gameObject.SetActive (true);
+				sendMode |= 16;
+				return;
+			}
+		case	2:
+			{	// ごっちポイント送信の確認のはいが押された時（まだ、アイテムは決定していない時）
+				kakuninMenuOFF();
+				EventDialogKakunin.transform.Find ("4").gameObject.SetActive (true);
+				sendMode |= 16;
+				return;
+			}
+		case	17:
+			{	// ごっちポイントも送るかの確認画面（ごっちポイント送信画面を開く）
+				kakuninMenuOFF();
+				EventDialogKakunin.SetActive (false);
 
-		ButtonKakuninNoClick ();
-		EventTushinTime.SetActive (true);
+				PresentSetActive (EventPresent, false);
+				PresentSetActive (EventPresentMIX2, false);
+
+				gPointNow = 0;
+				pointSendSet ();
+				EventTushinPoint.SetActive (true);
+
+				_btnTushinCheckFlag = true;
+				StartCoroutine ("BtnTushinCheck");
+				return;
+			}
+		case	18:
+			{	// アイテムも送るかの確認画面（アイテム一覧画面を開く）
+				kakuninMenuOFF();
+				EventDialogKakunin.SetActive (false);
+
+				EventPresentPoint.SetActive (false);
+				EventTushinPoint.SetActive (false);
+				_btnTushinCheckFlag = false;
+
+				eventPresentPanelReset ();
+				PresentSetActive(EventPresentMIX2,true);
+				swipIdouFlag = true;
+				itemNumberNow = -1;
+				return;
+			}
+		}
+
+		// 玩具へアイテムやごっちポイントを送る
+		PresentSendJob ();
+
 	}
 	// 確認画面のいいえボタン
 	private void ButtonKakuninNoClick(){
 		ManagerObject.instance.sound.playSe (14);
 
-		EventDialogKakunin.transform.Find ("1").gameObject.SetActive (false);
-		EventDialogKakunin.transform.Find ("2").gameObject.SetActive (false);
-		EventDialogKakunin.transform.Find ("3").gameObject.SetActive (false);
-		EventDialogKakunin.transform.Find ("4").gameObject.SetActive (false);
+		switch (sendMode) {
+		case	1:
+		case	19:
+			{
+				swipIdouFlag = true;
+				break;
+			}
+		case	17:							// アイテムだけを送信する
+		case	18:							// ごっちポイントだけを送信する
+			{	
+				// 玩具へアイテムやごっちポイントを送る
+				PresentSendJob();
+				return;
+			}
+		}
+
+		kakuninMenuOFF ();
 		EventDialogKakunin.SetActive (false);
 	}
 	private void ButtonErrorTojiruClick(){
 	}
+
+	private void kakuninMenuOFF(){
+		EventDialogKakunin.transform.Find ("1").gameObject.SetActive (false);
+		EventDialogKakunin.transform.Find ("2").gameObject.SetActive (false);
+		EventDialogKakunin.transform.Find ("3").gameObject.SetActive (false);
+		EventDialogKakunin.transform.Find ("4").gameObject.SetActive (false);
+	}
+
+	// 玩具へアイテムやごっちポイントを送る
+	private void PresentSendJob(){
+		GameCall call;
+//		Debug.Log (itemNumberNow.ToString () + "/" + gPointNow.ToString () + " " + sendMode.ToString());
+
+		if (itemNumberNow != -1) {
+			call = new GameCall (CallLabel.BLE_SEND_GIFT, mPresentData.items [itemNumberNow].iid, gPointNow);
+		} else {
+			call = new GameCall (CallLabel.BLE_SEND_GIFT, 0, gPointNow);
+		}
+		call.AddListener (mBleSendGift);
+		ManagerObject.instance.connect.send (call);
+
+		kakuninMenuOFF ();
+		EventDialogKakunin.SetActive (false);
+
+		EventTushinTime.SetActive (true);
+
+		PresentSetActive (EventPresent, false);
+		PresentSetActive (EventPresentMIX2, false);
+		EventPresentPoint.SetActive (false);
+		EventTushinPoint.SetActive (false);
+		_btnTushinCheckFlag = false;
+	}
+
 		
 	// ごっちポイント送信画面の１０００ポイントアップボタン
 	private void ButtonTushinUp1000Click(){
@@ -589,12 +681,16 @@ public class ItemBox : MonoBehaviour,IReceiver {
 		
 
 
-	// PresentDataを展開し、画面に必要なものを抽出する
-	private void mPresentDataExpansion(){
+	private void eventPresentPanelReset(){
 		Vector3 _pos = new Vector3 (0.0f, 0.0f, 0.0f);
 
 		EventPresent.transform.Find ("mask/panel").transform.localPosition = _pos;
 		EventPresentMIX2.transform.Find ("mask/panel").transform.localPosition = _pos;
+	}
+
+	// PresentDataを展開し、画面に必要なものを抽出する
+	private void mPresentDataExpansion(){
+		eventPresentPanelReset ();
 
 		gPointMax = mPresentData.gpt;
 		gPointNow = 0;
