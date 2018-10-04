@@ -225,6 +225,12 @@ namespace Mix2App.Marriage{
 
 
 
+//			muser1.chara2 = new TamaChara (29);
+//			muser2.chara2 = new TamaChara (30);
+
+
+
+
 			float use_screen_x = Screen.currentResolution.width;
 			float use_screen_y = Screen.currentResolution.height;
 			#if UNITY_EDITOR

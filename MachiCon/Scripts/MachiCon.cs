@@ -334,6 +334,10 @@ namespace Mix2App.MachiCon{
 			Debug.Log ("MachiCon Destroy");
 		}
 
+		void OnDestroy(){
+			Debug.Log ("machicon OnDestroy");
+		}
+
 		private float	countTime1;
 		private int		countTime2;
 		private int		waitTime;
@@ -477,6 +481,7 @@ namespace Mix2App.MachiCon{
 						EventPhase.SetActive (true);
 						EventPhasePTStar.SetActive (true);
 						EventPhaseCount.GetComponent<Image> ().sprite = EventPhaseSprite [sceneNumber];
+
 						WaitTimeSecInit (1);
 
 						TargetRandomSet ();														// 相談相手の決定
@@ -763,8 +768,8 @@ namespace Mix2App.MachiCon{
 				{
 					Vector3 _pos = EventEndMarriage.transform.Find ("panel").gameObject.transform.localPosition;
 					_pos.y += (15.0f * (60 * Time.deltaTime));
-					if (_pos.y >= 400.0f) {
-						_pos.y = 400.0f;
+					if (_pos.y >= 425.0f) {
+						_pos.y = 425.0f;
 						jobCount = statusJobCount.machiconJobCount330;
 					}
 					EventEndMarriage.transform.Find ("panel").gameObject.transform.localPosition = _pos;
@@ -1992,13 +1997,24 @@ namespace Mix2App.MachiCon{
 
 		// 告白する相手の番号
 		private int[] KokuhakuManToWomanTable = new int[4] { 0, 1, 2, 3 };
-			
+		private int[] KokuhakuSeikouNumber = new int[4]{ -1, -1, -1, -1 };
 		private void KokuhakuTimeInit(){
+			// 男の子の告白する相手の番号をPartyResultDataから抽出する
+			for (int i = 0; i < prdata.ansList.Count; i++) {
+				KokuhakuManToWomanTable [prdata.ansList [i].firstIndex] = prdata.ansList [i].targetIndex - 4;
+				if (prdata.ansList [i].rivalIndexs != null) {
+					for (int i2 = 0; i2 < prdata.ansList [i].rivalIndexs.Length; i2++) {
+						KokuhakuManToWomanTable [prdata.ansList [i].rivalIndexs [i2]] = prdata.ansList [i].targetIndex - 4;
+					}
+				}
+				KokuhakuSeikouNumber [prdata.ansList [i].targetIndex - 4] = prdata.ansList [i].successIndex;
+			}
+/*			
 			KokuhakuManToWomanTable[0] = KokuhakuTimeObjectSelect (0);		// 男の子１の告白する相手の番号を登録
 			KokuhakuManToWomanTable[1] = KokuhakuTimeObjectSelect (1);		// 男の子２の告白する相手の番号を登録
 			KokuhakuManToWomanTable[2] = KokuhakuTimeObjectSelect (2);		// 男の子３の告白する相手の番号を登録
 			KokuhakuManToWomanTable[3] = KokuhakuTimeObjectSelect (3);		// 男の子４の告白する相手の番号を登録
-
+*/
 			kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount000;
 		}
 
@@ -2304,8 +2320,14 @@ namespace Mix2App.MachiCon{
 					CharaTamagochi [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].transform.Find ("fukidashi/comment").gameObject.SetActive (true);
 					cbTamagoChara [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].gotoAndPlay (MotionLabel.GLAD1);
 
-					TamagochiPatanChenge (2, KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4);
-					TamagochiPatanChenge (2, loveParamManNumber);
+					if (loveParamManNumber != -1) {
+						// 告白成功者がいるので喜ぶ
+						TamagochiPatanChenge (2, KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4);
+						TamagochiPatanChenge (2, loveParamManNumber);
+					} else {
+						// 告白成功者がいないので女の子は普通に・・・
+						cbTamagoChara [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].gotoAndPlay (MotionLabel.IDLE);
+					}
 
 					heartSize = 0.0f;
 					kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount340;
@@ -2688,7 +2710,10 @@ namespace Mix2App.MachiCon{
 				loveParamManCryFlag [i] = false;
 			}
 
-			if(loveManWomanFix[kokuhakuManTable [kokuhakuManNumber],KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] <= loveManWoman[kokuhakuManTable [kokuhakuManNumber],KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]]){
+			loveParamManNumber = -1;
+
+//			if(loveManWomanFix[kokuhakuManTable [kokuhakuManNumber],KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] <= loveManWoman[kokuhakuManTable [kokuhakuManNumber],KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]]){
+			if(KokuhakuSeikouNumber[KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] == kokuhakuManTable[kokuhakuManNumber]){
 				// 告白成功
 				loveParamFlag = true;
 				loveParamManNumber = kokuhakuManTable [kokuhakuManNumber];
@@ -2703,7 +2728,8 @@ namespace Mix2App.MachiCon{
 				
 			if(kokuhakuRivalNumber != 0){
 				if((kokuhakuRivalNumber & 16) != 0){
-					if((loveManWomanFix[1,KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] <= loveManWoman[1,KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]]) && (!loveParamFlag)){
+//					if((loveManWomanFix[1,KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] <= loveManWoman[1,KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]]) && (!loveParamFlag)){
+					if(KokuhakuSeikouNumber[KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] == 1){
 						// 告白成功
 						loveParamFlag = true;
 						loveParamManNumber = 1;
@@ -2716,7 +2742,8 @@ namespace Mix2App.MachiCon{
 					}
 				}
 				if((kokuhakuRivalNumber & 32) != 0){
-					if((loveManWomanFix[2,KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] <= loveManWoman[2,KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]]) && (!loveParamFlag)){
+//					if((loveManWomanFix[2,KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] <= loveManWoman[2,KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]]) && (!loveParamFlag)){
+					if(KokuhakuSeikouNumber[KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] == 2){
 						// 告白成功
 						loveParamFlag = true;
 						loveParamManNumber = 2;
@@ -2729,7 +2756,8 @@ namespace Mix2App.MachiCon{
 					}
 				}
 				if((kokuhakuRivalNumber & 64) != 0){
-					if((loveManWomanFix[3,KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] <= loveManWoman[3,KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]]) && (!loveParamFlag)){
+//					if((loveManWomanFix[3,KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] <= loveManWoman[3,KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]]) && (!loveParamFlag)){
+					if(KokuhakuSeikouNumber[KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] == 3){
 						// 告白成功
 						loveParamFlag = true;
 						loveParamManNumber = 3;
@@ -2750,12 +2778,12 @@ namespace Mix2App.MachiCon{
 					// 告白成功
 					EventResult.transform.Find ("yes").gameObject.SetActive (true);
 
-					ManagerObject.instance.sound.playBgm (14);
+					ManagerObject.instance.sound.playJingle (14);
 				} else {
 					// 告白失敗
 					EventResult.transform.Find ("no").gameObject.SetActive (true);
 
-					ManagerObject.instance.sound.playBgm (15);
+					ManagerObject.instance.sound.playJingle (15);
 				}
 			} else {
 				Vector3 pos = new Vector3 (0.0f, 0.0f, 0.0f);
@@ -3005,7 +3033,7 @@ namespace Mix2App.MachiCon{
 			ManagerObject.instance.sound.playSe (31);
 
 			while (true) {														// ハートを女の子から男の子へ飛ばす
-				_pos = Vector3.MoveTowards (_pos, posTamago [loveParamManNumber], (200.0f * Time.deltaTime));
+				_pos = Vector3.MoveTowards (_pos, posTamago [loveParamManNumber], (300.0f * Time.deltaTime));
 				TamagoEffect.transform.Find ("Heart").gameObject.transform.localPosition = _pos;
 				if (_pos.x >= posTamago [loveParamManNumber].x) {
 					break;
@@ -3039,8 +3067,8 @@ namespace Mix2App.MachiCon{
 			// 画面中央に男の子と女の子を集合させる
 			cbTamagoChara [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].gotoAndPlay (MotionLabel.SHY4);
 			cbTamagoChara [loveParamManNumber].gotoAndPlay (MotionLabel.SHY4);
-			_pos = new Vector3 (-45.0f, -20.0f, 0.0f);
-			_posMan = new Vector3 (45.0f, -20.0f, 0.0f);
+			_pos = new Vector3 (-45.0f, -70.0f, 0.0f);
+			_posMan = new Vector3 (45.0f, -70.0f, 0.0f);
 			while (true) {
 				posTamago [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4] = Vector3.MoveTowards (posTamago [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4], _pos, (200.0f * Time.deltaTime));
 				posTamago [loveParamManNumber] = Vector3.MoveTowards (posTamago [loveParamManNumber], _posMan, (200.0f * Time.deltaTime));

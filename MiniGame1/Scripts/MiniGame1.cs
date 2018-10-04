@@ -458,13 +458,13 @@ namespace Mix2App.MiniGame1{
 					int itemRnd = Random.Range (0, 100);
 					int number = 0;
 
-					posItem.y = 418;
+					posItem.y = 600;
 					posItem.x = (Random.Range (-59, 59) * 10);
 					itemIdouFlag = 1;
 					itemXbase = posItem.x;
 					itemYNumber = 0;
 
-					itemDownSpeed = (600 / (itemTable [itemGetNumber, 1] * 60));
+					itemDownSpeed = (700 / (itemTable [itemGetNumber, 1] * 60));
 
 					float totalNum = 0;
 					for (int i = 0; i < 6; i++) {
@@ -633,13 +633,13 @@ namespace Mix2App.MiniGame1{
 					EventResult.transform.Find ("Button_blue_modoru").gameObject.SetActive (false);
 
 					if (nowScore < 50) {
-						EventResult.transform.Find ("chara").gameObject.transform.localPosition = new Vector3 (250.0f, -320.0f, 0.0f);
-						EventResult.transform.Find ("chara2").gameObject.transform.localPosition = new Vector3 (-400.0f, -320.0f, 0.0f);
-						EventResult.transform.Find ("chara3").gameObject.transform.localPosition = new Vector3 (-250.0f, -320.0f, 0.0f);
+						EventResult.transform.Find ("tamago/chara").gameObject.transform.localPosition = new Vector3 (250.0f, -320.0f, 0.0f);
+						EventResult.transform.Find ("tamago/chara2").gameObject.transform.localPosition = new Vector3 (-400.0f, -320.0f, 0.0f);
+						EventResult.transform.Find ("tamago/chara3").gameObject.transform.localPosition = new Vector3 (-250.0f, -320.0f, 0.0f);
 					} else {
-						EventResult.transform.Find ("chara").gameObject.transform.localPosition = new Vector3 (120.0f, -320.0f, 0.0f);
-						EventResult.transform.Find ("chara2").gameObject.transform.localPosition = new Vector3 (-280.0f, -320.0f, 0.0f);
-						EventResult.transform.Find ("chara3").gameObject.transform.localPosition = new Vector3 (-120.0f, -320.0f, 0.0f);
+						EventResult.transform.Find ("tamago/chara").gameObject.transform.localPosition = new Vector3 (120.0f, -320.0f, 0.0f);
+						EventResult.transform.Find ("tamago/chara2").gameObject.transform.localPosition = new Vector3 (-280.0f, -320.0f, 0.0f);
+						EventResult.transform.Find ("tamago/chara3").gameObject.transform.localPosition = new Vector3 (-120.0f, -320.0f, 0.0f);
 					}
 					resultLoopCount = statusResult.resultJobCount010;
 					break;
@@ -780,7 +780,7 @@ namespace Mix2App.MiniGame1{
 			new Vector2 (-120.0f, -320.0f),		// 結果画面の応援キャラ２の初期位置
 			new Vector2 (   0.0f,  700.0f),		// 結果画面の宝箱の初期位置
 			new Vector2 (   0.0f,  700.0f),		// 結果画面のメッセージの初期位置
-			new Vector2 (   0.0f,  500.0f),		// ゲーム画面の落下アイテムの初期位置
+			new Vector2 (   0.0f,  600.0f),		// ゲーム画面の落下アイテムの初期位置
 			new Vector2 (   0.0f,  999.0f),		// ゲーム画面のスコアの初期位置
 		};
 		private void TamagoCharaPositionInit(){

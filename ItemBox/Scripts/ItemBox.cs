@@ -198,6 +198,10 @@ public class ItemBox : MonoBehaviour,IReceiver {
 		Debug.Log ("ItemBox Destroy");
 	}
 
+	void OnDestroy(){
+		ItemBoxScrollFlag = false;
+		Debug.Log("ItemBox OnDestroy");
+	}
 
 	private bool swipIdouFlag;
 	private float StartPos;

@@ -64,10 +64,10 @@ public class Friends : MonoBehaviour,IReceiver {
 
 
 
-	private const int APPFRIENDS_MAX = 10;
-	private const int TOYFRIENDS_MAX = 20;
-	private const int RENRAKU_MAX = 50;
-	private const int SEARCH_MAX = 50;
+	private const int APPFRIENDS_MAX = 10;												// アプリの友達の最大数
+	private const int TOYFRIENDS_MAX = 20;												// 玩具の友達の最大数
+	private const int RENRAKU_MAX = 50;													// 友達申請の最大数
+	private const int SEARCH_MAX = 50;													// 友達検索結果の最大数
 
 
 
@@ -83,7 +83,6 @@ public class Friends : MonoBehaviour,IReceiver {
 
 
 
-
 	private readonly string MsgDataTable_1 = "の\n「";
 	private readonly string MsgDataTable_2 = "」と「";
 	private readonly string MsgDataTable_3 = "」と\nともだちに なりますか？";
@@ -92,7 +91,6 @@ public class Friends : MonoBehaviour,IReceiver {
 	private readonly string MsgDataTable_6 = "」と\nともだちに なりますか？";
 	private readonly string MsgDataTable_7 = "」と\nともだちに なりません";
 	private readonly string MsgDataTable_8 = "」の\nともだちが いっぱいで とうろくできません";
-
 
 
 
@@ -207,6 +205,10 @@ public class Friends : MonoBehaviour,IReceiver {
 		Debug.Log ("Friends Destroy");
 	}
 
+	void OnDestroy(){
+		FriendListScrollFlag = false;
+		Debug.Log ("Friends OnDestroy");
+	}
 
 	// サーチ結果
 	void mSearchFriend(bool success,object data)

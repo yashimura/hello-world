@@ -131,6 +131,15 @@ namespace Mix2App.MarriageDate{
 			muser2 = (User)mparam[3];		// 左のたまごっち
 			mkind2 = (int)mparam[4];
 
+
+
+
+//			muser1.utype = UserType.MIX;
+//			muser2.utype = UserType.MIX;
+
+
+
+
 			jobCount = statusJobCount.marriageJobCount000;
 			startEndFlag = false;
 			waitCount = 1;
@@ -411,13 +420,13 @@ namespace Mix2App.MarriageDate{
 			EventEnd.transform.Find("bg1/manChara/fukidashi/stamp").gameObject.GetComponent<Image>().sprite = StampImage[Random.Range(0,StampImage.Length)];
 			EventEnd.transform.Find("bg1/womanChara/fukidashi/stamp").gameObject.GetComponent<Image>().sprite = StampImage[Random.Range(0,StampImage.Length)];
 
-			if (muser1.utype != UserType.MIX2) {
+//			if (muser1.utype != UserType.MIX2) {
 				EventEnd.transform.Find ("serif_1").gameObject.SetActive (false);
-			}
+//			}
 
-			if (muser2.utype != UserType.MIX2) {
+//			if (muser2.utype != UserType.MIX2) {
 				EventEnd.transform.Find ("serif 2").gameObject.SetActive (false);
-			}
+//			}
 			EventEnd.transform.Find ("bg1/manChara/fukidashi").gameObject.SetActive (false);
 			EventEnd.transform.Find ("bg1/womanChara/fukidashi").gameObject.SetActive (false);
 		}
@@ -516,21 +525,21 @@ namespace Mix2App.MarriageDate{
 		}
 		private IEnumerator EventEndFukidashiCheck(){
 			while (whileEndFlag) {
-				if (muser1.utype != UserType.MIX2) {
+//				if (muser1.utype != UserType.MIX2) {
 					if (man_text.GetComponent<Text> ().enabled == true) {
 						EventEnd.transform.Find ("bg1/manChara/fukidashi").gameObject.SetActive (true);
 					} else {
 						EventEnd.transform.Find ("bg1/manChara/fukidashi").gameObject.SetActive (false);
 					}
-				}
+//				}
 
-				if (muser2.utype != UserType.MIX2) {
+//				if (muser2.utype != UserType.MIX2) {
 					if (woman_text.GetComponent<Text> ().enabled == true) {
 						EventEnd.transform.Find ("bg1/womanChara/fukidashi").gameObject.SetActive (true);
 					} else {
 						EventEnd.transform.Find ("bg1/womanChara/fukidashi").gameObject.SetActive (false);
 					}
-				}
+//				}
 
 				yield return null;
 			}
