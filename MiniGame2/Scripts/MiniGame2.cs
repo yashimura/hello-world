@@ -1101,8 +1101,13 @@ namespace Mix2App.MiniGame2{
 				}
 			case	statusResult.resultJobCount080:
 				{
-					EventResult.SetActive (false);															// アイテム入手画面を開く
+					EventResult.SetActive (false);
+					// アイテム入手画面を開く
 					EventItemget.SetActive (true);
+
+					GotchiBehaviour gbPoint = EventItemget.transform.Find ("GotchiView").gameObject.GetComponent<GotchiBehaviour> ();
+					gbPoint.init (ItemGetPointSet (nowScore));
+
 					resultItemGetFlag = false;
 					resultLoopCount = statusResult.resultJobCount090;
 					break;
@@ -1213,8 +1218,28 @@ namespace Mix2App.MiniGame2{
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer4").gameObject.transform.localScale;
 		}
 
-	}
+		private int ItemGetPointSet(int score){
+			int retPoint = 0;
+			if (score >= 50) {
+				retPoint = 50;
+			}
+			if (score >= 150) {
+				retPoint = 100;
+			}
+			if (score >= 650) {
+				retPoint = 150;
+			}
+			if (score >= 800) {
+				retPoint = 200;
+			}
+			if (score >= 1000) {
+				retPoint = 500;
+			}
 
+			return retPoint;
+		}
+			
+	}
 
 
 }

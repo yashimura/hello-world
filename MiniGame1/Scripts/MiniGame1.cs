@@ -464,7 +464,7 @@ namespace Mix2App.MiniGame1{
 					itemXbase = posItem.x;
 					itemYNumber = 0;
 
-					itemDownSpeed = (700 / (itemTable [itemGetNumber, 1] * 60));
+					itemDownSpeed = (1000 / (itemTable [itemGetNumber, 1] * 60));
 
 					float totalNum = 0;
 					for (int i = 0; i < 6; i++) {
@@ -564,7 +564,7 @@ namespace Mix2App.MiniGame1{
 
 		// たまごっちとアイテムの当たり判定
 		private bool HitCheck(Vector3 tamagoPos,Vector3 itemPos){
-			if (((tamagoPos.x - 50.0f) < itemPos.x) && (itemPos.x < (tamagoPos.x + 50.0f))) {
+			if (((tamagoPos.x - 60.0f) < itemPos.x) && (itemPos.x < (tamagoPos.x + 60.0f))) {
 				if (((tamagoPos.y - 100.0f) < itemPos.y) && (itemPos.y < (tamagoPos.y + 100.0f))) {
 					return true;
 				}
@@ -720,6 +720,10 @@ namespace Mix2App.MiniGame1{
 				{
 					EventResult.SetActive (false);															// アイテム入手画面を開く
 					EventItemget.SetActive (true);
+
+					GotchiBehaviour gbPoint = EventItemget.transform.Find ("GotchiView").gameObject.GetComponent<GotchiBehaviour> ();
+					gbPoint.init (ItemGetPointSet (nowScore));
+
 					resultItemGetFlag = false;
 					resultLoopCount = statusResult.resultJobCount090;
 					break;
@@ -840,6 +844,27 @@ namespace Mix2App.MiniGame1{
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer4").gameObject.transform.localScale;
 		}
 
+
+		private int ItemGetPointSet(int score){
+			int retPoint = 0;
+			if (score >= 50) {
+				retPoint = 50;
+			}
+			if (score >= 200) {
+				retPoint = 100;
+			}
+			if (score >= 300) {
+				retPoint = 150;
+			}
+			if (score >= 500) {
+				retPoint = 200;
+			}
+			if (score >= 1000) {
+				retPoint = 500;
+			}
+
+			return retPoint;
+		}
 
 	}
 }

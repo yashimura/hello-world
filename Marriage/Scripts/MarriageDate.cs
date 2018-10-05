@@ -317,8 +317,8 @@ namespace Mix2App.MarriageDate{
 
 						Debug.Log ("原っぱ");
 
-						TamagochiAnimeRandomChenge (cbMan1);
-						TamagochiAnimeRandomChenge (cbWoman1);
+						TamagochiAnimeRandomChange (cbMan1);
+						TamagochiAnimeRandomChange (cbWoman1);
 
 						manXposition = man_walk3.transform.localPosition.x;
 						womanXposition = woman_walk3.transform.localPosition.x;
@@ -431,7 +431,7 @@ namespace Mix2App.MarriageDate{
 			EventEnd.transform.Find ("bg1/womanChara/fukidashi").gameObject.SetActive (false);
 		}
 
-		private void TamagochiAnimeRandomChenge(CharaBehaviour cb){
+		private void TamagochiAnimeRandomChange(CharaBehaviour cb){
 			
 			switch (Random.Range (0, 3)) {
 			case	0:
