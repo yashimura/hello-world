@@ -16,6 +16,7 @@ namespace Mix2App.MiniGame2{
 	public class MiniGame2 : MonoBehaviour,IReceiver {
 		[SerializeField] private GameObject[] CharaTamagoMain;					// たまごっち
 		[SerializeField] private GameObject[] CharaTamago;						// たまごっち
+		[SerializeField] private GameObject MinigameRoot;
 		[SerializeField] private GameObject EventTitle;							// タイトル画面
 		[SerializeField] private GameObject EventStart;							// スタート画面
 		[SerializeField] private GameObject	EventGame;							// ゲーム画面
@@ -95,13 +96,22 @@ namespace Mix2App.MiniGame2{
 		void Start() {
 			Debug.Log ("MiniGame2 Start");
 
-			StartCoroutine(mstart());
+
+			GameCall call = new GameCall (CallLabel.GET_MINIGAME_INFO);
+			call.AddListener (mGetMinigameInfo);
+			ManagerObject.instance.connect.send (call);
+		}
+
+		private MinigameData mData;
+		private MinigameResultData mResultData;
+		void mGetMinigameInfo(bool success,object data){
+			mData = (MinigameData)data;
+			StartCoroutine(mStart());
 		}
 
 
-
-		IEnumerator mstart(){
-			Debug.Log ("MiniGame2 mstart");
+		IEnumerator mStart(){
+			Debug.Log ("MiniGame2 mStart");
 
 			//単体動作テスト用
 			//パラメタ詳細は設計書参照
@@ -112,7 +122,13 @@ namespace Mix2App.MiniGame2{
 			}
 			muser1 = (User)mparam[0];		// たまごっち
 
-			EventTitle.SetActive (false);
+
+
+
+
+			ManagerObject.instance.sound.playSe (22);
+
+			MinigameRoot.transform.Find ("bg").gameObject.SetActive (true);
 
 			startEndFlag = false;
 
@@ -204,6 +220,9 @@ namespace Mix2App.MiniGame2{
 		void Destroy(){
 			Debug.Log ("MiniGame2 Destroy");
 		}
+		void OnDestroy(){
+			Debug.Log ("MiniGame2 OnDestroy");
+		}
 
 		void Update(){
 			switch (jobCount) {
@@ -230,6 +249,8 @@ namespace Mix2App.MiniGame2{
 					EventStart.SetActive (true);
 					TamagochiLoopInit ();
 					jobCount = statusJobCount.minigame2JobCount030;
+
+					ManagerObject.instance.sound.playSe (20);
 					break;
 				}
 			case	statusJobCount.minigame2JobCount030:
@@ -239,6 +260,8 @@ namespace Mix2App.MiniGame2{
 						EventStart.SetActive (false);
 						EventGame.SetActive (true);
 						GameMainInit ();
+
+						ManagerObject.instance.sound.playBgm (22);
 					}
 					break;
 				}
@@ -247,12 +270,19 @@ namespace Mix2App.MiniGame2{
 					if (GameMainLoop ()) {											// ゲーム処理
 						jobCount = statusJobCount.minigame2JobCount050;
 						waitCount = 45;
+
+						waitResultFlag = false;
+						GameCall call = new GameCall (CallLabel.GET_MINIGAME_RESULT,mData.mid,nowScore);
+						call.AddListener (mGetMinigameResult);
+						ManagerObject.instance.connect.send (call);
 					}
 					break;
 				}
 			case	statusJobCount.minigame2JobCount050:
 				{
-					waitCount--;
+					if (waitResultFlag) {
+						waitCount--;
+					}
 					if (waitCount == 0) {											// 驚きを見せるためのウエィト
 						jobCount = statusJobCount.minigame2JobCount060;
 						EventGame.SetActive (false);
@@ -307,30 +337,52 @@ namespace Mix2App.MiniGame2{
 			}
 		}
 
+
+		private bool waitResultFlag;
+		private void mGetMinigameResult(bool success,object data){
+			mResultData = (MinigameResultData)data;
+			waitResultFlag = true;
+		}
+
+
 		private void ButtonStartClick(){
 			jobCount = statusJobCount.minigame2JobCount020;							// スタートボタンが押されたのでゲーム開始
+
+			ManagerObject.instance.sound.playSe (11);
 		}
 		private void ButtonCloseClick(){
+			ManagerObject.instance.sound.playSe (17);
+
 			Debug.Log ("たまタウンへ・・・");
 			ManagerObject.instance.view.change(SceneLabel.TOWN);
 		}
 		private void ButtonHelpClick(){
 			EventHelp.SetActive (true);
+
+			ManagerObject.instance.sound.playSe (11);
 		}
 		private void ButtonHelpModoruClick(){
 			EventHelp.SetActive (false);
+
+			ManagerObject.instance.sound.playSe (17);
 		}
 		private void ButtonYameruClick(){
 			gameMainLoopFlag = true;
+
+			ManagerObject.instance.sound.playSe (17);
 		}
 		private void ButtonTakuhaiClick(){
 			Debug.Log ("宅配サービスへ・・・");
 		}
 		private void ButtonTojiruClick(){
 			resultItemGetFlag = true;
+
+			ManagerObject.instance.sound.playSe (17);
 		}
 		private void ButtonModoruClick(){
-			resultMainLoopFlag = true;												// 
+			resultMainLoopFlag = true;												// タイトルにもどる
+
+			ManagerObject.instance.sound.playSe (17);
 		}
 
 		private void ButtonMenu0Click(){
@@ -720,6 +772,7 @@ namespace Mix2App.MiniGame2{
 					posMenu.x = 1500.0f;
 					gameJobCount = statusGameCount.minigame2GameCount010;
 
+					ManagerObject.instance.sound.playSe (27);
 					break;
 				}
 			case	statusGameCount.minigame2GameCount010:
@@ -903,9 +956,12 @@ namespace Mix2App.MiniGame2{
 				EventGameScore.transform.Find ("score").gameObject.GetComponent<Text> ().text = _score.ToString();
 				nowScore += _score;
 
+				ManagerObject.instance.sound.playSe (28);
 			} else {
 				EventGameFukidashi.transform.Find ("hantei").gameObject.GetComponent<Image> ().sprite = CheckImage [1];						// ０：丸、１：バツ
 				_flag = false;
+
+				ManagerObject.instance.sound.playSe (29);
 			}
 			EventGameFukidashi.transform.Find ("hantei").gameObject.SetActive (true);
 
@@ -957,6 +1013,7 @@ namespace Mix2App.MiniGame2{
 		private statusResult	resultLoopCount = statusResult.resultJobCount000;
 		private enum statusResult{
 			resultJobCount000,
+			resultJobCount001,
 			resultJobCount010,
 			resultJobCount020,
 			resultJobCount030,
@@ -1015,7 +1072,7 @@ namespace Mix2App.MiniGame2{
 					EventResult.transform.Find ("treasure_open").gameObject.SetActive (false);
 					EventResult.transform.Find ("Button_blue_modoru").gameObject.SetActive (false);
 
-					if (nowScore < 50) {
+					if ((nowScore == 0) || (!mResultData.rewardFlag)) {
 						EventResult.transform.Find ("chara").gameObject.transform.localPosition = new Vector3 (250.0f, -320.0f, 0.0f);
 						EventResult.transform.Find ("chara2").gameObject.transform.localPosition = new Vector3 (-400.0f, -320.0f, 0.0f);
 						EventResult.transform.Find ("chara3").gameObject.transform.localPosition = new Vector3 (-250.0f, -320.0f, 0.0f);
@@ -1054,9 +1111,11 @@ namespace Mix2App.MiniGame2{
 				{
 					if (ResultWaitTimeSubLoop ()) {															// スコアなどを見せる
 						resultLoopCount = statusResult.resultJobCount040;
-						if (nowScore < 50) {
-							resultItemGetFlag = true;														// ５０点未満ならアイテム入手できないのでそのまま終了
+						if ((nowScore == 0) || (!mResultData.rewardFlag)) {
+							resultItemGetFlag = true;														// 褒賞品が手に入らないのでそのまま終了
 							resultLoopCount = statusResult.resultJobCount090;
+						} else {
+							ManagerObject.instance.sound.playSe (9);
 						}
 					}
 					break;
@@ -1069,6 +1128,8 @@ namespace Mix2App.MiniGame2{
 						resultLoopCount = statusResult.resultJobCount050;
 						resultLoopWait = treasureRotationTable.Length;
 						resultTamagoYJumpCount = tamagoYJumpTable.Length;
+
+						ManagerObject.instance.sound.playSe (30);
 					}
 					EventResult.transform.Find ("treasure").gameObject.transform.localPosition = pos;		// 落下する宝箱の座標を設定
 					break;
@@ -1105,8 +1166,26 @@ namespace Mix2App.MiniGame2{
 					// アイテム入手画面を開く
 					EventItemget.SetActive (true);
 
-					GotchiBehaviour gbPoint = EventItemget.transform.Find ("GotchiView").gameObject.GetComponent<GotchiBehaviour> ();
-					gbPoint.init (ItemGetPointSet (nowScore));
+					EventItemget.transform.Find ("getpoints_text").gameObject.SetActive (false);
+					EventItemget.transform.Find ("GotchiView").gameObject.SetActive (false);
+					EventItemget.transform.Find ("getitem_text").gameObject.SetActive (false);
+					EventItemget.transform.Find ("ItemView").gameObject.SetActive (false);
+
+					if (mResultData.reward.kind == 0) {
+						// ごっちポイントが褒賞品
+						EventItemget.transform.Find ("getpoints_text").gameObject.SetActive (true);
+						EventItemget.transform.Find ("GotchiView").gameObject.SetActive (true);
+
+						GotchiBehaviour gbPoint = EventItemget.transform.Find ("GotchiView").gameObject.GetComponent<GotchiBehaviour> ();
+						gbPoint.init (mResultData.reward.gpt);
+					} else {
+						// アイテムが褒賞品
+						EventItemget.transform.Find ("getitem_text").gameObject.SetActive (true);
+						EventItemget.transform.Find ("ItemView").gameObject.SetActive (true);
+
+						ItemBehaviour ibItem = EventItemget.transform.Find ("ItemView").gameObject.GetComponent<ItemBehaviour> ();
+						ibItem.init (mResultData.reward.item);
+					}
 
 					resultItemGetFlag = false;
 					resultLoopCount = statusResult.resultJobCount090;
@@ -1118,8 +1197,10 @@ namespace Mix2App.MiniGame2{
 						EventItemget.SetActive (false);														// アイテム入手画面を消す
 						EventResult.SetActive (true);														// 結果画面を表示する
 						EventResult.transform.Find ("Button_blue_modoru").gameObject.SetActive (true);		// 戻るボタンを表示する
-						if (nowScore >= 50) {
-							for (int i = 0; i < 3; i++) {													// ５０点以上ならアイテム入手したのでたまごっちを喜ばす
+						if ((nowScore == 0) || (!mResultData.rewardFlag)) {
+						}
+						else{
+							for (int i = 0; i < 3; i++) {													// 褒賞品があるのでたまごっちを喜ばす
 								TamagochiMainAnimeSet (i, MotionLabel.GLAD1);
 							}
 						}
@@ -1218,26 +1299,6 @@ namespace Mix2App.MiniGame2{
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer4").gameObject.transform.localScale;
 		}
 
-		private int ItemGetPointSet(int score){
-			int retPoint = 0;
-			if (score >= 50) {
-				retPoint = 50;
-			}
-			if (score >= 150) {
-				retPoint = 100;
-			}
-			if (score >= 650) {
-				retPoint = 150;
-			}
-			if (score >= 800) {
-				retPoint = 200;
-			}
-			if (score >= 1000) {
-				retPoint = 500;
-			}
-
-			return retPoint;
-		}
 			
 	}
 
