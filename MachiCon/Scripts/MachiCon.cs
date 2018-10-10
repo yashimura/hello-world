@@ -270,29 +270,7 @@ namespace Mix2App.MachiCon{
 			for (int i = 0; i < 8; i++) {
 				mkindTable [i] = mpdata.members [i].index;
 			}
-
-			float use_screen_x = Screen.currentResolution.width;
-			float use_screen_y = Screen.currentResolution.height;
-			#if UNITY_EDITOR
-			use_screen_x = Screen.width;
-			use_screen_y = Screen.height;
-			#endif
-
-			/*
-			float num;
-			if (use_screen_x >= use_screen_y) {
-				num = use_screen_x / use_screen_y;
-			} else {
-				num = use_screen_y / use_screen_x;
-			}
-
-			if ((num > 1.33f) && (num < 1.34f)) {
-				screenMode = false;													// 3:4
-			} else {
-				screenMode = true;													// 3:4以外
-			}
-			*/
-
+				
 			MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
 
 			if (muser1.chara2 != null) {
@@ -2599,7 +2577,7 @@ namespace Mix2App.MachiCon{
 
 		private void KokuhakuEnd(){
 		}
-
+/*
 		// 告白する相手を選択する
 		// manNum:男の子の番号（０〜３）
 		private int KokuhakuTimeObjectSelect(int manNum){
@@ -2654,7 +2632,7 @@ namespace Mix2App.MachiCon{
 
 			return	womanNum;
 		}
-
+*/
 		// たまごっちキャラクターのランダムアニメ
 		// patanNum:アニメ種類、tamagoNum:アニメさせるたまごっちの番号（０〜７）
 		private void TamagochiPatanChange(int patanNum,int tamagoNum){
