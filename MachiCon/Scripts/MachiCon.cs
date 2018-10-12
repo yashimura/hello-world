@@ -241,8 +241,8 @@ namespace Mix2App.MachiCon{
 			// dataの内容は設計書参照
 			// dataを変更したいときはConnectManagerDriverのGetRoomResult()を変更する
 			prdata = (PartyResultData)data;
-			loveManWoman = prdata.loves;
-			loveManWomanFix = prdata.fixs;
+//			loveManWoman = prdata.loves;
+//			loveManWomanFix = prdata.fixs;
 		}
 
 		IEnumerator mstart()
@@ -1924,8 +1924,8 @@ namespace Mix2App.MachiCon{
 			EventCurtain.transform.localPosition = pos;
 
 			if (num > 0) {
-				if (EventCurtain.transform.localPosition.y >= 1200.0f) {
-					pos.y = 1200.0f;
+				if (EventCurtain.transform.localPosition.y >= 1220.0f) {
+					pos.y = 1220.0f;
 					EventCurtain.transform.localPosition = pos;
 					return true;
 				}
@@ -2869,6 +2869,12 @@ namespace Mix2App.MachiCon{
 				EventResult.transform.Find ("yes/heart").gameObject.transform.localScale = pos;
 				EventResult.transform.Find ("no").gameObject.SetActive (false);
 				EventResult.transform.Find ("no/heart").gameObject.transform.localScale = pos;
+/*
+				if (loveParamFlag) {
+					EventResult.transform.Find("hart_pt").gameObject.SetActive(true);
+					EventResult.transform.Find ("hart_pt").gameObject.GetComponent<ParticleSystem> ().Play ();
+				}
+*/				
 			}
 		}
 		private bool LoveResultDispHeart(){
@@ -3476,6 +3482,7 @@ namespace Mix2App.MachiCon{
 		// 好感度を上下させる（本当はサーバーでやるのが良いと思う）
 		// num:好感度の上下値
 		private void LoveManWomanNumberSet(int Num){
+/*			
 			int	manNumber = 0;
 			int womanNumber = 0;
 
@@ -3517,7 +3524,7 @@ namespace Mix2App.MachiCon{
 				}
 			}
 			loveManWoman [manNumber, womanNumber] += Num;
-
+*/
 
 
 			int _result;

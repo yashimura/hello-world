@@ -144,7 +144,7 @@ public class Friends : MonoBehaviour,IReceiver {
 
 
 		// パパママモードで友達検索を許可しているかどうか
-		if (ManagerObject.instance.app.enabledSearchTarget) {
+		if (ManagerObject.instance.app.enabledViewSearchFriend) {
 			// 友達検索OK
 			EventMenu.transform.Find("Button_kensaku_gray").gameObject.SetActive(false);
 		} else {
@@ -767,9 +767,8 @@ public class Friends : MonoBehaviour,IReceiver {
 		switch (YesNoModeFlag) {
 		case	YesNoModeTable.APPLY_FRIEND:
 			{	// フレンド申請
-				int _id = int.Parse (prefabObjSearch [ReqUserNumber].transform.Find ("IDbase/ID").gameObject.GetComponent<Text> ().text);
-
-				GameCall call = new GameCall (CallLabel.APPLY_FRIEND, _id);
+//				int _id = int.Parse (prefabObjSearch [ReqUserNumber].transform.Find ("IDbase/ID").gameObject.GetComponent<Text> ().text);
+				GameCall call = new GameCall (CallLabel.APPLY_FRIEND, mFriendSearchData [ReqUserNumber].code);
 				call.AddListener (mApplyFriend);
 				ManagerObject.instance.connect.send (call);
 				break;
@@ -1174,7 +1173,7 @@ public class Friends : MonoBehaviour,IReceiver {
 				prefabObjSearch [i].transform.localPosition = _Pos;
 
 				// みーつIDを登録
-				prefabObjSearch [i].transform.Find ("IDbase/ID").gameObject.GetComponent<Text> ().text = mFriendSearchData [i].id.ToString ();
+				prefabObjSearch [i].transform.Find ("IDbase/ID").gameObject.GetComponent<Text> ().text = mFriendSearchData [i].code;
 				// ユーザー名を登録
 				prefabObjSearch [i].transform.Find ("name_daishi/Text").gameObject.GetComponent<Text> ().text = mFriendSearchData [i].nickname;
 				// たまごっちの名前を登録
@@ -1453,6 +1452,7 @@ public class Friends : MonoBehaviour,IReceiver {
 
 		Debug.Log ("プロフィール画面へ・・・" + _user.nickname);
 		ManagerObject.instance.view.add (SceneLabel.PROFILE_TOWN, _user);
+//		ManagerObject.instance.view.change(SceneLabel.PROFILE,_user);
 	}
 
 
