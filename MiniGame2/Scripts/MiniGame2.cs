@@ -1177,6 +1177,7 @@ namespace Mix2App.MiniGame2{
 					EventResult.SetActive (false);
 					// アイテム入手画面を開く
 					EventItemget.SetActive (true);
+					ManagerObject.instance.sound.playSe (23);
 
 					EventItemget.transform.Find ("getpoints_text").gameObject.SetActive (false);
 					EventItemget.transform.Find ("GotchiView").gameObject.SetActive (false);
