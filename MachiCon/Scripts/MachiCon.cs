@@ -76,15 +76,16 @@ namespace Mix2App.MachiCon{
 		private bool kokuhakuTimeEndFlag = true;
 		private float applealWaitTime;
 
+		private bool stampFlag = false;
 
 
 		private CharaBehaviour[] cbTamagoChara = new CharaBehaviour[8];
 		private CharaBehaviour[] cbFutagoChara = new CharaBehaviour[2];
 
 		// 相性度（０〜１００）（男の子、女の子）
-		private int[,] loveManWoman = new int[4, 4]{ { 40,40,40,40 }, { 40,40,40,40 }, { 40,40,40,40 }, { 40,40,40,40 } };
+//		private int[,] loveManWoman = new int[4, 4]{ { 40,40,40,40 }, { 40,40,40,40 }, { 40,40,40,40 }, { 40,40,40,40 } };
 		// 成否判定の種（０〜１００）（男の子、女の子）
-		private int[,] loveManWomanFix;
+//		private int[,] loveManWomanFix;
 
 		private readonly float APPEAL_LIMIT_TIME = 5.0f;			// アピールタイムのキー入力待ち時間（秒）
 
@@ -190,7 +191,7 @@ namespace Mix2App.MachiCon{
 		void Awake(){
 			Debug.Log ("MachiCon Awake");
 			mresult=false;
-			loveManWomanFix=null;
+//			loveManWomanFix=null;
 			mkind=0;
 			mkind1=0;
 			mkind2=0;
@@ -263,6 +264,12 @@ namespace Mix2App.MachiCon{
 //			muser1.chara2 = new TamaChara (29);
 
 
+
+			if (muser1.utype == UserType.MIX2) {
+				stampFlag = false;			// たまごっちの喋るコメントあり
+			} else {
+				stampFlag = true;			// たまごっちのコメントはスタンプ
+			}
 
 			// めいんBGMを登録
 			ManagerObject.instance.sound.playBgm (11);
@@ -738,7 +745,7 @@ namespace Mix2App.MachiCon{
 						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp15);		// 告白処理が終了したのでお別れメッセージを表示
 						jobCount = statusJobCount.machiconJobCount290;
 
-						ManagerObject.instance.sound.playBgm (11);
+//						ManagerObject.instance.sound.playBgm (11);
 					}
 					KokuhakuTimeMain ();														// 告白処理ループ
 					break;
@@ -981,28 +988,28 @@ namespace Mix2App.MachiCon{
 
 			CharaTamagochi [posNumber].transform.Find ("fukidashi/comment/text").gameObject.GetComponent<Text> ().text = mesAvater + mesRet + mesTamago;
 
-/////			if (mpdata.members [posNumber].user.utype != UserType.MIX2) {
-/////				switch (posNumber) {
-/////				case	0:
-/////				case	1:
-/////				case	2:
-/////				case	3:
-/////					{	//男の子：ハート、音符、笑顔、歓喜、にやり（RND）
-/////						int[] _table = new int[5]{ 0, 2, 3, 4, 6 };
-/////						CharaTamagochi [posNumber].transform.Find ("fukidashi/stamp/Image").gameObject.GetComponent<Image> ().sprite = StampImage [_table [Random.Range (0, _table.Length)]];
-/////						break;
-/////					}
-/////				case	4:
-/////				case	5:
-/////				case	6:
-/////				case	7:
-/////					{	//女の子：ハート、音符、笑顔、歓喜、苦笑い（RND）
-/////						int[] _table = new int[5]{ 0, 2, 3, 4, 5 };
-/////						CharaTamagochi [posNumber].transform.Find ("fukidashi/stamp/Image").gameObject.GetComponent<Image> ().sprite = StampImage [_table [Random.Range (0, _table.Length)]];
-/////						break;
-/////					}
-/////				}
-/////			}
+			if (stampFlag) {
+				switch (posNumber) {
+				case	0:
+				case	1:
+				case	2:
+				case	3:
+					{	//男の子：ハート、音符、笑顔、歓喜、にやり（RND）
+						int[] _table = new int[5]{ 0, 2, 3, 4, 6 };
+						CharaTamagochi [posNumber].transform.Find ("fukidashi/stamp/Image").gameObject.GetComponent<Image> ().sprite = StampImage [_table [Random.Range (0, _table.Length)]];
+						break;
+					}
+				case	4:
+				case	5:
+				case	6:
+				case	7:
+					{	//女の子：ハート、音符、笑顔、歓喜、苦笑い（RND）
+						int[] _table = new int[5]{ 0, 2, 3, 4, 5 };
+						CharaTamagochi [posNumber].transform.Find ("fukidashi/stamp/Image").gameObject.GetComponent<Image> ().sprite = StampImage [_table [Random.Range (0, _table.Length)]];
+						break;
+					}
+				}
+			}
 
 		}
 		// 告白タイムの対象相手を指定する
@@ -2394,7 +2401,18 @@ namespace Mix2App.MachiCon{
 			case	statusKokuhakuCount.kokuhakuCount330:
 				{
 					FukidashiMessageKokuhakuReturn (KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]], loveParamFlag);		// 告白の返事を表示
-					CharaTamagochi [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].transform.Find ("fukidashi/comment").gameObject.SetActive (true);
+					if (!stampFlag) {
+						CharaTamagochi [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].transform.Find ("fukidashi/comment").gameObject.SetActive (true);
+					} else {
+						if (loveParamFlag) {
+							int[] _table = new int[]{ 0, 2, 3 };		// ハート、音符、笑顔（RND）
+							CharaTamagochi [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].transform.Find ("fukidashi/stamp/Image").gameObject.GetComponent<Image> ().sprite = StampImage [_table [Random.Range (0, _table.Length)]];
+						} else {
+							int[] _table = new int[]{ 1, 5, 7 };		// ハートブレイク、苦笑い、あせあせっ！（RND）
+							CharaTamagochi [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].transform.Find ("fukidashi/stamp/Image").gameObject.GetComponent<Image> ().sprite = StampImage [_table [Random.Range (0, _table.Length)]];
+						}
+						CharaTamagochi [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].transform.Find ("fukidashi/stamp").gameObject.SetActive (true);	// 吹き出しコメントを表示・非表示
+					}
 					cbTamagoChara [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].gotoAndPlay (MotionLabel.GLAD1);
 
 					if (loveParamManNumber != -1) {
@@ -2415,7 +2433,11 @@ namespace Mix2App.MachiCon{
 				{
 					if (KokuhakuWaitTimeSubLoop ()) {
 						LoveResultDisp (true);													// 告白結果のハートなどを表示
-						CharaTamagochi[KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].transform.Find("fukidashi/comment").gameObject.SetActive(false);
+						if (!stampFlag) {
+							CharaTamagochi [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].transform.Find ("fukidashi/comment").gameObject.SetActive (false);
+						} else {
+							CharaTamagochi [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].transform.Find ("fukidashi/stamp").gameObject.SetActive (false);	// 吹き出しコメントを表示・非表示
+						}
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount350;
 					}
 					break;
@@ -2574,6 +2596,19 @@ namespace Mix2App.MachiCon{
 				MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
 			}
 		}
+
+		private void KokuhakuMessageDispStamp(int num,bool flag){
+			int[] _table = new int[5]{ 0, 2, 3, 4, 12 };		// ハート、音符、笑顔、歓喜、ラブレター（RND）
+			CharaTamagochi [num].transform.Find ("fukidashi/stamp/Image").gameObject.GetComponent<Image> ().sprite = StampImage [_table [Random.Range (0, _table.Length)]];
+			CharaTamagochi [num].transform.Find ("fukidashi/stamp").gameObject.SetActive (flag);	// 吹き出しコメントを表示・非表示
+			if (flag) {
+				TamagochiPatanChange (0, num);														// 告白者のアニメパターンを登録
+				MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp11);
+			} else {
+				MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
+			}
+		}
+
 
 		private void KokuhakuEnd(){
 		}
@@ -2972,15 +3007,15 @@ namespace Mix2App.MachiCon{
 			}
 
 			FukidashiMessageSet ();																// 自己紹介メッセージ登録
-/////			if (mpdata.members [posNumber].user.utype == UserType.MIX2) {
+			if (!stampFlag) {
 				CharaTamagochi [posNumber].transform.Find ("fukidashi/comment").gameObject.SetActive (true);
 				yield return new WaitForSeconds (2.0f);
 				CharaTamagochi [posNumber].transform.Find ("fukidashi/comment").gameObject.SetActive (false);
-/////			} else {
-/////				CharaTamagochi [posNumber].transform.Find ("fukidashi/stamp").gameObject.SetActive (true);
-/////				yield return new WaitForSeconds (2.0f);
-/////				CharaTamagochi [posNumber].transform.Find ("fukidashi/stamp").gameObject.SetActive (false);
-/////			}
+			} else {
+				CharaTamagochi [posNumber].transform.Find ("fukidashi/stamp").gameObject.SetActive (true);
+				yield return new WaitForSeconds (2.0f);
+				CharaTamagochi [posNumber].transform.Find ("fukidashi/stamp").gameObject.SetActive (false);
+			}
 
 			cbTamagoChara [posNumber].gotoAndPlay (MotionLabel.WALK);							// 整列位置に移動
 			switch (posNumber) {
@@ -3137,8 +3172,14 @@ namespace Mix2App.MachiCon{
 			Vector3 _pos;
 			Vector3 _posMan;
 
-			FukidashiMessageSetKokuhakuWoman (KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4, loveParamManNumber);
-			CharaTamagochi[KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].transform.Find("fukidashi/comment").gameObject.SetActive(true);
+			if (!stampFlag) {
+				FukidashiMessageSetKokuhakuWoman (KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4, loveParamManNumber);
+				CharaTamagochi [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].transform.Find ("fukidashi/comment").gameObject.SetActive (true);
+			} else {
+				int[] _table = new int[]{ 0, 2, 3, 4 };		// ハート、音符、笑顔、歓喜（RND）
+				CharaTamagochi [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].transform.Find ("fukidashi/stamp/Image").gameObject.GetComponent<Image> ().sprite = StampImage [_table [Random.Range (0, _table.Length)]];
+				CharaTamagochi [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].transform.Find ("fukidashi/stamp").gameObject.SetActive (true);	// 吹き出しコメントを表示・非表示
+			}
 			cbTamagoChara [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].gotoAndPlay (MotionLabel.SHY1);
 
 			_scale = new Vector3 (0.0f, 0.0f, 0.0f);
@@ -3188,7 +3229,11 @@ namespace Mix2App.MachiCon{
 			}
 
 			TamagoEffect.transform.Find ("Heart").gameObject.SetActive (false);
-			CharaTamagochi [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].transform.Find ("fukidashi/comment").gameObject.SetActive (false);
+			if (!stampFlag) {
+				CharaTamagochi [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].transform.Find ("fukidashi/comment").gameObject.SetActive (false);
+			} else {
+				CharaTamagochi [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].transform.Find ("fukidashi/stamp").gameObject.SetActive (false);	// 吹き出しコメントを表示・非表示
+			}
 
 			while (_kokuhakuHeartJumpFlag) {
 				yield return null;
@@ -3254,10 +3299,18 @@ namespace Mix2App.MachiCon{
 			}
 
 			if (_mode) {
-				FukidashiMessageSetKokuhaku (_num, KokuhakuManToWomanTable [_num] + 4);
-				CharaTamagochi [_num].transform.Find ("fukidashi/comment").gameObject.SetActive (true);
-				yield return new WaitForSeconds (2.0f);
-				CharaTamagochi [_num].transform.Find ("fukidashi/comment").gameObject.SetActive (false);
+				if (!stampFlag) {
+					FukidashiMessageSetKokuhaku (_num, KokuhakuManToWomanTable [_num] + 4);
+					CharaTamagochi [_num].transform.Find ("fukidashi/comment").gameObject.SetActive (true);
+					yield return new WaitForSeconds (2.0f);
+					CharaTamagochi [_num].transform.Find ("fukidashi/comment").gameObject.SetActive (false);
+				} else {
+					int[] _table = new int[]{ 0, 2, 3, 4 };		// ハート、音符、笑顔、歓喜（RND）
+					CharaTamagochi [_num].transform.Find ("fukidashi/stamp/Image").gameObject.GetComponent<Image> ().sprite = StampImage [_table [Random.Range (0, _table.Length)]];
+					CharaTamagochi [_num].transform.Find ("fukidashi/stamp").gameObject.SetActive (true);	// 吹き出しコメントを表示・非表示
+					yield return new WaitForSeconds(2.0f);
+					CharaTamagochi [_num].transform.Find ("fukidashi/stamp").gameObject.SetActive (false);	// 吹き出しコメントを表示・非表示
+				}
 			}
 
 			_KokuhakuAttackIdouFlag = true;
@@ -3279,9 +3332,15 @@ namespace Mix2App.MachiCon{
 				yield return null;
 			}
 
-			KokuhakuMessageDisp (_num, true);		// 吹き出しを表示
-			yield return new WaitForSeconds(2.0f);
-			KokuhakuMessageDisp (_num, false);		// 吹き出しを非表示
+			if (!stampFlag) {
+				KokuhakuMessageDisp (_num, true);		// 吹き出しを表示
+				yield return new WaitForSeconds (2.0f);
+				KokuhakuMessageDisp (_num, false);		// 吹き出しを非表示
+			} else {
+				KokuhakuMessageDispStamp (_num, true);
+				yield return new WaitForSeconds (2.0f);
+				KokuhakuMessageDispStamp (_num, false);
+			}
 
 			_KokuhakuAttackIdouFlag = true;
 		}
