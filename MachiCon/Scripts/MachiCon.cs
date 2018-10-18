@@ -53,6 +53,7 @@ namespace Mix2App.MachiCon{
 		[SerializeField] private GameObject[] CharaFutago;					// 双子のたまごっち
 		[SerializeField] private GameObject[] CharaFutagoImage;				// 双子のたまごっち（Image）
 		[SerializeField] private GameObject[] CharaFutagoName;				// 双子の名前
+		[SerializeField] private GameObject EventKakunin;					// 結婚確認画面
 		[SerializeField] private GameObject TamagoEffect;
 		[SerializeField] private GameObject	PrgCanvas;
 		[SerializeField] private Sprite[] StampImage;						// スタンプイメージ
@@ -65,9 +66,7 @@ namespace Mix2App.MachiCon{
 		private bool playerResultFlag = false;			// カップル成立:true 不成立:false
 
 		private bool buttonFlag = false;
-		//private bool btnYesNo = false;					// Yes:true No:false
 		private int sceneNumber = 0;					// シーンナンバー
-		//private bool screenMode = false;
 
 		private bool startEndFutagoFlag = false;
 		private bool buttonFutagoFlag = false;
@@ -81,11 +80,6 @@ namespace Mix2App.MachiCon{
 
 		private CharaBehaviour[] cbTamagoChara = new CharaBehaviour[8];
 		private CharaBehaviour[] cbFutagoChara = new CharaBehaviour[2];
-
-		// 相性度（０〜１００）（男の子、女の子）
-//		private int[,] loveManWoman = new int[4, 4]{ { 40,40,40,40 }, { 40,40,40,40 }, { 40,40,40,40 }, { 40,40,40,40 } };
-		// 成否判定の種（０〜１００）（男の子、女の子）
-//		private int[,] loveManWomanFix;
 
 		private readonly float APPEAL_LIMIT_TIME = 5.0f;			// アピールタイムのキー入力待ち時間（秒）
 
@@ -127,6 +121,9 @@ namespace Mix2App.MachiCon{
 			machiconJobCount330,
 			machiconJobCount340,
 			machiconJobCount350,
+			machiconJobCount360,
+			machiconJobCount370,
+			machiconJobCount380,
 		}
 
 		private statusKokuhakuCount kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount000;
@@ -191,7 +188,6 @@ namespace Mix2App.MachiCon{
 		void Awake(){
 			Debug.Log ("MachiCon Awake");
 			mresult=false;
-//			loveManWomanFix=null;
 			mkind=0;
 			mkind1=0;
 			mkind2=0;
@@ -242,13 +238,10 @@ namespace Mix2App.MachiCon{
 			// dataの内容は設計書参照
 			// dataを変更したいときはConnectManagerDriverのGetRoomResult()を変更する
 			prdata = (PartyResultData)data;
-//			loveManWoman = prdata.loves;
-//			loveManWomanFix = prdata.fixs;
 		}
 
 		IEnumerator mstart()
 		{
-
 			playerNumber = mpdata.playerIndex;
 			muser1 = mpdata.members[playerNumber].user;
 			mkind1 = mpdata.members[playerNumber].index;
@@ -256,6 +249,9 @@ namespace Mix2App.MachiCon{
 
 			EventSoudanYesNew.GetComponent<Button> ().onClick.AddListener (ButtneYesClick);
 			EventSoudanNoNew.GetComponent<Button> ().onClick.AddListener (ButtonNoClick);
+
+			EventKakunin.transform.Find ("kakunin/button1").gameObject.GetComponent<Button> ().onClick.AddListener (ButtonKakuninYesClick);
+			EventKakunin.transform.Find ("kakunin/button2").gameObject.GetComponent<Button> ().onClick.AddListener (ButtonKakuninNoClick);
 
 			jobCount = statusJobCount.machiconJobCount020;							// 双子選択画面を飛ばす場合
 
@@ -778,26 +774,50 @@ namespace Mix2App.MachiCon{
 				{
 					if (WaitTimeSubLoop ()) {
 						if (playerResultFlag) {
-							EventEndMarriage.SetActive (true);									// 自キャラがカップル成立したのでハートフェードを表示する
-							jobCount = statusJobCount.machiconJobCount320;
+							jobCount = statusJobCount.machiconJobCount320;						// 自キャラがカップルので確認画面を表示
 						} else {
-							jobCount = statusJobCount.machiconJobCount330;						// 自キャラがカップル成立していないのでそのままシーンチェンジ
+							jobCount = statusJobCount.machiconJobCount360;						// 自キャラがカップル成立していないのでそのままシーンチェンジ
 						}
 					}
 					break;
 				}
 			case	statusJobCount.machiconJobCount320:
 				{
+					eventKakuninFlag = false;
+					EventKakunin.SetActive (true);
+					jobCount = statusJobCount.machiconJobCount330;
+					break;
+				}
+			case	statusJobCount.machiconJobCount330:
+				{
+					if (eventKakuninFlag) {
+						EventKakunin.SetActive (false);
+						if (playerResultFlag) {
+							jobCount = statusJobCount.machiconJobCount340;						// カップル継続
+						} else {
+							jobCount = statusJobCount.machiconJobCount360;						// カップル解消
+						}
+					}
+					break;
+				}
+			case	statusJobCount.machiconJobCount340:
+				{
+					EventEndMarriage.SetActive (true);											// 自キャラがカップル成立したのでハートフェードを表示する
+					jobCount = statusJobCount.machiconJobCount350;
+					break;
+				}
+			case	statusJobCount.machiconJobCount350:
+				{
 					Vector3 _pos = EventEndMarriage.transform.Find ("panel").gameObject.transform.localPosition;
 					_pos.y += (15.0f * (60 * Time.deltaTime));
 					if (_pos.y >= 425.0f) {
 						_pos.y = 425.0f;
-						jobCount = statusJobCount.machiconJobCount330;
+						jobCount = statusJobCount.machiconJobCount360;
 					}
 					EventEndMarriage.transform.Find ("panel").gameObject.transform.localPosition = _pos;
 					break;
 				}
-			case	statusJobCount.machiconJobCount330:
+			case	statusJobCount.machiconJobCount360:
 				{
 					if (WaitTimeSubLoop ()) {
 						if (playerResultFlag) {
@@ -809,19 +829,20 @@ namespace Mix2App.MachiCon{
 								ManagerObject.instance.view.change(SceneLabel.MARRIAGE_DATE,mkind,muser1,mkind1,muser2,mkind2);
 							}
 						} else {
+							EventEnd.SetActive (false);
 							Debug.Log ("たまタウンへ・・・");
 							ManagerObject.instance.view.change (SceneLabel.TOWN);
 						}
 
-						jobCount = statusJobCount.machiconJobCount340;
+						jobCount = statusJobCount.machiconJobCount370;
 					}
 					break;
 				}
-			case	statusJobCount.machiconJobCount340:
+			case	statusJobCount.machiconJobCount370:
 				{
 					break;
 				}
-			case	statusJobCount.machiconJobCount350:
+			case	statusJobCount.machiconJobCount380:
 				{
 					break;
 				}
@@ -907,8 +928,6 @@ namespace Mix2App.MachiCon{
 		private void SoudanTamagoCharaSet (){
 			TamagochiImageMove (EventSoudanTamago, CharaTamago [playerNumber], "chara/");
 			TamagochiImageMove (EventSoudanTamago, CharaTamago [targetNumber], "target/");
-//			EventSoudanTamago.transform.Find ("chara").gameObject.GetComponent<Image> ().sprite = CharaTamago [playerNumber].GetComponent<SpriteRenderer> ().sprite;
-//			EventSoudanTamago.transform.Find ("target").gameObject.GetComponent<Image> ().sprite = CharaTamago [targetNumber].GetComponent<SpriteRenderer> ().sprite;
 		}
 
 		private float[] soudanJumpTable = new float[] {
@@ -2609,65 +2628,9 @@ namespace Mix2App.MachiCon{
 			}
 		}
 
-
 		private void KokuhakuEnd(){
 		}
-/*
-		// 告白する相手を選択する
-		// manNum:男の子の番号（０〜３）
-		private int KokuhakuTimeObjectSelect(int manNum){
-			
-			int womanNum = 0;
 
-			womanNum = KokuhakuTimeObjectSelectSub (manNum, 0, 1);								// 告白する相手を１番目と２番目で比較
-
-			if (womanNum == 0) {
-				womanNum = KokuhakuTimeObjectSelectSub (manNum, 0, 2);							// 告白する相手を１番目と３番目で比較
-			} else {
-				womanNum = KokuhakuTimeObjectSelectSub (manNum, 1, 2);							// 告白する相手を２番目と３番目で比較
-			}
-
-			switch (womanNum) {
-			case	0:
-				{
-					womanNum = KokuhakuTimeObjectSelectSub (manNum, 0, 3);						// 告白する相手を１番目と４番目で比較
-					break;
-				}
-			case	1:
-				{
-					womanNum = KokuhakuTimeObjectSelectSub (manNum, 1, 3);						// 告白する相手を２番目と４番目で比較
-					break;
-				}
-			case	2:
-				{
-					womanNum = KokuhakuTimeObjectSelectSub (manNum, 2, 3);						// 告白する相手を３番目と４番目で比較
-					break;
-				}
-			}
-
-			return womanNum;
-		}
-		// manNum:男の子の番号（０〜３）、womanNum1:女の子の番号（０〜２）、womanNum2:女の子の番号（１〜３）
-		private int KokuhakuTimeObjectSelectSub(int manNum,int womanNum1,int womanNum2){
-			int womanNum = 0;
-
-			if (loveManWoman [manNum, womanNum1] <= loveManWoman [manNum, womanNum2]) {
-				if (loveManWoman [manNum, womanNum1] == loveManWoman [manNum, womanNum2]) {
-					if (Random.Range (0, 2) == 0) {												// num1とnum2の相性度が同じ場合ランダムで対象を決定
-						womanNum = womanNum1;
-					} else {
-						womanNum = womanNum2;
-					}
-				} else {
-					womanNum = womanNum2;														// num2の相性度が高い
-				}
-			} else {
-				womanNum = womanNum1;															// num1の相性度が高い
-			}
-
-			return	womanNum;
-		}
-*/
 		// たまごっちキャラクターのランダムアニメ
 		// patanNum:アニメ種類、tamagoNum:アニメさせるたまごっちの番号（０〜７）
 		private void TamagochiPatanChange(int patanNum,int tamagoNum){
@@ -2824,7 +2787,6 @@ namespace Mix2App.MachiCon{
 
 			loveParamManNumber = -1;
 
-//			if(loveManWomanFix[kokuhakuManTable [kokuhakuManNumber],KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] <= loveManWoman[kokuhakuManTable [kokuhakuManNumber],KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]]){
 			if(KokuhakuSeikouNumber[KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] == kokuhakuManTable[kokuhakuManNumber]){
 				// 告白成功
 				loveParamFlag = true;
@@ -2840,7 +2802,6 @@ namespace Mix2App.MachiCon{
 				
 			if(kokuhakuRivalNumber != 0){
 				if((kokuhakuRivalNumber & 16) != 0){
-//					if((loveManWomanFix[1,KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] <= loveManWoman[1,KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]]) && (!loveParamFlag)){
 					if(KokuhakuSeikouNumber[KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] == 1){
 						// 告白成功
 						loveParamFlag = true;
@@ -2854,7 +2815,6 @@ namespace Mix2App.MachiCon{
 					}
 				}
 				if((kokuhakuRivalNumber & 32) != 0){
-//					if((loveManWomanFix[2,KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] <= loveManWoman[2,KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]]) && (!loveParamFlag)){
 					if(KokuhakuSeikouNumber[KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] == 2){
 						// 告白成功
 						loveParamFlag = true;
@@ -2868,7 +2828,6 @@ namespace Mix2App.MachiCon{
 					}
 				}
 				if((kokuhakuRivalNumber & 64) != 0){
-//					if((loveManWomanFix[3,KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] <= loveManWoman[3,KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]]) && (!loveParamFlag)){
 					if(KokuhakuSeikouNumber[KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]]] == 3){
 						// 告白成功
 						loveParamFlag = true;
@@ -3514,7 +3473,17 @@ namespace Mix2App.MachiCon{
 
 
 
+		private bool eventKakuninFlag;
+		private void ButtonKakuninYesClick(){
+			ManagerObject.instance.sound.playSe (13);
+			eventKakuninFlag = true;
+		}
 
+		private void ButtonKakuninNoClick(){
+			ManagerObject.instance.sound.playSe (14);
+			eventKakuninFlag = true;
+			playerResultFlag = false;					// カップル解消
+		}
 
 		private IEnumerator AppelTimeWait(){
 			yield return new WaitForSeconds (APPEAL_LIMIT_TIME);
@@ -3527,7 +3496,6 @@ namespace Mix2App.MachiCon{
 
 			LoveManWomanNumberSet (10);		// 好感度を１０上げる
 			buttonFlag = true;
-			//btnYesNo = true;
 		}
 		// Noボタンが押された時
 		private void ButtonNoClick(){
@@ -3535,58 +3503,13 @@ namespace Mix2App.MachiCon{
 
 			LoveManWomanNumberSet (-10);	// 好感度を１０下げる
 			buttonFlag = true;
-			//btnYesNo = false;
 		}
 
 		// 好感度を上下させる（本当はサーバーでやるのが良いと思う）
 		// num:好感度の上下値
 		private void LoveManWomanNumberSet(int Num){
-/*			
-			int	manNumber = 0;
-			int womanNumber = 0;
-
-			switch (playerNumber) {
-			case	0:
-			case	1:
-			case	2:
-			case	3:
-				{
-					manNumber = playerNumber;
-					break;
-				}
-			case	4:
-			case	5:
-			case	6:
-			case	7:
-				{
-					womanNumber = playerNumber - 4;
-					break;
-				}
-			}
-
-			switch (targetNumber) {
-			case	0:
-			case	1:
-			case	2:
-			case	3:
-				{
-					manNumber = targetNumber;
-					break;
-				}
-			case	4:
-			case	5:
-			case	6:
-			case	7:
-				{
-					womanNumber = targetNumber - 4;
-					break;
-				}
-			}
-			loveManWoman [manNumber, womanNumber] += Num;
-*/
-
-
 			int _result;
+
 			if (Num == 10) {
 				_result = 1;
 			} else {
