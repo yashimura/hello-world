@@ -57,8 +57,6 @@ public class Friends : MonoBehaviour,IReceiver {
 	[SerializeField] private GameObject	PrefabRenraku;
 	[SerializeField] private GameObject PrefabSearch;
 
-	private object[]		mparam;
-	private User muser1;//自分
 	private FriendData		mFriendData;
 	private List<User> 		mFriendSearchData;
 
@@ -98,13 +96,10 @@ public class Friends : MonoBehaviour,IReceiver {
 
 	void Awake(){
 		Debug.Log ("Friends Awake");
-		mparam=null;
-		muser1=null;
 	}
 
 	public void receive(params object[] parameter){
 		Debug.Log ("Friends receive");
-		mparam = parameter;
 	}
 
 	void Start() {
@@ -122,15 +117,6 @@ public class Friends : MonoBehaviour,IReceiver {
 	}
 
 	IEnumerator mstart(){
-		//単体動作テスト用
-		//パラメタ詳細は設計書参照
-		if (mparam==null) {
-			mparam = new object[] {
-				ManagerObject.instance.player,
-			};
-		}
-		muser1 = ManagerObject.instance.player;
-
 		EventNoteApp.SetActive (true);
 		EventNoteMIX2.SetActive (true);
 		EventNoteRenraku.SetActive (true);
@@ -954,7 +940,7 @@ public class Friends : MonoBehaviour,IReceiver {
 			prefabObjApp [i].transform.localPosition = _Pos;
 
 			// ユーザー名を登録
-			prefabObjApp [i].transform.Find ("name_daishi/Text").gameObject.GetComponent<Text> ().text = mFriendData.appfriends [i].nickname;
+			prefabObjApp [i].transform.Find ("name_daishi/Text").gameObject.GetComponent<Text> ().text = userNicknameRetInsert(userNicknameChange(mFriendData.appfriends [i].nickname));
 			// たまごっちの名前を登録
 			mesData = mFriendData.appfriends [i].chara1.cname;
 			if (mFriendData.appfriends [i].chara2 != null) {
@@ -983,7 +969,7 @@ public class Friends : MonoBehaviour,IReceiver {
 			prefabObjMIX2 [i].transform.localPosition = _Pos;
 
 			// ユーザー名を登録
-			prefabObjMIX2 [i].transform.Find ("name_daishi/Text").gameObject.GetComponent<Text> ().text = mFriendData.toyfriends [i].nickname;
+			prefabObjMIX2 [i].transform.Find ("name_daishi/Text").gameObject.GetComponent<Text> ().text = userNicknameRetInsert(userNicknameChange(mFriendData.toyfriends [i].nickname));
 			// たまごっちの名前を登録
 			mesData = mFriendData.toyfriends [i].chara1.cname;
 			if (mFriendData.toyfriends [i].chara2 != null) {
@@ -1017,7 +1003,7 @@ public class Friends : MonoBehaviour,IReceiver {
 			prefabObjRenraku [i].transform.localPosition = _Pos;
 
 			// ユーザー名を登録
-			prefabObjRenraku [i].transform.Find ("name_daishi/Text").gameObject.GetComponent<Text> ().text = mFriendData.applys [i].user.nickname;
+			prefabObjRenraku [i].transform.Find ("name_daishi/Text").gameObject.GetComponent<Text> ().text = userNicknameRetInsert(userNicknameChange(mFriendData.applys [i].user.nickname));
 			// たまごっちの名前を登録
 			mesData = mFriendData.applys [i].user.chara1.cname;
 			if (mFriendData.applys [i].user.chara2 != null) {
@@ -1060,7 +1046,7 @@ public class Friends : MonoBehaviour,IReceiver {
 		EventKakunin.transform.Find ("Button_blue_iie").gameObject.SetActive (true);
 		YesNoModeFlag = YesNoModeTable.REPLY_FRIEND_YES;
 
-		EventKakunin.transform.Find ("Text_Arial").gameObject.GetComponent<Text> ().text = mFriendData.appfriends [num].nickname;
+		EventKakunin.transform.Find ("Text_Arial").gameObject.GetComponent<Text> ().text = userNicknameChange(mFriendData.appfriends [num].nickname);
 		if (mFriendData.appfriends [num].chara2 != null) {
 			_mes = MsgDataTable_1;
 			_mes = _mes + mFriendData.appfriends [num].chara1.cname;
@@ -1088,7 +1074,7 @@ public class Friends : MonoBehaviour,IReceiver {
 		EventKakunin.transform.Find ("Button_blue_iie").gameObject.SetActive (true);
 		YesNoModeFlag = YesNoModeTable.REPLY_FRIEND_NO;
 
-		EventKakunin.transform.Find ("Text_Arial").gameObject.GetComponent<Text> ().text = mFriendData.appfriends [num].nickname;
+		EventKakunin.transform.Find ("Text_Arial").gameObject.GetComponent<Text> ().text = userNicknameChange(mFriendData.appfriends [num].nickname);
 		if (mFriendData.appfriends [num].chara2 != null) {
 			_mes = MsgDataTable_1;
 			_mes = _mes + mFriendData.appfriends [num].chara1.cname;
@@ -1118,7 +1104,7 @@ public class Friends : MonoBehaviour,IReceiver {
 		EventKakunin.transform.Find ("Button_blue_iie").gameObject.SetActive (true);
 		YesNoModeFlag = YesNoModeTable.DELETE_FRIEND;
 
-		EventKakunin.transform.Find ("Text_Arial").gameObject.GetComponent<Text> ().text = mFriendData.appfriends [num].nickname;
+		EventKakunin.transform.Find ("Text_Arial").gameObject.GetComponent<Text> ().text = userNicknameChange(mFriendData.appfriends [num].nickname);
 		if (mFriendData.appfriends [num].chara2 != null) {
 			_mes = MsgDataTable_1;
 			_mes = _mes + mFriendData.appfriends [num].chara1.cname;
@@ -1175,7 +1161,7 @@ public class Friends : MonoBehaviour,IReceiver {
 				// みーつIDを登録
 				prefabObjSearch [i].transform.Find ("IDbase/ID").gameObject.GetComponent<Text> ().text = mFriendSearchData [i].code;
 				// ユーザー名を登録
-				prefabObjSearch [i].transform.Find ("name_daishi/Text").gameObject.GetComponent<Text> ().text = mFriendSearchData [i].nickname;
+				prefabObjSearch [i].transform.Find ("name_daishi/Text").gameObject.GetComponent<Text> ().text = userNicknameRetInsert(userNicknameChange(mFriendSearchData [i].nickname));
 				// たまごっちの名前を登録
 				mesData = mFriendSearchData [i].chara1.cname;
 				if (mFriendSearchData[i].chara2 != null) {
@@ -1233,7 +1219,7 @@ public class Friends : MonoBehaviour,IReceiver {
 		EventKakunin.transform.Find ("Button_blue_iie").gameObject.SetActive (true);
 		YesNoModeFlag = YesNoModeTable.APPLY_FRIEND;
 
-		EventKakunin.transform.Find ("Text_Arial").gameObject.GetComponent<Text> ().text = mFriendSearchData [num].nickname;
+		EventKakunin.transform.Find ("Text_Arial").gameObject.GetComponent<Text> ().text = userNicknameChange(mFriendSearchData [num].nickname);
 		if (mFriendSearchData [num].chara2 != null) {
 			_mes = MsgDataTable_1;
 			_mes = _mes + mFriendSearchData [num].chara1.cname;
@@ -1260,7 +1246,7 @@ public class Friends : MonoBehaviour,IReceiver {
 			EventResult.transform.Find ("Text_Arial").gameObject.SetActive (true);
 			EventResult.transform.Find ("Text 1").gameObject.SetActive (true);
 
-			EventResult.transform.Find ("Text_Arial").gameObject.GetComponent<Text> ().text = mFriendSearchData [ReqUserNumber].nickname;
+			EventResult.transform.Find ("Text_Arial").gameObject.GetComponent<Text> ().text = userNicknameChange(mFriendSearchData [ReqUserNumber].nickname);
 			if (mFriendSearchData [ReqUserNumber].chara2 != null) {
 				_mes = MsgDataTable_1;
 				_mes = _mes + mFriendSearchData [ReqUserNumber].chara1.cname;
@@ -1403,7 +1389,7 @@ public class Friends : MonoBehaviour,IReceiver {
 				EventResult.transform.Find ("Text_Arial").gameObject.SetActive (true);
 				EventResult.transform.Find ("Text 3-2").gameObject.SetActive (true);
 
-				EventResult.transform.Find ("Text_Arial").gameObject.GetComponent<Text> ().text = _user.nickname;
+				EventResult.transform.Find ("Text_Arial").gameObject.GetComponent<Text> ().text = userNicknameChange(_user.nickname);
 
 				if (_user.chara2 != null) {
 					_mes = MsgDataTable_1;
@@ -1427,6 +1413,34 @@ public class Friends : MonoBehaviour,IReceiver {
 				break;
 			}
 		}
+	}
+
+	private string userNicknameChange(string baseStr){
+		string retStr = baseStr;
+
+		if (baseStr != null) {
+			if (baseStr.Length > 20) {
+				retStr = baseStr.Remove (18, baseStr.Length - 18);
+				retStr = retStr + "……";
+			}
+		} else {
+			retStr = "";
+		}
+
+		return retStr;
+	}
+	private string userNicknameRetInsert(string baseStr){
+		string retStr = baseStr;
+
+		if (baseStr != null) {
+			if (baseStr.Length > 10) {
+				retStr = baseStr.Insert (10,"\n");
+			}
+		} else {
+			retStr = "";
+		}
+
+		return retStr;
 	}
 
 	// キャラとユーザー情報を押したらプロフィール画面へ

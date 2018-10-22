@@ -158,22 +158,6 @@ namespace Mix2App.MiniGame1{
 
 
 
-//			Debug.Log (Application.streamingAssetsPath);
-
-			var mablist = AssetBundle.LoadFromFileAsync("/Users/shimurayasuhiro/Documents/GitHub/UnityMix2App/Assets/StreamingAssets/minigame1/season0");
-//			var mablist = AssetBundle.LoadFromFileAsync("/Users/shimurayasuhiro/Documents/GitHub/UnityMix2App/Assets/StreamingAssets/item/kari");
-
-			while (!mablist.isDone)
-				yield return null;
-
-			var assetbundle = mablist.assetBundle;
-
-			var abreq = assetbundle.LoadAssetAsync<GameObject>("spring.asset");
-//			var abreq = assetbundle.LoadAssetAsync<Sprite>("gohan_kari");
-			while (!abreq.isDone) yield return null;
-
-
-
 			SeasonImageSet();
 
 
