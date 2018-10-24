@@ -1046,16 +1046,16 @@ public class Friends : MonoBehaviour,IReceiver {
 		EventKakunin.transform.Find ("Button_blue_iie").gameObject.SetActive (true);
 		YesNoModeFlag = YesNoModeTable.REPLY_FRIEND_YES;
 
-		EventKakunin.transform.Find ("Text_Arial").gameObject.GetComponent<Text> ().text = userNicknameChange(mFriendData.appfriends [num].nickname);
+		EventKakunin.transform.Find ("Text_Arial").gameObject.GetComponent<Text> ().text = userNicknameChange(mFriendData.applys [num].user.nickname);
 		if (mFriendData.appfriends [num].chara2 != null) {
 			_mes = MsgDataTable_1;
-			_mes = _mes + mFriendData.appfriends [num].chara1.cname;
+			_mes = _mes + mFriendData.applys [num].user.chara1.cname;
 			_mes = _mes + MsgDataTable_2;
-			_mes = _mes + mFriendData.appfriends [num].chara2.cname;
+			_mes = _mes + mFriendData.applys [num].user.chara2.cname;
 			_mes = _mes + MsgDataTable_6;
 		} else {
 			_mes = MsgDataTable_1;
-			_mes = _mes + mFriendData.appfriends [num].chara1.cname;
+			_mes = _mes + mFriendData.applys [num].user.chara1.cname;
 			_mes = _mes + MsgDataTable_6;
 		}
 		EventKakunin.transform.Find ("Text (1)").gameObject.GetComponent<Text> ().text = _mes;
@@ -1074,16 +1074,16 @@ public class Friends : MonoBehaviour,IReceiver {
 		EventKakunin.transform.Find ("Button_blue_iie").gameObject.SetActive (true);
 		YesNoModeFlag = YesNoModeTable.REPLY_FRIEND_NO;
 
-		EventKakunin.transform.Find ("Text_Arial").gameObject.GetComponent<Text> ().text = userNicknameChange(mFriendData.appfriends [num].nickname);
+		EventKakunin.transform.Find ("Text_Arial").gameObject.GetComponent<Text> ().text = userNicknameChange(mFriendData.applys [num].user.nickname);
 		if (mFriendData.appfriends [num].chara2 != null) {
 			_mes = MsgDataTable_1;
-			_mes = _mes + mFriendData.appfriends [num].chara1.cname;
+			_mes = _mes + mFriendData.applys [num].user.chara1.cname;
 			_mes = _mes + MsgDataTable_2;
-			_mes = _mes + mFriendData.appfriends [num].chara2.cname;
+			_mes = _mes + mFriendData.applys [num].user.chara2.cname;
 			_mes = _mes + MsgDataTable_7;
 		} else {
 			_mes = MsgDataTable_1;
-			_mes = _mes + mFriendData.appfriends [num].chara1.cname;
+			_mes = _mes + mFriendData.applys [num].user.chara1.cname;
 			_mes = _mes + MsgDataTable_7;
 		}
 		EventKakunin.transform.Find ("Text (1)").gameObject.GetComponent<Text> ().text = _mes;
