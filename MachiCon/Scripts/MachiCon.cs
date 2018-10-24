@@ -210,8 +210,6 @@ namespace Mix2App.MachiCon{
 			// イベントたまキュンか？
 			// コラボたまキュンか？
 			// 通常たまキュンか？
-
-
 		}
 			
 		void Start() {
@@ -222,7 +220,6 @@ namespace Mix2App.MachiCon{
 			GameCall call = new GameCall(CallLabel.GET_ROOM_INFO);
 			call.AddListener(mgetroominf);
 			ManagerObject.instance.connect.send(call);
-
 		}
 		
 		void mgetroominf(bool success,object data)
@@ -245,6 +242,7 @@ namespace Mix2App.MachiCon{
 		IEnumerator mstart()
 		{
 			playerNumber = mpdata.playerIndex;
+			// ユーザー情報の登録
 			mpMember1 = mpdata.members [playerNumber];
 			muser1 = mpdata.members[playerNumber].user;
 			mkind1 = mpdata.members[playerNumber].index;
@@ -277,7 +275,6 @@ namespace Mix2App.MachiCon{
 				mkindTable [i] = mpdata.members [i].index;
 			}
 
-				
 			MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
 
 			if (muser1.chara2 != null) {
@@ -355,12 +352,12 @@ namespace Mix2App.MachiCon{
 		}
 
 
+
 		private float	countTime1;
 		private int		countTime2;
 		private int		waitTime;
 		private Vector3[] posTamago = new Vector3[8];
 		private int		posNumber;
-
 
 		void Update(){
 			switch (jobCount) {
@@ -575,7 +572,7 @@ namespace Mix2App.MachiCon{
 						EventSoudanPartsDisp (true);
 						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp07);
 
-						StartCoroutine ("AppelTimeWait");										// APPEAL_LIMIT_TIME秒間でキー入力待ち終了
+						StartCoroutine ("AppealTimeWait");										// APPEAL_LIMIT_TIME秒間でキー入力待ち終了
 					}
 
 					SoudanTamagoCharaSet ();													// 相談シーンのたまごっちのアニメ
@@ -687,7 +684,6 @@ namespace Mix2App.MachiCon{
 						//相談送信、全メンバーの相談処理を完了後、告白結果取得
 						// パラメタは設計書参照
 						//TODO masklistは現在何も反映していないので適宜設定を
-//						GameCall call = new GameCall(CallLabel.GET_ROOM_RESULT,maskdatas);
 						GameCall call = new GameCall(CallLabel.GET_ROOM_RESULT,mpdata.roomId,maskdatas,mpdata.members);
 						call.AddListener(mgetroomres);
 						ManagerObject.instance.connect.send(call);
@@ -1409,8 +1405,8 @@ namespace Mix2App.MachiCon{
 							} else {
 								CharaTamagoFlipChange (i, true);
 							}
-							TamagoPairCheck (i);
-							TamagoCakeCheck (i);
+							TamagoPairCheck (i);							// たまごっちがテーブルに停止している？
+							TamagoCakeCheck (i);							// たまごっちがケーキエリアに停止している？
 						} else {
 							TamagochiIdouInit (i);
 						}
@@ -1726,7 +1722,7 @@ namespace Mix2App.MachiCon{
 				posTamagoSpeedY [num] = (posTamagoTargetY [num] - posTamago [num].y) / _randSpeed;
 			}
 		}
-
+		// たまごっちがテーブルでペアになっているか確認
 		private void TamagoPairCheck(int num){
 			int _target = posTamagoTargetType [num];
 			bool _flag = false;
@@ -1830,6 +1826,7 @@ namespace Mix2App.MachiCon{
 				}
 			}
 		}
+		// たまごっちがケーキエリアに停止しているか確認
 		private void TamagoCakeCheck (int num){
 			int _target = posTamagoTargetType [num];
 
@@ -2489,10 +2486,12 @@ namespace Mix2App.MachiCon{
 							if ((playerNumber == KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4) || (playerNumber == loveParamManNumber)) {
 								playerResultFlag = true;
 								if (playerNumber == KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4) {
+									// 告白相手のデータを登録
 									mpMember2 = mpdata.members [loveParamManNumber];
 									muser2 = mpdata.members [loveParamManNumber].user;
 									mkind2 = mkindTable [loveParamManNumber];
 								} else {
+									// 告白相手のデータを登録
 									mpMember2 = mpdata.members[KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4];
 									muser2 = mpdata.members [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4].user;
 									mkind2 = mkindTable [KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4];
@@ -2624,9 +2623,6 @@ namespace Mix2App.MachiCon{
 			} else {
 				MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
 			}
-		}
-
-		private void KokuhakuEnd(){
 		}
 
 		// たまごっちキャラクターのランダムアニメ
@@ -2869,6 +2865,7 @@ namespace Mix2App.MachiCon{
 */				
 			}
 		}
+		// 告白結果のハートを拡大表示
 		private bool LoveResultDispHeart(){
 			bool retFlag = false;
 			Vector3 pos = new Vector3 (1.0f, 1.0f, 1.0f);
@@ -2907,8 +2904,8 @@ namespace Mix2App.MachiCon{
 			};
 
 			Vector3 _pos = new Vector3 (0.0f, 0.0f, 0.0f);
-			_openningTamagoIdouFlag = false;
 
+			_openningTamagoIdouFlag = false;
 			StartCoroutine ("OpenningTamagoSort");
 
 			cbTamagoChara [posNumber].gotoAndPlay (MotionLabel.WALK);
@@ -3164,7 +3161,6 @@ namespace Mix2App.MachiCon{
 			ManagerObject.instance.sound.playSe (31);
 
 			while (true) {														// ハートを女の子から男の子へ飛ばす
-//				_pos = Vector3.MoveTowards (_pos, posTamago [loveParamManNumber], (200.0f * Time.deltaTime));
 				_pos = Vector3.MoveTowards (_pos, _posMan, (200.0f * Time.deltaTime));
 				TamagoEffect.transform.Find ("Heart").gameObject.transform.localPosition = _pos;
 				if (_pos.x >= posTamago [loveParamManNumber].x) {
@@ -3218,8 +3214,7 @@ namespace Mix2App.MachiCon{
 
 			kokuhakuWaitTime = 1;
 		}
-
-
+			
 		private Vector3[] _KokuhakuPositionTable = new Vector3[]{
 			new Vector3(  200.0f,   40.0f, 0.0f),									// 男の子１の初期位置
 			new Vector3(  230.0f,  -40.0f, 0.0f),									// 男の子２の初期位置
@@ -3230,7 +3225,6 @@ namespace Mix2App.MachiCon{
 			new Vector3( -260.0f, -120.0f, 0.0f),									// 女の子３の初期位置
 			new Vector3( -290.0f, -200.0f, 0.0f),									// 女の子４の初期位置
 		};
-
 		private bool _KokuhakuAttackIdouFlag;
 		// 一歩前に
 		// num:たまごっち、sex:男女、mode:初期設定あり
@@ -3325,6 +3319,7 @@ namespace Mix2App.MachiCon{
 
 			_KokuhakuReturnIdouFlag = true;
 		}
+		// 告白を受けた女の子は、定位置に戻る
 		private IEnumerator KokuhakuWomanReturn(){
 			int _num = KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4;
 			Vector3 _pos = _KokuhakuPositionTable [_num];
@@ -3343,6 +3338,7 @@ namespace Mix2App.MachiCon{
 			}
 			_kokuhakuWomanReturnFlag = true;
 		}
+		// 告白成功した男の子は、女の子の定位置の右に移動する
 		private IEnumerator KokuhakuManGotoWoman(){
 			int _num = KokuhakuManToWomanTable [kokuhakuManTable [kokuhakuManNumber]] + 4;
 			Vector3 _pos = _KokuhakuPositionTable [_num];
@@ -3365,6 +3361,7 @@ namespace Mix2App.MachiCon{
 
 			_kokuhakuManGotoWomanFlag = true;
 		}
+		// 告白失敗した男の子は、定位置に戻る
 		private IEnumerator KokuhakuManReturn(){
 			int _retNum;
 			_kokuhakuManReturnFlag = false;
@@ -3421,7 +3418,6 @@ namespace Mix2App.MachiCon{
 				yield return null;
 			}
 			jobCount = num;
-
 		}
 
 
@@ -3454,9 +3450,7 @@ namespace Mix2App.MachiCon{
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer2").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer2").gameObject.transform.localScale;
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer3").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localScale;
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer4").gameObject.transform.localScale;
-
 		}
-
 
 
 
@@ -3487,7 +3481,7 @@ namespace Mix2App.MachiCon{
 			playerResultFlag = false;					// カップル解消
 		}
 
-		private IEnumerator AppelTimeWait(){
+		private IEnumerator AppealTimeWait(){
 			yield return new WaitForSeconds (APPEAL_LIMIT_TIME);
 			buttonFlag = true;
 		}
