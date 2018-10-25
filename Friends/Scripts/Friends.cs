@@ -1047,7 +1047,7 @@ public class Friends : MonoBehaviour,IReceiver {
 		YesNoModeFlag = YesNoModeTable.REPLY_FRIEND_YES;
 
 		EventKakunin.transform.Find ("Text_Arial").gameObject.GetComponent<Text> ().text = userNicknameChange(mFriendData.applys [num].user.nickname);
-		if (mFriendData.appfriends [num].chara2 != null) {
+		if (mFriendData.applys [num].user.chara2 != null) {
 			_mes = MsgDataTable_1;
 			_mes = _mes + mFriendData.applys [num].user.chara1.cname;
 			_mes = _mes + MsgDataTable_2;
@@ -1075,7 +1075,7 @@ public class Friends : MonoBehaviour,IReceiver {
 		YesNoModeFlag = YesNoModeTable.REPLY_FRIEND_NO;
 
 		EventKakunin.transform.Find ("Text_Arial").gameObject.GetComponent<Text> ().text = userNicknameChange(mFriendData.applys [num].user.nickname);
-		if (mFriendData.appfriends [num].chara2 != null) {
+		if (mFriendData.applys [num].user.chara2 != null) {
 			_mes = MsgDataTable_1;
 			_mes = _mes + mFriendData.applys [num].user.chara1.cname;
 			_mes = _mes + MsgDataTable_2;
