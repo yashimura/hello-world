@@ -83,7 +83,7 @@ namespace Mix2App.MachiCon{
 
 		private readonly float APPEAL_LIMIT_TIME = 5.0f;			// アピールタイムのキー入力待ち時間（秒）
 
-		private statusJobCount	jobCount = statusJobCount.machiconJobCount020;
+		private statusJobCount	jobCount = statusJobCount.machiconJobCountInit;	//machiconJobCount020;machiconJobCountInit
 		private enum statusJobCount{
 			machiconJobCount000,
 			machiconJobCount010,
@@ -124,6 +124,8 @@ namespace Mix2App.MachiCon{
 			machiconJobCount360,
 			machiconJobCount370,
 			machiconJobCount380,
+
+			machiconJobCountInit,
 		}
 
 		private statusKokuhakuCount kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount000;
@@ -366,6 +368,10 @@ namespace Mix2App.MachiCon{
 
 
 		void Update(){
+			if (jobCount == statusJobCount.machiconJobCountInit) {
+				return;
+			}
+
 			switch (jobCount) {
 			case	statusJobCount.machiconJobCount000:
 				{
@@ -725,6 +731,9 @@ namespace Mix2App.MachiCon{
 						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp10);
 						MesDisp.KokuhakuCurtainJikkyouOnOff(true);
 						kokuhakuTimeEndFlag = false;
+
+						kokuhakuTamagoSortFlag = false;
+						StartCoroutine ("kokuhakuTamagoSort");
 					}
 					break;
 				}
@@ -748,6 +757,8 @@ namespace Mix2App.MachiCon{
 						Color color = EventEnd.transform.Find ("text").gameObject.GetComponent<Image> ().color;
 						color.a = 0.0f;
 						EventEnd.transform.Find ("text").gameObject.GetComponent<Image> ().color = color;
+
+						kokuhakuTamagoSortFlag = true;
 					}
 					break;
 				}
@@ -3054,7 +3065,35 @@ namespace Mix2App.MachiCon{
 			}
 		}
 
+		private bool kokuhakuTamagoSortFlag;
+		private IEnumerator kokuhakuTamagoSort(){
+			float[] _posY = new float[8];
 
+			while (true) {
+				if (kokuhakuTamagoSortFlag) {
+					break;
+				}
+
+				for (int i = 0; i < 8; i++) {
+					_posY [i] = posTamago [i].y;
+				}
+
+				for (int j = 0; j < 8; j++) {								// たまごっちの表示優先順位の変更
+					int k = 0;
+					float _checkPos = -1000.0f;
+					for (int i = 0; i < 8; i++) {
+						if (_checkPos <= _posY [i]) {
+							_checkPos = _posY [i];
+							k = i;
+						}
+					}
+					_posY [k] = -1000.0f;
+					CharaTamagochi [k].GetComponent<Canvas> ().sortingOrder = j + 1;
+				}
+
+				yield return null;
+			}
+		}
 
 		// ライバルが出現してびっくりしてその場で少しジャンプする。
 		private IEnumerator TamagochiRivalJump(int num){
@@ -3357,9 +3396,9 @@ namespace Mix2App.MachiCon{
 			while (loveParamFlag) {
 				TamagochiAnimeSet (loveParamManNumber, MotionLabel.WALK);
 				posTamago [loveParamManNumber] = Vector3.MoveTowards (posTamago [loveParamManNumber], _pos, (200.0f * Time.deltaTime));
-				if (posTamago [loveParamManNumber].x <= 0) {
-					CharaTamagochi [loveParamManNumber].GetComponent<Canvas> ().sortingOrder = CharaTamagochi [_num].GetComponent<Canvas> ().sortingOrder;
-				}
+//				if (posTamago [loveParamManNumber].x <= 0) {
+//					CharaTamagochi [loveParamManNumber].GetComponent<Canvas> ().sortingOrder = CharaTamagochi [_num].GetComponent<Canvas> ().sortingOrder;
+//				}
 				if (posTamago [loveParamManNumber].x == _pos.x) {
 					break;
 				}
