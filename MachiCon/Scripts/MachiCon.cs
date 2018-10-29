@@ -981,6 +981,7 @@ namespace Mix2App.MachiCon{
 		// 入場時のたまごっちの吹き出しメッセージ登録
 		private void FukidashiMessageSet(){
 			string mesAvater = "";
+			string mesNo = "の";
 			string mesTamago = "";
 			string mesRet = "\n";
 
@@ -1040,7 +1041,7 @@ namespace Mix2App.MachiCon{
 				}
 			}
 
-			CharaTamagochi [posNumber].transform.Find ("fukidashi/comment/text").gameObject.GetComponent<Text> ().text = mesAvater + mesRet + mesTamago;
+			CharaTamagochi [posNumber].transform.Find ("fukidashi/comment/text").gameObject.GetComponent<Text> ().text = mesAvater + mesNo + mesRet + mesTamago;
 
 			if (stampFlag) {
 				switch (posNumber) {
