@@ -257,8 +257,8 @@ namespace Mix2App.MachiCon{
 			EventSoudanYesNew.GetComponent<Button> ().onClick.AddListener (ButtneYesClick);
 			EventSoudanNoNew.GetComponent<Button> ().onClick.AddListener (ButtonNoClick);
 
-			EventKakunin.transform.Find ("kakunin/button1").gameObject.GetComponent<Button> ().onClick.AddListener (ButtonKakuninYesClick);
-			EventKakunin.transform.Find ("kakunin/button2").gameObject.GetComponent<Button> ().onClick.AddListener (ButtonKakuninNoClick);
+			EventKakunin.transform.Find ("window_kakunin/Button_hai").gameObject.GetComponent<Button> ().onClick.AddListener (ButtonKakuninYesClick);
+			EventKakunin.transform.Find ("window_kakunin/Button_iie").gameObject.GetComponent<Button> ().onClick.AddListener (ButtonKakuninNoClick);
 
 			jobCount = statusJobCount.machiconJobCount020;							// 双子選択画面を飛ばす場合
 

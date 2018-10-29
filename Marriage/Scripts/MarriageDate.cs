@@ -120,7 +120,7 @@ namespace Mix2App.MarriageDate{
 					0,
 					ManagerObject.instance.player,
 					0,
-					new TestUser(1,UserKind.ANOTHER,UserType.MIX2,23,0,0,1),
+					new TestUser(1,UserKind.ANOTHER,UserType.MIX2,1,23,0,0,1),
 					0
 				};
 			}
