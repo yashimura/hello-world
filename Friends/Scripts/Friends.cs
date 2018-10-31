@@ -203,7 +203,8 @@ public class Friends : MonoBehaviour,IReceiver {
 
 		if (success) {
 			mFriendSearchData = (List<User>)data;
-			if (mFriendSearchData.Count != 0) {
+			Debug.Log(mFriendSearchData.Count);
+			if (mFriendSearchData.Count > 0) {
 				// 検索結果があるのでデータをパネルにセット
 				SearchDataSet ();
 			} else {
@@ -306,8 +307,9 @@ public class Friends : MonoBehaviour,IReceiver {
 	// 探すボタンの表示非表示を監視
 	private IEnumerator FriendSearchBtn(){
 		while (FriendSearchBtnFlag) {
-			string _data = EventSearch.transform.Find ("Image/Text").gameObject.GetComponent<InputField> ().text;
-			bool _roFlag = EventSearch.transform.Find ("Image/Text").gameObject.GetComponent<InputField> ().readOnly;
+			InputField inputcode = EventSearch.transform.Find ("InputCode").gameObject.GetComponent<InputField>();
+			string _data = inputcode.text;
+			bool _roFlag = inputcode.readOnly;
 			bool _flag;
 
 			if ((_data == "") || (_data.Length > 9) || _roFlag) {
@@ -580,7 +582,7 @@ public class Friends : MonoBehaviour,IReceiver {
 		FriendSearchBtnFlag = true;
 		StartCoroutine ("FriendSearchBtn");
 
-		eventSearchInputFieldSet("みーつID を いれてね",false);
+		eventSearchInputFieldSet("",false);
 		FriendSetActive (EventSearch, true);
 
 		// 検索結果を無しにする
@@ -667,26 +669,28 @@ public class Friends : MonoBehaviour,IReceiver {
 	private void BtnSearchInitClick(){
 		ManagerObject.instance.sound.playSe (11);
 
-		eventSearchInputFieldSet("みーつID を いれてね",false);
+		eventSearchInputFieldSet("",false);
 	}
 	private void eventSearchInputFieldSet(string _data,bool _flag){
-		EventSearch.transform.Find ("Image/Text").gameObject.GetComponent<InputField> ().characterLimit = 20;
-		EventSearch.transform.Find ("Image/Text").gameObject.GetComponent<InputField> ().contentType = InputField.ContentType.Standard;
-		EventSearch.transform.Find ("Image/Text").gameObject.GetComponent<InputField> ().text = _data;
-		EventSearch.transform.Find ("Image/Text").gameObject.GetComponent<InputField> ().characterLimit = 9;
-		EventSearch.transform.Find ("Image/Text").gameObject.GetComponent<InputField> ().contentType = InputField.ContentType.Alphanumeric;
-		EventSearch.transform.Find ("Image/Text").gameObject.GetComponent<InputField> ().readOnly = _flag;
+		InputField inputcode = EventSearch.transform.Find ("InputCode").gameObject.GetComponent<InputField>();
+		Text inputtext = inputcode.gameObject.transform.Find ("Text").gameObject.GetComponent<Text>();
+		inputcode.characterLimit = 20;
+		inputcode.contentType = InputField.ContentType.Standard;
+		inputcode.text = _data;
+		inputcode.characterLimit = 9;
+		inputcode.contentType = InputField.ContentType.Alphanumeric;
+		inputcode.readOnly = _flag;
 		if (_flag) {
-			EventSearch.transform.Find ("Image/Text").gameObject.GetComponent<Text> ().color = new Color (128.0f / 255.0f, 128.0f / 255.0f, 128.0f / 255.0f, 1.0f);
+			inputtext.color = new Color (128.0f / 255.0f, 128.0f / 255.0f, 128.0f / 255.0f, 1.0f);
 		} else {
-			EventSearch.transform.Find ("Image/Text").gameObject.GetComponent<Text> ().color = new Color (50.0f / 255.0f, 50.0f / 255.0f, 50.0f / 255.0f, 1.0f);
+			inputtext.color = new Color (50.0f / 255.0f, 50.0f / 255.0f, 50.0f / 255.0f, 1.0f);
 		}
 	}
 	// 探すボタン
 	private void BtnSearchSearchClick(){
 		ManagerObject.instance.sound.playSe (11);
 
-		string _data = EventSearch.transform.Find ("Image/Text").gameObject.GetComponent<InputField> ().text;
+		string _data = EventSearch.transform.Find ("InputCode").gameObject.GetComponent<InputField> ().text;
 
 		if ((_data == "") || (_data.Length > 9)) {
 			// 未入力の時などにエラー表示（探すボタンが４文字以上入力しないと表示ないから必要ないかも）
@@ -754,16 +758,14 @@ public class Friends : MonoBehaviour,IReceiver {
 		case	YesNoModeTable.APPLY_FRIEND:
 			{	// フレンド申請
 //				int _id = int.Parse (prefabObjSearch [ReqUserNumber].transform.Find ("IDbase/ID").gameObject.GetComponent<Text> ().text);
-				GameCall call = new GameCall (CallLabel.APPLY_FRIEND, mFriendSearchData [ReqUserNumber].code);
+				GameCall call = new GameCall (CallLabel.APPLY_FRIEND, mFriendSearchData[ReqUserNumber]);
 				call.AddListener (mApplyFriend);
 				ManagerObject.instance.connect.send (call);
 				break;
 			}
 		case	YesNoModeTable.DELETE_FRIEND:
 			{	// フレンドを削除する
-				int _id = mFriendData.appfriends[SakujoNumber].id;
-
-				GameCall call = new GameCall (CallLabel.DELETE_FRIEND, _id);
+				GameCall call = new GameCall (CallLabel.DELETE_FRIEND, mFriendData.appfriends[SakujoNumber]);
 				call.AddListener (mDeleteFriend);
 				ManagerObject.instance.connect.send (call);
 				break;
@@ -771,14 +773,13 @@ public class Friends : MonoBehaviour,IReceiver {
 		case	YesNoModeTable.REPLY_FRIEND_YES:
 		case	YesNoModeTable.REPLY_FRIEND_NO:
 			{	// フレンド申請に対する返答
-				int _id = mFriendData.applys [FriendYNNumber].user.id;
 				bool _flag;
 				if (YesNoModeFlag == YesNoModeTable.REPLY_FRIEND_YES) {
 					_flag = true;				// 承認
 				} else {
 					_flag = false;				// 却下
 				}
-				GameCall call = new GameCall (CallLabel.REPLY_FRIEND, _id, _flag);
+				GameCall call = new GameCall (CallLabel.REPLY_FRIEND, mFriendData.applys[FriendYNNumber], _flag);
 				call.AddListener (mReplyFriend);
 				ManagerObject.instance.connect.send (call);
 				break;
