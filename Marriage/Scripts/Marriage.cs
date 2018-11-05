@@ -330,8 +330,7 @@ namespace Mix2App.Marriage{
 			Debug.LogFormat("Marriage mblekekkon:{0},{1}",success,data);
 			//dataの内容は設計書を参照
 			//dataを変えたい場合はConnectManagerDriverのBLEKekkon()を変える
-			bool ret = (bool)data;
-			if (ret) mBleSuccess = 1;
+			if (success) mBleSuccess = 1;
 			else mBleSuccess = 2;
 		}
 

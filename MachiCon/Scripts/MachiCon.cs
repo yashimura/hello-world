@@ -221,38 +221,8 @@ namespace Mix2App.MachiCon{
 		void Start() {
 			Debug.Log ("MachiCon start");
 
-			//ルーム情報取得、メンバーマッチング処理
-			//パラメタは設計書参照
-			GameCall call = new GameCall(CallLabel.GET_ROOM_INFO);
-			call.AddListener(mgetroominf);
-			ManagerObject.instance.connect.send(call);
-
-		}
-		
-		void mgetroominf(bool success,object data)
-		{
-			// dataの内容は設計書参照
-			// dataを変更したいときはConnectManagerDriverのGetRoomInfo()を変更する
-			mpdata = (PartyData)data;
-			StartCoroutine(mstart());
-		}
-
-		private PartyResultData prdata;
-		void mgetroomres(bool success,object data)
-		{
-			mresult=true;
-			// dataの内容は設計書参照
-			// dataを変更したいときはConnectManagerDriverのGetRoomResult()を変更する
-			prdata = (PartyResultData)data;
-		}
-
-		IEnumerator mstart()
-		{
-			playerNumber = mpdata.playerIndex;
-			mpMember1 = mpdata.members [playerNumber];
-			muser1 = mpdata.members[playerNumber].user;
-			mkind1 = mpdata.members[playerNumber].index;
-			playerResultFlag = false;
+			muser1 = ManagerObject.instance.player;
+			mkind1 = 0;
 
 			EventSoudanYesNew.GetComponent<Button> ().onClick.AddListener (ButtneYesClick);
 			EventSoudanNoNew.GetComponent<Button> ().onClick.AddListener (ButtonNoClick);
@@ -277,11 +247,6 @@ namespace Mix2App.MachiCon{
 			// めいんBGMを登録
 			ManagerObject.instance.sound.playBgm (11);
 
-			for (int i = 0; i < 8; i++) {
-				mkindTable [i] = mpdata.members [i].index;
-			}
-
-				
 			MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
 
 			if (muser1.chara2 != null) {
@@ -298,12 +263,36 @@ namespace Mix2App.MachiCon{
 				for (int i = 0; i < 2; i++) {
 					cbFutagoChara [i] = CharaFutago [i].GetComponent<CharaBehaviour> ();
 				}
-				yield return cbFutagoChara [0].init (muser1.GetCharaAt(0));
-				cbFutagoChara [0].gotoAndPlay (MotionLabel.IDLE);
-				yield return cbFutagoChara [1].init (muser1.GetCharaAt(1));
-				cbFutagoChara [1].gotoAndPlay (MotionLabel.IDLE);
 
-				startEndFutagoFlag = true;
+				StartCoroutine("futagoCharaSet");
+			}
+		}
+		
+		void mgetroominf(bool success,object data)
+		{
+			// dataの内容は設計書参照
+			// dataを変更したいときはConnectManagerDriverのGetRoomInfo()を変更する
+			mpdata = (PartyData)data;
+			StartCoroutine(mstart());
+		}
+
+		private PartyResultData prdata;
+		void mgetroomres(bool success,object data)
+		{
+			mresult=true;
+			// dataの内容は設計書参照
+			// dataを変更したいときはConnectManagerDriverのGetRoomResult()を変更する
+			prdata = (PartyResultData)data;
+		}
+
+		IEnumerator mstart()
+		{
+			playerNumber = mpdata.playerIndex;
+			mpMember1 = mpdata.members [playerNumber];
+			playerResultFlag = false;
+
+			for (int i = 0; i < 8; i++) {
+				mkindTable [i] = mpdata.members [i].index;
 			}
 
 			for (int i = 0; i < 8; i++) {
@@ -367,6 +356,16 @@ namespace Mix2App.MachiCon{
 		private int		posNumber;
 
 
+
+		private IEnumerator futagoCharaSet(){
+			yield return cbFutagoChara [0].init (muser1.GetCharaAt(0));
+			cbFutagoChara [0].gotoAndPlay (MotionLabel.IDLE);
+			yield return cbFutagoChara [1].init (muser1.GetCharaAt(1));
+			cbFutagoChara [1].gotoAndPlay (MotionLabel.IDLE);
+
+			startEndFutagoFlag = true;
+		}
+
 		void Update(){
 			if (jobCount == statusJobCount.machiconJobCountInit) {
 				return;
@@ -395,12 +394,6 @@ namespace Mix2App.MachiCon{
 						jobCount = statusJobCount.machiconJobCount020;
 						EventFutago.SetActive (false);											// 双子選択画面を消す。
 						mkind1 = buttonFutagoNumber;
-						mkindTable[playerNumber] = buttonFutagoNumber;
-						if (buttonFutagoNumber == 0) {
-							cbTamagoChara[playerNumber].init (muser1.GetCharaAt(0));
-						} else {
-							cbTamagoChara[playerNumber].init (muser1.GetCharaAt(1));
-						}
 					}
 
 					TamagochiImageMove (CharaFutagoImage [0], CharaFutago [0], "");
@@ -410,6 +403,12 @@ namespace Mix2App.MachiCon{
 				}
 			case	statusJobCount.machiconJobCount020:
 				{
+					//ルーム情報取得、メンバーマッチング処理
+					//パラメタは設計書参照
+					GameCall call = new GameCall(CallLabel.GET_ROOM_INFO,mkind1);
+					call.AddListener(mgetroominf);
+					ManagerObject.instance.connect.send(call);
+
 					countTime1 = 0.0f;
 					countTime2 = 10;
 
@@ -862,18 +861,23 @@ namespace Mix2App.MachiCon{
 				}
 			}
 
-			for (int i = 0; i < 8; i++) {								// 各キャラの表示位置を登録
-				CharaTamagochi [i].transform.localPosition = posTamago [i];
-			}
 
-			for (int i = 0; i < 8; i++) {
-				TamagochiImageMove (CharaTamagochi [i], CharaTamago [i], "");
-				if(CharaTamago[i].transform.localScale.x <= 0){
-					CharaTamagochi [i].transform.localScale = new Vector3 (-2.5f, 2.5f, 1.0f);
-					CharaTamagochi [i].transform.Find ("fukidashi").gameObject.transform.localScale = new Vector3 (-0.42f, 0.42f, 1.0f);
-				} else {
-					CharaTamagochi [i].transform.localScale = new Vector3 (2.5f, 2.5f, 1.0f);
-					CharaTamagochi [i].transform.Find ("fukidashi").gameObject.transform.localScale = new Vector3 (0.42f, 0.42f, 1.0f);
+
+			if (mresultinit) {
+
+				for (int i = 0; i < 8; i++) {								// 各キャラの表示位置を登録
+					CharaTamagochi [i].transform.localPosition = posTamago [i];
+				}
+
+				for (int i = 0; i < 8; i++) {
+					TamagochiImageMove (CharaTamagochi [i], CharaTamago [i], "");
+					if (CharaTamago [i].transform.localScale.x <= 0) {
+						CharaTamagochi [i].transform.localScale = new Vector3 (-2.5f, 2.5f, 1.0f);
+						CharaTamagochi [i].transform.Find ("fukidashi").gameObject.transform.localScale = new Vector3 (-0.42f, 0.42f, 1.0f);
+					} else {
+						CharaTamagochi [i].transform.localScale = new Vector3 (2.5f, 2.5f, 1.0f);
+						CharaTamagochi [i].transform.Find ("fukidashi").gameObject.transform.localScale = new Vector3 (0.42f, 0.42f, 1.0f);
+					}
 				}
 			}
 		}
