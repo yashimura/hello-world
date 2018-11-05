@@ -654,6 +654,15 @@ namespace Mix2App.MachiCon{
 						}
 						WaitTimeSecInit (15);													// アピールタイムは１５秒
 						applealWaitTime = 0.0f;
+
+						if (sceneNumber == 1) {													// アピールタイム２回目が開始されたのでデータ転送開始
+							//相談送信、全メンバーの相談処理を完了後、告白結果取得
+							// パラメタは設計書参照
+							//TODO masklistは現在何も反映していないので適宜設定を
+							GameCall call = new GameCall(CallLabel.GET_ROOM_RESULT,mpdata.roomId,maskdatas,mpdata.members);
+							call.AddListener(mgetroomres);
+							ManagerObject.instance.connect.send(call);
+						}
 					}
 					break;
 				}
@@ -691,14 +700,14 @@ namespace Mix2App.MachiCon{
 						_eventAppealSetActiveFlag = false;
 						EventAppeal.SetActive (false);
 						EventAppealTableHeartClear ();											// テーブルハートを消しておく
-
+/*
 						//相談送信、全メンバーの相談処理を完了後、告白結果取得
 						// パラメタは設計書参照
 						//TODO masklistは現在何も反映していないので適宜設定を
-//						GameCall call = new GameCall(CallLabel.GET_ROOM_RESULT,maskdatas);
 						GameCall call = new GameCall(CallLabel.GET_ROOM_RESULT,mpdata.roomId,maskdatas,mpdata.members);
 						call.AddListener(mgetroomres);
 						ManagerObject.instance.connect.send(call);
+*/
 					}
 					break;
 				}
