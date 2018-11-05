@@ -740,7 +740,7 @@ namespace Mix2App.MachiCon{
 			case	statusJobCount.machiconJobCount280:
 				{
 					if (kokuhakuTimeEndFlag) {
-						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp15);		// 告白処理が終了したのでお別れメッセージを表示
+//						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp15);		// 告白処理が終了したのでお別れメッセージを表示
 						jobCount = statusJobCount.machiconJobCount290;
 
 //						ManagerObject.instance.sound.playBgm (11);
@@ -752,6 +752,8 @@ namespace Mix2App.MachiCon{
 				{
 					if (EventCurtainPositionChange (-15.0f)) {									// カーテンクローズ
 						jobCount = statusJobCount.machiconJobCount300;
+
+						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp15);		// 告白処理が終了したのでお別れメッセージを表示
 
 						EventEnd.SetActive (true);												// おしまいを表示準備
 						Color color = EventEnd.transform.Find ("text").gameObject.GetComponent<Image> ().color;
@@ -778,7 +780,12 @@ namespace Mix2App.MachiCon{
 				{
 					if (WaitTimeSubLoop ()) {
 						if (playerResultFlag) {
-							jobCount = statusJobCount.machiconJobCount320;						// 自キャラがカップルので確認画面を表示
+//							if ((mpMember1.canMarried) && (mpMember2.canMarried)) {
+							if((mpMember1.user.utype == UserType.MIX2) && (mpMember2.user.utype == UserType.MIX2)){
+								jobCount = statusJobCount.machiconJobCount320;					// 自キャラがカップルで結婚イベントに行くので確認画面を表示
+							} else {
+								jobCount = statusJobCount.machiconJobCount360;					// デートイベントに行くのでそのままシーンチェンジ
+							}
 						} else {
 							jobCount = statusJobCount.machiconJobCount360;						// 自キャラがカップル成立していないのでそのままシーンチェンジ
 						}
@@ -825,6 +832,7 @@ namespace Mix2App.MachiCon{
 			case	statusJobCount.machiconJobCount360:
 				{
 					if (WaitTimeSubLoop ()) {
+						EventEnd.SetActive (false);
 						if (playerResultFlag) {
 							Debug.Log ("ユーザーの結婚フラグ：" + mpMember1.canMarried);
 							Debug.Log ("告白相手の結婚フラグ：" + mpMember2.canMarried);
@@ -2197,9 +2205,7 @@ namespace Mix2App.MachiCon{
 			case	statusKokuhakuCount.kokuhakuCount060:
 				{
 					KokuhakuRivalWaitStop (1, false);											// ちょっと待ったを表示
-					if (KokuhakuWaitTimeSubLoop ()) {
-						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
-						EventWaitStop.SetActive (false);
+					if (KokuhakuWaitStopAnimeEnd ()) {
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount070;
 					}
 					break;
@@ -2233,9 +2239,7 @@ namespace Mix2App.MachiCon{
 			case	statusKokuhakuCount.kokuhakuCount100:
 				{
 					KokuhakuRivalWaitStop (2, false);											// ちょっと待ったを表示
-					if (KokuhakuWaitTimeSubLoop ()) {
-						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
-						EventWaitStop.SetActive (false);
+					if (KokuhakuWaitStopAnimeEnd ()) {
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount110;
 					}
 					break;
@@ -2276,9 +2280,7 @@ namespace Mix2App.MachiCon{
 			case	statusKokuhakuCount.kokuhakuCount140:
 				{
 					KokuhakuRivalWaitStop (3, false);											// ちょっと待ったを表示
-					if (KokuhakuWaitTimeSubLoop ()) {
-						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
-						EventWaitStop.SetActive (false);
+					if (KokuhakuWaitStopAnimeEnd ()) {
 						kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount150;
 					}
 					break;
@@ -2616,6 +2618,24 @@ namespace Mix2App.MachiCon{
 			}
 			return false;
 		}
+		private bool KokuhakuWaitStopAnimeEnd(){
+			if (EventWaitStop.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0f) {
+				MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
+				EventWaitStop.SetActive (false);
+				return true;
+			}
+
+			GameObject obj = EventWaitStop.transform.Find ("Panel (1)").gameObject;
+			GameObject obj2 = EventWaitStop.transform.Find ("Panel (1)/Image").gameObject;
+			if (obj.transform.localScale.x == 1.68f) {
+				// IPhoneXで画面端に残ってしまうのでスケールを０に
+				obj2.transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
+			} else {
+				obj2.transform.localScale = new Vector3 (3.2f, 3.2f, 2.0f);
+			}
+
+			return false;
+		}
 
 		// num:男の子の番号（０〜３）、flag:表示フラグ（true:表示、false:非表示）
 		private void KokuhakuMessageDisp(int num,bool flag){
@@ -2786,7 +2806,7 @@ namespace Mix2App.MachiCon{
 				MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp12);
 				kokuhakuWaitTime = 120;
 			}
-			TamagochiImageMove (EventWaitStop, CharaTamago [num], "panel/image/");
+			TamagochiImageMove (EventWaitStop, CharaTamago [num], "Panel (1)/Image/");
 		}
 			
 		// 告白判定

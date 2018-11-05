@@ -203,7 +203,6 @@ public class Friends : MonoBehaviour,IReceiver {
 
 		if (success) {
 			mFriendSearchData = (List<User>)data;
-			Debug.Log(mFriendSearchData.Count);
 			if (mFriendSearchData.Count > 0) {
 				// 検索結果があるのでデータをパネルにセット
 				SearchDataSet ();
@@ -219,6 +218,7 @@ public class Friends : MonoBehaviour,IReceiver {
 			EventKakunin.transform.Find ("Button_blue_tojiru").gameObject.SetActive (true);
 			EventKakunin.transform.Find ("Text (2)").gameObject.SetActive (true);
 		}
+		eventSearchInputFieldSet (null,true);
 	}
 		
 
@@ -323,9 +323,9 @@ public class Friends : MonoBehaviour,IReceiver {
 			}
 
 			if (_flag) {
-				BtnSearchSearch.gameObject.SetActive (true);
+				BtnSearchSearch.interactable = true;
 			} else {
-				BtnSearchSearch.gameObject.SetActive (false);
+				BtnSearchSearch.interactable = false;
 			}
 
 			yield return null;
@@ -582,7 +582,7 @@ public class Friends : MonoBehaviour,IReceiver {
 		FriendSearchBtnFlag = true;
 		StartCoroutine ("FriendSearchBtn");
 
-		eventSearchInputFieldSet("",false);
+		eventSearchInputFieldSet("",true);
 		FriendSetActive (EventSearch, true);
 
 		// 検索結果を無しにする
@@ -669,22 +669,15 @@ public class Friends : MonoBehaviour,IReceiver {
 	private void BtnSearchInitClick(){
 		ManagerObject.instance.sound.playSe (11);
 
-		eventSearchInputFieldSet("",false);
+		eventSearchInputFieldSet("",true);
 	}
 	private void eventSearchInputFieldSet(string _data,bool _flag){
 		InputField inputcode = EventSearch.transform.Find ("InputCode").gameObject.GetComponent<InputField>();
-		Text inputtext = inputcode.gameObject.transform.Find ("Text").gameObject.GetComponent<Text>();
-		inputcode.characterLimit = 20;
-		inputcode.contentType = InputField.ContentType.Standard;
-		inputcode.text = _data;
-		inputcode.characterLimit = 9;
-		inputcode.contentType = InputField.ContentType.Alphanumeric;
-		inputcode.readOnly = _flag;
-		if (_flag) {
-			inputtext.color = new Color (128.0f / 255.0f, 128.0f / 255.0f, 128.0f / 255.0f, 1.0f);
-		} else {
-			inputtext.color = new Color (50.0f / 255.0f, 50.0f / 255.0f, 50.0f / 255.0f, 1.0f);
-		}
+		//Text inputtext = inputcode.gameObject.transform.Find ("Text").gameObject.GetComponent<Text>();
+		if (_data!=null) 
+			inputcode.text = _data;
+
+		inputcode.interactable = _flag;
 	}
 	// 探すボタン
 	private void BtnSearchSearchClick(){
@@ -703,7 +696,7 @@ public class Friends : MonoBehaviour,IReceiver {
 			call.AddListener (mSearchFriend);
 			ManagerObject.instance.connect.send (call);
 
-			eventSearchInputFieldSet (_data,true);
+			eventSearchInputFieldSet (null,false);
 		}
 	}
 	// 初期選択画面へのボタン
@@ -932,7 +925,7 @@ public class Friends : MonoBehaviour,IReceiver {
 			prefabObjApp [i].transform.Find("Button_sakujo").gameObject.GetComponent<Button> ().onClick.AddListener (() => BtnSakujoReq (ii));
 
 			// プロフィール画面へのボタンを有効化
-			prefabObjApp [i].gameObject.GetComponent<Button> ().onClick.AddListener (() => BtnUserEventNoteApp (ii));
+			//prefabObjApp [i].gameObject.GetComponent<Button> ().onClick.AddListener (() => BtnUserEventNoteApp (ii));
 
 			// 表示位置を登録
 			_Pos.x = prefabObjAppXPosTable [i & 1];
@@ -959,9 +952,9 @@ public class Friends : MonoBehaviour,IReceiver {
 			prefabObjMIX2 [i].transform.SetParent (EventNoteMIX2.transform.Find ("daishi/mask/Panel").transform, false);
 			prefabObjMIX2 [i].name = "friendMIX2" + i.ToString ();
 
-			int ii = i + 0;
 			// プロフィール画面へのボタンを有効化
-			prefabObjMIX2 [i].GetComponent<Button> ().onClick.AddListener (() => BtnUserEventNoteMIX2 (ii));
+			//int ii = i + 0;
+			//prefabObjMIX2 [i].GetComponent<Button> ().onClick.AddListener (() => BtnUserEventNoteMIX2 (ii));
 	
 			// 表示位置を登録
 			_Pos.x = prefabObjMIX2XPosTable [i & 1];
@@ -995,7 +988,7 @@ public class Friends : MonoBehaviour,IReceiver {
 			prefabObjRenraku [i].transform.Find ("Button_blue").gameObject.GetComponent<Button> ().onClick.AddListener (() => BtnFriendNOReq (ii));
 
 			// プロフィール画面へのボタンを有効化
-			prefabObjRenraku [i].GetComponent<Button> ().onClick.AddListener (() => BtnUserEventNoteRenraku (ii));
+			//prefabObjRenraku [i].GetComponent<Button> ().onClick.AddListener (() => BtnUserEventNoteRenraku (ii));
 
 			// 表示位置を登録
 			_Pos.x = 0.0f;
@@ -1151,7 +1144,7 @@ public class Friends : MonoBehaviour,IReceiver {
 				prefabObjSearch [i].transform.Find("Button_red").gameObject.GetComponent<Button> ().onClick.AddListener (() => BtnSearchReq (ii));
 
 				// プロフィール画面へのボタンを有効化
-				prefabObjSearch [i].GetComponent<Button> ().onClick.AddListener (() => BtnUserEventSearch (ii));
+				//prefabObjSearch [i].GetComponent<Button> ().onClick.AddListener (() => BtnUserEventSearch (ii));
 
 				// 表示位置を登録
 				_Pos.x = 0.0f;
@@ -1444,6 +1437,7 @@ public class Friends : MonoBehaviour,IReceiver {
 		return retStr;
 	}
 
+/* フレンド画面ではプロフィール詳細表示はないです
 	// キャラとユーザー情報を押したらプロフィール画面へ
 	private void BtnUserEventNoteApp(int num){
 		EventProfileSend (mFriendData.appfriends [num]);
@@ -1460,15 +1454,12 @@ public class Friends : MonoBehaviour,IReceiver {
 	private void BtnUserEventSearch(int num){
 		EventProfileSend (mFriendSearchData [num]);
 	}
-
-
 	private void EventProfileSend(User _user){
 		ManagerObject.instance.sound.playSe (11);
-
 		Debug.Log ("プロフィール画面へ・・・" + _user.nickname);
 		ManagerObject.instance.view.add (SceneLabel.PROFILE_TOWN, _user);
 //		ManagerObject.instance.view.change(SceneLabel.PROFILE,_user);
 	}
-
+*/
 
 }
