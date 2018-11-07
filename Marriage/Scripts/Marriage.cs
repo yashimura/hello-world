@@ -63,7 +63,8 @@ namespace Mix2App.Marriage{
 		[SerializeField] private GameObject EventSeikou;			// 通信成功画面
 
 		[SerializeField] private Button ButtonJyunbi;
-		[SerializeField] private Button ButtonSippai;
+		[SerializeField] private Button ButtonSippaiEnd;
+		[SerializeField] private Button ButtonSippaiRetry;
 		[SerializeField] private Button ButtonSeikou;
 
 		[SerializeField] private GameObject EventEgg1;				// 
@@ -142,6 +143,8 @@ namespace Mix2App.Marriage{
 		private bool womanPetAttendFlag;
 
 
+		private bool retryFlag;
+
 		void Awake(){
 			Debug.Log ("Marriage Awake");
 			mparam=null;
@@ -211,7 +214,8 @@ namespace Mix2App.Marriage{
 
 			jyunbiButtonFlag = false;
 			ButtonJyunbi.onClick.AddListener (ButtonJyunbiClick);
-			ButtonSippai.onClick.AddListener (ButtonSippaiClick);
+			ButtonSippaiEnd.onClick.AddListener (ButtonSippaiEndClick);
+			ButtonSippaiRetry.onClick.AddListener (ButtonSippaiRetryClick);
 			ButtonSeikou.onClick.AddListener (ButtonSeikouClick);
 			EventEgg1.transform.Find("Image").gameObject.GetComponent<Button>().onClick.AddListener (ButtonEggClick);
 
@@ -224,10 +228,9 @@ namespace Mix2App.Marriage{
 
 
 
-
-//			muser1.chara2 = new TamaChara (29);
-//			muser2.chara2 = new TamaChara (30);
-
+//			muser1.chara2 = muser1.chara1;
+//			muser2.chara2 = muser2.chara1;
+//			muser2.pet = muser1.pet;
 
 
 
@@ -344,6 +347,8 @@ namespace Mix2App.Marriage{
 					EventSeikou.SetActive (false);
 
 					jobCount = statusJobCount.marriageJobCount010;
+					jyunbiButtonFlag = false;
+					waitCount = 1;
 					break;
 				}
 			case	statusJobCount.marriageJobCount010:
@@ -605,6 +610,8 @@ namespace Mix2App.Marriage{
 				}
 			case	statusJobCount.marriageJobCount120:
 				{
+					retryFlag = false;
+
 					//waitと結婚通信が完了するまで待つ
 					if (waitFlag&&mBleSuccess>0) {
 						if (mBleSuccess==1) {
@@ -654,6 +661,20 @@ namespace Mix2App.Marriage{
 				}
 			case	statusJobCount.marriageJobCount150:
 				{
+					if (retryFlag) {
+						EventMarriage.SetActive (true);
+						CameraObj.SetActive (true);
+						CameraObjMarriage.SetActive (false);
+
+						EventStart.SetActive (false);
+						EventTown.SetActive (false);
+						EventPark.SetActive (false);
+						EventBeach.SetActive (false);
+						EventGarden.SetActive (false);
+						EventFinale.SetActive (false);
+
+						jobCount = statusJobCount.marriageJobCount000;
+					}
 					break;
 				}
 			}
@@ -782,6 +803,8 @@ namespace Mix2App.Marriage{
 
 
 		private IEnumerator TownCharaIdou(){
+			EventTown.transform.Find ("Chara").gameObject.transform.localPosition = new Vector3 (0.0f, 0.0f, 0.0f);
+
 			while (_CoroutineFlagTown) {
 				Vector3 _pos = EventTown.transform.Find ("Chara").gameObject.transform.localPosition;
 				_pos.x -= (0.6f * (60 * Time.deltaTime));
@@ -791,6 +814,8 @@ namespace Mix2App.Marriage{
 		}
 
 		private IEnumerator ParkCharaIdou(){
+			EventPark.transform.Find ("Chara").gameObject.transform.localPosition = new Vector3 (0.0f, 0.0f, 0.0f);
+
 			while(_CoroutineFlagPark){
 				Vector3 _pos = EventPark.transform.Find ("Chara").gameObject.transform.localPosition;
 				_pos.x += (0.075f * (60 * Time.deltaTime));
@@ -800,6 +825,8 @@ namespace Mix2App.Marriage{
 		}
 
 		private IEnumerator BeachCharaIdou(){
+			EventBeach.transform.Find ("Chara").gameObject.transform.localPosition = new Vector3 (0.0f, 0.0f, 0.0f);
+
 			while (_CoroutineFlagBeach) {
 				Vector3 _pos = EventBeach.transform.Find ("Chara").gameObject.transform.localPosition;
 				_pos.x -= (0.6f * (60 * Time.deltaTime));
@@ -820,12 +847,12 @@ namespace Mix2App.Marriage{
 			float	_posPet1y;
 			float	_posPet2y;
 
-			_posCharaMan = EventFinale.transform.Find ("bg/manChara").gameObject.transform.localPosition;
-			_posCharaWoman = EventFinale.transform.Find ("bg/womanChara").gameObject.transform.localPosition;
-			_posCharaMan2 = EventFinale.transform.Find ("bg/manChara2").gameObject.transform.localPosition;
-			_posCharaWoman2 = EventFinale.transform.Find ("bg/womanChara2").gameObject.transform.localPosition;
-			_posPet1 = EventFinale.transform.Find ("bg/manPet").gameObject.transform.localPosition;
-			_posPet2 = EventFinale.transform.Find ("bg/womanPet").gameObject.transform.localPosition;
+			_posCharaMan = new Vector3 (70.0f, -120.0f, 0.0f);
+			_posCharaWoman = new Vector3 (-50.0f, -120.0f, 0.0f);
+			_posCharaMan2 = new Vector3 (60.0f, 30.0f, 0.0f);
+			_posCharaWoman2 = new Vector3 (-40.0f, 30.0f, 0.0f);
+			_posPet1 = new Vector3 (65.0f, -15.0f, 0.0f);
+			_posPet2 = new Vector3 (-45.0f, -15.0f, 0.0f);
 
 			_posCharaMan2y = _posCharaMan2.y;
 			_posCharaWoman2y = _posCharaWoman2.y;
@@ -970,9 +997,13 @@ namespace Mix2App.Marriage{
 			ManagerObject.instance.sound.playSe (13);
 			jyunbiButtonFlag = true;
 		}
-		private void ButtonSippaiClick(){
+		private void ButtonSippaiEndClick(){
 			ManagerObject.instance.sound.playSe (17);
 			ManagerObject.instance.view.change(SceneLabel.TOWN);
+		}
+		private void ButtonSippaiRetryClick(){
+			ManagerObject.instance.sound.playSe (13);
+			retryFlag = true;
 		}
 		private void ButtonSeikouClick(){
 			ManagerObject.instance.sound.playSe (17);
