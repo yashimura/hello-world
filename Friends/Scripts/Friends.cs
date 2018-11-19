@@ -9,7 +9,7 @@ using Mix2App.Lib.Events;
 using Mix2App.Lib.View;
 using Mix2App.Lib.Utils;
 
-public class Friends : MonoBehaviour,IReceiver {
+public class Friends : MonoBehaviour,IReceiver,IReadyable {
 	[SerializeField] private GameObject TamagoBase;
 
 	[SerializeField] private GameObject EventMenu;			// 初期選択画面
@@ -90,12 +90,36 @@ public class Friends : MonoBehaviour,IReceiver {
 	private readonly string MsgDataTable_7 = "」と\nともだちに なりません";
 	private readonly string MsgDataTable_8 = "」の\nともだちが いっぱいで とうろくできません";
 
-
-
-
+	private bool minited;
+	private InputField msearchin;
 
 	void Awake(){
 		Debug.Log ("Friends Awake");
+		minited=false;
+		// パパママモードで友達検索を許可しているかどうか
+		BtnMenuSearch.interactable = ManagerObject.instance.app.enabledViewSearchFriend;
+
+		msearchin = EventSearch.transform.Find ("InputCode").gameObject.GetComponent<InputField>();
+	}
+
+	void OnEnable()
+	{
+		msearchin.onValidateInput += ValidateInput;
+	}
+
+	void OnDisable()
+	{
+		msearchin.onValidateInput -= ValidateInput;
+	}
+
+	public char ValidateInput(string text, int charIndex, char addedChar)
+	{
+		if (char.IsSurrogate(addedChar))
+		{
+			// サロゲートペアの場合には削除
+			addedChar = '\0';
+		}
+		return addedChar;
 	}
 
 	public void receive(params object[] parameter){
@@ -109,6 +133,11 @@ public class Friends : MonoBehaviour,IReceiver {
 		GameCall call = new GameCall (CallLabel.GET_FRIEND_INFO);
 		call.AddListener (mGetFriendInfo);
 		ManagerObject.instance.connect.send (call);
+	}
+
+	public bool ready ()
+	{
+		return minited;
 	}
 
 	void mGetFriendInfo(bool success,object data){
@@ -126,24 +155,9 @@ public class Friends : MonoBehaviour,IReceiver {
 		FriendSetActive (EventNoteMIX2, false);
 		FriendSetActive (EventNoteRenraku, false);
 		FriendSetActive (EventSearch, false);
-
-
-
-		// パパママモードで友達検索を許可しているかどうか
-		if (ManagerObject.instance.app.enabledViewSearchFriend) {
-			// 友達検索OK
-			EventMenu.transform.Find("Button_kensaku_gray").gameObject.SetActive(false);
-		} else {
-			// 友達検索NO
-			EventMenu.transform.Find("Button_kensaku_gray").gameObject.SetActive(true);
-		}
-
-
 	
 		// 友達手帳のデータを登録する
 		NoteDataSet ();
-
-
 
 		BtnMenuTecho.onClick.AddListener(BtnMenuTechoClick);					// 友達手帳へのボタン
 		BtnMenuSearch.onClick.AddListener(BtnMenuSearchClick);					// 友達検索へのボタン
@@ -175,15 +189,13 @@ public class Friends : MonoBehaviour,IReceiver {
 		BtnKakuninYes.onClick.AddListener(BtnKakuninYesClick);					// はいボタン
 		BtnKakuninNo.onClick.AddListener(BtnKakuninNoClick);					// いいえボタン
 
-
-
 		// アイテムパネルのスクロール監視
 		FriendListScrollFlag = true;
 		StartCoroutine ("FriendListScroll");
 
-
-
 		yield return null;
+
+		minited=true;
 	}
 
 	void Destroy(){
@@ -218,7 +230,7 @@ public class Friends : MonoBehaviour,IReceiver {
 			EventKakunin.transform.Find ("Button_blue_tojiru").gameObject.SetActive (true);
 			EventKakunin.transform.Find ("Text (2)").gameObject.SetActive (true);
 		}
-		eventSearchInputFieldSet (null,true);
+
 	}
 		
 
@@ -307,9 +319,9 @@ public class Friends : MonoBehaviour,IReceiver {
 	// 探すボタンの表示非表示を監視
 	private IEnumerator FriendSearchBtn(){
 		while (FriendSearchBtnFlag) {
-			InputField inputcode = EventSearch.transform.Find ("InputCode").gameObject.GetComponent<InputField>();
-			string _data = inputcode.text;
-			bool _roFlag = inputcode.readOnly;
+			
+			string _data = msearchin.text;
+			bool _roFlag = msearchin.readOnly;
 			bool _flag;
 
 			if ((_data == "") || (_data.Length > 9) || _roFlag) {
@@ -582,7 +594,7 @@ public class Friends : MonoBehaviour,IReceiver {
 		FriendSearchBtnFlag = true;
 		StartCoroutine ("FriendSearchBtn");
 
-		eventSearchInputFieldSet("",true);
+		eventSearchInputFieldSet("");
 		FriendSetActive (EventSearch, true);
 
 		// 検索結果を無しにする
@@ -669,21 +681,17 @@ public class Friends : MonoBehaviour,IReceiver {
 	private void BtnSearchInitClick(){
 		ManagerObject.instance.sound.playSe (11);
 
-		eventSearchInputFieldSet("",true);
+		eventSearchInputFieldSet("");
 	}
-	private void eventSearchInputFieldSet(string _data,bool _flag){
-		InputField inputcode = EventSearch.transform.Find ("InputCode").gameObject.GetComponent<InputField>();
-		//Text inputtext = inputcode.gameObject.transform.Find ("Text").gameObject.GetComponent<Text>();
+	private void eventSearchInputFieldSet(string _data){
 		if (_data!=null) 
-			inputcode.text = _data;
-
-		inputcode.interactable = _flag;
+			msearchin.text = _data;
 	}
 	// 探すボタン
 	private void BtnSearchSearchClick(){
 		ManagerObject.instance.sound.playSe (11);
 
-		string _data = EventSearch.transform.Find ("InputCode").gameObject.GetComponent<InputField> ().text;
+		string _data = msearchin.text;
 
 		if ((_data == "") || (_data.Length > 9)) {
 			// 未入力の時などにエラー表示（探すボタンが４文字以上入力しないと表示ないから必要ないかも）
@@ -695,8 +703,6 @@ public class Friends : MonoBehaviour,IReceiver {
 			GameCall call = new GameCall (CallLabel.SEARCH_FRIEND, _data);
 			call.AddListener (mSearchFriend);
 			ManagerObject.instance.connect.send (call);
-
-			eventSearchInputFieldSet (null,false);
 		}
 	}
 	// 初期選択画面へのボタン
