@@ -612,8 +612,8 @@ namespace Mix2App.Marriage{
 				{
 					retryFlag = false;
 
-					//waitと結婚通信が完了するまで待つ
-					if (waitFlag&&mBleSuccess>0) {
+					//結婚通信が完了するまで待つ
+					if (mBleSuccess>0) {
 						if (mBleSuccess==1) {
 							//通信成功時はホーム画面へ
 							jobCount = statusJobCount.marriageJobCount130;
