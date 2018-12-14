@@ -1184,20 +1184,20 @@ namespace Mix2App.MiniGame2{
 					EventItemget.transform.Find ("getitem_text").gameObject.SetActive (false);
 					EventItemget.transform.Find ("ItemView").gameObject.SetActive (false);
 
-					if (mResultData.reward.kind == 0) {
-						// ごっちポイントが褒賞品
-						EventItemget.transform.Find ("getpoints_text").gameObject.SetActive (true);
-						EventItemget.transform.Find ("GotchiView").gameObject.SetActive (true);
-
-						GotchiBehaviour gbPoint = EventItemget.transform.Find ("GotchiView").gameObject.GetComponent<GotchiBehaviour> ();
-						gbPoint.init (mResultData.reward.gpt);
-					} else {
+					if (mResultData.reward.kind == RewardKind.ITEM) {
 						// アイテムが褒賞品
 						EventItemget.transform.Find ("getitem_text").gameObject.SetActive (true);
 						EventItemget.transform.Find ("ItemView").gameObject.SetActive (true);
 
 						ItemBehaviour ibItem = EventItemget.transform.Find ("ItemView").gameObject.GetComponent<ItemBehaviour> ();
 						ibItem.init (mResultData.reward.item);
+					} else {
+						// ごっちポイントが褒賞品
+						EventItemget.transform.Find ("getpoints_text").gameObject.SetActive (true);
+						EventItemget.transform.Find ("GotchiView").gameObject.SetActive (true);
+
+						GotchiBehaviour gbPoint = EventItemget.transform.Find ("GotchiView").gameObject.GetComponent<GotchiBehaviour> ();
+						gbPoint.init (mResultData.reward.point);
 					}
 
 					resultItemGetFlag = false;

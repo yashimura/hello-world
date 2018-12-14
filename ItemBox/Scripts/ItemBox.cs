@@ -9,6 +9,8 @@ using Mix2App.Lib.Events;
 using Mix2App.Lib.View;
 using Mix2App.Lib.Utils;
 
+namespace Mix2App.ItemBox
+{
 public class ItemBox : MonoBehaviour,IReceiver {
 
 	[SerializeField] private Camera mainCamera;
@@ -22,6 +24,8 @@ public class ItemBox : MonoBehaviour,IReceiver {
 	[SerializeField] private GameObject EventDialogKakunin;			// 確認画面
 	[SerializeField] private GameObject EventDialogError;			// エラー画面
 	[SerializeField] private GameObject EventTushinTime;			// 通信中画面
+	[SerializeField] private GameObject ToyKakunin;					// 通信前の玩具操作確認画面
+	[SerializeField] private Button ButtonToyKakuninYes;			// 通信前の玩具操作確認画面　はいボタン
 
 	[SerializeField] private Button ButtonPresent;					// メイン画面 アイテム一覧画面へのボタン
 	[SerializeField] private Button ButtonPoint;					// メイン画面 ポイント表示画面へのボタン
@@ -90,9 +94,10 @@ public class ItemBox : MonoBehaviour,IReceiver {
 	public void receive(params object[] parameter){
 		Debug.Log ("ItemBox receive");
 		mparam = parameter;
+		minit();
 	}
 
-	void Start() {
+	void minit() {
 		Debug.Log ("ItemBox start");
 
 		// プレゼントデータを取得
@@ -169,6 +174,8 @@ public class ItemBox : MonoBehaviour,IReceiver {
 		ButtonKakuninYes.onClick.AddListener (ButtonKakuninYesClick);
 		ButtonKakuninNo.onClick.AddListener (ButtonKakuninNoClick);
 		ButtonErrorTojiru.onClick.AddListener (ButtonErrorTojiruClick);
+
+		ButtonToyKakuninYes.onClick.AddListener (ButtonToyKakuninYesClick);
 
 		ButtonTushinUp [0].onClick.AddListener (ButtonTushinUp1000Click);
 		ButtonTushinUp [1].onClick.AddListener (ButtonTushinUp100Click);
@@ -337,6 +344,7 @@ public class ItemBox : MonoBehaviour,IReceiver {
 
 	// アイテム一覧画面のアイテム毎にボタン化しボタンが押されたら確認画面を開く
 	private void ButtonWakuClick(int num){
+		ManagerObject.instance.sound.playSe(11);
 		if (itemBoxIdouFlag == itemBoxIdouTable.Null) {
 			EventDialogKakunin.SetActive (true);
 			EventDialogKakunin.transform.Find ("1").gameObject.SetActive (true);
@@ -359,11 +367,13 @@ public class ItemBox : MonoBehaviour,IReceiver {
 	private void ButtonPresentClick(){
 		ManagerObject.instance.sound.playSe (11);
 
-		if (muser1.utype == UserType.MIX2) {
+		//アイテム送信は、玩具の「プレゼント」からの通信なので、
+		//おでかけしてると選択できないのでMIX2制限は外す
+//		if (muser1.utype == UserType.MIX2) {
 			PresentSetActive(EventPresentMIX2,true);
-		} else {
-			PresentSetActive(EventPresent,true);
-		}
+//		} else {
+//			PresentSetActive(EventPresent,true);
+//		}
 		swipIdouFlag = true;
 
 		gPointNow = 0;
@@ -378,15 +388,16 @@ public class ItemBox : MonoBehaviour,IReceiver {
 		ManagerObject.instance.sound.playSe (11);
 
 		EventPresentPoint.SetActive (true);
-		if (muser1.utype == UserType.MIX2) {
-			ButtonPointSend.gameObject.SetActive (true);
-			ButtonPointBackMIX2.gameObject.SetActive (true);
-			ButtonPointBack.gameObject.SetActive (false);
-		} else {
+		//送信はアイテムとセットなのでポイント主体の送信はできないようにする
+		//if (muser1.utype == UserType.MIX2) {
+		//	ButtonPointSend.gameObject.SetActive (true);
+		//	ButtonPointBackMIX2.gameObject.SetActive (true);
+		//	ButtonPointBack.gameObject.SetActive (false);
+		//} else {
 			ButtonPointSend.gameObject.SetActive (false);
 			ButtonPointBackMIX2.gameObject.SetActive (false);
 			ButtonPointBack.gameObject.SetActive (true);
-		}
+		//}
 
 		gPointNow = 0;
 		itemNumberNow = -1;
@@ -480,6 +491,11 @@ public class ItemBox : MonoBehaviour,IReceiver {
 	}
 
 
+	private void ButtonToyKakuninYesClick(){
+		ManagerObject.instance.sound.playSe (13);
+		PresentSendJob2();
+	}
+
 	// 確認画面のはいボタン
 	private void ButtonKakuninYesClick(){
 		ManagerObject.instance.sound.playSe (13);
@@ -560,6 +576,10 @@ public class ItemBox : MonoBehaviour,IReceiver {
 		EventDialogKakunin.SetActive (false);
 	}
 	private void ButtonErrorTojiruClick(){
+			EventDialogError.SetActive(false);
+			EventDialogError.transform.Find("1").gameObject.SetActive(false);
+			EventDialogError.transform.Find("2").gameObject.SetActive(false);
+			EventDialogError.transform.Find("3").gameObject.SetActive(false);
 	}
 
 	private void kakuninMenuOFF(){
@@ -571,21 +591,38 @@ public class ItemBox : MonoBehaviour,IReceiver {
 
 	// 玩具へアイテムやごっちポイントを送る
 	private void PresentSendJob(){
+		if (ManagerObject.instance.app.toys.Count>0){
+			ToyKakunin.SetActive(true);
+		} else {
+			EventDialogError.SetActive(true);
+			EventDialogError.transform.Find("3").gameObject.SetActive(true);
+			clearmenu();
+		}
+	}
+
+	private void PresentSendJob2()
+	{
 		GameCall call;
 //		Debug.Log (itemNumberNow.ToString () + "/" + gPointNow.ToString () + " " + sendMode.ToString());
 
 		if (itemNumberNow != -1) {
-			call = new GameCall (CallLabel.BLE_SEND_GIFT, mPresentData.items [itemNumberNow].iid, gPointNow);
+			call = new GameCall (CallLabel.BLE_SEND_GIFT, gPointNow, mPresentData.items[itemNumberNow] );
 		} else {
-			call = new GameCall (CallLabel.BLE_SEND_GIFT, 0, gPointNow);
+			call = new GameCall (CallLabel.BLE_SEND_GIFT, gPointNow);
 		}
 		call.AddListener (mBleSendGift);
 		ManagerObject.instance.connect.send (call);
 
+		EventTushinTime.SetActive (true);
+		clearmenu();
+	}
+
+	void clearmenu()
+	{
 		kakuninMenuOFF ();
 		EventDialogKakunin.SetActive (false);
 
-		EventTushinTime.SetActive (true);
+		ToyKakunin.SetActive(false);
 
 		PresentSetActive (EventPresent, false);
 		PresentSetActive (EventPresentMIX2, false);
@@ -722,25 +759,25 @@ public class ItemBox : MonoBehaviour,IReceiver {
 		Vector3 _Pos;
 		GameObject _Obj;
 
-		if (muser1.utype == UserType.MIX2) {
+		//if (muser1.utype == UserType.MIX2) {
 			_Obj = EventPresentMIX2;
-		} else {
-			_Obj = EventPresent;
-		}
+		//} else {
+		//	_Obj = EventPresent;
+		//}
 
 		for (int i = 0; i < itemCountNow; i++) {
-			if (muser1.utype == UserType.MIX2) {
+			//if (muser1.utype == UserType.MIX2) {
 				prefabObj [i] = (GameObject)Instantiate (WakuMIX2Prefab);
-			} else {
-				prefabObj [i] = (GameObject)Instantiate (WakuPrefab);
-			}
+			//} else {
+			//	prefabObj [i] = (GameObject)Instantiate (WakuPrefab);
+			//}
 			prefabObj [i].transform.SetParent (_Obj.transform.Find ("mask/panel").transform, false);
 			prefabObj [i].name = "Waku" + i.ToString ();
-			if (muser1.utype == UserType.MIX2) {
+			//if (muser1.utype == UserType.MIX2) {
 				int ii = i + 0;
 				// アイテム選択ボタンの有効化
 				prefabObj [i].GetComponent<Button> ().onClick.AddListener (() => ButtonWakuClick (ii));
-			}
+			//}
 
 			_Pos.x = itemBoxPosXTable [i & 3];
 			_Pos.y = itemBoxPosYTable [i >> 2];
@@ -800,4 +837,5 @@ public class ItemBox : MonoBehaviour,IReceiver {
 		GotchiBehaviour gbPoint = EventDialogKakunin.transform.Find ("3/GotchiView").gameObject.GetComponent<GotchiBehaviour> ();
 		gbPoint.init (gPointNow);
 	}
+}
 }
