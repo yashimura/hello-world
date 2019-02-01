@@ -59,10 +59,11 @@ namespace Mix2App.Marriage{
 
 		[SerializeField] private GameObject EventNet;				// 通信画面一式
 		[SerializeField] private GameObject EventJyunbi;			// たまごっちみーつ準備画面
+		[SerializeField] private GameObject EventJyunbi2;			// たまごっちみーつ失敗説明画面
 		[SerializeField] private GameObject EventSippai;			// 通信失敗画面
 		[SerializeField] private GameObject EventSeikou;			// 通信成功画面
 
-		[SerializeField] private Button ButtonJyunbi;
+		//[SerializeField] private Button ButtonJyunbi;
 		[SerializeField] private Button ButtonSippaiEnd;
 		[SerializeField] private Button ButtonSippaiRetry;
 		[SerializeField] private Button ButtonSeikou;
@@ -104,6 +105,7 @@ namespace Mix2App.Marriage{
 		private enum statusJobCount{
 			marriageJobCount000,
 			marriageJobCount010,
+			marriageJobCount011,
 			marriageJobCount020,
 			marriageJobCount030,
 			marriageJobCount040,
@@ -213,7 +215,7 @@ namespace Mix2App.Marriage{
 
 
 			jyunbiButtonFlag = false;
-			ButtonJyunbi.onClick.AddListener (ButtonJyunbiClick);
+			//ButtonJyunbi.onClick.AddListener (ButtonJyunbiClick);
 			ButtonSippaiEnd.onClick.AddListener (ButtonSippaiEndClick);
 			ButtonSippaiRetry.onClick.AddListener (ButtonSippaiRetryClick);
 			ButtonSeikou.onClick.AddListener (ButtonSeikouClick);
@@ -343,6 +345,7 @@ namespace Mix2App.Marriage{
 				{
 					EventNet.SetActive (true);
 					EventJyunbi.SetActive (true);
+					EventJyunbi2.SetActive (false);
 					EventSippai.SetActive (false);
 					EventSeikou.SetActive (false);
 
@@ -354,16 +357,24 @@ namespace Mix2App.Marriage{
 			case	statusJobCount.marriageJobCount010:
 				{
 					if (jyunbiButtonFlag) {
-						EventNet.SetActive (false);
+						jyunbiButtonFlag=false;
 						EventJyunbi.SetActive (false);
-						EventSippai.SetActive (false);
-						EventSeikou.SetActive (false);
+						EventJyunbi2.SetActive (true);
+
+						jobCount = statusJobCount.marriageJobCount011;
+					}
+					break;
+				}
+			case	statusJobCount.marriageJobCount011:
+				{
+					if (jyunbiButtonFlag) {
+						EventNet.SetActive (false);
+						EventJyunbi2.SetActive (false);
 
 						jobCount = statusJobCount.marriageJobCount020;
 					}
 					break;
 				}
-
 			case	statusJobCount.marriageJobCount020:
 				{
 					if (startEndFlag) {
@@ -993,7 +1004,7 @@ namespace Mix2App.Marriage{
 
 
 
-		private void ButtonJyunbiClick(){
+		public void ButtonJyunbiClick(){
 			ManagerObject.instance.sound.playSe (13);
 			jyunbiButtonFlag = true;
 		}

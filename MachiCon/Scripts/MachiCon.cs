@@ -14,7 +14,7 @@ using Mix2App.Lib.Net;
 
 
 namespace Mix2App.MachiCon{
-	public class MachiCon : MonoBehaviour,IReceiver {
+	public class MachiCon : MonoBehaviour,IReceiver,IDebugReceiver {
 		[SerializeField] private Message	MesDisp;						// メッセージ関連
 		[SerializeField] private GameObject EventCurtain;					// カーテン
 		[SerializeField] private GameObject EventTitle;						// たまキュンパーティータイトル
@@ -189,6 +189,7 @@ namespace Mix2App.MachiCon{
 		private PartyMember mpMember2;
 		private int mkind2;
 		private int[] mkindTable = new int[8];
+		private bool mready;
 
 		void Awake(){
 			Debug.Log ("MachiCon Awake");
@@ -207,6 +208,43 @@ namespace Mix2App.MachiCon{
 			}
 		}
 
+		public void dreceive(string command,string[] parameter)
+		{
+			if (command==null) return;
+
+			string[] pp = (string[])parameter;
+
+			if (command=="fk"&&pp.Length==4)
+			{
+				int ti1 = int.Parse(pp[0]);
+				int ans1 = int.Parse(pp[1]);
+				int ti2 = int.Parse(pp[2]);
+				int ans2 = int.Parse(pp[3]);
+				forcekokuhaku(ti1,ans1,ti2,ans2);
+			}
+		}
+
+		private void forcekokuhaku(int t1,int a1, int t2, int a2)
+		{
+			if (jobCount<statusJobCount.machiconJobCount060) return;
+
+			Debug.Log("forcekokuhaku");
+
+			maskdatas[0].askIndex = t1;
+			maskdatas[0].askUid = mpdata.members [t1].user.id;
+			maskdatas[0].result = a1;
+			maskdatas[1].askIndex = t2;
+			maskdatas[1].askUid = mpdata.members [t2].user.id;
+			maskdatas[1].result = a2;
+
+			StopAllCoroutines();
+			jobCount=statusJobCount.machiconJobCount240;
+			GameCall call = new GameCall(CallLabel.GET_ROOM_RESULT,mpdata.roomId,maskdatas,mpdata.members);
+			call.AddListener(mgetroomres);
+			ManagerObject.instance.connect.send(call);
+			return;
+		}
+
 		public void receive(params object[] parameter){
 			Debug.Log ("MachiCon receive");
 			//mparam = parameter;
@@ -214,12 +252,6 @@ namespace Mix2App.MachiCon{
 			// イベントたまキュンか？
 			// コラボたまキュンか？
 			// 通常たまキュンか？
-
-
-		}
-			
-		void Start() {
-			Debug.Log ("MachiCon start");
 
 			muser1 = ManagerObject.instance.player;
 			mkind1 = 0;
@@ -266,6 +298,8 @@ namespace Mix2App.MachiCon{
 
 				StartCoroutine("futagoCharaSet");
 			}
+
+			mready = true;
 		}
 		
 		void mgetroominf(bool success,object data)
@@ -356,7 +390,6 @@ namespace Mix2App.MachiCon{
 		private int		posNumber;
 
 
-
 		private IEnumerator futagoCharaSet(){
 			yield return cbFutagoChara [0].init (muser1.GetCharaAt(0));
 			cbFutagoChara [0].gotoAndPlay (MotionLabel.IDLE);
@@ -367,6 +400,15 @@ namespace Mix2App.MachiCon{
 		}
 
 		void Update(){
+			
+			if (!mready) return;
+
+			if(Input.GetKeyDown(KeyCode.X)) {
+				TamaChara pchara = mpMember1.user.GetCharaAt(mpMember1.index);
+				if(pchara.sex==0) forcekokuhaku(7,1,7,1);
+				else if(pchara.sex==1) forcekokuhaku(3,1,3,1);
+			}
+
 			if (jobCount == statusJobCount.machiconJobCountInit) {
 				return;
 			}
@@ -453,7 +495,7 @@ namespace Mix2App.MachiCon{
 				{
 					if (EventCurtainPositionChange (15.0f)) {									// カーテンオープン
 						EventTitle.SetActive (false);
-						EventCurtain.SetActive (false);
+						//EventCurtain.SetActive (false);
 						jobCount = statusJobCount.machiconJobCount060;
 						posNumber = 0;
 					}
@@ -480,7 +522,7 @@ namespace Mix2App.MachiCon{
 						posNumber++;
 						if (posNumber == 8) {
 							jobCount = statusJobCount.machiconJobCount090;
-							EventCurtain.SetActive (true);
+							//EventCurtain.SetActive (true);
 							MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp06);
 							StartCoroutine (MessageDispOff(3.0f));
 							sceneNumber = 0;
@@ -1009,58 +1051,8 @@ namespace Mix2App.MachiCon{
 			mesTamago = mpdata.members [posNumber].user.GetCharaAt (mkindTable[posNumber]).cname;
 			mesAvater = userNicknameChange(mpdata.members [posNumber].user.nickname);
 
-			if (mesTamago == "" || mesTamago == null) {
-				switch (posNumber) {
-				case	0:
-					{
-						mesAvater = "アバターネーム1";
-						mesTamago = "たまごっちネーム";
-						break;
-					}
-				case	1:
-					{
-						mesAvater = "アバターネーム2";
-						mesTamago = "たまごっちネーム";
-						break;
-					}
-				case	2:
-					{
-						mesAvater = "アバターネーム3";
-						mesTamago = "たまごっちネーム";
-						break;
-					}
-				case	3:
-					{
-						mesAvater = "アバターネーム4";
-						mesTamago = "たまごっちネーム";
-						break;
-					}
-				case	4:
-					{
-						mesAvater = "アバターネーム5";
-						mesTamago = "たまごっちネーム";
-						break;
-					}
-				case	5:
-					{
-						mesAvater = "アバターネーム6";
-						mesTamago = "たまごっちネーム";
-						break;
-					}
-				case	6:
-					{
-						mesAvater = "アバターネーム7";
-						mesTamago = "たまごっちネーム";
-						break;
-					}
-				case	7:
-					{
-						mesAvater = "アバターネーム8";
-						mesTamago = "たまごっちネーム";
-						break;
-					}
-				}
-			}
+			if (mesAvater == null) mesAvater = "アバターネーム"+(posNumber+1);
+			if (mesTamago == null) mesTamago = "たまごっちネーム";
 
 			CharaTamagochi [posNumber].transform.Find ("fukidashi/comment/text").gameObject.GetComponent<Text> ().text = mesAvater + mesNo + mesRet + mesTamago;
 
@@ -1099,34 +1091,8 @@ namespace Mix2App.MachiCon{
 			mesTamago = mpdata.members [targetNum].user.GetCharaAt (mkindTable[targetNum]).cname;
 			mesAvater = userNicknameChange(mpdata.members [targetNum].user.nickname);
 
-			if (mesTamago == "" || mesTamago == null) {
-				switch (targetNum) {
-				case	4:
-					{
-						mesAvater = "アバターネーム5";
-						mesTamago = "たまごっちネーム";
-						break;
-					}
-				case	5:
-					{
-						mesAvater = "アバターネーム6";
-						mesTamago = "たまごっちネーム";
-						break;
-					}
-				case	6:
-					{
-						mesAvater = "アバターネーム7";
-						mesTamago = "たまごっちネーム";
-						break;
-					}
-				case	7:
-					{
-						mesAvater = "アバターネーム8";
-						mesTamago = "たまごっちネーム";
-						break;
-					}
-				}
-			}
+			if (mesAvater == null) mesAvater = "アバターネーム"+(targetNum+1);
+			if (mesTamago == null) mesTamago = "たまごっちネーム";
 
 			CharaTamagochi [num].transform.Find ("fukidashi/comment/text").gameObject.GetComponent<Text> ().text = mesAvater + mesNo + mesRet + mesTamago + mesTo;
 		}
@@ -1142,34 +1108,8 @@ namespace Mix2App.MachiCon{
 			mesTamago = mpdata.members [targetNum].user.GetCharaAt (mkindTable[targetNum]).cname;
 			mesAvater = userNicknameChange(mpdata.members [targetNum].user.nickname);
 
-			if (mesTamago == "" || mesTamago == null) {
-				switch (targetNum) {
-				case	0:
-					{
-						mesAvater = "アバターネーム1";
-						mesTamago = "たまごっちネーム";
-						break;
-					}
-				case	1:
-					{
-						mesAvater = "アバターネーム2";
-						mesTamago = "たまごっちネーム";
-						break;
-					}
-				case	2:
-					{
-						mesAvater = "アバターネーム3";
-						mesTamago = "たまごっちネーム";
-						break;
-					}
-				case	3:
-					{
-						mesAvater = "アバターネーム4";
-						mesTamago = "たまごっちネーム";
-						break;
-					}
-				}
-			}
+			if (mesAvater == null) mesAvater = "アバターネーム"+(targetNum+1);
+			if (mesTamago == null) mesTamago = "たまごっちネーム";
 
 			CharaTamagochi [num].transform.Find ("fukidashi/comment/text").gameObject.GetComponent<Text> ().text = mesAvater + mesNo + mesRet + mesTamago + mesTo;
 		}
@@ -2063,58 +2003,8 @@ namespace Mix2App.MachiCon{
 			tamagoMes = mpdata.members [targetNumber].user.GetCharaAt (mkindTable[targetNumber]).cname;
 			avaterMes = userNicknameChange(mpdata.members [targetNumber].user.nickname);
 
-			if (tamagoMes == "" || tamagoMes == null) {
-				switch (targetNumber) {
-				case	0:
-					{
-						avaterMes = "アバターネーム1";
-						tamagoMes = "たまごっちネーム";
-						break;
-					}
-				case	1:
-					{
-						avaterMes = "アバターネーム2";
-						tamagoMes = "たまごっちネーム";
-						break;
-					}
-				case	2:
-					{
-						avaterMes = "アバターネーム3";
-						tamagoMes = "たまごっちネーム";
-						break;
-					}
-				case	3:
-					{
-						avaterMes = "アバターネーム4";
-						tamagoMes = "たまごっちネーム";
-						break;
-					}
-				case	4:
-					{
-						avaterMes = "アバターネーム5";
-						tamagoMes = "たまごっちネーム";
-						break;
-					}
-				case	5:
-					{
-						avaterMes = "アバターネーム6";
-						tamagoMes = "たまごっちネーム";
-						break;
-					}
-				case	6:
-					{
-						avaterMes = "アバターネーム7";
-						tamagoMes = "たまごっちネーム";
-						break;
-					}
-				case	7:
-					{
-						avaterMes = "アバターネーム8";
-						tamagoMes = "たまごっちネーム";
-						break;
-					}
-				}
-			}
+			if (avaterMes == null) avaterMes = "アバターネーム"+(targetNumber+1);
+			if (tamagoMes == null) tamagoMes = "たまごっちネーム";
 
 			EventSoudanAvaterNameNew.transform.Find ("text").gameObject.GetComponent<Text> ().text = avaterMes;
 			EventSoudanTamagoNameNew.transform.Find ("text").gameObject.GetComponent<Text> ().text = tamagoMes;
