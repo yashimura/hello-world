@@ -41,6 +41,9 @@ namespace Mix2App.MiniGame1{
 		[Tooltip("四季の画像データ（春、夏、秋、冬）")]
 		[SerializeField] private SeasonImg[] SeasonData;
 
+		[SerializeField] private GameObject PrefabItem;
+		[SerializeField] private GameObject PrefabScore;
+
 
 		private object[]		mparam;
 
@@ -152,11 +155,9 @@ namespace Mix2App.MiniGame1{
 			}
 			muser1 = ManagerObject.instance.player;		// たまごっち
 
-
-
 //			mData.seasonId = 3;
-
-
+//			mData.seasonId = Random.Range (0, 4);
+//			Debug.Log ("季節：" + mData.seasonId.ToString());
 
 			SeasonImageSet();
 
@@ -178,7 +179,6 @@ namespace Mix2App.MiniGame1{
 			ButtonTakuhai.GetComponent<Button> ().onClick.AddListener (ButtonTakuhaiClick);
 			ButtonTojiru.GetComponent<Button> ().onClick.AddListener (ButtonTojiruClick);
 			ButtonModoru.GetComponent<Button> ().onClick.AddListener (ButtonModoruClick);
-
 
 
 			float use_screen_x = Screen.currentResolution.width;
@@ -293,6 +293,7 @@ namespace Mix2App.MiniGame1{
 						jobCount = statusJobCount.minigame1JobCount060;
 						EventGame.SetActive (false);
 						EventEnd.SetActive (true);
+						ManagerObject.instance.sound.playSe (21);
 					}
 					break;
 				}
@@ -385,6 +386,8 @@ namespace Mix2App.MiniGame1{
 
 		private void ButtonTakuhaiClick(){
 			Debug.Log ("宅配サービスへ・・・");
+			ManagerObject.instance.sound.playSe (17);
+			ManagerObject.instance.view.change("ItemBox");
 		}
 
 		private void ButtonTojiruClick(){
@@ -415,16 +418,12 @@ namespace Mix2App.MiniGame1{
 			itemGetNumber = 0;
 			charaJumpCheckFlag = 0;
 			charaJumpCheckFlag2 = 0;
-			itemDownSpeed = 0.0f;
-			itemXbase = 0.0f;
-			itemYNumber = 0;
 			scoreYIdouNumber = 0;
 			gameMainLoopFlag = false;
+
+			itemCoroutineFlag = true;
 		}
 
-		private float itemDownSpeed = 0.0f;
-		private float itemXbase = 0.0f;
-		private int itemYNumber = 0;
 		private float[] itemYJumpTable = new float[]{
 			2.0f,1.8f,1.8f,1.5f,1.5f,1.1f,1.1f,1.1f,0.6f,0.6f,0.6f,0.6f,0.0f,0.0f,0.0f,
 			0.0f,0.0f,0.0f,-0.6f,-0.6f,-0.6f,-0.6f,-1.1f,-1.1f,-1.1f,-1.5f,-1.5f,-1.8f,-1.8f,-2.0f,
@@ -444,6 +443,8 @@ namespace Mix2App.MiniGame1{
 		private float[] scoreYIdouTable = new float[]{
 			0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.5f,0.5f,0.5f,1.0f,1.0f,1.0f,1.8f,1.8f,1.8f,2.8f,2.8f,2.8f,3.0f,
 		};
+
+		private bool itemCoroutineFlag = true;
 		private int scoreYIdouNumber = 0;
 		private GameItem gameitem;													// spriteと得点の構造体
 		private bool gameMainLoopFlag = false;
@@ -525,105 +526,11 @@ namespace Mix2App.MiniGame1{
 
 			charaObj.transform.localPosition = pos;									// 操作キャラの座標を設定
 
-
-			GameObject itemObj = EventGame.transform.Find ("item").gameObject;
-			Vector3 posItem = itemObj.transform.localPosition;						// 落下アイテムの座標を抽出
-
-			GameObject scoreObj = EventGame.transform.Find ("score").gameObject;
-			Vector3 posScore = scoreObj.transform.localPosition;					// スコア表示の座標を抽出
-
-			switch (itemIdouFlag) {
-			case	0:																// 落下アイテムの初期化
-				{
-					int itemRnd = Random.Range (0, 100);
-					int number = 0;
-
-					posItem.y = 600;
-					posItem.x = (Random.Range (-59, 59) * 10);
-					itemIdouFlag = 1;
-					itemXbase = posItem.x;
-					itemYNumber = 0;
-
-					itemDownSpeed = (1000 / (itemTable [itemGetNumber, 1] * 60));
-
-					float totalNum = 0;
-					for (int i = 0; i < 6; i++) {
-						totalNum += itemTable [itemGetNumber, 2 + i];
-						if (itemRnd <= totalNum) {
-							number = i;
-							break;
-						}
-					}
-
-					gameitem = pgGameCore.GameItemGet (number);
-//					itemObj.GetComponent<SpriteRenderer> ().sprite = gameitem.ItemImage;
-					itemObj.GetComponent<SpriteRenderer>().sprite = SeasonData [mData.seasonId].ImgItem [number];
-					break;
-				}
-			case	1:																// 落下アイテムの落下処理
-				{
-					posItem.y -= (itemDownSpeed * (60 * Time.deltaTime));
-					if (posItem.y <= -350.0f) {
-						posItem.y = -350.0f;										// 地面に落ちたのでアイテムは消える
-						itemIdouFlag = 2;
-					}
-
-					if (HitCheck (pos, posItem)) {									// たまごっちとアイテムの当たり判定
-						if (gameitem.Score < 0) {
-							ManagerObject.instance.sound.playSe (26);
-							gameMainLoopFlag = true;								// お邪魔アイテムに触ったので終了
-							cbCharaTamago [0].gotoAndPlay (MotionLabel.SHOCK);
-							break;
-						}
-						ManagerObject.instance.sound.playSe (25);
-
-						posScore.x = pos.x;											// アイテムをゲットしたので得点を表示する
-						posScore.y = pos.y - 26.0f;
-//						posScore.y = pos.y + 10.0f;
-						scoreYIdouNumber = scoreYIdouTable.Length;
-						scoreObj.GetComponent<Text> ().text = gameitem.Score.ToString ();
-
-						nowScore += gameitem.Score;
-//						pgGameCore.GameScoreSet (gameitem.Score);
-
-						itemIdouFlag = 0;
-						Debug.Log ("アイテムゲット");
-						itemGetNumber++;											// アイテムの番号を次にする
-						if (itemGetNumber == 30) {
-							itemGetNumber = 0;
-						}
-					}
-
-					break;
-				}
-			case	2:																// 地面に落ちたアイテムは少し跳ねる
-				{
-					if (itemXbase > 0) {
-						posItem.x -= 1.2f;
-					} else {
-						posItem.x += 1.2f;
-					}
-					posItem.y += itemYJumpTable [itemYNumber];
-					itemYNumber++;
-					if (itemYNumber == itemYJumpTable.Length) {
-						itemIdouFlag = 0;
-					}
-					break;
-				}
-			case	3:
-				{
-					break;
-				}
-			}
-			if (scoreYIdouNumber != 0) {
-				scoreYIdouNumber--;													// スコア表示
-				posScore.y += scoreYIdouTable [scoreYIdouNumber];
-			} else {
-				posScore.y = 1000.0f;
+			if (itemCoroutineFlag == true) {
+				StartCoroutine (ItemDown ());
+				itemCoroutineFlag = false;
 			}
 
-			itemObj.transform.localPosition = posItem;								// 落下アイテムの座標を設定
-			scoreObj.transform.localPosition = posScore;							// スコア表示の座標を設定
 
 			nowTime1 += 1.0f * Time.deltaTime;
 			if (nowTime1 >= 1.0f) {
@@ -654,6 +561,174 @@ namespace Mix2App.MiniGame1{
 			}
 
 			return false;
+		}
+
+
+
+		private IEnumerator ItemDown(){
+			int i = 0;
+
+			while (true) {
+				if (gameMainLoopFlag == true) {
+					break;
+				}
+
+				StartCoroutine (ItemDownSub (i));
+
+				i++;
+				if (i == 20) {
+					i = 0;
+				}
+
+				yield return new WaitForSeconds (itemTable [itemGetNumber, 0]);
+//				yield return null;
+			}
+		}
+
+
+		private GameObject[] prefabObjItem = new GameObject[20];
+		private GameObject[] prefabObjScore = new GameObject[20];
+
+
+		private IEnumerator ItemDownSub(int _num){
+			int _itemIdouFlag = 0;
+			float _itemXbase = 0.0f;
+			int _itemYNumber = 0;
+			float _itemDownSpeed = 0.0f;
+			GameItem _gameitem = pgGameCore.GameItemGet (0);
+
+			// プレハブを登録
+			prefabObjItem [_num] = (GameObject)Instantiate (PrefabItem);
+			prefabObjItem [_num].transform.SetParent (EventGame.transform.Find ("Items").transform, false);
+			prefabObjItem [_num].name = "Item" + _num.ToString ();
+
+			prefabObjScore [_num] = (GameObject)Instantiate (PrefabScore);
+			prefabObjScore [_num].transform.SetParent (EventGame.transform.Find ("Scores").transform, false);
+			prefabObjScore [_num].name = "Score" + _num.ToString ();
+
+
+
+			while (true) {
+				GameObject charaObj = EventGame.transform.Find ("tamago/chara").gameObject;	// 操作キャラのGameObjectを抽出
+				Vector3 pos = charaObj.transform.localPosition;							// 操作キャラの座標を抽出
+
+				GameObject itemObj = prefabObjItem[_num].gameObject;
+				Vector3 posItem = itemObj.transform.localPosition;						// 落下アイテムの座標を抽出
+
+				GameObject scoreObj = prefabObjScore [_num].gameObject;
+				Vector3 posScore = scoreObj.transform.localPosition;					// スコア表示の座標を抽出
+
+				switch (_itemIdouFlag) {
+				case	0:																// 落下アイテムの初期化
+					{
+						int itemRnd = Random.Range (0, 100);
+						int number = 0;
+
+						posItem.y = 600;
+						posItem.x = (Random.Range (-59, 59) * 10);
+						_itemIdouFlag = 1;
+						_itemXbase = posItem.x;
+						_itemYNumber = 0;
+
+						_itemDownSpeed = (1000 / (itemTable [itemGetNumber, 1] * 60));
+
+						float totalNum = 0;
+						for (int i = 0; i < 6; i++) {
+							totalNum += itemTable [itemGetNumber, 2 + i];
+							if (itemRnd <= totalNum) {
+								number = i;
+								break;
+							}
+						}
+
+						_gameitem = pgGameCore.GameItemGet (number);
+						//					itemObj.GetComponent<SpriteRenderer> ().sprite = gameitem.ItemImage;
+						itemObj.GetComponent<Image>().sprite = SeasonData [mData.seasonId].ImgItem [number];
+						break;
+					}
+				case	1:																// 落下アイテムの落下処理
+					{
+						posItem.y -= (_itemDownSpeed * (60 * Time.deltaTime));
+						if (posItem.y <= -350.0f) {
+							posItem.y = -350.0f;										// 地面に落ちたのでアイテムは消える
+							_itemIdouFlag = 2;
+						}
+
+						if (HitCheck (pos, posItem)) {									// たまごっちとアイテムの当たり判定
+							if (_gameitem.Score < 0) {
+								ManagerObject.instance.sound.playSe (26);
+								gameMainLoopFlag = true;								// お邪魔アイテムに触ったので終了
+								cbCharaTamago [0].gotoAndPlay (MotionLabel.SHOCK);
+								break;
+							} else {
+								ManagerObject.instance.sound.playSe (25);
+							}
+
+							posScore.x = pos.x;											// アイテムをゲットしたので得点を表示する
+							posScore.y = pos.y - 26.0f;
+//							posScore.y = pos.y + 10.0f;
+
+							scoreYIdouNumber = scoreYIdouTable.Length;
+							scoreObj.GetComponent<Text> ().text = _gameitem.Score.ToString ();
+
+							nowScore += _gameitem.Score;
+//							pgGameCore.GameScoreSet (gameitem.Score);
+
+							_itemIdouFlag = 3;
+							Debug.Log ("アイテムゲット");
+							itemGetNumber++;											// アイテムの番号を次にする
+							if (itemGetNumber == 30) {
+								itemGetNumber = 29;
+							}
+						}
+
+						break;
+					}
+				case	2:																// 地面に落ちたアイテムは少し跳ねる
+					{
+						if (_itemXbase > 0) {
+							posItem.x -= 1.2f;
+						} else {
+							posItem.x += 1.2f;
+						}
+						posItem.y += itemYJumpTable [_itemYNumber];
+						_itemYNumber++;
+						if (_itemYNumber == itemYJumpTable.Length) {
+							_itemIdouFlag = 0;
+						}
+						break;
+					}
+				case	3:
+					{
+						if (scoreYIdouNumber == 0) {
+							_itemIdouFlag = 0;
+						}
+						break;
+					}
+				}
+				if (scoreYIdouNumber != 0) {
+					scoreYIdouNumber--;													// スコア表示
+					posScore.y += scoreYIdouTable [scoreYIdouNumber];
+				} else {
+					posScore.y = 1000.0f;
+				}
+
+				itemObj.transform.localPosition = posItem;								// 落下アイテムの座標を設定
+				scoreObj.transform.localPosition = posScore;							// スコア表示の座標を設定
+
+				if (_itemIdouFlag == 0) {
+					break;
+				}
+				if (gameMainLoopFlag == true) {
+					break;
+				}
+
+
+				yield return null;
+			}
+
+			GameObject.Destroy(prefabObjItem [_num].gameObject);
+			GameObject.Destroy(prefabObjScore [_num].gameObject);
 		}
 
 
@@ -716,14 +791,23 @@ namespace Mix2App.MiniGame1{
 					EventResult.transform.Find ("treasure_open").gameObject.SetActive (false);
 					EventResult.transform.Find ("Button_blue_modoru").gameObject.SetActive (false);
 
-					if ((nowScore == 0) || (!mResultData.rewardFlag)) {
-						EventResult.transform.Find ("tamago/chara").gameObject.transform.localPosition = new Vector3 (250.0f, -320.0f, 0.0f);
-						EventResult.transform.Find ("tamago/chara2").gameObject.transform.localPosition = new Vector3 (-400.0f, -320.0f, 0.0f);
-						EventResult.transform.Find ("tamago/chara3").gameObject.transform.localPosition = new Vector3 (-250.0f, -320.0f, 0.0f);
+
+					if (mData.eventId != 0) {
+						if ((nowScore == 0) || (!mResultData.rewardFlag)) {
+							EventResult.transform.Find ("tamago/chara").gameObject.transform.localPosition = new Vector3 (250.0f, -320.0f, 0.0f);
+							EventResult.transform.Find ("tamago/chara2").gameObject.transform.localPosition = new Vector3 (-400.0f, -320.0f, 0.0f);
+							EventResult.transform.Find ("tamago/chara3").gameObject.transform.localPosition = new Vector3 (-250.0f, -320.0f, 0.0f);
+						} else {
+							EventResult.transform.Find ("tamago/chara").gameObject.transform.localPosition = new Vector3 (120.0f, -320.0f, 0.0f);
+							EventResult.transform.Find ("tamago/chara2").gameObject.transform.localPosition = new Vector3 (-280.0f, -320.0f, 0.0f);
+							EventResult.transform.Find ("tamago/chara3").gameObject.transform.localPosition = new Vector3 (-120.0f, -320.0f, 0.0f);
+						}
 					} else {
-						EventResult.transform.Find ("tamago/chara").gameObject.transform.localPosition = new Vector3 (120.0f, -320.0f, 0.0f);
-						EventResult.transform.Find ("tamago/chara2").gameObject.transform.localPosition = new Vector3 (-280.0f, -320.0f, 0.0f);
-						EventResult.transform.Find ("tamago/chara3").gameObject.transform.localPosition = new Vector3 (-120.0f, -320.0f, 0.0f);
+						if ((nowScore == 0) || (!mResultData.rewardFlag)) {
+							EventResult.transform.Find ("tamago/chara").gameObject.transform.localPosition = new Vector3 (250.0f, -320.0f, 0.0f);
+						} else {
+							EventResult.transform.Find ("tamago/chara").gameObject.transform.localPosition = new Vector3 (120.0f, -320.0f, 0.0f);
+						}
 					}
 					resultLoopCount = statusResult.resultJobCount010;
 					break;
@@ -997,6 +1081,7 @@ namespace Mix2App.MiniGame1{
 			new Vector2 (   0.0f,  700.0f),		// 結果画面のメッセージの初期位置
 			new Vector2 (   0.0f,  600.0f),		// ゲーム画面の落下アイテムの初期位置
 			new Vector2 (   0.0f,  999.0f),		// ゲーム画面のスコアの初期位置
+			new Vector2 (   0.0f,  999.0f),		// NPCキャラ画面外配置
 		};
 		private void TamagoCharaPositionInit(){
 			TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara").gameObject, 0);
@@ -1012,6 +1097,15 @@ namespace Mix2App.MiniGame1{
 			TamagoCharaPositionInitSub (EventResult.transform.Find ("result_text").gameObject, 10);
 			TamagoCharaPositionInitSub (EventGame.transform.Find ("item").gameObject, 11);
 			TamagoCharaPositionInitSub (EventGame.transform.Find ("score").gameObject, 12);
+
+			if (mData.eventId == 0) {
+				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara2").gameObject, 13);
+				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara3").gameObject, 13);
+				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara2").gameObject, 13);
+				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara3").gameObject, 13);
+				TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara2").gameObject, 13);
+				TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara3").gameObject, 13);
+			}
 		}
 		private void TamagoCharaPositionInitSub (GameObject obj, int num){
 			Vector3 pos = new Vector3 (0.0f, 0.0f, 0.0f);
