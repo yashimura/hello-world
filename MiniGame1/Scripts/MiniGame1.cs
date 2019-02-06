@@ -43,6 +43,7 @@ namespace Mix2App.MiniGame1{
 
 		[SerializeField] private GameObject PrefabItem;
 		[SerializeField] private GameObject PrefabScore;
+		[SerializeField] private GameObject PrefabMessage;
 
 
 		private object[]		mparam;
@@ -126,15 +127,22 @@ namespace Mix2App.MiniGame1{
 		public void receive(params object[] parameter){
 			Debug.Log ("MiniGame1 receive");
 			mparam = parameter;
-		}
 
-		void Start(){
-			Debug.Log ("MiniGame1 Start");
-
+			//単体動作テスト用
+			//パラメタ詳細は設計書参照
+			if (mparam==null) {
+				mparam = new object[] {
+					1,1,1,
+				};
+			}
 
 			GameCall call = new GameCall (CallLabel.GET_MINIGAME_INFO);
 			call.AddListener (mGetMinigameInfo);
 			ManagerObject.instance.connect.send (call);
+		}
+
+		void Start(){
+			Debug.Log ("MiniGame1 Start");
 		}
 
 		private MinigameData mData;
@@ -145,14 +153,6 @@ namespace Mix2App.MiniGame1{
 		}
 
 		IEnumerator mStart(){
-
-			//単体動作テスト用
-			//パラメタ詳細は設計書参照
-			if (mparam==null) {
-				mparam = new object[] {
-					ManagerObject.instance.player,
-				};
-			}
 			muser1 = ManagerObject.instance.player;		// たまごっち
 
 //			mData.seasonId = 3;
@@ -363,7 +363,7 @@ namespace Mix2App.MiniGame1{
 			ManagerObject.instance.sound.playSe (17);
 
 			Debug.Log ("たまタウンへ・・・");
-			ManagerObject.instance.view.change("Town");
+			ManagerObject.instance.view.change(SceneLabel.TOWN);
 		}
 
 		private void ButtonHelpClick(){
@@ -385,9 +385,9 @@ namespace Mix2App.MiniGame1{
 		}
 
 		private void ButtonTakuhaiClick(){
-			Debug.Log ("宅配サービスへ・・・");
+			Debug.Log ("プレゼントボックスへ・・・");
 			ManagerObject.instance.sound.playSe (17);
-			ManagerObject.instance.view.change("ItemBox");
+			ManagerObject.instance.view.change(SceneLabel.ITEMBOX);
 		}
 
 		private void ButtonTojiruClick(){
@@ -441,6 +441,8 @@ namespace Mix2App.MiniGame1{
 			-290.2f,-292.6f,-296.4f,-300.2f,-304.0f,-309.0f,-314.0f,-320.0f,
 		};
 		private float[] scoreYIdouTable = new float[]{
+			0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,
+			0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,
 			0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.5f,0.5f,0.5f,1.0f,1.0f,1.0f,1.8f,1.8f,1.8f,2.8f,2.8f,2.8f,3.0f,
 		};
 
@@ -500,7 +502,7 @@ namespace Mix2App.MiniGame1{
 			switch (charaAnimeFlag) {
 			case	1:																// 右移動
 				{
-					pos.x += (4.0f * (60 * Time.deltaTime));
+					pos.x += (4.4f * (60 * Time.deltaTime));
 					if (pos.x >= 600.0f) {
 						pos.x = 600.0f;												// 画面端に来たら停止
 						cbCharaTamago [0].gotoAndPlay (MotionLabel.IDLE);
@@ -510,7 +512,7 @@ namespace Mix2App.MiniGame1{
 				}
 			case	2:																// 左移動
 				{
-					pos.x -= (4.0f * (60 * Time.deltaTime));
+					pos.x -= (4.4f * (60 * Time.deltaTime));
 					if (pos.x <= -600.0f) {
 						pos.x = -600.0f;											// 画面端に来たら停止
 						cbCharaTamago [0].gotoAndPlay (MotionLabel.IDLE);
@@ -554,7 +556,7 @@ namespace Mix2App.MiniGame1{
 
 		// たまごっちとアイテムの当たり判定
 		private bool HitCheck(Vector3 tamagoPos,Vector3 itemPos){
-			if (((tamagoPos.x - 60.0f) < itemPos.x) && (itemPos.x < (tamagoPos.x + 60.0f))) {
+			if (((tamagoPos.x - 90.0f) < itemPos.x) && (itemPos.x < (tamagoPos.x + 90.0f))) {
 				if (((tamagoPos.y - 100.0f) < itemPos.y) && (itemPos.y < (tamagoPos.y + 100.0f))) {
 					return true;
 				}
@@ -588,7 +590,7 @@ namespace Mix2App.MiniGame1{
 
 		private GameObject[] prefabObjItem = new GameObject[20];
 		private GameObject[] prefabObjScore = new GameObject[20];
-
+		private GameObject[] prefabObjMessage = new GameObject[20];
 
 		private IEnumerator ItemDownSub(int _num){
 			int _itemIdouFlag = 0;
@@ -606,6 +608,9 @@ namespace Mix2App.MiniGame1{
 			prefabObjScore [_num].transform.SetParent (EventGame.transform.Find ("Scores").transform, false);
 			prefabObjScore [_num].name = "Score" + _num.ToString ();
 
+			prefabObjMessage [_num] = (GameObject)Instantiate (PrefabMessage);
+			prefabObjMessage [_num].transform.SetParent (EventGame.transform.Find ("Messages").transform, false);
+			prefabObjMessage [_num].name = "Message" + _num.ToString ();
 
 
 			while (true) {
@@ -617,6 +622,9 @@ namespace Mix2App.MiniGame1{
 
 				GameObject scoreObj = prefabObjScore [_num].gameObject;
 				Vector3 posScore = scoreObj.transform.localPosition;					// スコア表示の座標を抽出
+
+				GameObject messageObj = prefabObjMessage [_num].gameObject;				// スコア評価オブジェ
+				Vector3 posMessage = messageObj.transform.localPosition;
 
 				switch (_itemIdouFlag) {
 				case	0:																// 落下アイテムの初期化
@@ -665,11 +673,13 @@ namespace Mix2App.MiniGame1{
 							}
 
 							posScore.x = pos.x;											// アイテムをゲットしたので得点を表示する
-							posScore.y = pos.y - 26.0f;
-//							posScore.y = pos.y + 10.0f;
+							posScore.y = pos.y - 56.0f;
 
 							scoreYIdouNumber = scoreYIdouTable.Length;
 							scoreObj.GetComponent<Text> ().text = _gameitem.Score.ToString ();
+
+							posMessage.x = pos.x;
+							posMessage.y = pos.y + 20.0f;
 
 							nowScore += _gameitem.Score;
 //							pgGameCore.GameScoreSet (gameitem.Score);
@@ -715,6 +725,7 @@ namespace Mix2App.MiniGame1{
 
 				itemObj.transform.localPosition = posItem;								// 落下アイテムの座標を設定
 				scoreObj.transform.localPosition = posScore;							// スコア表示の座標を設定
+				messageObj.transform.localPosition = posMessage;
 
 				if (_itemIdouFlag == 0) {
 					break;
@@ -729,6 +740,7 @@ namespace Mix2App.MiniGame1{
 
 			GameObject.Destroy(prefabObjItem [_num].gameObject);
 			GameObject.Destroy(prefabObjScore [_num].gameObject);
+			GameObject.Destroy (prefabObjMessage [_num].gameObject);
 		}
 
 
@@ -1079,8 +1091,6 @@ namespace Mix2App.MiniGame1{
 			new Vector2 (-120.0f, -320.0f),		// 結果画面の応援キャラ２の初期位置
 			new Vector2 (   0.0f,  700.0f),		// 結果画面の宝箱の初期位置
 			new Vector2 (   0.0f,  700.0f),		// 結果画面のメッセージの初期位置
-			new Vector2 (   0.0f,  600.0f),		// ゲーム画面の落下アイテムの初期位置
-			new Vector2 (   0.0f,  999.0f),		// ゲーム画面のスコアの初期位置
 			new Vector2 (   0.0f,  999.0f),		// NPCキャラ画面外配置
 		};
 		private void TamagoCharaPositionInit(){
@@ -1095,16 +1105,14 @@ namespace Mix2App.MiniGame1{
 			TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara3").gameObject, 8);
 			TamagoCharaPositionInitSub (EventResult.transform.Find ("treasure").gameObject, 9);
 			TamagoCharaPositionInitSub (EventResult.transform.Find ("result_text").gameObject, 10);
-			TamagoCharaPositionInitSub (EventGame.transform.Find ("item").gameObject, 11);
-			TamagoCharaPositionInitSub (EventGame.transform.Find ("score").gameObject, 12);
 
 			if (mData.eventId == 0) {
-				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara2").gameObject, 13);
-				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara3").gameObject, 13);
-				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara2").gameObject, 13);
-				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara3").gameObject, 13);
-				TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara2").gameObject, 13);
-				TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara3").gameObject, 13);
+				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara2").gameObject, 11);
+				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara3").gameObject, 11);
+				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara2").gameObject, 11);
+				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara3").gameObject, 11);
+				TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara2").gameObject, 11);
+				TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara3").gameObject, 11);
 			}
 		}
 		private void TamagoCharaPositionInitSub (GameObject obj, int num){

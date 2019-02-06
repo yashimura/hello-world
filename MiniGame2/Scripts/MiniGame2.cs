@@ -92,15 +92,15 @@ namespace Mix2App.MiniGame2{
 		public void receive(params object[] parameter){
 			Debug.Log ("MiniGame2 receive");
 			mparam = parameter;
-		}
-
-		void Start() {
-			Debug.Log ("MiniGame2 Start");
 
 
 			GameCall call = new GameCall (CallLabel.GET_MINIGAME_INFO);
 			call.AddListener (mGetMinigameInfo);
 			ManagerObject.instance.connect.send (call);
+		}
+
+		void Start() {
+			Debug.Log ("MiniGame2 Start");
 		}
 
 		private MinigameData mData;
