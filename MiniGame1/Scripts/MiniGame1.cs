@@ -45,6 +45,7 @@ namespace Mix2App.MiniGame1{
 		[SerializeField] private GameObject PrefabScore;
 		[SerializeField] private GameObject PrefabMessage;
 
+		[SerializeField] private Sprite[] EventEndSprite;
 
 		private object[]		mparam;
 
@@ -132,11 +133,12 @@ namespace Mix2App.MiniGame1{
 			//パラメタ詳細は設計書参照
 			if (mparam==null) {
 				mparam = new object[] {
-					1,1,1,
+					1,						// ミニゲームID
+					Random.Range(0,4) + 1,	// 季節ID：１：春、２：夏、３：秋、４：冬
 				};
 			}
 
-			GameCall call = new GameCall (CallLabel.GET_MINIGAME_INFO);
+			GameCall call = new GameCall (CallLabel.GET_MINIGAME_INFO,1,mparam[0],mparam[1]);
 			call.AddListener (mGetMinigameInfo);
 			ManagerObject.instance.connect.send (call);
 		}
@@ -155,9 +157,7 @@ namespace Mix2App.MiniGame1{
 		IEnumerator mStart(){
 			muser1 = ManagerObject.instance.player;		// たまごっち
 
-//			mData.seasonId = 3;
-//			mData.seasonId = Random.Range (0, 4);
-//			Debug.Log ("季節：" + mData.seasonId.ToString());
+
 
 			SeasonImageSet();
 
@@ -233,13 +233,13 @@ namespace Mix2App.MiniGame1{
 						nowScore = 0;
 						nowScore2 = 0;
 						nowTime1 = 0.0f;
-						nowTime2 = 50;									// 制限時間
+						nowTime2 = 50;												// 制限時間
 					}
 					break;
 				}
 			case statusJobCount.minigame1JobCount010:
 				{
-					break;
+					break;															// タイトル画面
 				}
 			case statusJobCount.minigame1JobCount020:
 				{
@@ -260,8 +260,9 @@ namespace Mix2App.MiniGame1{
 					if (EventStart.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0f) {
 						jobCount = statusJobCount.minigame1JobCount040;
 						EventStart.SetActive (false);
-						EventGame.SetActive (true);
+
 						GameMainInit ();
+						EventGame.SetActive (true);
 						TamagoAnimeSprite (EventGame);								// たまごっちのアニメを反映する
 
 //						ManagerObject.instance.sound.playBgm (21);
@@ -291,6 +292,21 @@ namespace Mix2App.MiniGame1{
 					}
 					if (waitCount == 0) {											// 驚きを見せるためのウエィト
 						jobCount = statusJobCount.minigame1JobCount060;
+
+						int _num = 0;
+						if (nowScore < 100) {
+							_num = 0;
+						} else if (nowScore < 200) {
+							_num = 1;
+						} else if (nowScore < 300) {
+							_num = 2;
+						} else if (nowScore < 500) {
+							_num = 3;
+						} else {
+							_num = 4;
+						}
+						EventEnd.transform.Find ("gameend").transform.GetComponent<Image> ().sprite = EventEndSprite [_num];
+
 						EventGame.SetActive (false);
 						EventEnd.SetActive (true);
 						ManagerObject.instance.sound.playSe (21);
@@ -355,32 +371,28 @@ namespace Mix2App.MiniGame1{
 
 		private void ButtonStartClick(){
 			jobCount = statusJobCount.minigame1JobCount020;							// スタートボタンが押されたのでゲーム開始
-
 			ManagerObject.instance.sound.playSe (11);
 		}
 
 		private void ButtonCloseClick(){
 			ManagerObject.instance.sound.playSe (17);
-
 			Debug.Log ("たまタウンへ・・・");
 			ManagerObject.instance.view.change(SceneLabel.TOWN);
 		}
 
 		private void ButtonHelpClick(){
 			EventHelp.SetActive (true);
-
 			ManagerObject.instance.sound.playSe (11);
+//			ManagerObject.instance.view.add("webview","minigame1");
 		}
 
 		private void ButtonHelpModoruClick(){
 			EventHelp.SetActive (false);
-
 			ManagerObject.instance.sound.playSe (17);
 		}
 
 		private void ButtonYameruClick(){
 			gameMainLoopFlag = true;												// ゲームメインを終了する
-
 			ManagerObject.instance.sound.playSe (17);
 		}
 
@@ -392,13 +404,11 @@ namespace Mix2App.MiniGame1{
 
 		private void ButtonTojiruClick(){
 			resultItemGetFlag = true;												// アイテム入手画面を閉じる
-
 			ManagerObject.instance.sound.playSe (17);
 		}
 
 		private void ButtonModoruClick(){
 			resultMainLoopFlag = true;												// タイトルにもどる
-
 			ManagerObject.instance.sound.playSe (17);
 		}
 
@@ -421,7 +431,11 @@ namespace Mix2App.MiniGame1{
 			scoreYIdouNumber = 0;
 			gameMainLoopFlag = false;
 
-			itemCoroutineFlag = true;
+			// アイテム下降メイン処理を登録する
+			StartCoroutine (ItemDown ());
+
+			EventGame.transform.Find ("points/Text").gameObject.GetComponent<Text> ().text = nowScore.ToString ();
+			EventGame.transform.Find ("timer/Text").gameObject.GetComponent<Text> ().text = nowTime2.ToString ();
 		}
 
 		private float[] itemYJumpTable = new float[]{
@@ -446,7 +460,6 @@ namespace Mix2App.MiniGame1{
 			0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.5f,0.5f,0.5f,1.0f,1.0f,1.0f,1.8f,1.8f,1.8f,2.8f,2.8f,2.8f,3.0f,
 		};
 
-		private bool itemCoroutineFlag = true;
 		private int scoreYIdouNumber = 0;
 		private GameItem gameitem;													// spriteと得点の構造体
 		private bool gameMainLoopFlag = false;
@@ -528,10 +541,6 @@ namespace Mix2App.MiniGame1{
 
 			charaObj.transform.localPosition = pos;									// 操作キャラの座標を設定
 
-			if (itemCoroutineFlag == true) {
-				StartCoroutine (ItemDown ());
-				itemCoroutineFlag = false;
-			}
 
 
 			nowTime1 += 1.0f * Time.deltaTime;
@@ -570,11 +579,16 @@ namespace Mix2App.MiniGame1{
 		private IEnumerator ItemDown(){
 			int i = 0;
 
+			yield return null;
+
+			iMessageCounter = Random.Range (0, 3) + 2;
+
 			while (true) {
 				if (gameMainLoopFlag == true) {
 					break;
 				}
 
+				// アイテム下降開始
 				StartCoroutine (ItemDownSub (i));
 
 				i++;
@@ -582,8 +596,8 @@ namespace Mix2App.MiniGame1{
 					i = 0;
 				}
 
+				// 下降するアイテムを出現させたのでウェイト
 				yield return new WaitForSeconds (itemTable [itemGetNumber, 0]);
-//				yield return null;
 			}
 		}
 
@@ -591,6 +605,7 @@ namespace Mix2App.MiniGame1{
 		private GameObject[] prefabObjItem = new GameObject[20];
 		private GameObject[] prefabObjScore = new GameObject[20];
 		private GameObject[] prefabObjMessage = new GameObject[20];
+		private int iMessageCounter;
 
 		private IEnumerator ItemDownSub(int _num){
 			int _itemIdouFlag = 0;
@@ -623,8 +638,8 @@ namespace Mix2App.MiniGame1{
 				GameObject scoreObj = prefabObjScore [_num].gameObject;
 				Vector3 posScore = scoreObj.transform.localPosition;					// スコア表示の座標を抽出
 
-				GameObject messageObj = prefabObjMessage [_num].gameObject;				// スコア評価オブジェ
-				Vector3 posMessage = messageObj.transform.localPosition;
+				GameObject messageObj = prefabObjMessage [_num].gameObject;
+				Vector3 posMessage = messageObj.transform.localPosition;				// スコア評価オブジェの座標を抽出
 
 				switch (_itemIdouFlag) {
 				case	0:																// 落下アイテムの初期化
@@ -633,25 +648,59 @@ namespace Mix2App.MiniGame1{
 						int number = 0;
 
 						posItem.y = 600;
-						posItem.x = (Random.Range (-59, 59) * 10);
+						posItem.x = (Random.Range (-59, 59) * 10);						// 落下位置を設定
 						_itemIdouFlag = 1;
 						_itemXbase = posItem.x;
 						_itemYNumber = 0;
 
-						_itemDownSpeed = (1000 / (itemTable [itemGetNumber, 1] * 60));
+						_itemDownSpeed = (1000 / (itemTable [itemGetNumber, 1] * 60));	// 落下速度を設定
 
 						float totalNum = 0;
 						for (int i = 0; i < 6; i++) {
 							totalNum += itemTable [itemGetNumber, 2 + i];
 							if (itemRnd <= totalNum) {
-								number = i;
+								number = i;												// 落下アイテムを決定
 								break;
 							}
 						}
 
-						_gameitem = pgGameCore.GameItemGet (number);
-						//					itemObj.GetComponent<SpriteRenderer> ().sprite = gameitem.ItemImage;
-						itemObj.GetComponent<Image>().sprite = SeasonData [mData.seasonId].ImgItem [number];
+						_gameitem = pgGameCore.GameItemGet (number);					// 落下アイテムの情報を設定
+
+						Sprite _sprite;
+						switch (number) {
+						case	0:
+							{
+								_sprite = EventGame.transform.Find ("item_0").gameObject.GetComponent<Image> ().sprite;
+								break;
+							}
+						case	1:
+							{
+								_sprite = EventGame.transform.Find ("item_1").gameObject.GetComponent<Image> ().sprite;
+								break;
+							}
+						case	2:
+							{
+								_sprite = EventGame.transform.Find ("item_2").gameObject.GetComponent<Image> ().sprite;
+								break;
+							}
+						case	3:
+							{
+								_sprite = EventGame.transform.Find ("item_3").gameObject.GetComponent<Image> ().sprite;
+								break;
+							}
+						case	4:
+							{
+								_sprite = EventGame.transform.Find ("item_4").gameObject.GetComponent<Image> ().sprite;
+								break;
+							}
+						default:
+							{
+								_sprite = EventGame.transform.Find ("item_5").gameObject.GetComponent<Image> ().sprite;
+								break;
+							}
+						}
+						itemObj.GetComponent<Image> ().sprite = _sprite;				// 落下アイテムのスプライトを設定
+
 						break;
 					}
 				case	1:																// 落下アイテムの落下処理
@@ -673,16 +722,38 @@ namespace Mix2App.MiniGame1{
 							}
 
 							posScore.x = pos.x;											// アイテムをゲットしたので得点を表示する
-							posScore.y = pos.y - 56.0f;
+							posScore.y = pos.y - 125.0f;
 
 							scoreYIdouNumber = scoreYIdouTable.Length;
 							scoreObj.GetComponent<Text> ().text = _gameitem.Score.ToString ();
 
-							posMessage.x = pos.x;
-							posMessage.y = pos.y + 20.0f;
 
-							nowScore += _gameitem.Score;
-//							pgGameCore.GameScoreSet (gameitem.Score);
+							iMessageCounter--;
+							if (iMessageCounter == 0) {
+								posMessage.x = pos.x;									// スコア評価オブジェの表示位置を決定
+								posMessage.y = pos.y + 20.0f;
+								iMessageCounter = Random.Range (0, 3) + 2;
+
+								switch (Random.Range (0, 3)) {							// スコア評価オブジェの種類を決定
+								case	0:
+									{
+										messageObj.transform.Find ("type01").gameObject.SetActive (true);
+										break;
+									}
+								case	1:
+									{
+										messageObj.transform.Find ("type02").gameObject.SetActive (true);
+										break;
+									}
+								default:
+									{
+										messageObj.transform.Find ("type03").gameObject.SetActive (true);
+										break;
+									}
+								}
+							}
+
+							nowScore += _gameitem.Score;								// 得点を加算する
 
 							_itemIdouFlag = 3;
 							Debug.Log ("アイテムゲット");
@@ -725,7 +796,7 @@ namespace Mix2App.MiniGame1{
 
 				itemObj.transform.localPosition = posItem;								// 落下アイテムの座標を設定
 				scoreObj.transform.localPosition = posScore;							// スコア表示の座標を設定
-				messageObj.transform.localPosition = posMessage;
+				messageObj.transform.localPosition = posMessage;						// スコア評価オブジェの座標を設定
 
 				if (_itemIdouFlag == 0) {
 					break;
@@ -738,8 +809,9 @@ namespace Mix2App.MiniGame1{
 				yield return null;
 			}
 
-			GameObject.Destroy(prefabObjItem [_num].gameObject);
-			GameObject.Destroy(prefabObjScore [_num].gameObject);
+			// プレハブの削除
+			GameObject.Destroy (prefabObjItem [_num].gameObject);
+			GameObject.Destroy (prefabObjScore [_num].gameObject);
 			GameObject.Destroy (prefabObjMessage [_num].gameObject);
 		}
 
@@ -1160,36 +1232,39 @@ namespace Mix2App.MiniGame1{
 
 		// 画像データの差し替え
 		private void SeasonImageSet(){
+			int	_seasonID = mData.seasonId - 1;
+
+
 			// 背景
-			MinigameRoot.transform.Find ("base/bg").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgBG;
+			MinigameRoot.transform.Find ("base/bg").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgBG;
 			// 雲
-			MinigameRoot.transform.Find ("base/bg/cloud1").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgKumo;
-			MinigameRoot.transform.Find ("base/bg/cloud2").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgKumo;
+			MinigameRoot.transform.Find ("base/bg/cloud1").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgKumo;
+			MinigameRoot.transform.Find ("base/bg/cloud2").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgKumo;
 			// タイトル
-			MinigameRoot.transform.Find ("base/title/title").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgTitle;
+			MinigameRoot.transform.Find ("base/title/title").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgTitle;
 			// 紅葉
-			MinigameRoot.transform.Find ("base/title/momiji").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgMomiji;
-			MinigameRoot.transform.Find ("base/start/momiji").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgMomiji;
-			MinigameRoot.transform.Find ("base/game/momiji").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgMomiji;
-			MinigameRoot.transform.Find ("base/result/momiji").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgMomiji;
-			MinigameRoot.transform.Find ("base/end/momiji").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgMomiji;
+			MinigameRoot.transform.Find ("base/title/momiji").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgMomiji;
+			MinigameRoot.transform.Find ("base/start/momiji").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgMomiji;
+			MinigameRoot.transform.Find ("base/game/momiji").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgMomiji;
+			MinigameRoot.transform.Find ("base/result/momiji").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgMomiji;
+			MinigameRoot.transform.Find ("base/end/momiji").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgMomiji;
 			// １０点アイテム
-			MinigameRoot.transform.Find ("base/start/item_0").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgItem [0];
-			MinigameRoot.transform.Find ("base/game/item_0").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgItem [0];
+			MinigameRoot.transform.Find ("base/start/item_0").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [0];
+			MinigameRoot.transform.Find ("base/game/item_0").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [0];
 			// ２０点アイテム
-			MinigameRoot.transform.Find ("base/start/item_1").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgItem [1];
-			MinigameRoot.transform.Find ("base/game/item_1").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgItem [1];
+			MinigameRoot.transform.Find ("base/start/item_1").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [1];
+			MinigameRoot.transform.Find ("base/game/item_1").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [1];
 			// ３０点アイテム
-			MinigameRoot.transform.Find ("base/start/item_2").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgItem [2];
-			MinigameRoot.transform.Find ("base/game/item_2").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgItem [2];
+			MinigameRoot.transform.Find ("base/start/item_2").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [2];
+			MinigameRoot.transform.Find ("base/game/item_2").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [2];
 			// ５０点アイテム
-			MinigameRoot.transform.Find ("base/start/item_3").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgItem [3];
-			MinigameRoot.transform.Find ("base/game/item_3").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgItem [3];
+			MinigameRoot.transform.Find ("base/start/item_3").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [3];
+			MinigameRoot.transform.Find ("base/game/item_3").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [3];
 			// １００点アイテム
-			MinigameRoot.transform.Find ("base/start/item_4").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgItem [4];
-			MinigameRoot.transform.Find ("base/game/item_4").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgItem [4];
+			MinigameRoot.transform.Find ("base/start/item_4").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [4];
+			MinigameRoot.transform.Find ("base/game/item_4").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [4];
 			// お邪魔アイテム
-			MinigameRoot.transform.Find ("base/game/item_5").gameObject.GetComponent<Image> ().sprite = SeasonData [mData.seasonId].ImgItem [5];
+			MinigameRoot.transform.Find ("base/game/item_5").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [5];
 
 
 		}

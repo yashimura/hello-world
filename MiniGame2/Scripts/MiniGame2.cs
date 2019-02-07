@@ -92,9 +92,15 @@ namespace Mix2App.MiniGame2{
 		public void receive(params object[] parameter){
 			Debug.Log ("MiniGame2 receive");
 			mparam = parameter;
+			if (mparam==null) {
+				mparam = new object[] {
+					1,						// ミニゲームID
+					0,						// イベントID
+				};
+			}
 
 
-			GameCall call = new GameCall (CallLabel.GET_MINIGAME_INFO);
+			GameCall call = new GameCall (CallLabel.GET_MINIGAME_INFO,2,mparam[0],mparam[1]);
 			call.AddListener (mGetMinigameInfo);
 			ManagerObject.instance.connect.send (call);
 		}
@@ -354,7 +360,6 @@ namespace Mix2App.MiniGame2{
 		}
 		private void ButtonCloseClick(){
 			ManagerObject.instance.sound.playSe (17);
-
 			Debug.Log ("たまタウンへ・・・");
 			ManagerObject.instance.view.change(SceneLabel.TOWN);
 		}
@@ -374,7 +379,9 @@ namespace Mix2App.MiniGame2{
 			ManagerObject.instance.sound.playSe (17);
 		}
 		private void ButtonTakuhaiClick(){
-			Debug.Log ("宅配サービスへ・・・");
+			Debug.Log ("プレゼントボックスへ・・・");
+			ManagerObject.instance.sound.playSe (17);
+			ManagerObject.instance.view.change(SceneLabel.ITEMBOX);
 		}
 		private void ButtonTojiruClick(){
 			resultItemGetFlag = true;
