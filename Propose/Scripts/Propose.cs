@@ -161,8 +161,7 @@ namespace Mix2App.Propose{
 		}
 
 		void Update () {
-		
-
+			// たまごっちのアニメを反映させる
 			TamagochiImageMove (EventWait, CharaTamago [0], "tamago/charaR/");
 			TamagochiImageMove (EventWait, CharaTamago [1], "tamago/charaL/");
 		}
@@ -188,13 +187,13 @@ namespace Mix2App.Propose{
 			}
 */
 
-			if (mProposeType == 0) {
+			if (mProposeType == 0) {			// 自分がプロポーズを受けた
 				userR = mUser2;
 				userL = mUser1;
 
 				brotherR = mBrother2;
 				brotherL = mBrother1;
-			} else {
+			} else {							// 自分がプロポーズをした
 				userR = mUser1;
 				userL = mUser2;
 
@@ -220,26 +219,29 @@ namespace Mix2App.Propose{
 			EventSky.SetActive (true);
 			EventWait.SetActive (true);
 			if (mProposeType == 1) {
+				// 自分がプロポーズしたのでプロポーズ待機状態を表示する
 				EventWait.transform.Find ("fukidashi_left").gameObject.SetActive (true);
 				EventWait.transform.Find ("fukidashi_left/text").gameObject.GetComponent<Text> ().text = "・・・";
 				yield return new WaitForSeconds (3.0f);
 				EventWait.transform.Find ("fukidashi_left").gameObject.SetActive (false);
 			}
 
+			// プロポーズ待機状態が終了したので音楽スタートand戻るボタンを消す
 			EventWait.transform.Find ("Button_blue_modoru").gameObject.SetActive (false);
 			ManagerObject.instance.sound.playBgm (16);
 
+			// 右に配置されているたまごっちを移動させる
 			yield return StartCoroutine(TamagochiRightIdou (EventWait.transform.Find ("tamago/charaR").gameObject));
 
 
 			if (mProposeResult == true) {
-				// 成功
+				// 告白が成功したので左に配置されているたまごっちが演出をする（少し前に移動する）
 				yield return StartCoroutine(TamagochiProposeSuccess(EventWait.transform.Find("tamago/charaL").gameObject));
 
 				Debug.Log ("結婚へ・・・");
 				ManagerObject.instance.view.change(SceneLabel.MARRIAGE,mProposeType,mUser1,mBrother1,mUser2,mBrother2);
 			} else {
-				// 失敗
+				// 告白が失敗したので左に配置されているたまごっちが演出をする
 				yield return StartCoroutine(TamagochiProposeMiss());
 
 				Debug.Log ("たまタウンへ・・・");
@@ -250,15 +252,14 @@ namespace Mix2App.Propose{
 			yield return null;
 		}
 			
-
+		// 右のたまごっちの告白演出
 		private IEnumerator TamagochiRightIdou(GameObject _obj){
-			Vector3 _pos = new Vector3 (100, -50, 0);
+			Vector3 _pos = new Vector3 (100, -50, 0);					// 右のたまごっちの移動先
 
 			cbCharaTamago [0].gotoAndPlay (MotionLabel.WALK);
-
 			StartCoroutine (TamagochiWalkSEPlay (cbCharaTamago [0]));
 
-			while (true) {
+			while (true) {												// 移動処理
 				_obj.transform.localPosition = Vector3.MoveTowards (_obj.transform.localPosition, _pos, (40.0f * Time.deltaTime));
 				if (_obj.transform.localPosition.x == _pos.x) {
 					break;
@@ -268,13 +269,13 @@ namespace Mix2App.Propose{
 
 			cbCharaTamago [0].gotoAndPlay (MotionLabel.SHY1);
 
+			// 告白メッセージを表示
 			string _gobi;
 			if (brotherR == 0) {
 				_gobi = userR.chara1.wend;
 			} else {
 				_gobi = userR.chara2.wend;
 			}
-
 			if (userR.chara1.sex == 0) {
 				EventWait.transform.Find ("fukidashi_right/text").gameObject.GetComponent<Text> ().text = manMessageTable1 [Random.Range (0, manMessageTable1.Length)].Replace ("（＋語尾）", _gobi);
 			} else {
@@ -285,14 +286,14 @@ namespace Mix2App.Propose{
 			yield return new WaitForSeconds (3.0f);
 		}
 
+		// 左のたまごっちの告白OK演出
 		private IEnumerator TamagochiProposeSuccess(GameObject _obj){
-			Vector3 _pos = new Vector3 (-100, -50, 0);
+			Vector3 _pos = new Vector3 (-100, -50, 0);					// 左のたまごっちの移動先
 
 			cbCharaTamago [1].gotoAndPlay (MotionLabel.WALK);
-
 			StartCoroutine (TamagochiWalkSEPlay (cbCharaTamago [1]));
 
-			while (true) {
+			while (true) {												// 移動処理
 				_obj.transform.localPosition = Vector3.MoveTowards (_obj.transform.localPosition, _pos, (40.0f * Time.deltaTime));
 				if (_obj.transform.localPosition.x == _pos.x) {
 					break;
@@ -300,6 +301,7 @@ namespace Mix2App.Propose{
 				yield return null;
 			}
 
+			// 告白メッセージを消す
 			EventWait.transform.Find ("fukidashi_right").gameObject.SetActive (false);
 
 			if (Random.Range (0, 2) == 0) {
@@ -311,13 +313,13 @@ namespace Mix2App.Propose{
 
 			ManagerObject.instance.sound.playJingle (17);
 
+			// 告白OKメッセージを表示
 			string _gobi;
 			if (brotherL == 0) {
 				_gobi = userL.chara1.wend;
 			} else {
 				_gobi = userL.chara2.wend;
 			}
-
 			if (userL.chara1.sex == 0) {
 				EventWait.transform.Find ("fukidashi_left2/text").gameObject.GetComponent<Text> ().text = manMessageTable2 [Random.Range (0, manMessageTable2.Length)].Replace ("（＋語尾）", _gobi);
 			} else {
@@ -327,8 +329,10 @@ namespace Mix2App.Propose{
 
 			yield return new WaitForSeconds (2.0f);
 
+			// 告白OKメッセージを消す
 			EventWait.transform.Find ("fukidashi_left2").gameObject.SetActive (false);
 
+			// たまごっちを喜び状態にする
 			TamagochiRandomGlay (cbCharaTamago [0]);
 			TamagochiRandomGlay (cbCharaTamago [1]);
 
@@ -350,16 +354,18 @@ namespace Mix2App.Propose{
 			}
 		}
 
+		// 左のたまごっちの告白No演出
 		private IEnumerator TamagochiProposeMiss(){
+			// 告白メッセージを消す
 			EventWait.transform.Find ("fukidashi_right").gameObject.SetActive (false);
 
+			// 告白Noメッセージを表示
 			string _gobi;
 			if (brotherL == 0) {
 				_gobi = userL.chara1.wend;
 			} else {
 				_gobi = userL.chara2.wend;
 			}
-
 			if (userL.chara1.sex == 0) {
 				EventWait.transform.Find ("fukidashi_left/text").gameObject.GetComponent<Text> ().text = manMessageTable3 [Random.Range (0, manMessageTable3.Length)].Replace ("（＋語尾）", _gobi);
 			} else {
@@ -375,8 +381,8 @@ namespace Mix2App.Propose{
 			cbCharaTamago [0].gotoAndPlay (MotionLabel.CRY);
 			yield return new WaitForSeconds (1.0f);
 
+			// ハートの割れる演出
 			EventMiss.SetActive (true);
-
 			while (true) {
 				if (EventMiss.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0f) {
 					break;
@@ -388,7 +394,6 @@ namespace Mix2App.Propose{
 			yield return new WaitForSeconds (2.0f);
 
 			yield return StartCoroutine(ProposeHeartMiss());
-
 		}
 		private IEnumerator ProposeHeartMiss(){
 			GameObject _obj = EventWait.transform.Find ("heartloder_b").gameObject;
