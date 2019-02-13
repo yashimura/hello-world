@@ -51,7 +51,7 @@ namespace Mix2App.MiniGame1{
 
 
 
-		private CharaBehaviour[] cbCharaTamago = new CharaBehaviour[3];		// 
+		private CharaBehaviour[] cbCharaTamago = new CharaBehaviour[4];		// 
 		private bool startEndFlag = false;
 		private int waitCount = 0;
 		private int nowScore;													// 得点
@@ -150,14 +150,20 @@ namespace Mix2App.MiniGame1{
 		private MinigameData mData;
 		private MinigameResultData mResultData;
 		void mGetMinigameInfo(bool success,object data){
+			Debug.Log(data);
 			mData = (MinigameData)data;
 			StartCoroutine(mStart());
 		}
 
+
+		private float useScreenX, useScreenY;
+
 		IEnumerator mStart(){
 			muser1 = ManagerObject.instance.player;		// たまごっち
 
-
+			if (Random.Range (0, 2) == 0) {
+				muser1.chara2 = null;
+			}
 
 			SeasonImageSet();
 
@@ -188,6 +194,9 @@ namespace Mix2App.MiniGame1{
 			use_screen_y = Screen.height;
 			#endif
 
+			useScreenX = use_screen_x;
+			useScreenY = use_screen_y;
+
 			float num;
 			if (use_screen_x >= use_screen_y) {
 				num = use_screen_x / use_screen_y;
@@ -206,9 +215,15 @@ namespace Mix2App.MiniGame1{
 			cbCharaTamago[0] = CharaTamago[0].GetComponent<CharaBehaviour> ();		// プレイヤー
 			cbCharaTamago[1] = CharaTamago[1].GetComponent<CharaBehaviour> ();		// 応援キャラ１
 			cbCharaTamago[2] = CharaTamago[2].GetComponent<CharaBehaviour> ();		// 応援キャラ２
+			cbCharaTamago[3] = CharaTamago[3].GetComponent<CharaBehaviour> ();		// 双子プレイヤー
 			yield return cbCharaTamago[0].init (muser1.chara1);
 			yield return cbCharaTamago[1].init (new TamaChara (17));
 			yield return cbCharaTamago[2].init (new TamaChara (18));
+
+			if (muser1.chara2 != null) {
+				yield return cbCharaTamago [3].init (muser1.chara2);
+			}
+
 
 
 
@@ -250,6 +265,10 @@ namespace Mix2App.MiniGame1{
 					cbCharaTamago [0].gotoAndPlay (MotionLabel.IDLE);
 					cbCharaTamago [1].gotoAndPlay (MotionLabel.IDLE);
 					cbCharaTamago [2].gotoAndPlay (MotionLabel.SIT);
+					if (muser1.chara2 != null) {
+						cbCharaTamago [3].gotoAndPlay (MotionLabel.IDLE);
+					}
+
 					TamagoAnimeSprite (EventStart);									// たまごっちのアニメを反映する
 
 					ManagerObject.instance.sound.playSe (20);
@@ -326,6 +345,10 @@ namespace Mix2App.MiniGame1{
 						for (int i = 0; i < 3; i++) {
 							cbCharaTamago [i].gotoAndPlay (MotionLabel.IDLE);
 						}
+						if (muser1.chara2 != null) {
+							cbCharaTamago [3].gotoAndPlay (MotionLabel.IDLE);
+						}
+
 						TamagoAnimeSprite (EventResult);							// たまごっちのアニメを反映する
 					}
 					break;
@@ -417,6 +440,9 @@ namespace Mix2App.MiniGame1{
 			TamagochiImageMove (obj, CharaTamago [0], "tamago/chara/");
 			TamagochiImageMove (obj, CharaTamago [1], "tamago/chara2/");
 			TamagochiImageMove (obj, CharaTamago [2], "tamago/chara3/");
+			if (muser1.chara2 != null) {
+				TamagochiImageMove (obj, CharaTamago [3], "tamago/charaF/");
+			}
 		}
 
 
@@ -436,6 +462,14 @@ namespace Mix2App.MiniGame1{
 
 			EventGame.transform.Find ("points/Text").gameObject.GetComponent<Text> ().text = nowScore.ToString ();
 			EventGame.transform.Find ("timer/Text").gameObject.GetComponent<Text> ().text = nowTime2.ToString ();
+
+			// 初期は左向き
+			EventGame.transform.Find ("tamago/chara").gameObject.transform.localScale = new Vector3 (2.0f, 2.0f, 1.0f);
+			if (muser1.chara2 != null) {
+				EventGame.transform.Find ("tamago/charaF").gameObject.transform.localScale = new Vector3 (2.0f, 2.0f, 1.0f);
+			}
+
+			scrnOffX = MinigameRoot.gameObject.GetComponent<RectTransform> ().sizeDelta.x / 2;
 		}
 
 		private float[] itemYJumpTable = new float[]{
@@ -463,15 +497,29 @@ namespace Mix2App.MiniGame1{
 		private int scoreYIdouNumber = 0;
 		private GameItem gameitem;													// spriteと得点の構造体
 		private bool gameMainLoopFlag = false;
+		private float scrnOffX;
+		private int tapPosX;
 		// ゲームメイン処理
 		private bool GameMainLoop(){
 			GameObject charaObj = EventGame.transform.Find ("tamago/chara").gameObject;	// 操作キャラのGameObjectを抽出
+			GameObject charaObjF = EventGame.transform.Find ("tamago/charaF").gameObject;
 			Vector3 pos = charaObj.transform.localPosition;							// 操作キャラの座標を抽出
 
 			if (Input.GetMouseButtonDown (0)) {				
-				Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+				Vector3 mousePosition = Input.mousePosition;
+				float posScrn = useScreenX / 2;
+				tapPosX = (int)(((mousePosition.x - posScrn) / posScrn) * scrnOffX);
 
-				if (ray.direction.x * 1100 >= pos.x) {
+				if (muser1.chara2 != null) {
+					tapPosX = tapPosX + 75;
+				}
+				float _posx;
+				if (muser1.chara2 == null) {
+					_posx = pos.x;
+				} else {
+					_posx = pos.x - 75.0f;
+				}
+				if(tapPosX >= _posx){
 					if (charaAnimeFlag != 1) {
 						if (cbCharaTamago [0].nowlabel != MotionLabel.WALK) {
 							cbCharaTamago [0].gotoAndPlay (MotionLabel.WALK);
@@ -491,7 +539,7 @@ namespace Mix2App.MiniGame1{
 
 				if (charaJumpCheckFlag2 == 0) {
 					if (charaJumpCheckFlag == 0) {
-						charaJumpCheckFlag = 30;
+						charaJumpCheckFlag = 15;
 					} else {
 						charaJumpCheckFlag2 = tamagoYJumpIdouTable.Length;			// ジャンプ開始
 						ManagerObject.instance.sound.playSe (24);
@@ -512,12 +560,17 @@ namespace Mix2App.MiniGame1{
 				pos.y = tamagoYJumpIdouTable[(int)charaJumpCheckFlag2];
 			}
 
+			float _idouStopX = (float)tapPosX;
 			switch (charaAnimeFlag) {
 			case	1:																// 右移動
 				{
+					if (tapPosX > 600) {
+						_idouStopX = 600.0f;
+					}
+
 					pos.x += (4.4f * (60 * Time.deltaTime));
-					if (pos.x >= 600.0f) {
-						pos.x = 600.0f;												// 画面端に来たら停止
+					if (pos.x >= _idouStopX) {
+						pos.x = _idouStopX;												// 画面端に来たら停止
 						cbCharaTamago [0].gotoAndPlay (MotionLabel.IDLE);
 						charaAnimeFlag = 0;
 					}
@@ -526,11 +579,21 @@ namespace Mix2App.MiniGame1{
 			case	2:																// 左移動
 				{
 					pos.x -= (4.4f * (60 * Time.deltaTime));
-					if (pos.x <= -600.0f) {
-						pos.x = -600.0f;											// 画面端に来たら停止
+					if (muser1.chara2 == null) {
+						if (tapPosX < -600) {
+							_idouStopX = -600.0f;
+						}
+					} else {
+						if (tapPosX < -450) {
+							_idouStopX = -450.0f;
+						}
+					}
+					if (pos.x <= _idouStopX) {
+						pos.x = _idouStopX;											// 画面端に来たら停止
 						cbCharaTamago [0].gotoAndPlay (MotionLabel.IDLE);
 						charaAnimeFlag = 0;
 					}
+
 					break;
 				}
 			default:
@@ -539,9 +602,20 @@ namespace Mix2App.MiniGame1{
 				}
 			}
 
-			charaObj.transform.localPosition = pos;									// 操作キャラの座標を設定
-
-
+			if (muser1.chara2 == null) {
+				charaObj.transform.localPosition = pos;									// 操作キャラの座標を設定
+				charaObjF.transform.localPosition = new Vector3(5000.0f,5000.0f,0.0f);
+			}
+			else{
+				Vector3 _pos = pos;
+				charaObj.transform.localPosition = _pos;									// 操作キャラの座標を設定
+				_pos.x -= 150.0f;
+				charaObjF.transform.localPosition = _pos;
+				charaObjF.transform.localScale = charaObj.transform.localScale;
+				if (cbCharaTamago [0].nowlabel != cbCharaTamago [3].nowlabel) {
+					cbCharaTamago [3].gotoAndPlay (cbCharaTamago [0].nowlabel);
+				}
+			}
 
 			nowTime1 += 1.0f * Time.deltaTime;
 			if (nowTime1 >= 1.0f) {
@@ -565,7 +639,16 @@ namespace Mix2App.MiniGame1{
 
 		// たまごっちとアイテムの当たり判定
 		private bool HitCheck(Vector3 tamagoPos,Vector3 itemPos){
-			if (((tamagoPos.x - 90.0f) < itemPos.x) && (itemPos.x < (tamagoPos.x + 90.0f))) {
+			float _posx, _offsetx;
+			if (muser1.chara2 == null) {
+				_posx = tamagoPos.x;
+				_offsetx = 100.0f;
+			} else {
+				_posx = tamagoPos.x - 75.0f;
+				_offsetx = 175.0f;
+			}
+
+			if (((_posx - _offsetx) < itemPos.x) && (itemPos.x < (_posx + _offsetx))) {
 				if (((tamagoPos.y - 100.0f) < itemPos.y) && (itemPos.y < (tamagoPos.y + 100.0f))) {
 					return true;
 				}
@@ -721,7 +804,11 @@ namespace Mix2App.MiniGame1{
 								ManagerObject.instance.sound.playSe (25);
 							}
 
-							posScore.x = pos.x;											// アイテムをゲットしたので得点を表示する
+							if (muser1.chara2 == null) {
+								posScore.x = pos.x;											// アイテムをゲットしたので得点を表示する
+							} else {
+								posScore.x = pos.x - 75.0f;
+							}
 							posScore.y = pos.y - 125.0f;
 
 							scoreYIdouNumber = scoreYIdouTable.Length;
@@ -730,7 +817,11 @@ namespace Mix2App.MiniGame1{
 
 							iMessageCounter--;
 							if (iMessageCounter == 0) {
-								posMessage.x = pos.x;									// スコア評価オブジェの表示位置を決定
+								if (muser1.chara2 == null) {
+									posMessage.x = pos.x;									// スコア評価オブジェの表示位置を決定
+								} else {
+									posMessage.x = pos.x - 75.0f;
+								}
 								posMessage.y = pos.y + 20.0f;
 								iMessageCounter = Random.Range (0, 3) + 2;
 
@@ -888,9 +979,19 @@ namespace Mix2App.MiniGame1{
 						}
 					} else {
 						if ((nowScore == 0) || (!mResultData.rewardFlag)) {
-							EventResult.transform.Find ("tamago/chara").gameObject.transform.localPosition = new Vector3 (250.0f, -320.0f, 0.0f);
+							if (muser1.chara2 == null) {
+								EventResult.transform.Find ("tamago/chara").gameObject.transform.localPosition = new Vector3 (250.0f, -320.0f, 0.0f);
+							} else {
+								EventResult.transform.Find ("tamago/chara").gameObject.transform.localPosition = new Vector3 (375.0f, -320.0f, 0.0f);
+								EventResult.transform.Find ("tamago/charaF").gameObject.transform.localPosition = new Vector3 (225.0f, -320.0f, 0.0f);
+							}
 						} else {
-							EventResult.transform.Find ("tamago/chara").gameObject.transform.localPosition = new Vector3 (120.0f, -320.0f, 0.0f);
+							if (muser1.chara2 == null) {
+								EventResult.transform.Find ("tamago/chara").gameObject.transform.localPosition = new Vector3 (120.0f, -320.0f, 0.0f);
+							} else {
+								EventResult.transform.Find ("tamago/chara").gameObject.transform.localPosition = new Vector3 (245.0f, -320.0f, 0.0f);
+								EventResult.transform.Find ("tamago/charaF").gameObject.transform.localPosition = new Vector3 (95.0f, -320.0f, 0.0f);
+							}
 						}
 					}
 					resultLoopCount = statusResult.resultJobCount010;
@@ -1050,6 +1151,19 @@ namespace Mix2App.MiniGame1{
 				pos.x -= 4.0f;
 				pos.y += tamagoYJumpTable [resultTamagoYJumpCount];
 				EventResult.transform.Find ("tamago/chara3").gameObject.transform.localPosition = pos;
+
+				if (muser1.chara2 != null) {
+					pos = EventResult.transform.Find ("tamago/charaF").gameObject.transform.localPosition;
+					pos.x += 4.0f;
+					pos.y += tamagoYJumpTable [resultTamagoYJumpCount];
+					EventResult.transform.Find ("tamago/charaF").gameObject.transform.localPosition = pos;
+				}
+			}
+
+			if (muser1.chara2 != null) {
+				if (cbCharaTamago [3].nowlabel != cbCharaTamago [0].nowlabel) {
+					cbCharaTamago [3].gotoAndPlay (cbCharaTamago [0].nowlabel);
+				}
 			}
 
 			return resultMainLoopFlag;
@@ -1158,12 +1272,15 @@ namespace Mix2App.MiniGame1{
 			new Vector2 (   0.0f, -320.0f),		// ゲーム画面のプレイヤーキャラの初期位置
 			new Vector2 (-450.0f, -200.0f),		// ゲーム画面の応援キャラ１の初期位置
 			new Vector2 ( 450.0f, -150.0f),		// ゲーム画面の応援キャラ２の初期位置
-			new Vector2 ( 120.0f, -320.0f),		// 結果画面のプレイヤーキャラの初期位置
-			new Vector2 (-280.0f, -320.0f),		// 結果画面の応援キャラ１の初期位置
-			new Vector2 (-120.0f, -320.0f),		// 結果画面の応援キャラ２の初期位置
 			new Vector2 (   0.0f,  700.0f),		// 結果画面の宝箱の初期位置
 			new Vector2 (   0.0f,  700.0f),		// 結果画面のメッセージの初期位置
 			new Vector2 (   0.0f,  999.0f),		// NPCキャラ画面外配置
+
+			new Vector2 (  75.0f, -320.0f),		// スタート画面のプレイヤーキャラの初期位置
+			new Vector2 ( -75.0f, -320.0f),		// スタート画面のプレイヤーFキャラの初期位置
+			new Vector2 (  75.0f, -320.0f),		// ゲーム画面のプレイヤーキャラの初期位置
+			new Vector2 ( -75.0f, -320.0f),		// ゲーム画面のプレイヤーFキャラの初期位置
+
 		};
 		private void TamagoCharaPositionInit(){
 			TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara").gameObject, 0);
@@ -1172,20 +1289,25 @@ namespace Mix2App.MiniGame1{
 			TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara").gameObject, 3);
 			TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara2").gameObject, 4);
 			TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara3").gameObject, 5);
-			TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara").gameObject, 6);
-			TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara2").gameObject, 7);
-			TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara3").gameObject, 8);
-			TamagoCharaPositionInitSub (EventResult.transform.Find ("treasure").gameObject, 9);
-			TamagoCharaPositionInitSub (EventResult.transform.Find ("result_text").gameObject, 10);
+			TamagoCharaPositionInitSub (EventResult.transform.Find ("treasure").gameObject, 6);
+			TamagoCharaPositionInitSub (EventResult.transform.Find ("result_text").gameObject, 7);
 
 			if (mData.eventId == 0) {
-				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara2").gameObject, 11);
-				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara3").gameObject, 11);
-				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara2").gameObject, 11);
-				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara3").gameObject, 11);
-				TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara2").gameObject, 11);
-				TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara3").gameObject, 11);
+				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara2").gameObject, 8);
+				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara3").gameObject, 8);
+				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara2").gameObject, 8);
+				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara3").gameObject, 8);
+				TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara2").gameObject, 8);
+				TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara3").gameObject, 8);
 			}
+
+			if (muser1.chara2 != null) {
+				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara").gameObject, 9);
+				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/charaF").gameObject, 10);
+				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara").gameObject, 11);
+				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/charaF").gameObject, 12);
+			}
+
 		}
 		private void TamagoCharaPositionInitSub (GameObject obj, int num){
 			Vector3 pos = new Vector3 (0.0f, 0.0f, 0.0f);
