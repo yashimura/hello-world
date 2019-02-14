@@ -36,13 +36,10 @@ namespace Mix2App.MiniGame2{
 		[SerializeField] private GameObject EventGameMenu;
 		[SerializeField] private GameObject EventGameFukidashi;
 		[SerializeField] private GameObject EventGameScore;
-		[SerializeField] private GameObject[] EventStartTamago;
-		[SerializeField] private GameObject[] EventGameTamago;
-		[SerializeField] private GameObject[] EventEndTamago;
-		[SerializeField] private GameObject[] EventResultTamago;
 		[SerializeField] private Sprite[] MenuImage;							// ０：カツ丼、１：プリン、２：サンド、３：ステーキ、４：パスタ、５：オムライス、６：ご飯、７：寿司
 		[SerializeField] private Sprite[] FukidashiImage;						// ０：吹き出し１、１：吹き出し２、２：吹き出し３、３：吹き出し４
 		[SerializeField] private Sprite[] CheckImage;							// ０：丸、１：バツ
+		[SerializeField] private Sprite[] EventEndSprite;					// 終了時の演出スプライト
 
 
 
@@ -120,13 +117,6 @@ namespace Mix2App.MiniGame2{
 		IEnumerator mStart(){
 			Debug.Log ("MiniGame2 mStart");
 
-			//単体動作テスト用
-			//パラメタ詳細は設計書参照
-			if (mparam==null) {
-				mparam = new object[] {
-					ManagerObject.instance.player,
-				};
-			}
 			muser1 = ManagerObject.instance.player;		// たまごっち
 
 
@@ -226,9 +216,11 @@ namespace Mix2App.MiniGame2{
 
 		void Destroy(){
 			Debug.Log ("MiniGame2 Destroy");
+			StopCoroutine ("TamagochiSortLoop");
 		}
 		void OnDestroy(){
 			Debug.Log ("MiniGame2 OnDestroy");
+			StopCoroutine ("TamagochiSortLoop");
 		}
 
 		void Update(){
@@ -237,13 +229,15 @@ namespace Mix2App.MiniGame2{
 				{
 					if (startEndFlag) {
 						EventTitle.SetActive (true);
-						TamagochiDesignOff ();
 						jobCount = statusJobCount.minigame2JobCount010;
 						TamagoCharaPositionInit ();
 						nowScore = 0;
 						nowScore2 = 0;
 						nowTime1 = 0.0f;
 						nowTime2 = GAME_PLAY_TIME;									// 制限時間
+
+						EventGameScore.SetActive (false);
+
 					}
 					break;
 				}
@@ -293,6 +287,21 @@ namespace Mix2App.MiniGame2{
 					}
 					if (waitCount == 0) {											// 驚きを見せるためのウエィト
 						jobCount = statusJobCount.minigame2JobCount060;
+
+						int _num = 0;
+						if (nowScore < 100) {
+							_num = 0;
+						} else if (nowScore < 200) {
+							_num = 1;
+						} else if (nowScore < 300) {
+							_num = 2;
+						} else if (nowScore < 500) {
+							_num = 3;
+						} else {
+							_num = 4;
+						}
+						EventEnd.transform.Find ("gameend").transform.GetComponent<Image> ().sprite = EventEndSprite [_num];
+
 						EventGame.SetActive (false);
 						EventEnd.SetActive (true);
 					}
@@ -427,7 +436,6 @@ namespace Mix2App.MiniGame2{
 			}
 		}
 
-		private int[] tamagochiIdouFlag = new int[12];
 		private void TamagochiLoopInit(){
 			Vector2[] _initTable = new Vector2[] {
 				new Vector2 (0.0f, 380.0f),
@@ -455,7 +463,6 @@ namespace Mix2App.MiniGame2{
 			}
 		}
 
-		private Vector3[] _idouPos = new Vector3[12];
 		private IEnumerator TamagochiStartPositionSet(int num,int num2){
 			Vector3[] _idouPosTable = new Vector3[]{
 				new Vector3(260.0f,-250.0f,0.0f),
@@ -519,6 +526,9 @@ namespace Mix2App.MiniGame2{
 
 		private IEnumerator TamagoNextIdou0(int num,Vector3 pos){
 			while(true){
+				if (gameMainLoopFlag) {
+					break;
+				}
 				TamagochiAnimeFlipSet (num, MotionLabel.WALK, pos);
 				CharaTamago [num].transform.localPosition = Vector3.MoveTowards (CharaTamago [num].transform.localPosition, pos, 700 * Time.deltaTime);
 				if((CharaTamago[num].transform.localPosition.x == pos.x) && (CharaTamago[num].transform.localPosition.y == pos.y)){
@@ -529,6 +539,9 @@ namespace Mix2App.MiniGame2{
 			_NextCounter++;
 			Vector3 pos2 = new Vector3 (-1000.0f, -1500.0f, 0.0f);
 			while(true){
+				if (gameMainLoopFlag) {
+					break;
+				}
 				TamagochiAnimeFlipSet (num, MotionLabel.WALK, pos2);
 				CharaTamago [num].transform.localPosition = Vector3.MoveTowards (CharaTamago [num].transform.localPosition, pos2, 700 * Time.deltaTime);
 				if((CharaTamago[num].transform.localPosition.x == pos2.x) && (CharaTamago[num].transform.localPosition.y == pos2.y)){
@@ -540,6 +553,9 @@ namespace Mix2App.MiniGame2{
 		}
 		private IEnumerator TamagoNextIdou(int num,Vector3 pos){
 			while(true){
+				if (gameMainLoopFlag) {
+					break;
+				}
 				TamagochiAnimeFlipSet (num, MotionLabel.WALK, pos);
 				CharaTamago [num].transform.localPosition = Vector3.MoveTowards (CharaTamago [num].transform.localPosition, pos, 700 * Time.deltaTime);
 				if((CharaTamago[num].transform.localPosition.x == pos.x) && (CharaTamago[num].transform.localPosition.y == pos.y)){
@@ -582,7 +598,6 @@ namespace Mix2App.MiniGame2{
 
 
 		private int[] tamagochiIdouTable = new int[12];
-		private int tamagoGameIdouCount;
 		private void TamagochiGameIdouInit(){
 			for (int i = 0; i < 12; i++) {
 				tamagochiIdouTable [i] = i;
@@ -683,21 +698,6 @@ namespace Mix2App.MiniGame2{
 			}
 		}
 
-		private void TamagochiDesignOff (){
-			Vector3 _scaleZero = new Vector3 (0, 0, 0);
-			for (int i = 0; i < EventStartTamago.Length; i++) {
-				EventStartTamago [i].transform.localScale = _scaleZero;
-			}
-			for (int i = 0; i < EventGameTamago.Length; i++) {
-				EventGameTamago [i].transform.localScale = _scaleZero;
-			}
-			for (int i = 0; i < EventEndTamago.Length; i++) {
-				EventEndTamago [i].transform.localScale = _scaleZero;
-			}
-			for (int i = 0; i < EventResultTamago.Length; i++) {
-				EventResultTamago [i].transform.localScale = _scaleZero;
-			}
-		}
 
 
 
@@ -829,7 +829,6 @@ namespace Mix2App.MiniGame2{
 					if (posMenu.x <= -1500.0f) {
 						posMenu.x = -1500.0f;
 						gameJobCount = statusGameCount.minigame2GameCount050;
-						tamagoGameIdouCount = 0;
 					}
 					break;
 				}
@@ -887,7 +886,6 @@ namespace Mix2App.MiniGame2{
 
 			EventGameMenu.transform.localPosition = posMenu;
 			EventGame.transform.Find ("points/Text").gameObject.GetComponent<Text> ().text = nowScore.ToString ();
-			EventEnd.transform.Find ("points/Text").gameObject.GetComponent<Text> ().text = nowScore.ToString ();
 			EventResult.transform.Find ("points/Text").gameObject.GetComponent<Text> ().text = nowScore2.ToString ();
 			EventGame.transform.Find ("timer/Text").gameObject.GetComponent<Text> ().text = nowTime2.ToString ();
 

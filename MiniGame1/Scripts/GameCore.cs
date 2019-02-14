@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
-using Mix2App.MiniGame1.Events;
 using Mix2App.UI.Events;
 
 namespace Mix2App.MiniGame1 {

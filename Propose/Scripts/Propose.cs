@@ -374,7 +374,7 @@ namespace Mix2App.Propose{
 			EventWait.transform.Find ("fukidashi_left").gameObject.SetActive (true);
 
 			ManagerObject.instance.sound.playJingle (18);
-
+				
 			cbCharaTamago [0].gotoAndPlay (MotionLabel.SHOCK);
 			yield return new WaitForSeconds (0.5f);
 
