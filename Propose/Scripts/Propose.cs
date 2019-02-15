@@ -333,8 +333,8 @@ namespace Mix2App.Propose{
 			EventWait.transform.Find ("fukidashi_left2").gameObject.SetActive (false);
 
 			// たまごっちを喜び状態にする
-			TamagochiRandomGlay (cbCharaTamago [0]);
-			TamagochiRandomGlay (cbCharaTamago [1]);
+			TamagochiRandomGlad (cbCharaTamago [0]);
+			TamagochiRandomGlad (cbCharaTamago [1]);
 
 			yield return new WaitForSeconds (3.0f);
 
@@ -420,7 +420,7 @@ namespace Mix2App.Propose{
 		}
 
 
-		private void TamagochiRandomGlay(CharaBehaviour _cb){
+		private void TamagochiRandomGlad(CharaBehaviour _cb){
 			switch (Random.Range (0, 3)) {
 			case	0:
 				{

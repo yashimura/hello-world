@@ -39,7 +39,7 @@ namespace Mix2App.MiniGame2{
 		[SerializeField] private Sprite[] MenuImage;							// ０：カツ丼、１：プリン、２：サンド、３：ステーキ、４：パスタ、５：オムライス、６：ご飯、７：寿司
 		[SerializeField] private Sprite[] FukidashiImage;						// ０：吹き出し１、１：吹き出し２、２：吹き出し３、３：吹き出し４
 		[SerializeField] private Sprite[] CheckImage;							// ０：丸、１：バツ
-		[SerializeField] private Sprite[] EventEndSprite;					// 終了時の演出スプライト
+		[SerializeField] private Sprite[] EventEndSprite;						// 終了時の演出スプライト
 
 
 
