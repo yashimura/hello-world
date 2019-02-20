@@ -368,8 +368,8 @@ namespace Mix2App.Marriage{
 			case	statusJobCount.marriageJobCount011:
 				{
 					if (jyunbiButtonFlag) {
-						EventNet.SetActive (false);
-						EventJyunbi2.SetActive (false);
+//						EventNet.SetActive (false);
+//						EventJyunbi2.SetActive (false);
 
 						jobCount = statusJobCount.marriageJobCount020;
 					}
@@ -400,6 +400,8 @@ namespace Mix2App.Marriage{
 			case	statusJobCount.marriageJobCount030:
 				{
 					MarriageJobTypeOpening ();
+					EventNet.SetActive (false);
+					EventJyunbi2.SetActive (false);
 					EventStart.SetActive (true);
 					jobCount = statusJobCount.marriageJobCount040;
 					Debug.Log ("草原");

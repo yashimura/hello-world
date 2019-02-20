@@ -16,7 +16,7 @@ using Mix2App.Lib.Utils;
 
 
 namespace Mix2App.MiniGame1{
-	public class MiniGame1 : MonoBehaviour,IReceiver {
+	public class MiniGame1 : MonoBehaviour,IReceiver,IReadyable {
 		[SerializeField] private GameCore	pgGameCore;
 		[SerializeField] private GameObject MinigameRoot;
 		[SerializeField] private GameObject[] CharaTamago;					// たまごっち
@@ -62,7 +62,6 @@ namespace Mix2App.MiniGame1{
 		private int	nowTime2;													// 残り時間（制限時間）
 
 		private int charaAnimeFlag = 0;										// 0:idel,1:r-idou,2:l-idou
-		private int itemIdouFlag = 0;										// 0;init,1:d-idou,2:
 		private int itemGetNumber = 0;
 		private int charaJumpCheckFlag = 0;									// jumpFlag
 //		private int charaJumpCheckFlag2 = 0;								// jumpFlag2
@@ -125,6 +124,7 @@ namespace Mix2App.MiniGame1{
 			Debug.Log ("MiniGame1 Awake");
 			mparam=null;
 			muser1=null;
+			mready = false;
 		}
 
 		public void receive(params object[] parameter){
@@ -134,15 +134,16 @@ namespace Mix2App.MiniGame1{
 			//単体動作テスト用
 			//パラメタ詳細は設計書参照
 			if (mparam==null) {
-				mparam = new object[] {
-					1,						// ミニゲームID
-					Random.Range(0,4) + 1,	// 季節ID：１：春、２：夏、３：秋、４：冬
-				};
 			}
 
-			GameCall call = new GameCall (CallLabel.GET_MINIGAME_INFO,1,mparam[0],mparam[1]);
+			GameCall call = new GameCall (CallLabel.GET_MINIGAME_INFO,1);
 			call.AddListener (mGetMinigameInfo);
 			ManagerObject.instance.connect.send (call);
+		}
+
+		private bool mready = false;
+		public bool ready(){
+			return mready;
 		}
 
 		void Start(){
@@ -152,15 +153,24 @@ namespace Mix2App.MiniGame1{
 		private MinigameData mData;
 		private MinigameResultData mResultData;
 		void mGetMinigameInfo(bool success,object data){
-			Debug.Log(data);
-			mData = (MinigameData)data;
-			StartCoroutine(mStart());
+			Debug.Log(success + "/" + data);
+			if (success) {
+				mData = (MinigameData)data;
+				StartCoroutine (mStart ());
+			} else {
+				if ((int)data == 4) {
+					ManagerObject.instance.view.dialog ("alert", new object[]{ "minigame1" }, mGetMinigameInfoCallBack);
+				}
+			}
 		}
-
+		private void mGetMinigameInfoCallBack(int num){
+			ManagerObject.instance.view.change(SceneLabel.TOWN);
+		}
 
 		private float useScreenX;
 		private float useScreenY;
 		private bool futagoFlag;
+		private bool[] NpcDispFlag = new bool[4] {false,false,false,false};
 		IEnumerator mStart(){
 			muser1 = ManagerObject.instance.player;		// たまごっち
 
@@ -168,12 +178,30 @@ namespace Mix2App.MiniGame1{
 //				muser1.chara2 = null;
 //			}
 
-			mData.eventId = 1;
 
 
 			SeasonImageSet();
 
 
+
+			NpcDispFlag[0] = false;
+			NpcDispFlag[1] = false;
+			NpcDispFlag[2] = false;
+			NpcDispFlag[3] = false;
+			if (mData.eventCharaList != null) {
+				int _num;
+				if (mData.eventCharaList.Count > 4) {
+					_num = 4;
+				} else {
+					_num = mData.eventCharaList.Count;
+				}
+
+				for (int i = 0; i < _num; i++) {
+					NpcDispFlag [i] = true;
+				}
+			}
+
+			Debug.Log ("NPC " + NpcDispFlag [0] + "/" + NpcDispFlag [1] + "/" + NpcDispFlag [2] + "/" + NpcDispFlag [3]);
 
 			ManagerObject.instance.sound.playBgm (21);
 
@@ -230,18 +258,13 @@ namespace Mix2App.MiniGame1{
 				yield return cbCharaTamago [1].init (muser1.chara2);
 			}
 
-			cbCharaTamagoNPC[0] = CharaTamagoNPC[0].GetComponent<CharaBehaviour> ();	// 応援キャラ１
-			cbCharaTamagoNPC[1] = CharaTamagoNPC[1].GetComponent<CharaBehaviour> ();	// 応援キャラ２
-			cbCharaTamagoNPC[2] = CharaTamagoNPC[2].GetComponent<CharaBehaviour> ();	// 応援キャラ３
-			cbCharaTamagoNPC[3] = CharaTamagoNPC[3].GetComponent<CharaBehaviour> ();	// 応援キャラ４
-
-			if (mData.eventId != 0) {
-				yield return cbCharaTamagoNPC [0].init (new TamaChara (17));
-				yield return cbCharaTamagoNPC [1].init (new TamaChara (18));
-				yield return cbCharaTamagoNPC [2].init (new TamaChara (21));
-				yield return cbCharaTamagoNPC [3].init (new TamaChara (22));
+			for (int i = 0; i < 4; i++) {
+				cbCharaTamagoNPC[i] = CharaTamagoNPC[i].GetComponent<CharaBehaviour> ();
+				if (NpcDispFlag [i]) {
+					yield return cbCharaTamagoNPC [i].init (mData.eventCharaList [i]);	// 応援キャラを登録する
+				}
 			}
-
+			mready = true;
 			startEndFlag = true;
 		}
 
@@ -282,11 +305,10 @@ namespace Mix2App.MiniGame1{
 						cbCharaTamago [1].gotoAndPlay (MotionLabel.IDLE);
 					}
 
-					if (mData.eventId != 0) {
-						cbCharaTamagoNPC [0].gotoAndPlay (MotionLabel.IDLE);
-						cbCharaTamagoNPC [1].gotoAndPlay (MotionLabel.IDLE);
-						cbCharaTamagoNPC [2].gotoAndPlay (MotionLabel.IDLE);
-						cbCharaTamagoNPC [3].gotoAndPlay (MotionLabel.IDLE);
+					for (int i = 0; i < 4; i++) {
+						if (NpcDispFlag [i]) {
+							cbCharaTamagoNPC [i].gotoAndPlay (MotionLabel.IDLE);	// 応援キャラのアニメを登録
+						}
 					}
 
 					TamagoAnimeSprite (EventStart);									// たまごっちのアニメを反映する
@@ -317,7 +339,7 @@ namespace Mix2App.MiniGame1{
 						waitCount = 45;
 
 						waitResultFlag = false;
-						GameCall call = new GameCall (CallLabel.GET_MINIGAME_RESULT,mData.mid,nowScore);
+						GameCall call = new GameCall (CallLabel.GET_MINIGAME_RESULT,mData,nowScore);
 						call.AddListener (mGetMinigameResult);
 						ManagerObject.instance.connect.send (call);
 					}
@@ -422,9 +444,11 @@ namespace Mix2App.MiniGame1{
 		}
 
 		private void ButtonHelpClick(){
-			EventHelp.SetActive (true);
+//			EventHelp.SetActive (true);
 			ManagerObject.instance.sound.playSe (11);
-//			ManagerObject.instance.view.add("webview","minigame1");
+			ManagerObject.instance.view.dialog("webview",new object[]{"minigame1"},null);
+		}
+		private void ButtonHelpClickCallBack(int num){
 		}
 
 		private void ButtonHelpModoruClick(){
@@ -460,11 +484,11 @@ namespace Mix2App.MiniGame1{
 				TamagochiImageMove (obj, CharaTamago [1], "tamago/charaF/");
 			}
 
-			if (mData.eventId != 0) {
-				TamagochiImageMove (obj, CharaTamagoNPC [0], "tamago/chara0/");
-				TamagochiImageMove (obj, CharaTamagoNPC [1], "tamago/chara1/");
-				TamagochiImageMove (obj, CharaTamagoNPC [2], "tamago/chara2/");
-				TamagochiImageMove (obj, CharaTamagoNPC [3], "tamago/chara3/");
+			{
+				string[] _name = new string[]{ "tamago/chara0/", "tamago/chara1/", "tamago/chara2/", "tamago/chara3/" };
+				for (int i = 0; i < 4; i++) {
+					TamagochiImageMove (obj, CharaTamagoNPC [i], _name [i]);
+				}
 			}
 		}
 
@@ -473,7 +497,6 @@ namespace Mix2App.MiniGame1{
 		// ゲームメイン初期化
 		private void GameMainInit(){
 			charaAnimeFlag = 0;
-			itemIdouFlag = 0;
 			itemGetNumber = 0;
 			charaJumpCheckFlag = 0;
 			charaJumpCheckFlag2 = 0;
@@ -1018,21 +1041,6 @@ namespace Mix2App.MiniGame1{
 					EventResult.transform.Find ("treasure_open").gameObject.SetActive (false);
 					EventResult.transform.Find ("Button_blue_modoru").gameObject.SetActive (false);
 
-/*
-					if (mData.eventId != 0) {
-						// イベントでサブキャラの表示がある場合
-						if ((nowScore == 0) || (!mResultData.rewardFlag)) {
-							EventResult.transform.Find ("tamago/chara0").gameObject.transform.localPosition = new Vector3 (-550.0f, -320.0f, 0.0f);
-							EventResult.transform.Find ("tamago/chara1").gameObject.transform.localPosition = new Vector3 (-400.0f, -320.0f, 0.0f);
-							EventResult.transform.Find ("tamago/chara2").gameObject.transform.localPosition = new Vector3 (-250.0f, -320.0f, 0.0f);
-						} else {
-							EventResult.transform.Find ("tamago/chara0").gameObject.transform.localPosition = new Vector3 (-420.0f, -320.0f, 0.0f);
-							EventResult.transform.Find ("tamago/chara1").gameObject.transform.localPosition = new Vector3 (-270.0f, -320.0f, 0.0f);
-							EventResult.transform.Find ("tamago/chara2").gameObject.transform.localPosition = new Vector3 (-120.0f, -320.0f, 0.0f);
-						}
-						EventResult.transform.Find ("tamago/chara3").gameObject.transform.localPosition = new Vector3 (250.0f, -150.0f, 0.0f);
-					}
-*/
 					if ((nowScore == 0) || (!mResultData.rewardFlag)) {
 						if (!futagoFlag) {
 							EventResult.transform.Find ("tamago/chara").gameObject.transform.localPosition = new Vector3 (250.0f, -320.0f, 0.0f);
@@ -1182,11 +1190,10 @@ namespace Mix2App.MiniGame1{
 							TamagochiRandomGlad (cbCharaTamago [0]);
 							TamagochiRandomGlad (cbCharaTamago [1]);
 
-							if (mData.eventId != 0) {
-								TamagochiRandomGlad (cbCharaTamagoNPC [0]);
-								TamagochiRandomGlad (cbCharaTamagoNPC [1]);
-								TamagochiRandomGlad (cbCharaTamagoNPC [2]);
-								TamagochiRandomGlad (cbCharaTamagoNPC [3]);
+							for (int i = 0; i < 4; i++) {
+								if (NpcDispFlag [i]) {
+									TamagochiRandomGlad (cbCharaTamagoNPC [i]);								// 応援キャラを喜ばす
+								}
 							}
 						}
 					}
@@ -1322,18 +1329,18 @@ namespace Mix2App.MiniGame1{
 			new Vector2 (   0.0f,  700.0f),		// 結果画面のメッセージの初期位置
 			new Vector2 (   0.0f, 5000.0f),		// NPCキャラ画面外配置
 
-			new Vector2 (-450.0f, -200.0f),		// スタート画面の応援キャラ０の初期位置
-			new Vector2 ( 450.0f, -150.0f),		// スタート画面の応援キャラ１の初期位置
+			new Vector2 (-470.0f, -200.0f),		// スタート画面の応援キャラ０の初期位置
+			new Vector2 ( 470.0f, -200.0f),		// スタート画面の応援キャラ１の初期位置
 			new Vector2 (-300.0f, -200.0f),		// スタート画面の応援キャラ２の初期位置
-			new Vector2 ( 300.0f, -150.0f),		// スタート画面の応援キャラ３の初期位置
-			new Vector2 (-450.0f, -200.0f),		// ゲーム画面の応援キャラ０の初期位置
-			new Vector2 ( 450.0f, -150.0f),		// ゲーム画面の応援キャラ１の初期位置
+			new Vector2 ( 300.0f, -200.0f),		// スタート画面の応援キャラ３の初期位置
+			new Vector2 (-470.0f, -200.0f),		// ゲーム画面の応援キャラ０の初期位置
+			new Vector2 ( 470.0f, -200.0f),		// ゲーム画面の応援キャラ１の初期位置
 			new Vector2 (-300.0f, -200.0f),		// ゲーム画面の応援キャラ２の初期位置
-			new Vector2 ( 300.0f, -150.0f),		// ゲーム画面の応援キャラ３の初期位置
+			new Vector2 ( 300.0f, -200.0f),		// ゲーム画面の応援キャラ３の初期位置
 			new Vector2 (-310.0f, -200.0f),		// 結果画面の応援キャラ０の初期位置
 			new Vector2 ( 310.0f, -200.0f),		// 結果画面の応援キャラ１の初期位置
-			new Vector2 (-460.0f, -200.0f),		// 結果画面の応援キャラ２の初期位置
-			new Vector2 ( 460.0f, -200.0f),		// 結果画面の応援キャラ３の初期位置
+			new Vector2 (-480.0f, -200.0f),		// 結果画面の応援キャラ２の初期位置
+			new Vector2 ( 480.0f, -200.0f),		// 結果画面の応援キャラ３の初期位置
 		};
 		private void TamagoCharaPositionInit(){
 			if (!futagoFlag) {
@@ -1350,32 +1357,23 @@ namespace Mix2App.MiniGame1{
 			TamagoCharaPositionInitSub (EventResult.transform.Find ("treasure").gameObject, 6);
 			TamagoCharaPositionInitSub (EventResult.transform.Find ("result_text").gameObject, 7);
 
-			if (mData.eventId == 0) {
-				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara0").gameObject, 8);
-				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara1").gameObject, 8);
-				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara2").gameObject, 8);
-				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara3").gameObject, 8);
-				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara0").gameObject, 8);
-				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara1").gameObject, 8);
-				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara2").gameObject, 8);
-				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara3").gameObject, 8);
-				TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara0").gameObject, 8);
-				TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara1").gameObject, 8);
-				TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara2").gameObject, 8);
-				TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara3").gameObject, 8);
-			} else {
-				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara0").gameObject, 9);
-				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara1").gameObject, 10);
-				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara2").gameObject, 11);
-				TamagoCharaPositionInitSub (EventStart.transform.Find ("tamago/chara3").gameObject, 12);
-				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara0").gameObject, 13);
-				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara1").gameObject, 14);
-				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara2").gameObject, 15);
-				TamagoCharaPositionInitSub (EventGame.transform.Find ("tamago/chara3").gameObject, 16);
-				TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara0").gameObject, 17);
-				TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara1").gameObject, 18);
-				TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara2").gameObject, 19);
-				TamagoCharaPositionInitSub (EventResult.transform.Find ("tamago/chara3").gameObject, 20);
+			{
+				string[] _name = new string[4]{"tamago/chara0","tamago/chara1","tamago/chara2","tamago/chara3"};
+				int[] _start = new int[4]{ 9, 10, 11, 12 };
+				int[] _game = new int[4]{ 13, 14, 15, 16 };
+				int[] _result = new int[4]{ 17, 18, 19, 20 };
+
+				for (int i = 0; i < 4; i++) {													// 応援キャラの表示位置登録
+					if (NpcDispFlag [i]) {
+						TamagoCharaPositionInitSub (EventStart.transform.Find (_name[i]).gameObject, _start[i]);
+						TamagoCharaPositionInitSub (EventGame.transform.Find (_name[i]).gameObject, _game[i]);
+						TamagoCharaPositionInitSub (EventResult.transform.Find (_name[i]).gameObject, _result[i]);
+					} else {
+						TamagoCharaPositionInitSub (EventStart.transform.Find (_name[i]).gameObject, 8);
+						TamagoCharaPositionInitSub (EventGame.transform.Find (_name[i]).gameObject, 8);
+						TamagoCharaPositionInitSub (EventResult.transform.Find (_name[i]).gameObject, 8);
+					}
+				}
 			}
 		}
 		private void TamagoCharaPositionInitSub (GameObject obj, int num){

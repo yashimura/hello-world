@@ -13,7 +13,7 @@ using Mix2App.Lib.Utils;
 
 
 namespace Mix2App.MiniGame2{
-	public class MiniGame2 : MonoBehaviour,IReceiver {
+	public class MiniGame2 : MonoBehaviour,IReceiver,IReadyable {
 		[SerializeField] private GameObject[] CharaTamagoMain;					// たまごっち
 		[SerializeField] private GameObject[] CharaTamago;						// たまごっち
 		[SerializeField] private GameObject MinigameRoot;
@@ -84,22 +84,25 @@ namespace Mix2App.MiniGame2{
 
 			mparam=null;
 			muser1=null;
+
+			mready = false;
 		}
 
 		public void receive(params object[] parameter){
 			Debug.Log ("MiniGame2 receive");
 			mparam = parameter;
 			if (mparam==null) {
-				mparam = new object[] {
-					1,						// ミニゲームID
-					0,						// イベントID
-				};
 			}
 
 
-			GameCall call = new GameCall (CallLabel.GET_MINIGAME_INFO,2,mparam[0],mparam[1]);
+			GameCall call = new GameCall (CallLabel.GET_MINIGAME_INFO,2);
 			call.AddListener (mGetMinigameInfo);
 			ManagerObject.instance.connect.send (call);
+		}
+
+		private bool mready = false;
+		public bool ready(){
+			return mready;
 		}
 
 		void Start() {
@@ -212,6 +215,7 @@ namespace Mix2App.MiniGame2{
 			StartCoroutine ("TamagochiSortLoop");
 
 			startEndFlag = true;
+			mready = true;
 		}
 
 		void Destroy(){
@@ -274,7 +278,7 @@ namespace Mix2App.MiniGame2{
 						waitCount = 45;
 
 						waitResultFlag = false;
-						GameCall call = new GameCall (CallLabel.GET_MINIGAME_RESULT,mData.mid,nowScore);
+						GameCall call = new GameCall (CallLabel.GET_MINIGAME_RESULT,mData,nowScore);
 						call.AddListener (mGetMinigameResult);
 						ManagerObject.instance.connect.send (call);
 					}
@@ -373,9 +377,11 @@ namespace Mix2App.MiniGame2{
 			ManagerObject.instance.view.change(SceneLabel.TOWN);
 		}
 		private void ButtonHelpClick(){
-			EventHelp.SetActive (true);
-
+//			EventHelp.SetActive (true);
 			ManagerObject.instance.sound.playSe (11);
+			ManagerObject.instance.view.dialog("webview",new object[]{"minigame2"},null);
+		}
+		private void ButtonHelpClickCallBack(int num){
 		}
 		private void ButtonHelpModoruClick(){
 			EventHelp.SetActive (false);
