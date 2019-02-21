@@ -115,6 +115,10 @@ namespace Mix2App.ItemBox
         {
             muser1 = ManagerObject.instance.player;
 
+
+			ManagerObject.instance.sound.playBgm (1);
+
+
             EventItemBoxMenu.SetActive(true);
             EventPresent.SetActive(true);
             ViewSwitch(EventPresent, false);

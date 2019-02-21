@@ -260,6 +260,10 @@ namespace Mix2App.MiniGame1{
 		}
 		void OnDestroy(){
 			Debug.Log ("MiniGame1 OnDestroy");
+
+			if (mData.assetBundle != null) {
+				mData.assetBundle.Unload (false);
+			}
 		}
 
 		void Update(){
@@ -504,32 +508,27 @@ namespace Mix2App.MiniGame1{
 			NpcDispFlag [2] = false;
 			NpcDispFlag [3] = false;
 
-			if (mData.eventIds != null) {
-				int _f = 0;
-				for (int i = 0; i < mData.eventIds.Length; i++) {
-					_f += mData.eventIds [i];
+			// 背景にキャラを表示するかどうかはmData.eventUserListのCountで判断する
+			// ｍData.eventIdsによる判定は不要
+			if (mData.eventUserList != null && mData.eventUserList.Count > 0) {
+				int[] _a = new int[2]{ 0, 1 };
+				if (mData.eventUserList.Count > 2) {
+					_a [0] = Random.Range (0, mData.eventUserList.Count);
+					_a [1] = Random.Range (0, mData.eventUserList.Count);
+					if (_a [0] == _a [1]) {
+						_a [1]++;
+						if (_a [1] == mData.eventUserList.Count) {
+							_a [1] = 0;
+						}
+					}
 				}
-				if (_f != 0) {
-					if (mData.eventUserList != null) {
-						int[] _a = new int[2]{ 0, 1 };
-						if (mData.eventUserList.Count > 2) {
-							_a [0] = Random.Range (0, mData.eventUserList.Count);
-							_a [1] = Random.Range (0, mData.eventUserList.Count);
-							if (_a [0] == _a [1]) {
-								_a [1]++;
-								if (_a [1] == mData.eventUserList.Count) {
-									_a [1] = 0;
-								}
-							}
-						}
-						for (int i = 0; i < 2; i++) {
-							NpcDispFlag [i] = true;
-							NpcBaseTamaChara [i] = mData.eventUserList [_a [i]].chara1;
-							if (mData.eventUserList [_a [i]].chara2 != null) {
-								NpcDispFlag [i + 2] = true;
-								NpcBaseTamaChara [i + 2] = mData.eventUserList [_a [i]].chara2;
-							}
-						}
+				// mData.eventUserList.Countも条件判定に加える
+				for (int i = 0; i < 2 && i < mData.eventUserList.Count; i++) {
+					NpcDispFlag [i] = true;
+					NpcBaseTamaChara [i] = mData.eventUserList [_a [i]].chara1;
+					if (mData.eventUserList [_a [i]].chara2 != null) {
+						NpcDispFlag [i + 2] = true;
+						NpcBaseTamaChara [i + 2] = mData.eventUserList [_a [i]].chara2;
 					}
 				}
 			}
@@ -1475,8 +1474,7 @@ namespace Mix2App.MiniGame1{
 
 		// 画像データの差し替え
 		private void SeasonImageSet(){
-			Object[] __data = mData.assetBundle.LoadAllAssets ();
-			SeasonImg _data = (SeasonImg)__data [0];
+			SeasonImg _data = mData.assetBundle.LoadAllAssets<SeasonImg> ()[0];
 
 			// 背景
 			MinigameRoot.transform.Find ("base/bg").gameObject.GetComponent<Image> ().sprite = _data.ImgBG;
