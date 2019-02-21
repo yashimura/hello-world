@@ -112,8 +112,19 @@ namespace Mix2App.MiniGame2{
 		private MinigameData mData;
 		private MinigameResultData mResultData;
 		void mGetMinigameInfo(bool success,object data){
-			mData = (MinigameData)data;
-			StartCoroutine(mStart());
+			Debug.Log(success + "/" + data);
+			if (success) {
+				mData = (MinigameData)data;
+				StartCoroutine (mStart ());
+			} else {
+				if ((int)data == 4) {
+					mready = true;
+					ManagerObject.instance.view.dialog ("alert", new object[]{ "minigame2",(int)data}, mGetMinigameInfoCallBack);
+				}
+			}
+		}
+		private void mGetMinigameInfoCallBack(int num){
+			ManagerObject.instance.view.change(SceneLabel.TOWN);
 		}
 
 

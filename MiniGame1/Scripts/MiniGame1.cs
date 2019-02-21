@@ -39,8 +39,8 @@ namespace Mix2App.MiniGame1{
 
 		[SerializeField] private GameObject baseSizePanel;
 
-		[Tooltip("四季の画像データ（春、夏、秋、冬）")]
-		[SerializeField] private SeasonImg[] SeasonData;
+//		[Tooltip("四季の画像データ（春、夏、秋、冬）")]
+//		[SerializeField] private SeasonImg[] SeasonData;
 
 		[SerializeField] private GameObject PrefabItem;
 		[SerializeField] private GameObject PrefabScore;
@@ -81,6 +81,8 @@ namespace Mix2App.MiniGame1{
 			minigame1JobCount090,
 			minigame1JobCount100,
 			minigame1JobCount110,
+			minigame1JobCount120,
+			minigame1JobCount130,
 		}
 
 		// 出現間隔（秒）,落下速度（秒）,アイテム1（％）,アイテム2（％）,アイテム3（％）,アイテム4（％）,アイテム5（％）,おじゃま（％）
@@ -159,7 +161,8 @@ namespace Mix2App.MiniGame1{
 				StartCoroutine (mStart ());
 			} else {
 				if ((int)data == 4) {
-					ManagerObject.instance.view.dialog ("alert", new object[]{ "minigame1" }, mGetMinigameInfoCallBack);
+					mready = true;
+					ManagerObject.instance.view.dialog ("alert", new object[]{ "minigame1",(int)data}, mGetMinigameInfoCallBack);
 				}
 			}
 		}
@@ -171,6 +174,7 @@ namespace Mix2App.MiniGame1{
 		private float useScreenY;
 		private bool futagoFlag;
 		private bool[] NpcDispFlag = new bool[4] {false,false,false,false};
+		private TamaChara[] NpcBaseTamaChara = new TamaChara[4];
 		IEnumerator mStart(){
 			muser1 = ManagerObject.instance.player;		// たまごっち
 
@@ -188,20 +192,6 @@ namespace Mix2App.MiniGame1{
 			NpcDispFlag[1] = false;
 			NpcDispFlag[2] = false;
 			NpcDispFlag[3] = false;
-			if (mData.eventCharaList != null) {
-				int _num;
-				if (mData.eventCharaList.Count > 4) {
-					_num = 4;
-				} else {
-					_num = mData.eventCharaList.Count;
-				}
-
-				for (int i = 0; i < _num; i++) {
-					NpcDispFlag [i] = true;
-				}
-			}
-
-			Debug.Log ("NPC " + NpcDispFlag [0] + "/" + NpcDispFlag [1] + "/" + NpcDispFlag [2] + "/" + NpcDispFlag [3]);
 
 			ManagerObject.instance.sound.playBgm (21);
 
@@ -260,9 +250,6 @@ namespace Mix2App.MiniGame1{
 
 			for (int i = 0; i < 4; i++) {
 				cbCharaTamagoNPC[i] = CharaTamagoNPC[i].GetComponent<CharaBehaviour> ();
-				if (NpcDispFlag [i]) {
-					yield return cbCharaTamagoNPC [i].init (mData.eventCharaList [i]);	// 応援キャラを登録する
-				}
 			}
 			mready = true;
 			startEndFlag = true;
@@ -282,7 +269,6 @@ namespace Mix2App.MiniGame1{
 					if (startEndFlag) {
 						EventTitle.SetActive (true);
 						jobCount = statusJobCount.minigame1JobCount010;
-						TamagoCharaPositionInit ();
 						nowScore = 0;
 						nowScore2 = 0;
 						nowTime1 = 0.0f;
@@ -296,9 +282,22 @@ namespace Mix2App.MiniGame1{
 				}
 			case statusJobCount.minigame1JobCount020:
 				{
+					EventTitleButtonActive (false);
+					jobCount = statusJobCount.minigame1JobCount030;
+					StartCoroutine (tamagochiCharaInit (statusJobCount.minigame1JobCount040));
+					break;
+				}
+			case statusJobCount.minigame1JobCount030:
+				{
+					break;															// NPCキャラセットが完了したら次へ
+				}
+			case statusJobCount.minigame1JobCount040:
+				{
+					TamagoCharaPositionInit ();
+					EventTitleButtonActive (true);
 					EventTitle.SetActive (false);
 					EventStart.SetActive (true);
-					jobCount = statusJobCount.minigame1JobCount030;
+					jobCount = statusJobCount.minigame1JobCount050;
 
 					cbCharaTamago [0].gotoAndPlay (MotionLabel.IDLE);
 					if (futagoFlag) {
@@ -316,10 +315,10 @@ namespace Mix2App.MiniGame1{
 					ManagerObject.instance.sound.playSe (20);
 					break;
 				}
-			case statusJobCount.minigame1JobCount030:
+			case statusJobCount.minigame1JobCount050:
 				{
 					if (EventStart.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0f) {
-						jobCount = statusJobCount.minigame1JobCount040;
+						jobCount = statusJobCount.minigame1JobCount060;
 						EventStart.SetActive (false);
 
 						GameMainInit ();
@@ -331,11 +330,11 @@ namespace Mix2App.MiniGame1{
 					TamagoAnimeSprite (EventStart);									// たまごっちのアニメを反映する
 					break;
 				}
-			case statusJobCount.minigame1JobCount040:
+			case statusJobCount.minigame1JobCount060:
 				{
 					TamagoAnimeSprite (EventGame);									// たまごっちのアニメを反映する
 					if (GameMainLoop ()) {											// ゲーム処理
-						jobCount = statusJobCount.minigame1JobCount050;
+						jobCount = statusJobCount.minigame1JobCount070;
 						waitCount = 45;
 
 						waitResultFlag = false;
@@ -345,14 +344,14 @@ namespace Mix2App.MiniGame1{
 					}
 					break;
 				}
-			case statusJobCount.minigame1JobCount050:
+			case statusJobCount.minigame1JobCount070:
 				{
 					TamagoAnimeSprite (EventGame);									// たまごっちのアニメを反映する
 					if (waitResultFlag) {
 						waitCount--;
 					}
 					if (waitCount == 0) {											// 驚きを見せるためのウエィト
-						jobCount = statusJobCount.minigame1JobCount060;
+						jobCount = statusJobCount.minigame1JobCount080;
 
 						int _num = 0;
 						if (nowScore < 100) {
@@ -374,10 +373,10 @@ namespace Mix2App.MiniGame1{
 					}
 					break;
 				}
-			case statusJobCount.minigame1JobCount060:
+			case statusJobCount.minigame1JobCount080:
 				{
 					if (EventEnd.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0f) {	// お疲れ様のアニメが終了するまで待つ
-						jobCount = statusJobCount.minigame1JobCount070;
+						jobCount = statusJobCount.minigame1JobCount090;
 						EventEnd.SetActive (false);
 						EventResult.SetActive (true);
 
@@ -393,7 +392,7 @@ namespace Mix2App.MiniGame1{
 					}
 					break;
 				}
-			case statusJobCount.minigame1JobCount070:
+			case statusJobCount.minigame1JobCount090:
 				{
 					TamagoAnimeSprite (EventResult);								// たまごっちのアニメを反映する
 							
@@ -405,19 +404,19 @@ namespace Mix2App.MiniGame1{
 
 					break;
 				}
-			case statusJobCount.minigame1JobCount080:
-				{
-					break;
-				}
-			case statusJobCount.minigame1JobCount090:
-				{
-					break;
-				}
 			case statusJobCount.minigame1JobCount100:
 				{
 					break;
 				}
 			case statusJobCount.minigame1JobCount110:
+				{
+					break;
+				}
+			case statusJobCount.minigame1JobCount120:
+				{
+					break;
+				}
+			case statusJobCount.minigame1JobCount130:
 				{
 					break;
 				}
@@ -492,6 +491,61 @@ namespace Mix2App.MiniGame1{
 			}
 		}
 
+		private void EventTitleButtonActive(bool flag){
+			EventTitle.transform.Find ("Button_red_start").gameObject.SetActive (flag);
+			EventTitle.transform.Find ("Button_red_help").gameObject.SetActive (flag);
+			EventTitle.transform.Find ("Button_red_close").gameObject.SetActive (flag);
+			EventTitle.transform.Find ("title").gameObject.SetActive (flag);
+		}
+
+		private IEnumerator tamagochiCharaInit (statusJobCount flag){
+			NpcDispFlag [0] = false;
+			NpcDispFlag [1] = false;
+			NpcDispFlag [2] = false;
+			NpcDispFlag [3] = false;
+
+			if (mData.eventIds != null) {
+				int _f = 0;
+				for (int i = 0; i < mData.eventIds.Length; i++) {
+					_f += mData.eventIds [i];
+				}
+				if (_f != 0) {
+					if (mData.eventUserList != null) {
+						int[] _a = new int[2]{ 0, 1 };
+						if (mData.eventUserList.Count > 2) {
+							_a [0] = Random.Range (0, mData.eventUserList.Count);
+							_a [1] = Random.Range (0, mData.eventUserList.Count);
+							if (_a [0] == _a [1]) {
+								_a [1]++;
+								if (_a [1] == mData.eventUserList.Count) {
+									_a [1] = 0;
+								}
+							}
+						}
+						for (int i = 0; i < 2; i++) {
+							NpcDispFlag [i] = true;
+							NpcBaseTamaChara [i] = mData.eventUserList [_a [i]].chara1;
+							if (mData.eventUserList [_a [i]].chara2 != null) {
+								NpcDispFlag [i + 2] = true;
+								NpcBaseTamaChara [i + 2] = mData.eventUserList [_a [i]].chara2;
+							}
+						}
+					}
+				}
+			}
+
+			yield return null;
+
+			for (int i = 0; i < 4; i++) {
+				if (NpcDispFlag [i]) {
+					yield return cbCharaTamagoNPC [i].init (NpcBaseTamaChara [i]);	// 応援キャラを登録する
+				}
+			}
+
+
+
+			jobCount = flag;
+		}
 
 
 		// ゲームメイン初期化
@@ -1421,38 +1475,39 @@ namespace Mix2App.MiniGame1{
 
 		// 画像データの差し替え
 		private void SeasonImageSet(){
-			int	_seasonID = mData.seasonId - 1;
+			Object[] __data = mData.assetBundle.LoadAllAssets ();
+			SeasonImg _data = (SeasonImg)__data [0];
 
 			// 背景
-			MinigameRoot.transform.Find ("base/bg").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgBG;
+			MinigameRoot.transform.Find ("base/bg").gameObject.GetComponent<Image> ().sprite = _data.ImgBG;
 			// 雲
-			MinigameRoot.transform.Find ("base/bg/cloud1").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgKumo;
-			MinigameRoot.transform.Find ("base/bg/cloud2").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgKumo;
+			MinigameRoot.transform.Find ("base/bg/cloud1").gameObject.GetComponent<Image> ().sprite = _data.ImgKumo;
+			MinigameRoot.transform.Find ("base/bg/cloud2").gameObject.GetComponent<Image> ().sprite = _data.ImgKumo;
 			// タイトル
-			MinigameRoot.transform.Find ("base/title/title").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgTitle;
+			MinigameRoot.transform.Find ("base/title/title").gameObject.GetComponent<Image> ().sprite = _data.ImgTitle;
 			// 紅葉
-			MinigameRoot.transform.Find ("base/title/momiji").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgMomiji;
-			MinigameRoot.transform.Find ("base/start/momiji").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgMomiji;
-			MinigameRoot.transform.Find ("base/game/momiji").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgMomiji;
-			MinigameRoot.transform.Find ("base/result/momiji").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgMomiji;
-			MinigameRoot.transform.Find ("base/end/momiji").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgMomiji;
+			MinigameRoot.transform.Find ("base/title/momiji").gameObject.GetComponent<Image> ().sprite = _data.ImgMomiji;
+			MinigameRoot.transform.Find ("base/start/momiji").gameObject.GetComponent<Image> ().sprite = _data.ImgMomiji;
+			MinigameRoot.transform.Find ("base/game/momiji").gameObject.GetComponent<Image> ().sprite = _data.ImgMomiji;
+			MinigameRoot.transform.Find ("base/result/momiji").gameObject.GetComponent<Image> ().sprite = _data.ImgMomiji;
+			MinigameRoot.transform.Find ("base/end/momiji").gameObject.GetComponent<Image> ().sprite = _data.ImgMomiji;
 			// １０点アイテム
-			MinigameRoot.transform.Find ("base/start/item_0").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [0];
-			MinigameRoot.transform.Find ("base/game/item_0").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [0];
+			MinigameRoot.transform.Find ("base/start/item_0").gameObject.GetComponent<Image> ().sprite = _data.ImgItem [0];
+			MinigameRoot.transform.Find ("base/game/item_0").gameObject.GetComponent<Image> ().sprite = _data.ImgItem [0];
 			// ２０点アイテム
-			MinigameRoot.transform.Find ("base/start/item_1").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [1];
-			MinigameRoot.transform.Find ("base/game/item_1").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [1];
+			MinigameRoot.transform.Find ("base/start/item_1").gameObject.GetComponent<Image> ().sprite = _data.ImgItem [1];
+			MinigameRoot.transform.Find ("base/game/item_1").gameObject.GetComponent<Image> ().sprite = _data.ImgItem [1];
 			// ３０点アイテム
-			MinigameRoot.transform.Find ("base/start/item_2").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [2];
-			MinigameRoot.transform.Find ("base/game/item_2").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [2];
+			MinigameRoot.transform.Find ("base/start/item_2").gameObject.GetComponent<Image> ().sprite = _data.ImgItem [2];
+			MinigameRoot.transform.Find ("base/game/item_2").gameObject.GetComponent<Image> ().sprite = _data.ImgItem [2];
 			// ５０点アイテム
-			MinigameRoot.transform.Find ("base/start/item_3").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [3];
-			MinigameRoot.transform.Find ("base/game/item_3").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [3];
+			MinigameRoot.transform.Find ("base/start/item_3").gameObject.GetComponent<Image> ().sprite = _data.ImgItem [3];
+			MinigameRoot.transform.Find ("base/game/item_3").gameObject.GetComponent<Image> ().sprite = _data.ImgItem [3];
 			// １００点アイテム
-			MinigameRoot.transform.Find ("base/start/item_4").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [4];
-			MinigameRoot.transform.Find ("base/game/item_4").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [4];
+			MinigameRoot.transform.Find ("base/start/item_4").gameObject.GetComponent<Image> ().sprite = _data.ImgItem [4];
+			MinigameRoot.transform.Find ("base/game/item_4").gameObject.GetComponent<Image> ().sprite = _data.ImgItem [4];
 			// お邪魔アイテム
-			MinigameRoot.transform.Find ("base/game/item_5").gameObject.GetComponent<Image> ().sprite = SeasonData [_seasonID].ImgItem [5];
+			MinigameRoot.transform.Find ("base/game/item_5").gameObject.GetComponent<Image> ().sprite = _data.ImgItem [5];
 		}
 
 
