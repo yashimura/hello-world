@@ -10,10 +10,10 @@ using Mix2App.Lib.View;
 using Mix2App.Lib.Utils;
 
 namespace Mix2App.TownEvent{
-	public class TownEvent_ev99 : MonoBehaviour,IReceiver,IReadyable {
+	public class TownEvent_easter : MonoBehaviour,IReceiver,IReadyable {
 		[SerializeField] private GameEventHandler GEHandler;
 		[SerializeField] private GameObject[] CharaTamago;					// たまごっち（プレイヤー）
-		[SerializeField] private GameObject[] CharaTamagoNpc;				// たまごっち（ナイナイ）
+		[SerializeField] private GameObject CharaTamagoNpc;					// たまごっち（カラフルっち）
 		[SerializeField] private GameObject EventBase;
 		[SerializeField] private GameObject EventScene;
 		[SerializeField] private GameObject EventItem;
@@ -24,26 +24,18 @@ namespace Mix2App.TownEvent{
 		private object[]		mparam;
 		private User muser1;
 		private CharaBehaviour[] cbCharaTamago = new CharaBehaviour[2];		// プレイヤー
-		private CharaBehaviour[] cbCharaTamagoNpc = new CharaBehaviour[2];	// ナイナイ
+		private CharaBehaviour cbCharaTamagoNpc;							// カラフルっち
 		private RewardData		mData;
 
 
 
-		private readonly string[] MessageTable1 = new string[]{	// オカムラのメッセージ
-			"まっとったでぇ！",
-			"いま いおうと おもったのに！",
-			"それはさておき！",
-			"いいもんもってきたで！",
-			"ほんのきもちや とっときや",
+		private readonly string[] MessageTable1 = new string[]{				// メッセージ
+			"ハッピーイースター！",
+			"あなたとカラフルなまいにちを\nすごしたい",
+			"カラフルラビっちですカラ～！",
+			"よいしょっと・・・",
+			"プレゼントなんだカラ～♪",
 		};
-		private readonly string[] MessageTable2 = new string[]{	// ヤベのメッセージ
-			"うちの あいかたが\nおせわになりました。",
-			"そんな こうふんせんでも・・・",
-			"さておかれたっ！",
-			"さすが おかザルっち！",
-		};
-
-
 
 		void Awake(){
 			muser1 = null;
@@ -94,7 +86,7 @@ namespace Mix2App.TownEvent{
 
 		void Start(){
 		}		
-	
+
 		IEnumerator mStart(){
 			Debug.Log (" mStart");
 
@@ -122,15 +114,12 @@ namespace Mix2App.TownEvent{
 				CharaTamago [1].transform.localPosition = new Vector3 (0, 5000, 0);
 			}
 
-			// ナイナイたまごっちを設定する
-			cbCharaTamagoNpc [0] = CharaTamagoNpc [0].GetComponent<CharaBehaviour> ();
-			cbCharaTamagoNpc [1] = CharaTamagoNpc [1].GetComponent<CharaBehaviour> ();
+			// カラフルっちたまごっちを設定する
+			cbCharaTamagoNpc = CharaTamagoNpc.GetComponent<CharaBehaviour> ();
 
-			yield return cbCharaTamagoNpc [0].init (new TamaChara(53));
-			yield return cbCharaTamagoNpc [1].init (new TamaChara(182));
+			yield return cbCharaTamagoNpc.init (new TamaChara(183));
 
-			cbCharaTamagoNpc [0].gotoAndPlay (MotionLabel.IDLE);
-			cbCharaTamagoNpc [1].gotoAndPlay (MotionLabel.IDLE);
+			cbCharaTamagoNpc.gotoAndPlay (MotionLabel.IDLE);
 
 
 
@@ -139,13 +128,12 @@ namespace Mix2App.TownEvent{
 
 		void Update(){
 			if (mready) {
-				// ナイナイのキャラの動きを設定する
-				TamagochiAnimeMove ("oka", CharaTamagoNpc [0], cbCharaTamagoNpc [0], MotionLabel.IDLE);
-				TamagochiAnimeMove ("oka_sa", CharaTamagoNpc [0], cbCharaTamagoNpc [0], MotionLabel.ANGER);
-				TamagochiAnimeMove ("oka_hp", CharaTamagoNpc [0], cbCharaTamagoNpc [0], MotionLabel.GLAD1);
-				TamagochiAnimeMove ("yab", CharaTamagoNpc [1], cbCharaTamagoNpc [1], MotionLabel.IDLE);
-				TamagochiAnimeMove ("yab_sa", CharaTamagoNpc [1], cbCharaTamagoNpc [1], MotionLabel.ANGER);
-				TamagochiAnimeMove ("yab_ku", CharaTamagoNpc [1], cbCharaTamagoNpc [1], MotionLabel.GLAD1);
+				// カラフルっちのキャラの動きを設定する
+				TamagochiAnimeMove ("color_no", CharaTamagoNpc, cbCharaTamagoNpc, MotionLabel.IDLE);
+				TamagochiAnimeMove ("color_yo", CharaTamagoNpc, cbCharaTamagoNpc, MotionLabel.GLAD2);
+				TamagochiAnimeMove ("color_cl", CharaTamagoNpc, cbCharaTamagoNpc, MotionLabel.IDLE);
+				TamagochiAnimeMove ("color_wo", CharaTamagoNpc, cbCharaTamagoNpc, MotionLabel.SHY2);
+				TamagochiAnimeMove ("color_bi", CharaTamagoNpc, cbCharaTamagoNpc, MotionLabel.SHOCK);
 
 				// ふきだしのメッセージを設定する
 				FukidashiTextSet ();
@@ -168,7 +156,6 @@ namespace Mix2App.TownEvent{
 			EventBase.SetActive (true);
 			EventScene.transform.localPosition = new Vector3 (0, 0, 0);
 			mready = true;
-
 			StartCoroutine (mainSELoop ());
 
 			while (true) {
@@ -186,25 +173,22 @@ namespace Mix2App.TownEvent{
 		}
 
 		IEnumerator mainSELoop(){
-			yield return new WaitForSeconds (2.2f);
-			ManagerObject.instance.sound.playSe (24);
-			yield return new WaitForSeconds (0.27f);
-			ManagerObject.instance.sound.playSe (24);
-			yield return new WaitForSeconds (0.27f);
-			ManagerObject.instance.sound.playSe (24);
-			yield return new WaitForSeconds (4.5f);
-
-			ManagerObject.instance.sound.playSe (33);
-
-			yield return new WaitForSeconds (13.1f);
+			yield return new WaitForSeconds (3.0f);
 
 			ManagerObject.instance.sound.playSe (24);
-			yield return new WaitForSeconds (0.75f);
+			yield return new WaitForSeconds (0.34f);
 			ManagerObject.instance.sound.playSe (24);
-			yield return new WaitForSeconds (0.37f);
+			yield return new WaitForSeconds (0.34f);
 			ManagerObject.instance.sound.playSe (24);
-			yield return new WaitForSeconds (0.37f);
+			yield return new WaitForSeconds (0.34f);
 			ManagerObject.instance.sound.playSe (24);
+
+			yield return new WaitForSeconds (6.2f);
+
+			ManagerObject.instance.sound.playSe (24);
+			yield return new WaitForSeconds (0.3f);
+			ManagerObject.instance.sound.playSe (24);
+
 		}
 
 		private void TamagochiAnimeMove(string _name,GameObject _obj,CharaBehaviour _cb,string _ml){
@@ -223,41 +207,23 @@ namespace Mix2App.TownEvent{
 		}
 
 		private void FukidashiTextSet(){
-			if(EventBase.transform.Find("fuki＿oka").gameObject.activeSelf){
-				string[] _name = new string[]{"fuki＿oka/Text1","fuki＿oka/Text2","fuki＿oka/Text3","fuki＿oka/Text4","fuki＿oka/Text5"};
+			if(EventBase.transform.Find("fuki").gameObject.activeSelf){
+				string[] _name = new string[]{"fuki/Text1","fuki/Text2","fuki/Text3","fuki/Text4","fuki/Text5"};
 				string _mes = "";
 
-				EventScene.transform.Find("fukiL1").gameObject.SetActive(true);
+				EventScene.transform.Find("fuki").gameObject.SetActive(true);
 				for(int i = 0;i < _name.Length;i++){
 					if(EventBase.transform.Find(_name[i]).gameObject.activeSelf){
 						_mes = MessageTable1[i];
 					}
 				}
 
-				EventScene.transform.Find("fukiL1/Text").gameObject.GetComponent<Text>().text = _mes;
+				EventScene.transform.Find("fuki/Text").gameObject.GetComponent<Text>().text = _mes;
 			}
 			else{
-				EventScene.transform.Find("fukiL1").gameObject.SetActive(false);
-			}
-
-			if(EventBase.transform.Find("fuki_yab").gameObject.activeSelf){
-				string[] _name = new string[]{"fuki_yab/Text1","fuki_yab/Text2","fuki_yab/Text3","fuki_yab/Text4"};
-				string _mes = "";
-
-				EventScene.transform.Find("fukiL2").gameObject.SetActive(true);
-				for(int i = 0;i < _name.Length;i++){
-					if(EventBase.transform.Find(_name[i]).gameObject.activeSelf){
-						_mes = MessageTable2[i];
-					}
-				}
-
-				EventScene.transform.Find("fukiL2/Text").gameObject.GetComponent<Text>().text = _mes;
-			}
-			else{
-				EventScene.transform.Find("fukiL2").gameObject.SetActive(false);
+				EventScene.transform.Find("fuki").gameObject.SetActive(false);
 			}
 		}
-
 
 
 		private bool TreasureFlag = false;
@@ -274,6 +240,7 @@ namespace Mix2App.TownEvent{
 				if (_flag) {
 					if (cbCharaTamago [0].nowlabel != MotionLabel.GLAD1) {
 						cbCharaTamago [0].gotoAndPlay (MotionLabel.GLAD1);
+
 						ManagerObject.instance.sound.playSe (30);
 					}
 					if (muser1.chara2 != null) {
@@ -282,11 +249,9 @@ namespace Mix2App.TownEvent{
 						}
 					}
 				} else {
-					if (_obj.transform.localPosition.y <= -250.0f) {
-						if (!TreasureFlag) {
-							TreasureFlag = true;
-							ManagerObject.instance.sound.playSe (26);
-						}
+					if (!TreasureFlag) {
+						TreasureFlag = true;
+						ManagerObject.instance.sound.playSe (26);
 					}
 				}
 			} else {
@@ -297,6 +262,7 @@ namespace Mix2App.TownEvent{
 
 
 
+			
 
 
 	}
