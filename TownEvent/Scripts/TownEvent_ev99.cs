@@ -56,32 +56,34 @@ namespace Mix2App.TownEvent{
 
 			//単体動作テスト用
 			//パラメタ詳細は設計書参照
-			if (mparam==null) {
+			if (mparam == null) {
 				mparam = new object[] {
-					1,					// 報酬ID
+					new RewardData (),	// 報酬
 					4,					// Depth値
 				};
+
+				mData = (RewardData)mparam [0];
+
+				mData.kind = RewardKind.ITEM;
+				mData.item = new ItemData ();
+				mData.item.code = "tg18_as16058_1";
+				mData.item.title = "テストアイテム";
+				mData.item.kind = 0;
+				mData.item.version = "tg18";
+			} else {
+				mData = (RewardData)mparam [0];
 			}
+
 			if (mparam.Length == 1) {
 				CameraObj.transform.GetComponent<Camera> ().depth = 2;
 			} else {
 				CameraObj.transform.GetComponent<Camera> ().depth = (int)mparam [1];
 			}
 
-			GameCall call = new GameCall (CallLabel.GET_EVENT_REWARD,mparam[0]);
-			call.AddListener (mGetEventReward);
-			ManagerObject.instance.connect.send (call);
+			RewardBehaviour _rb = EventItem.transform.Find("RewardView").gameObject.GetComponent<RewardBehaviour>();
+			_rb.init (mData);						// 報酬セット
 
 			StartCoroutine (mStart ());
-		}
-		void mGetEventReward(bool success,object data){
-			Debug.Log(success + "/" + data);
-			if (success) {
-				mData = (RewardData)data;
-
-				RewardBehaviour _rb = EventItem.transform.Find("RewardView").gameObject.GetComponent<RewardBehaviour>();
-				_rb.init (mData);
-			}
 		}
 
 		private bool mready = false;

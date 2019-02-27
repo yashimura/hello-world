@@ -46,7 +46,7 @@ namespace Mix2App.MiniGame2{
 
 		private object[]		mparam;
 
-		private CharaBehaviour[] cbCharaTamagoMain = new CharaBehaviour[1];		// プレイヤー
+		private CharaBehaviour[] cbCharaTamagoMain = new CharaBehaviour[2];		// プレイヤー
 		private CharaBehaviour[] cbCharaTamagoNpc = new CharaBehaviour[4];		// ゲスト（最大４人）
 		private CharaBehaviour[] cbCharaTamagoGuest = new CharaBehaviour[12];	// お客様
 		private bool startEndFlag = false;
@@ -58,6 +58,7 @@ namespace Mix2App.MiniGame2{
 		private int	nowTime2;													// 残り時間（制限時間）
 		private bool[] NpcDispFlag = new bool[4];
 		private TamaChara[] NpcBaseTamaChara = new TamaChara[4];
+		private bool futagoFlag;
 
 
 		private readonly float MENU_IDOU_SPEED = 30.0f;							// メニューの移動速度
@@ -84,6 +85,7 @@ namespace Mix2App.MiniGame2{
 		private readonly int GAME_TAMAGOCHI_GUEST11 = 29;						// お客さんたまごっち１１人目
 		private readonly int GAME_TAMAGOCHI_GUEST12 = 30;						// お客さんたまごっち１２人目
 
+		private readonly int GAME_TAMAGOCHI_PC = 16;							// 玩具連動していない時のプレイヤー
 
 
 		private statusJobCount	jobCount = statusJobCount.minigame2JobCount000;
@@ -117,6 +119,8 @@ namespace Mix2App.MiniGame2{
 			NpcDispFlag [1] = false;
 			NpcDispFlag [2] = false;
 			NpcDispFlag [3] = false;
+
+			futagoFlag = false;
 		}
 
 		public void receive(params object[] parameter){
@@ -211,6 +215,13 @@ namespace Mix2App.MiniGame2{
 				screenModeFlag = false;
 			}
 
+			if (muser1.chara2 == null) {
+				futagoFlag = false;
+			} else {
+				futagoFlag = true;
+			}
+
+
 			for (int i = 0; i < CharaTamagoMain.Length; i++) {
 				cbCharaTamagoMain [i] = CharaTamagoMain [i].GetComponent<CharaBehaviour> ();	// プレイヤーキャラ
 			}
@@ -220,9 +231,19 @@ namespace Mix2App.MiniGame2{
 			for (int i = 0; i < CharaTamagoGuest.Length; i++) {
 				cbCharaTamagoGuest [i] = CharaTamagoGuest [i].GetComponent<CharaBehaviour> ();	// お客キャラ
 			}
-
-			yield return cbCharaTamagoMain [0].init (muser1.chara1);							// プレイヤーキャラを登録する
+			if ((muser1.utype == UserType.MIX) || (muser1.utype == UserType.MIX2)) {
+				// 玩具連動キャラ
+				yield return cbCharaTamagoMain [0].init (muser1.chara1);						// プレイヤーキャラを登録する
+				if (futagoFlag) {
+					yield return cbCharaTamagoMain [1].init (muser1.chara2);					// プレイヤーキャラ（双子）を登録する
+				}
+			} else {
+				// 玩具非連動キャラ
+				yield return cbCharaTamagoMain [0].init (new TamaChara (GAME_TAMAGOCHI_PC));	// プレイヤーキャラを登録する
+				futagoFlag = false;
+			}
 			TamagochiMainAnimeSet (0, MotionLabel.IDLE);
+			TamagochiMainAnimeSet (1, MotionLabel.IDLE);
 
 			yield return cbCharaTamagoGuest [0].init (new TamaChara (GAME_TAMAGOCHI_GUEST1));	// お客キャラを登録する
 			yield return cbCharaTamagoGuest [1].init (new TamaChara (GAME_TAMAGOCHI_GUEST2));
@@ -485,9 +506,6 @@ namespace Mix2App.MiniGame2{
 		}
 
 		private void TamagochiLoopInit(){
-			Vector2[] _initTable = new Vector2[] {
-				new Vector2 (0.0f, 380.0f),
-			};
 			Vector2[] _initTableNpc = new Vector2[] {
 				new Vector2 (-400.0f, 380.0f),
 				new Vector2 (400.0f, 380.0f),
@@ -503,8 +521,16 @@ namespace Mix2App.MiniGame2{
 				CharaTamagoMain [i].SetActive (true);
 				TamagochiMainAnimeSet (i, MotionLabel.IDLE);
 				Vector3 pos = CharaTamagoMain [i].transform.localPosition;
-				pos.x = _initTable [i].x;
-				pos.y = _initTable [i].y;
+				if (futagoFlag) {
+					if (i == 0) {
+						pos.x = -110.0f;
+					} else {
+						pos.x = 110.0f;
+					}
+				} else {
+					pos.x = 5000.0f * i;
+				}
+				pos.y = 380.0f;
 				CharaTamagoMain [i].transform.localPosition = pos;
 			}
 
@@ -951,7 +977,9 @@ namespace Mix2App.MiniGame2{
 							ScoreInit ();
 						} else {
 							gameJobCount = statusGameCount.minigame2GameCount100;
-							TamagochiMainAnimeSet (0, MotionLabel.SHOCK);			// 誤答をしたので驚く
+							for (int i = 0; i < CharaTamagoMain.Length; i++) {
+								TamagochiMainAnimeSet (i, MotionLabel.SHOCK);		// 誤答をしたので驚く（プレイヤー）
+							}
 						}
 					}
 					break;
@@ -1306,9 +1334,19 @@ namespace Mix2App.MiniGame2{
 					EventResult.transform.Find ("Button_blue_modoru").gameObject.SetActive (false);
 
 					if ((nowScore == 0) || (!mResultData.rewardFlag)) {
-						EventResult.transform.Find ("chara").gameObject.transform.localPosition = new Vector3 (250.0f, -320.0f, 0.0f);
+						if (!futagoFlag) {
+							EventResult.transform.Find ("chara").gameObject.transform.localPosition = new Vector3 (250.0f, -320.0f, 0.0f);
+						} else {
+							EventResult.transform.Find ("chara").gameObject.transform.localPosition = new Vector3 (375.0f, -320.0f, 0.0f);
+							EventResult.transform.Find ("charaF").gameObject.transform.localPosition = new Vector3 (225.0f, -320.0f, 0.0f);
+						}
 					} else {
-						EventResult.transform.Find ("chara").gameObject.transform.localPosition = new Vector3 (120.0f, -320.0f, 0.0f);
+						if (!futagoFlag) {
+							EventResult.transform.Find ("chara").gameObject.transform.localPosition = new Vector3 (120.0f, -320.0f, 0.0f);
+						} else {
+							EventResult.transform.Find ("chara").gameObject.transform.localPosition = new Vector3 (245.0f, -320.0f, 0.0f);
+							EventResult.transform.Find ("charaF").gameObject.transform.localPosition = new Vector3 (95.0f, -320.0f, 0.0f);
+						}
 					}
 						
 					EventResult.transform.Find ("chara0").gameObject.transform.localPosition = new Vector3 (-310.0f, -200.0f, 0.0f);
@@ -1478,7 +1516,12 @@ namespace Mix2App.MiniGame2{
 				pos.x += 4.0f;
 				pos.y += tamagoYJumpTable [resultTamagoYJumpCount];
 				EventResult.transform.Find ("chara").gameObject.transform.localPosition = pos;
-			}
+
+				pos = EventResult.transform.Find ("charaF").gameObject.transform.localPosition;
+				pos.x += 4.0f;
+				pos.y += tamagoYJumpTable [resultTamagoYJumpCount];
+				EventResult.transform.Find ("charaF").gameObject.transform.localPosition = pos;
+				}
 
 			return resultMainLoopFlag;
 		}
@@ -1548,12 +1591,14 @@ namespace Mix2App.MiniGame2{
 
 		private void TamagoAnimeSprite(){
 			EventResult.transform.Find ("chara").transform.localScale = new Vector3 (2.0f, 2.0f, 1.0f);
+			EventResult.transform.Find ("charaF").transform.localScale = new Vector3 (2.0f, 2.0f, 1.0f);
 			EventResult.transform.Find ("chara0").transform.localScale = new Vector3 (2.0f, 2.0f, 1.0f);
 			EventResult.transform.Find ("chara1").transform.localScale = new Vector3 (2.0f, 2.0f, 1.0f);
 			EventResult.transform.Find ("chara2").transform.localScale = new Vector3 (2.0f, 2.0f, 1.0f);
 			EventResult.transform.Find ("chara3").transform.localScale = new Vector3 (2.0f, 2.0f, 1.0f);
 
 			TamagochiImageMove (EventResult, CharaTamagoMain [0], "chara/");
+			TamagochiImageMove (EventResult, CharaTamagoMain [1], "charaF/");
 
 			for (int i = 0; i < CharaTamagoNpc.Length; i++) {
 				string[] _name = new string[] { "chara0/", "chara1/", "chara2/", "chara3/" };

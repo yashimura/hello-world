@@ -132,14 +132,31 @@ namespace Mix2App.Profile.Town {
             ProfileWindow wnd = base.SetupUserData(user_data);
 
 
-			if (false) {
-				ProposeButton.gameObject.SetActive (true);
+
+			{
+				bool _proposeButtonActiveFlag = true;
 
 				mUserPc = ManagerObject.instance.player;
-				ProposeWindow = UIManager.proposeWindowGet ();
-				StartCoroutine (TamagochiCharaSet ());
-				ProposeButtonSet ();
+
+				if ((mUserPc.utype != UserType.MIX2) ||						// 自分がみーつユーザーでない
+					(mUserPc.chara1.grow < 4) ||							// 自分がフレンド期になっていない
+					(user_data.utype != UserType.MIX2) ||					// 相手がみーつユーザーでない
+					(user_data.chara1.grow < 4)	||							// 相手がフレンド期になっていない
+					(mUserPc.chara1.sex == user_data.chara1.sex)			// 同性
+				) {
+					_proposeButtonActiveFlag = false;						// プロポーズボタンを表示しない
+				}
+
+
+				if(_proposeButtonActiveFlag){
+					ProposeButton.gameObject.SetActive (true);
+
+					ProposeWindow = UIManager.proposeWindowGet ();
+					StartCoroutine (TamagochiCharaSet ());
+					ProposeButtonSet ();
+				}
 			}
+
 
 
             //他者のユーザーコードは表示しない

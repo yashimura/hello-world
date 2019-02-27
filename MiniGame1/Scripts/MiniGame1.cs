@@ -260,10 +260,6 @@ namespace Mix2App.MiniGame1{
 		}
 		void OnDestroy(){
 			Debug.Log ("MiniGame1 OnDestroy");
-
-			if (mData.assetBundle != null) {
-				mData.assetBundle.Unload (false);
-			}
 		}
 
 		void Update(){
