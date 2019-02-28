@@ -72,20 +72,26 @@ namespace Mix2App.MiniGame2{
 		private readonly int GAME_MENU_DIFFICULTY2 = 6;							// ６択メニューに切り替える正解数	
 		private readonly int GAME_MENU_DIFFICULTY3 = 9;							// ８択メニューに切り替える正解数
 
-		private readonly int GAME_TAMAGOCHI_GUEST1 = 19;						// お客さんたまごっち１人目
-		private readonly int GAME_TAMAGOCHI_GUEST2 = 20;						// お客さんたまごっち２人目
-		private readonly int GAME_TAMAGOCHI_GUEST3 = 21;						// お客さんたまごっち３人目
-		private readonly int GAME_TAMAGOCHI_GUEST4 = 22;						// お客さんたまごっち４人目
-		private readonly int GAME_TAMAGOCHI_GUEST5 = 23;						// お客さんたまごっち５人目
-		private readonly int GAME_TAMAGOCHI_GUEST6 = 24;						// お客さんたまごっち６人目
-		private readonly int GAME_TAMAGOCHI_GUEST7 = 25;						// お客さんたまごっち７人目
-		private readonly int GAME_TAMAGOCHI_GUEST8 = 26;						// お客さんたまごっち８人目
-		private readonly int GAME_TAMAGOCHI_GUEST9 = 27;						// お客さんたまごっち９人目
-		private readonly int GAME_TAMAGOCHI_GUEST10 = 28;						// お客さんたまごっち１０人目
-		private readonly int GAME_TAMAGOCHI_GUEST11 = 29;						// お客さんたまごっち１１人目
-		private readonly int GAME_TAMAGOCHI_GUEST12 = 30;						// お客さんたまごっち１２人目
+		private readonly int GAME_TAMAGOCHI_GUEST1 = 16;						// お客さんたまごっち１人目（まめっち）
+		private readonly int GAME_TAMAGOCHI_GUEST2 = 17;						// お客さんたまごっち２人目（くちぱっち）
+		private readonly int GAME_TAMAGOCHI_GUEST3 = 29;						// お客さんたまごっち３人目（かっぱっぱっち）
+		private readonly int GAME_TAMAGOCHI_GUEST4 = 31;						// お客さんたまごっち４人目（はたけもーっち）
+		private readonly int GAME_TAMAGOCHI_GUEST5 = 38;						// お客さんたまごっち５人目（かりすまっち）
+		private readonly int GAME_TAMAGOCHI_GUEST6 = 19;						// お客さんたまごっち６人目（ラブリっち）
+		private readonly int GAME_TAMAGOCHI_GUEST7 = 23;						// お客さんたまごっち７人目（にじふわっち）
+		private readonly int GAME_TAMAGOCHI_GUEST8 = 28;						// お客さんたまごっち８人目（ピザリーナっち）
+		private readonly int GAME_TAMAGOCHI_GUEST9 = 30;						// お客さんたまごっち９人目（チェリチェリっち）
+		private readonly int GAME_TAMAGOCHI_GUEST10 = 33;						// お客さんたまごっち１０人目（ボンネっち）
+		private readonly int GAME_TAMAGOCHI_GUEST11 = 41;						// お客さんたまごっち１１人目（フェアリっち）
+		private readonly int GAME_TAMAGOCHI_GUEST12 = 43;						// お客さんたまごっち１２人目（マジョリっち）
 
 		private readonly int GAME_TAMAGOCHI_PC = 16;							// 玩具連動していない時のプレイヤー
+
+		private readonly int GAME_CLEAR_MESSAGE1 = 100;							// 得点未満でゲームクリアメッセージ１を表示
+		private readonly int GAME_CLEAR_MESSAGE2 = 400;							// 得点未満でゲームクリアメッセージ２を表示
+		private readonly int GAME_CLEAR_MESSAGE3 = 700;							// 得点未満でゲームクリアメッセージ３を表示
+		private readonly int GAME_CLEAR_MESSAGE4 = 800;							// 得点未満でゲームクリアメッセージ４を表示
+
 
 
 		private statusJobCount	jobCount = statusJobCount.minigame2JobCount000;
@@ -352,13 +358,13 @@ namespace Mix2App.MiniGame2{
 						jobCount = statusJobCount.minigame2JobCount080;
 
 						int _num = 0;
-						if (nowScore < 100) {
+						if (nowScore < GAME_CLEAR_MESSAGE1) {
 							_num = 0;
-						} else if (nowScore < 200) {
+						} else if (nowScore < GAME_CLEAR_MESSAGE2) {
 							_num = 1;
-						} else if (nowScore < 300) {
+						} else if (nowScore < GAME_CLEAR_MESSAGE3) {
 							_num = 2;
-						} else if (nowScore < 500) {
+						} else if (nowScore < GAME_CLEAR_MESSAGE4) {
 							_num = 3;
 						} else {
 							_num = 4;
@@ -507,10 +513,10 @@ namespace Mix2App.MiniGame2{
 
 		private void TamagochiLoopInit(){
 			Vector2[] _initTableNpc = new Vector2[] {
-				new Vector2 (-400.0f, 380.0f),
-				new Vector2 (400.0f, 380.0f),
-				new Vector2 (-650.0f, 380.0f),
-				new Vector2 (650.0f, 380.0f),
+				new Vector2 (-450.0f, 380.0f),
+				new Vector2 ( 450.0f, 380.0f),
+				new Vector2 (-700.0f, 380.0f),
+				new Vector2 ( 700.0f, 380.0f),
 			};
 
 			for (int i = 0; i < CharaTamagoGuest.Length; i++) {
