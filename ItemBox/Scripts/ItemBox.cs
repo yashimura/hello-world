@@ -57,8 +57,8 @@ namespace Mix2App.ItemBox
 
 
 
-        private object[] mparam;
-        private User muser1;//自分
+        //private object[] mparam;
+        //private User muser1;//自分
         private PresentData mPresentData;
         private bool mready;
         private int gPointMax;
@@ -72,8 +72,8 @@ namespace Mix2App.ItemBox
         void Awake()
         {
             Debug.Log("ItemBox Awake");
-            mparam = null;
-            muser1 = null;
+            //mparam = null;
+            //muser1 = null;
             mready=false;
         }
 
@@ -113,7 +113,7 @@ namespace Mix2App.ItemBox
 
         void mstart()
         {
-            muser1 = ManagerObject.instance.player;
+            //muser1 = ManagerObject.instance.player;
 
 
 			ManagerObject.instance.sound.playBgm (1);

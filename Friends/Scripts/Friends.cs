@@ -554,7 +554,7 @@ namespace Mix2App.Friends
         // 友達手帳のタブ変更
         private void FriendNoteChange(friendTabTable type)
         {
-            Vector3 _Pos = new Vector3(0.0f, 0.0f, 0.0f);
+            //Vector3 _Pos = new Vector3(0.0f, 0.0f, 0.0f);
 
             switch (type)
             {
@@ -936,7 +936,7 @@ namespace Mix2App.Friends
 
         private void SearchDataClr()
         {
-            Vector3 _Pos = new Vector3(0.0f, 0.0f, 0.0f);
+            //Vector3 _Pos = new Vector3(0.0f, 0.0f, 0.0f);
 
             for (int i = 0; i < SearchNumber; i++)
             {

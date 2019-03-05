@@ -90,7 +90,7 @@ namespace Mix2App.MarriageDate{
 
 		private User muser1;//自分
 		private User muser2;//相手
-		private int mkind;//結婚種類
+		//private int mkind;//結婚種類
 		private int mkind1;//兄弟種類
 		private int mkind2;//兄弟種類
 
@@ -100,7 +100,7 @@ namespace Mix2App.MarriageDate{
 			mparam=null;
 			muser1=null;
 			muser2=null;
-			mkind=0;
+			//mkind=0;
 			mkind1=0;
 			mkind2=0;
 		}
@@ -125,7 +125,7 @@ namespace Mix2App.MarriageDate{
 				};
 			}
 
-			mkind = (int)mparam[0];
+			//mkind = (int)mparam[0];
 			muser1 = (User)mparam[1];		// 右のたまごっち
 			mkind1 = (int)mparam[2];
 			muser2 = (User)mparam[3];		// 左のたまごっち

@@ -12,8 +12,9 @@ using Mix2App.Lib.Utils;
 
 
 namespace Mix2App.Propose{
-	public class Propose : MonoBehaviour,IReceiver {
+	public class Propose : MonoBehaviour,IReceiver,IReadyable {
 		[SerializeField] private GameObject[] CharaTamago;					// たまごっち
+		[SerializeField] private GameObject EventRoot;
 		[SerializeField] private GameObject EventSky;						// 背景
 		[SerializeField] private GameObject EventWait;						// メイン
 		[SerializeField] private GameObject EventMiss;						// 失敗
@@ -78,8 +79,12 @@ namespace Mix2App.Propose{
 		private User userR, userL;
 		private int brotherR, brotherL;
 
-//		private CharaBehaviour[] cbCharaTamago = new CharaBehaviour[6];		// 
 		private CharaBehaviour[] cbCharaTamago = new CharaBehaviour[2];		// 
+
+		private float[] xSpd = new float[2];								// 雲の移動スピード
+		private float scrnOffX;
+
+
 
 		void Awake(){
 			Debug.Log ("Propose Awake");
@@ -90,6 +95,10 @@ namespace Mix2App.Propose{
 			mUser2 = null;
 			mBrother1 = 0;
 			mBrother2 = 0;
+			mready = false;
+
+			xSpd [0] = Random.Range (0.5f, 1.0f);
+			xSpd [1] = Random.Range (0.5f, 1.0f);
 		}
 
 		public void receive(params object[] parameter){
@@ -123,6 +132,11 @@ namespace Mix2App.Propose{
 			
 		}
 			
+		private bool mready = false;
+		public bool ready(){
+			return mready;
+		}
+
 		void Destroy(){
 			Debug.Log ("Propose Destroy");
 		}
@@ -132,28 +146,13 @@ namespace Mix2App.Propose{
 		}
 
 		IEnumerator mStart(){
+			// 描画エリアの横幅サイズの取得
+			scrnOffX = EventRoot.gameObject.GetComponent<RectTransform> ().sizeDelta.x / 2;
 
 			EventWait.transform.Find("Button_blue_modoru").gameObject.GetComponent<Button> ().onClick.AddListener (ButtonModoruClick);
 
-
 			cbCharaTamago[0] = CharaTamago[0].GetComponent<CharaBehaviour> ();		// 
 			cbCharaTamago[1] = CharaTamago[1].GetComponent<CharaBehaviour> ();		// 
-/*
-			cbCharaTamago[2] = CharaTamago[2].GetComponent<CharaBehaviour> ();		// 
-			cbCharaTamago[3] = CharaTamago[3].GetComponent<CharaBehaviour> ();		// 
-			cbCharaTamago[4] = CharaTamago[4].GetComponent<CharaBehaviour> ();		// 
-			cbCharaTamago[5] = CharaTamago[5].GetComponent<CharaBehaviour> ();		// 
-
-
-			yield return cbCharaTamago[2].init (mUser1.chara1);
-			if (mUser1.chara2 != null) {
-				yield return cbCharaTamago [3].init (mUser1.chara2);
-			}
-			yield return cbCharaTamago[4].init (mUser2.chara1);
-			if (mUser2.chara2 != null) {
-				yield return cbCharaTamago [5].init (mUser2.chara2);
-			}
-*/
 
 			StartCoroutine(mainLoop());
 
@@ -164,6 +163,12 @@ namespace Mix2App.Propose{
 			// たまごっちのアニメを反映させる
 			TamagochiImageMove (EventWait, CharaTamago [0], "tamago/charaR/");
 			TamagochiImageMove (EventWait, CharaTamago [1], "tamago/charaL/");
+
+			// 雲を移動する
+			if (mready) {
+				CloudIdouLoop (0);
+				CloudIdouLoop (1);
+			}
 		}
 
 		private void ButtonModoruClick(){
@@ -172,21 +177,7 @@ namespace Mix2App.Propose{
 			ManagerObject.instance.view.change(SceneLabel.TOWN);
 		}
 
-
 		private IEnumerator mainLoop(){
-/*
-			if ((muser1.chara2 == null) && (muser2.chara2 == null)) {
-				// シングル同士のプロポーズ
-				EventKakunin.SetActive();
-			} else {
-				if (muser1.chara2 != null) {
-					EventFutago.SetActive ();
-				}
-				if (muser2.chara2 != null) {
-				}
-			}
-*/
-
 			if (mProposeType == 0) {			// 自分がプロポーズを受けた
 				userR = mUser2;
 				userL = mUser1;
@@ -216,13 +207,15 @@ namespace Mix2App.Propose{
 			cbCharaTamago [0].gotoAndPlay (MotionLabel.IDLE);
 			cbCharaTamago [1].gotoAndPlay (MotionLabel.IDLE);
 
+			mready = true;
+
 			EventSky.SetActive (true);
 			EventWait.SetActive (true);
 			if (mProposeType == 1) {
 				// 自分がプロポーズしたのでプロポーズ待機状態を表示する
 				EventWait.transform.Find ("fukidashi_left").gameObject.SetActive (true);
 				EventWait.transform.Find ("fukidashi_left/text").gameObject.GetComponent<Text> ().text = "・・・";
-				yield return new WaitForSeconds (3.0f);
+				yield return new WaitForSeconds (15.0f);
 				EventWait.transform.Find ("fukidashi_left").gameObject.SetActive (false);
 			}
 
@@ -232,7 +225,6 @@ namespace Mix2App.Propose{
 
 			// 右に配置されているたまごっちを移動させる
 			yield return StartCoroutine(TamagochiRightIdou (EventWait.transform.Find ("tamago/charaR").gameObject));
-
 
 			if (mProposeResult == true) {
 				// 告白が成功したので左に配置されているたまごっちが演出をする（少し前に移動する）
@@ -247,7 +239,6 @@ namespace Mix2App.Propose{
 				Debug.Log ("たまタウンへ・・・");
 				ManagerObject.instance.view.change(SceneLabel.TOWN);
 			}
-
 
 			yield return null;
 		}
@@ -440,6 +431,18 @@ namespace Mix2App.Propose{
 			}
 		}
 
+		private void CloudIdouLoop (int _num){
+			string[] _name = new string[]{ "cloud", "cloud2" };
+
+			GameObject _obj = EventSky.transform.Find (_name[_num]).gameObject;
+			Vector3 _pos = _obj.transform.localPosition;
+			if (_pos.x >= scrnOffX + 150.0f) {
+				_pos.x = -(scrnOffX + 150.0f);
+				xSpd[_num] = Random.Range (0.5f, 1.0f);
+			}
+			_pos.x += (xSpd[_num] * (60 * Time.deltaTime));
+			_obj.transform.localPosition = _pos;
+		}
 
 
 		private void TamagochiImageMove(GameObject toObj,GameObject fromObj,string toStr){

@@ -128,6 +128,8 @@ namespace Mix2App.MachiCon{
 			machiconJobCountInit,
 		}
 
+		private int meventid;
+
 		private statusKokuhakuCount kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount000;
 		private enum statusKokuhakuCount{
 			kokuhakuCount000,
@@ -252,6 +254,8 @@ namespace Mix2App.MachiCon{
 			// イベントたまキュンか？
 			// コラボたまキュンか？
 			// 通常たまキュンか？
+
+			meventid = (int)parameter[0];
 
 			muser1 = ManagerObject.instance.player;
 			mkind1 = 0;
@@ -447,7 +451,7 @@ namespace Mix2App.MachiCon{
 				{
 					//ルーム情報取得、メンバーマッチング処理
 					//パラメタは設計書参照
-					GameCall call = new GameCall(CallLabel.GET_ROOM_INFO,mkind1);
+					GameCall call = new GameCall(CallLabel.GET_ROOM_INFO,mkind1,meventid);
 					call.AddListener(mgetroominf);
 					ManagerObject.instance.connect.send(call);
 

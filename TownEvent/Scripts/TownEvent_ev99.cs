@@ -13,10 +13,10 @@ namespace Mix2App.TownEvent{
 	public class TownEvent_ev99 : MonoBehaviour,IReceiver,IReadyable {
 		[SerializeField] private GameEventHandler GEHandler;
 		[SerializeField] private GameObject[] CharaTamago;					// たまごっち（プレイヤー）
-		[SerializeField] private GameObject[] CharaTamagoNpc;				// たまごっち（ナイナイ）
 		[SerializeField] private GameObject EventBase;
 		[SerializeField] private GameObject EventScene;
 		[SerializeField] private GameObject EventItem;
+		[SerializeField] private GameObject EventItemWindow;
 		[SerializeField] private GameObject CameraObj;		
 
 
@@ -24,7 +24,6 @@ namespace Mix2App.TownEvent{
 		private object[]		mparam;
 		private User muser1;
 		private CharaBehaviour[] cbCharaTamago = new CharaBehaviour[2];		// プレイヤー
-		private CharaBehaviour[] cbCharaTamagoNpc = new CharaBehaviour[2];	// ナイナイ
 		private RewardData		mData;
 
 
@@ -80,7 +79,7 @@ namespace Mix2App.TownEvent{
 				CameraObj.transform.GetComponent<Camera> ().depth = (int)mparam [1];
 			}
 
-			RewardBehaviour _rb = EventItem.transform.Find("RewardView").gameObject.GetComponent<RewardBehaviour>();
+			RewardBehaviour _rb = EventItemWindow.transform.Find("RewardView").gameObject.GetComponent<RewardBehaviour>();
 			_rb.init (mData);						// 報酬セット
 
 			StartCoroutine (mStart ());
@@ -104,7 +103,7 @@ namespace Mix2App.TownEvent{
 
 
 
-			EventItem.transform.Find("Button_blue_close").gameObject.GetComponent<Button> ().onClick.AddListener (ButtonCloseClick);
+			EventItemWindow.transform.Find("Button_blue_close").gameObject.GetComponent<Button> ().onClick.AddListener (ButtonCloseClick);
 
 
 
@@ -124,30 +123,18 @@ namespace Mix2App.TownEvent{
 				CharaTamago [1].transform.localPosition = new Vector3 (0, 5000, 0);
 			}
 
-			// ナイナイたまごっちを設定する
-			cbCharaTamagoNpc [0] = CharaTamagoNpc [0].GetComponent<CharaBehaviour> ();
-			cbCharaTamagoNpc [1] = CharaTamagoNpc [1].GetComponent<CharaBehaviour> ();
-
-			yield return cbCharaTamagoNpc [0].init (new TamaChara(53));
-			yield return cbCharaTamagoNpc [1].init (new TamaChara(182));
-
-			cbCharaTamagoNpc [0].gotoAndPlay (MotionLabel.IDLE);
-			cbCharaTamagoNpc [1].gotoAndPlay (MotionLabel.IDLE);
-
-
-
 			StartCoroutine (mainLoop ());
 		}
 
 		void Update(){
 			if (mready) {
 				// ナイナイのキャラの動きを設定する
-				TamagochiAnimeMove ("oka", CharaTamagoNpc [0], cbCharaTamagoNpc [0], MotionLabel.IDLE);
-				TamagochiAnimeMove ("oka_sa", CharaTamagoNpc [0], cbCharaTamagoNpc [0], MotionLabel.ANGER);
-				TamagochiAnimeMove ("oka_hp", CharaTamagoNpc [0], cbCharaTamagoNpc [0], MotionLabel.GLAD1);
-				TamagochiAnimeMove ("yab", CharaTamagoNpc [1], cbCharaTamagoNpc [1], MotionLabel.IDLE);
-				TamagochiAnimeMove ("yab_sa", CharaTamagoNpc [1], cbCharaTamagoNpc [1], MotionLabel.ANGER);
-				TamagochiAnimeMove ("yab_ku", CharaTamagoNpc [1], cbCharaTamagoNpc [1], MotionLabel.GLAD1);
+				TamagochiAnimeMove ("oka", "oka (1)");
+				TamagochiAnimeMove ("oka_sa", "oka_sa (1)");
+				TamagochiAnimeMove ("oka_hp", "oka_hp (1)");
+				TamagochiAnimeMove ("yab", "yab (1)");
+				TamagochiAnimeMove ("yab_sa", "yab_sa (1)");
+				TamagochiAnimeMove ("yab_ku", "yab_ku (1)");
 
 				// ふきだしのメッセージを設定する
 				FukidashiTextSet ();
@@ -160,7 +147,7 @@ namespace Mix2App.TownEvent{
 
 		private void ButtonCloseClick(){
 			ManagerObject.instance.sound.playSe (17);
-			GEHandler.OnRemoveScene (SceneLabel.TOWN_EVENT);
+			GEHandler.OnRemoveScene (SceneLabel.TOWN_EVENT+"_ev99");
 		}
 
 
@@ -170,6 +157,14 @@ namespace Mix2App.TownEvent{
 			EventBase.SetActive (true);
 			EventScene.transform.localPosition = new Vector3 (0, 0, 0);
 			mready = true;
+
+			//39:18や21:9などの縦長スクリーンサイズに対応する
+			//アスペクト比に応じて、画面のscaleを調整する。
+			float kk1 = 1024f / 2048f;
+			float kk2 = (float)Screen.height / (float)Screen.width;
+			float kk3 = (kk2 < kk1) ? kk2 / kk1 : 1.0f;
+			EventScene.transform.localScale = new Vector3(kk3,kk3,1);
+			EventItemWindow.transform.localScale = new Vector3(kk3,kk3,1);
 
 			StartCoroutine (mainSELoop ());
 
@@ -209,19 +204,14 @@ namespace Mix2App.TownEvent{
 			ManagerObject.instance.sound.playSe (24);
 		}
 
-		private void TamagochiAnimeMove(string _name,GameObject _obj,CharaBehaviour _cb,string _ml){
-			GameObject _objBase;
-
-			_objBase = EventBase.transform.Find (_name).gameObject;
-			if (_objBase.activeSelf) {
-				_obj.transform.localPosition = _objBase.transform.localPosition;
-				_obj.transform.localRotation = _objBase.transform.localRotation;
-				_obj.transform.localScale = _objBase.transform.localScale;
-
-				if (_cb.nowlabel != _ml) {
-					_cb.gotoAndPlay (_ml);
-				}
-			}
+		private void TamagochiAnimeMove(string _name,string _name2)
+		{
+			GameObject _obj = EventScene.transform.Find (_name2).gameObject;
+			GameObject _objBase = EventBase.transform.Find (_name).gameObject;
+			_obj.transform.localPosition = _objBase.transform.localPosition;
+			_obj.transform.localRotation = _objBase.transform.localRotation;
+			_obj.transform.localScale = _objBase.transform.localScale;
+			_obj.SetActive(_objBase.activeSelf);
 		}
 
 		private void FukidashiTextSet(){

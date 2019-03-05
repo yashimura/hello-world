@@ -296,27 +296,27 @@ namespace Mix2App.MachiCon{
 
 		void Start(){
 			jikkyouCharaAnimeNumber = 0;
-			countBaseTime1 = 0.0f;
-			countBaseTime2 = 0.0f;
-			countTime1 = 0;
-			countTime2 = 0;
-			countTime3 = 0;
-			SurpriseFlag = false;
+			//countBaseTime1 = 0.0f;
+			//countBaseTime2 = 0.0f;
+			//countTime1 = 0;
+			//countTime2 = 0;
+			//countTime3 = 0;
+			//SurpriseFlag = false;
 		}
 
 		void Destroy(){
-			SurpriseFlag = false;
+			//SurpriseFlag = false;
 		}
 
 
 
 		private JikkyouImageTable jikkyouCharaAnimeNumber;
-		private bool SurpriseFlag;
-		private float countBaseTime1;
-		private float countBaseTime2;
-		private int countTime1;
-		private int countTime2;
-		private int countTime3;
+		//private bool SurpriseFlag;
+		//private float countBaseTime1;
+		//private float countBaseTime2;
+//		private int countTime1;
+		//private int countTime2;
+		//private int countTime3;
 
 		private Coroutine retImage,retSprite;
 

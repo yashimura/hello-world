@@ -902,7 +902,7 @@ namespace Mix2App.Marriage{
 			yield return new WaitForSeconds (9.0f);
 
 			Vector3 _posMan = new Vector3 (57.0f, -120.0f, 0);
-			Vector3 _posWoman = new Vector3 (-57.0f, -120.0f, 0);
+			//Vector3 _posWoman = new Vector3 (-57.0f, -120.0f, 0);
 
 			while (_CoroutineFlagFinale) {
 				_posCharaMan = Vector3.MoveTowards (_posCharaMan, _posMan, (5.0f * Time.deltaTime));

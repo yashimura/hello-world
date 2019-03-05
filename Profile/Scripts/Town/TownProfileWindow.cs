@@ -50,63 +50,45 @@ namespace Mix2App.Profile.Town {
 	
 
 
+		private GameObject[] ProposeWindow;
 		private User mUserPc;
 		private User mUserNpc;
-		private GameObject[] ProposeWindow;
-		private User mUserPcHzn;
-		private int mCharaPcNumHzn;
-		private User mUserNpcHzn;
-		private int mCharaNpcNumHzn;
+		private int mCharaPcNum;
+		private int mCharaNpcNum;
 
 
 
-        private void ProposeStep3(User usr1, User usr2, int s_chara_num, int o_chara_num) {
+		private void ProposeStep3(int _mCharaPcNum, int _mCharaNpcNum) {
 			ProposeWindow [2].transform.localPosition = new Vector3 (5000, 0, 0);
-			ProposeWindow [0].transform.localPosition = new Vector3 (0, 0, 0);
+			ProposeWindow [0].transform.localPosition = new Vector3 (0, 0, 0);				// 最終確認画面
 
-			mUserPcHzn = usr1;
-			mCharaPcNumHzn = s_chara_num;
-			mUserNpcHzn = usr2;
-			mCharaNpcNumHzn = o_chara_num;
-
-
-/*            UIManager.ShowModal(ProposeConfirm).AddOKAction(() => {
-                GameCall call = new GameCall(CallLabel.GET_PROPOSE, usr1, s_chara_num, usr2, o_chara_num);
-                call.AddListener((bool b, object o) => {
-                    if (b) {
-                        ManagerObject.instance.view.change("Propose",
-                            b,
-                            0,
-                            usr1,
-                            s_chara_num,
-                            usr2,
-                            o_chara_num);
-                    }
-                });
-                ManagerObject.instance.connect.send(call);
-            });
-*/
+			mCharaPcNum = _mCharaPcNum;
+			mCharaNpcNum = _mCharaNpcNum;
         }
 
-        private void ProposeStep2(User usr, int s_chara_num) {
+		private void ProposeStep2(int _mCharaPcNum) {
 			ProposeWindow [1].transform.localPosition = new Vector3 (5000, 0, 0);
 
-			mUserPcHzn = usr;
-			mCharaPcNumHzn = s_chara_num;
+			mCharaPcNum = _mCharaPcNum;
+			mCharaNpcNum = 0;
 
-			if (UserData.chara2 != null) {
-				ProposeWindow [2].transform.localPosition = new Vector3 (0, 0, 0);
+			if (mUserNpc.chara2 != null) {
+				ProposeWindow [2].transform.localPosition = new Vector3 (0, 0, 0);			// 相手の双子選択画面
 			} else {
-				ProposeStep3 (usr, UserData, s_chara_num, 0);
+				ProposeStep3 (mCharaPcNum, 0);
 			}
         }
 
         private void Propose() {
 			BaseObj.transform.localPosition = new Vector3 (5000, 0, 0);
+
+			mCharaPcNum = 0;
+			mCharaNpcNum = 0;
+
 			if (mUserPc.chara2 != null) {
-				ProposeWindow [1].transform.localPosition = new Vector3 (0, 0, 0);
+				ProposeWindow [1].transform.localPosition = new Vector3 (0, 0, 0);			// 自分の双子選択画面
 			} else {
-				ProposeStep2 (mUserPc, 0);
+				ProposeStep2 (0);
 			}
         }
 
@@ -138,6 +120,8 @@ namespace Mix2App.Profile.Town {
 
 				mUserPc = ManagerObject.instance.player;
 				mUserNpc = user_data;
+				mCharaPcNum = 0;
+				mCharaNpcNum = 0;
 
 
 //				mUserPc.utype = UserType.MIX2;
@@ -154,11 +138,10 @@ namespace Mix2App.Profile.Town {
 				}
 
 				if(_proposeButtonActiveFlag){
-					ProposeButton.gameObject.SetActive (true);
-
-					ProposeWindow = UIManager.proposeWindowGet ();
-					StartCoroutine (TamagochiCharaSet ());
-					ProposeButtonSet ();
+					ProposeButton.gameObject.SetActive (true);				// プロポーズボタンの表示
+					ProposeWindow = UIManager.proposeWindowGet ();			// プロポーズ確認画面の登録
+					StartCoroutine (TamagochiCharaSet ());					// プロポーズ確認画面のたまごっちの登録
+					ProposeButtonSet ();									// プロポーズ確認画面のボタンの有効化
 				}
 			}
 
@@ -204,8 +187,17 @@ namespace Mix2App.Profile.Town {
                     });
                 });
             }
-                                    
-            return wnd;
+
+
+
+			if ((!ProfileUpdateButton.gameObject.activeSelf) && (!ProfileExchangeButton.gameObject.activeSelf)) {
+				// 「交換」「更新」ボタンが非表示の時、プロボーズボタンの表示位置を「交換」「更新」の位置に変更する
+				ProposeButton.gameObject.transform.localPosition = ProfileUpdateButton.gameObject.transform.localPosition;
+			}
+
+
+
+			return wnd;
         }
 
         void onremove(string label)
@@ -245,17 +237,21 @@ namespace Mix2App.Profile.Town {
 		}
 
 		private void ProposeButtonSet(){
+			// 最終確認画面
 			ProposeWindow [0].transform.Find ("Button_blue_iie").gameObject.GetComponent<Button> ().onClick.AddListener (Propose0Button_iie);
 			ProposeWindow [0].transform.Find ("Button_red_hai").gameObject.GetComponent<Button> ().onClick.AddListener (Propose0Button_hai);
 
+			// 自分の双子の選択画面
 			ProposeWindow [1].transform.Find ("Button_proposeL").gameObject.GetComponent<Button> ().onClick.AddListener (Propose1Button_PC1);
 			ProposeWindow [1].transform.Find ("Button_proposeR").gameObject.GetComponent<Button> ().onClick.AddListener (Propose1Button_PC2);
 			ProposeWindow [1].transform.Find ("Button_blue_tojiru").gameObject.GetComponent<Button> ().onClick.AddListener (Propose1Button_tojiru);
 
+			//相手の双子の選択画面
 			ProposeWindow [2].transform.Find ("Button_proposeL").gameObject.GetComponent<Button> ().onClick.AddListener (Propose2Button_NPC1);
 			ProposeWindow [2].transform.Find ("Button_proposeR").gameObject.GetComponent<Button> ().onClick.AddListener (Propose2Button_NPC2);
 			ProposeWindow [2].transform.Find ("Button_blue_tojiru").gameObject.GetComponent<Button> ().onClick.AddListener (Propose2Button_tojiru);
 
+			// 告白された状況の選択画面（未実装）
 			ProposeWindow [3].transform.Find ("Button_red_iine").gameObject.GetComponent<Button> ().onClick.AddListener (Propose3Button_iine);
 			ProposeWindow [3].transform.Find ("Button_blue_u-n").gameObject.GetComponent<Button> ().onClick.AddListener (Propose3Button_uun);
 		}
@@ -266,25 +262,25 @@ namespace Mix2App.Profile.Town {
 		private void Propose0Button_hai(){
 			ManagerObject.instance.sound.playSe (13);
 
-			GameCall call = new GameCall(CallLabel.GET_PROPOSE, mUserPcHzn, mCharaPcNumHzn, mUserNpcHzn, mCharaNpcNumHzn);
+			GameCall call = new GameCall(CallLabel.GET_PROPOSE, mUserPc, mCharaPcNum, mUserNpc, mCharaNpcNum);
 			call.AddListener((bool b, object o) => {
 				ManagerObject.instance.view.change("Propose",
 					b,									// プロポーズの成否
 					1,									// プロポーズをするので１（プロポーズされた場合は０）
-					mUserPcHzn,							// 自分のユーザー情報
-					mCharaPcNumHzn,						// 自分の兄弟のどちらでプロポーズしたか
-					mUserNpcHzn,						// 相手のユーザー情報
-					mCharaNpcNumHzn);					// 相手の兄弟のどちらにプロポーズしたか
+					mUserPc,							// 自分のユーザー情報
+					mCharaPcNum,						// 自分の兄弟のどちらでプロポーズしたか
+					mUserNpc,							// 相手のユーザー情報
+					mCharaNpcNum);						// 相手の兄弟のどちらにプロポーズしたか
 			});
 			ManagerObject.instance.connect.send(call);
 		}
 		private void Propose1Button_PC1(){
 			ManagerObject.instance.sound.playSe (12);
-			ProposeStep2(mUserPc,0);
+			ProposeStep2(0);							// 自分のたまごっちのchara1を選択
 		}
 		private void Propose1Button_PC2(){
 			ManagerObject.instance.sound.playSe (12);
-			ProposeStep2(mUserPc,1);
+			ProposeStep2(1);							// 自分のたまごっちのchara2を選択
 		}
 		private void Propose1Button_tojiru(){
 			ManagerObject.instance.sound.playSe (17);
@@ -292,11 +288,11 @@ namespace Mix2App.Profile.Town {
 		}
 		private void Propose2Button_NPC1(){
 			ManagerObject.instance.sound.playSe (12);
-			ProposeStep3(mUserPcHzn, UserData, mCharaPcNumHzn, 0);
+			ProposeStep3(mCharaPcNum, 0);				// 相手のたまごっちのchara1を選択
 		}
 		private void Propose2Button_NPC2(){
 			ManagerObject.instance.sound.playSe (12);
-			ProposeStep3(mUserPcHzn, UserData, mCharaPcNumHzn, 1);
+			ProposeStep3(mCharaPcNum, 1);				// 相手のたまごっちのchara2を選択
 		}
 		private void Propose2Button_tojiru(){
 			ManagerObject.instance.sound.playSe (17);
