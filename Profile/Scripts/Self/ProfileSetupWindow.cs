@@ -23,38 +23,38 @@ namespace Mix2App.Profile {
         [SerializeField, Required] protected PrefectureElement PrefectureElementPrefab;
 
         [Tooltip("Window prefab to select current prefecture")]
-        [SerializeField, Required] private PrefectureSelectWindow PrefectureSelectWindowPrefab;
+        [SerializeField, Required] private PrefectureSelectWindow PrefectureSelectWindowPrefab = null;
 
-        [SerializeField, Required] private Button SetupPrefectureButton;
+        [SerializeField, Required] private Button SetupPrefectureButton = null;
     
         [Header("Avatar setup")]
         [SerializeField, Required] protected AvatarElement AvatarPrefab;
 
         [Header("Avatar sex setup")]
-        [SerializeField, Required] private Button SetMaleSexButton;
-        [SerializeField, Required] private Button SetFemaleSexButton;
+        [SerializeField, Required] private Button SetMaleSexButton = null;
+        [SerializeField, Required] private Button SetFemaleSexButton = null;
 
-        [SerializeField, Required] private GameObject MaleFrame;
-        [SerializeField, Required] private GameObject FemaleFrame;
+        [SerializeField, Required] private GameObject MaleFrame = null;
+        [SerializeField, Required] private GameObject FemaleFrame = null;
 
         [Header("Avatar element setup")]
         [Tooltip("Setup avatar's hair button")]
-        [SerializeField, Required] private Button SetHairButton;
+        [SerializeField, Required] private Button SetHairButton = null;
 
         [Tooltip("Setup avatar's face button")]
-        [SerializeField, Required] private Button SetBodyButton;
+        [SerializeField, Required] private Button SetBodyButton = null;
 
         [Tooltip("Setup avatar's contour(body) button")]
-        [SerializeField, Required] private Button SetFaceButton;
+        [SerializeField, Required] private Button SetFaceButton = null;
 
         [Tooltip("Setup avatar's upper body part button")]
-        [SerializeField, Required] private Button SetTopsButton;
+        [SerializeField, Required] private Button SetTopsButton = null;
 
         [Tooltip("Setup avatar's lower body part button")]
-        [SerializeField, Required] private Button SetBottomsButton;
+        [SerializeField, Required] private Button SetBottomsButton = null;
 
         [Tooltip("Window prefab to select avatar's part")]
-        [SerializeField, Required] private AvatarElementSelectWindow AvatarElementSelectWindowPrefab;
+        [SerializeField, Required] private AvatarElementSelectWindow AvatarElementSelectWindowPrefab = null;
 
         protected User UserData;
         

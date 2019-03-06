@@ -17,36 +17,36 @@ using Mix2App.Lib.Utils;
 
 namespace Mix2App.MiniGame1{
 	public class MiniGame1 : MonoBehaviour,IReceiver,IReadyable {
-		[SerializeField] private GameCore	pgGameCore;
-		[SerializeField] private GameObject MinigameRoot;
-		[SerializeField] private GameObject[] CharaTamago;					// たまごっち
-		[SerializeField] private GameObject[] CharaTamagoNPC;				// たまごっち
-		[SerializeField] private GameObject EventTitle;						// タイトル画面
-		[SerializeField] private GameObject EventStart;						// スタート画面
-		[SerializeField] private GameObject EventGame;						// ゲーム画面
-		[SerializeField] private GameObject EventEnd;						// 終了画	面
-		[SerializeField] private GameObject EventResult;					// 結果画面
-		[SerializeField] private GameObject	EventItemget;					// アイテム入手画面
-		[SerializeField] private GameObject	EventHelp;						// 遊び方説明画面
-		[SerializeField] private GameObject ButtonStart;					// タイトル スタートボタン
-		[SerializeField] private GameObject ButtonHelp;						// タイトル ヘルプボタン
-		[SerializeField] private GameObject ButtonClose;					// タイトル 閉じるボタン
-		[SerializeField] private GameObject ButtonYameru;					// ゲーム やめるボタン
-		[SerializeField] private GameObject ButtonTakuhai;					// アイテム入手 宅配ボタン
-		[SerializeField] private GameObject ButtonTojiru;					// アイテム入手 閉じるボタン
-		[SerializeField] private GameObject ButtonModoru;					// 結果 戻るボタン
-		[SerializeField] private GameObject ButtonHelpModoru;				// 遊び方説明画面 戻るボタン
+		[SerializeField] private GameCore pgGameCore = null;
+		[SerializeField] private GameObject MinigameRoot = null;
+		[SerializeField] private GameObject[] CharaTamago = null;				// たまごっち
+		[SerializeField] private GameObject[] CharaTamagoNPC = null;			// たまごっち
+		[SerializeField] private GameObject EventTitle = null;					// タイトル画面
+		[SerializeField] private GameObject EventStart = null;					// スタート画面
+		[SerializeField] private GameObject EventGame = null;					// ゲーム画面
+		[SerializeField] private GameObject EventEnd = null;					// 終了画	面
+		[SerializeField] private GameObject EventResult = null;					// 結果画面
+		[SerializeField] private GameObject EventItemget = null;				// アイテム入手画面
+		[SerializeField] private GameObject EventHelp = null;					// 遊び方説明画面
+		[SerializeField] private GameObject ButtonStart = null;					// タイトル スタートボタン
+		[SerializeField] private GameObject ButtonHelp = null;					// タイトル ヘルプボタン
+		[SerializeField] private GameObject ButtonClose = null;					// タイトル 閉じるボタン
+		[SerializeField] private GameObject ButtonYameru = null;				// ゲーム やめるボタン
+		[SerializeField] private GameObject ButtonTakuhai = null;				// アイテム入手 宅配ボタン
+		[SerializeField] private GameObject ButtonTojiru = null;				// アイテム入手 閉じるボタン
+		[SerializeField] private GameObject ButtonModoru = null;				// 結果 戻るボタン
+		[SerializeField] private GameObject ButtonHelpModoru = null;			// 遊び方説明画面 戻るボタン
 
-		[SerializeField] private GameObject baseSizePanel;
+		[SerializeField] private GameObject baseSizePanel = null;
 
 //		[Tooltip("四季の画像データ（春、夏、秋、冬）")]
 //		[SerializeField] private SeasonImg[] SeasonData;
 
-		[SerializeField] private GameObject PrefabItem;
-		[SerializeField] private GameObject PrefabScore;
-		[SerializeField] private GameObject PrefabMessage;
+		[SerializeField] private GameObject PrefabItem = null;
+		[SerializeField] private GameObject PrefabScore = null;
+		[SerializeField] private GameObject PrefabMessage = null;
 
-		[SerializeField] private Sprite[] EventEndSprite;					// 終了時の演出スプライト
+		[SerializeField] private Sprite[] EventEndSprite = null;				// 終了時の演出スプライト
 
 		private object[]		mparam;
 

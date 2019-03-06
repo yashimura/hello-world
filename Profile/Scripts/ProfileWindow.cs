@@ -21,9 +21,9 @@ namespace Mix2App.Profile {
                 
         [Header("FamilyTree setup")]
         [Tooltip("Window prefab to select current prefecture")]
-        [SerializeField, Required] private FamilyTreeWindow FamilyTreeWindowPrefab;
-        [SerializeField, Required] private FamilyTreeExceptionWindow FamilyTreeExceptionWindowPrefab;
-        [SerializeField, Required] private Button ShowFamilyTreeButton;
+        [SerializeField, Required] private FamilyTreeWindow FamilyTreeWindowPrefab = null;
+        [SerializeField, Required] private FamilyTreeExceptionWindow FamilyTreeExceptionWindowPrefab = null;
+        [SerializeField, Required] private Button ShowFamilyTreeButton = null;
 
         [Header("User info")]
         [SerializeField, Required] protected UserInfoElement UserInfoElementPrefab;

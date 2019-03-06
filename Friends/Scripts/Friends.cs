@@ -13,54 +13,54 @@ namespace Mix2App.Friends
 {
     public class Friends : MonoBehaviour, IReceiver, IReadyable
     {
-        [SerializeField] private GameObject AppFriendContainer;
-        [SerializeField] private GameObject ToyFriendContainer;
-        [SerializeField] private GameObject ApplyContainer;
-        [SerializeField] private GameObject SearchContainer;
-        [SerializeField] private GameObject EventMenu;          // 初期選択画面
-        [SerializeField] private GameObject EventNoteApp;       // 友達手帳アプリの友達
-        [SerializeField] private GameObject EventNoteMIX2;      // 友達手帳MIX2の友達
-        [SerializeField] private GameObject EventNoteRenraku;   // 友達手帳の連絡帳
-        [SerializeField] private GameObject EventSearch;        // 友達検索画面
-        [SerializeField] private GameObject EventResult;        // 結果画面
-        [SerializeField] private GameObject EventKakunin;       // 確認画面
+        [SerializeField] private GameObject AppFriendContainer = null;
+        [SerializeField] private GameObject ToyFriendContainer = null;
+        [SerializeField] private GameObject ApplyContainer = null;
+        [SerializeField] private GameObject SearchContainer = null;
+//        [SerializeField] private GameObject EventMenu = null;          // 初期選択画面
+        [SerializeField] private GameObject EventNoteApp = null;       // 友達手帳アプリの友達
+        [SerializeField] private GameObject EventNoteMIX2 = null;      // 友達手帳MIX2の友達
+        [SerializeField] private GameObject EventNoteRenraku = null;   // 友達手帳の連絡帳
+        [SerializeField] private GameObject EventSearch = null;        // 友達検索画面
+        [SerializeField] private GameObject EventResult = null;        // 結果画面
+        [SerializeField] private GameObject EventKakunin = null;       // 確認画面
 
-        [SerializeField] private Button BtnMenuTecho;           // 友達手帳へのボタン
-        [SerializeField] private Button BtnMenuSearch;          // 友達検索へのボタン
-        [SerializeField] private Button BtnMenuTojiru;          // 終了ボタン
+        [SerializeField] private Button BtnMenuTecho = null;           // 友達手帳へのボタン
+        [SerializeField] private Button BtnMenuSearch = null;          // 友達検索へのボタン
+        [SerializeField] private Button BtnMenuTojiru = null;          // 終了ボタン
 
-        [SerializeField] private Button BtnNoteAppApp;          // 友達手帳アプリの友達へのボタン（未使用）
-        [SerializeField] private Button BtnNoteAppMIX2;         // 友達手帳MIX2の友達へのボタン
-        [SerializeField] private Button BtnNoteAppRenraku;      // 友達手帳の連絡帳へのボタン
-        [SerializeField] private Button BtnNoteAppBack;         // 初期選択画面へのボタン
+        [SerializeField] private Button BtnNoteAppApp = null;          // 友達手帳アプリの友達へのボタン（未使用）
+        [SerializeField] private Button BtnNoteAppMIX2 = null;         // 友達手帳MIX2の友達へのボタン
+        [SerializeField] private Button BtnNoteAppRenraku = null;      // 友達手帳の連絡帳へのボタン
+        [SerializeField] private Button BtnNoteAppBack = null;         // 初期選択画面へのボタン
 
-        [SerializeField] private Button BtnNoteMIX2App;         // 友達手帳アプリの友達へのボタン
-        [SerializeField] private Button BtnNoteMIX2MIX2;        // 友達手帳MIX2の友達へのボタン（未使用）
-        [SerializeField] private Button BtnNoteMIX2Renraku;     // 友達手帳の連絡帳へのボタン
-        [SerializeField] private Button BtnNoteMIX2Back;        // 初期選択画面へのボタン
+        [SerializeField] private Button BtnNoteMIX2App = null;         // 友達手帳アプリの友達へのボタン
+        [SerializeField] private Button BtnNoteMIX2MIX2 = null;        // 友達手帳MIX2の友達へのボタン（未使用）
+        [SerializeField] private Button BtnNoteMIX2Renraku = null;     // 友達手帳の連絡帳へのボタン
+        [SerializeField] private Button BtnNoteMIX2Back = null;        // 初期選択画面へのボタン
 
-        [SerializeField] private Button BtnNoteRenrakuApp;      // 友達手帳アプリの友達へのボタン
-        [SerializeField] private Button BtnNoteRenrakuMIX2;     // 友達手帳MIX2の友達へのボタン
-        [SerializeField] private Button BtnNoteRenrakuRenraku;  // 友達手帳の連絡帳へのボタン（未使用）
-        [SerializeField] private Button BtnNoteRenrakuBack;     // 初期選択画面へのボタン
+        [SerializeField] private Button BtnNoteRenrakuApp = null;      // 友達手帳アプリの友達へのボタン
+        [SerializeField] private Button BtnNoteRenrakuMIX2 = null;     // 友達手帳MIX2の友達へのボタン
+        [SerializeField] private Button BtnNoteRenrakuRenraku = null;  // 友達手帳の連絡帳へのボタン（未使用）
+        [SerializeField] private Button BtnNoteRenrakuBack = null;     // 初期選択画面へのボタン
 
-        [SerializeField] private Button BtnSearchInit;          // はじめからボタン
-        [SerializeField] private Button BtnSearchSearch;        // 探すボタン
-        [SerializeField] private Button BtnSearchBack;          // 初期選択画面へのボタン
+        [SerializeField] private Button BtnSearchInit = null;          // はじめからボタン
+        [SerializeField] private Button BtnSearchSearch = null;        // 探すボタン
+        [SerializeField] private Button BtnSearchBack = null;          // 初期選択画面へのボタン
 
-        [SerializeField] private Button BtnResultBack;          // もどるボタン
+        [SerializeField] private Button BtnResultBack = null;          // もどるボタン
 
-        [SerializeField] private Button BtnKakuninBack;         // もどるボタン
-        [SerializeField] private Button BtnKakuninTojiru;       // とじるボタン
-        [SerializeField] private Button BtnKakuninYes;          // はいボタン
-        [SerializeField] private Button BtnKakuninNo;           // いいえボタン
+        [SerializeField] private Button BtnKakuninBack = null;         // もどるボタン
+        [SerializeField] private Button BtnKakuninTojiru = null;       // とじるボタン
+        [SerializeField] private Button BtnKakuninYes = null;          // はいボタン
+        [SerializeField] private Button BtnKakuninNo = null;           // いいえボタン
 
-        [SerializeField] private Sprite[] ImgNumber;            // ００から２０まで
+        [SerializeField] private Sprite[] ImgNumber = null;            // ００から２０まで
 
-        [SerializeField] private GameObject PrefabApp;
-        [SerializeField] private GameObject PrefabMIX2;
-        [SerializeField] private GameObject PrefabRenraku;
-        [SerializeField] private GameObject PrefabSearch;
+        [SerializeField] private GameObject PrefabApp = null;
+        [SerializeField] private GameObject PrefabMIX2 = null;
+        [SerializeField] private GameObject PrefabRenraku = null;
+        [SerializeField] private GameObject PrefabSearch = null;
 
         private FriendData mFriendData;
         private List<User> mFriendSearchData;
@@ -75,8 +75,8 @@ namespace Mix2App.Friends
 
 
         private GameObject[] prefabObjApp = new GameObject[APPFRIENDS_MAX];             // アプリの友達
-        private GameObject[] prefabObjMIX2 = new GameObject[TOYFRIENDS_MAX];                // 玩具の友達
-        private GameObject[] prefabObjRenraku = new GameObject[RENRAKU_MAX];                // 友達申請（５０以上申請があったとしても５０件までしか表示しない）
+        private GameObject[] prefabObjMIX2 = new GameObject[TOYFRIENDS_MAX];            // 玩具の友達
+        private GameObject[] prefabObjRenraku = new GameObject[RENRAKU_MAX];            // 友達申請（５０以上申請があったとしても５０件までしか表示しない）
         private GameObject[] prefabObjSearch = new GameObject[SEARCH_MAX];              // 友達検索結果（５０以上検索結果があったとしても５０件までしか表示しない）
 
         private CharaBehaviour[] cbApp = new CharaBehaviour[APPFRIENDS_MAX];

@@ -33,7 +33,7 @@ namespace Mix2App.MiniGame1 {
         #endregion
 
         [Tooltip("List of game items")]
-        [SerializeField] private GameItem[] GameItems;
+        [SerializeField] private GameItem[] GameItems = null;
 
         /// <summary>
         /// Call this, when Game failed (finish by bomb)

@@ -20,8 +20,8 @@ namespace Mix2App.Profile.Elements {
     [Serializable] public class PrefectureElement {
 
         [Tooltip("SpriteList for prefecture places imge. Ended \"Secret\"")]
-        [SerializeField, Required] public SpriteList PrefecturePlaceList;
-        [SerializeField, Required] private Image PrefecturePlace;
+        [SerializeField, Required] public SpriteList PrefecturePlaceList = null;
+        [SerializeField, Required] private Image PrefecturePlace = null;
 
         /// <summary>
         /// Current prefecture number.

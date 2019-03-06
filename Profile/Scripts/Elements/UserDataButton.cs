@@ -18,8 +18,8 @@ namespace Mix2App.Profile.Elements {
     /// </summary>
     public class UserDataButton: ControlDataElement<Button, ProfileBookData> {
         [Tooltip("Text to display user name")]
-        [SerializeField, Required] private Text UserNameCaption;
-        [SerializeField, Required] private CharaBehaviour Character;
+        [SerializeField, Required] private Text UserNameCaption = null;
+        [SerializeField, Required] private CharaBehaviour Character = null;
 
         /// <summary>
         /// Gets current user data

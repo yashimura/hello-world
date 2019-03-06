@@ -11,13 +11,13 @@ using Mix2App.Lib.Utils;
 
 namespace Mix2App.TownEvent{
 	public class TownEvent_ev99 : MonoBehaviour,IReceiver,IReadyable {
-		[SerializeField] private GameEventHandler GEHandler;
-		[SerializeField] private GameObject[] CharaTamago;					// たまごっち（プレイヤー）
-		[SerializeField] private GameObject EventBase;
-		[SerializeField] private GameObject EventScene;
-		[SerializeField] private GameObject EventItem;
-		[SerializeField] private GameObject EventItemWindow;
-		[SerializeField] private GameObject CameraObj;		
+		[SerializeField] private GameEventHandler GEHandler = null;
+		[SerializeField] private GameObject[] CharaTamago = null;					// たまごっち（プレイヤー）
+		[SerializeField] private GameObject EventBase = null;
+		[SerializeField] private GameObject EventScene = null;
+		[SerializeField] private GameObject EventItem = null;
+		[SerializeField] private GameObject EventItemWindow = null;
+		[SerializeField] private GameObject CameraObj = null;		
 
 
 

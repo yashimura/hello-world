@@ -21,23 +21,23 @@ namespace Mix2App.Profile {
         private User UserData;
 
         [Header("Avatar settings")]
-        [SerializeField, Required] private AvatarElement AvatarPrefab;
-        [SerializeField, Required] private Text UserNameText;
+        [SerializeField, Required] private AvatarElement AvatarPrefab = null;
+        [SerializeField, Required] private Text UserNameText = null;
                 
         [Header("Tama character settings")]
-        [SerializeField, Required] private CharaBehaviour Chara0;
-        [SerializeField, Required] private CharaBehaviour Chara1;
-        [SerializeField, Required] private CharaBehaviour Chara2;
-        [SerializeField, Required] private Text TamaNameText;
-        [SerializeField, Required] private PetBehaviour Pet1;
+        [SerializeField, Required] private CharaBehaviour Chara0 = null;
+        [SerializeField, Required] private CharaBehaviour Chara1 = null;
+        [SerializeField, Required] private CharaBehaviour Chara2 = null;
+        [SerializeField, Required] private Text TamaNameText = null;
+        [SerializeField, Required] private PetBehaviour Pet1 = null;
 
         [Header("Kuchiguse")]
-        [SerializeField, Required] private GameObject KuchiguseBalloon1;
-        [SerializeField, Required] private GameObject KuchiguseBalloon2;
-        [SerializeField, Required] private Text KuchiguseText;
+        [SerializeField, Required] private GameObject KuchiguseBalloon1 = null;
+        [SerializeField, Required] private GameObject KuchiguseBalloon2 = null;
+        [SerializeField, Required] private Text KuchiguseText = null;
 
         [Header("Prefecture setup")]
-        [SerializeField, Required] private PrefectureElement PrefectureElementPrefab;
+        [SerializeField, Required] private PrefectureElement PrefectureElementPrefab = null;
 
         private string KuchiguseText_Data;
 

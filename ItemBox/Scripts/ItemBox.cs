@@ -14,46 +14,46 @@ namespace Mix2App.ItemBox
     public class ItemBox : MonoBehaviour, IReceiver, IReadyable
     {
         [SerializeField] private Camera mainCamera;
-        [SerializeField] private GameObject ItemContainer;
-        [SerializeField] private GameObject EventItemBoxMenu;           // プレゼントボックスメイン画面
-        [SerializeField] private GameObject EventPresent;               // プレゼントボックスアイテム一覧画面
-        [SerializeField] private GameObject EventTushinOk;              // 通信成功画面
-        [SerializeField] private GameObject EventTushinNot;             // 通信失敗画面
-        [SerializeField] private GameObject EventPresentPoint;          // プレゼントボックスポイント表示画面
-        [SerializeField] private GameObject EventTushinPoint;           // プレゼントボックスポイント転送量決定画面
-        [SerializeField] private GameObject EventDialogKakunin;         // 確認画面
-        [SerializeField] private GameObject EventDialogError;           // エラー画面
-        [SerializeField] private GameObject EventTushinTime;            // 通信中画面
-        [SerializeField] private GameObject ToyKakunin;                 // 通信前の玩具操作確認画面
-        [SerializeField] private Button ButtonToyKakuninYes;            // 通信前の玩具操作確認画面　はいボタン
+        [SerializeField] private GameObject ItemContainer = null;
+        [SerializeField] private GameObject EventItemBoxMenu = null;           // プレゼントボックスメイン画面
+        [SerializeField] private GameObject EventPresent = null;               // プレゼントボックスアイテム一覧画面
+        [SerializeField] private GameObject EventTushinOk = null;              // 通信成功画面
+        [SerializeField] private GameObject EventTushinNot = null;             // 通信失敗画面
+        [SerializeField] private GameObject EventPresentPoint = null;          // プレゼントボックスポイント表示画面
+        [SerializeField] private GameObject EventTushinPoint = null;           // プレゼントボックスポイント転送量決定画面
+        [SerializeField] private GameObject EventDialogKakunin = null;         // 確認画面
+        [SerializeField] private GameObject EventDialogError = null;           // エラー画面
+        [SerializeField] private GameObject EventTushinTime = null;            // 通信中画面
+        [SerializeField] private GameObject ToyKakunin = null;                 // 通信前の玩具操作確認画面
+        [SerializeField] private Button ButtonToyKakuninYes = null;            // 通信前の玩具操作確認画面　はいボタン
 
-        [SerializeField] private Button ButtonPresent;                  // メイン画面 アイテム一覧画面へのボタン
-        [SerializeField] private Button ButtonPoint;                    // メイン画面 ポイント表示画面へのボタン
-        [SerializeField] private Button ButtonTojiru;                   // メイン画面 とじるボタン
-        [SerializeField] private Button ButtonGPS;                      // メイン画面 GPSショートカットボタン
+        [SerializeField] private Button ButtonPresent = null;                  // メイン画面 アイテム一覧画面へのボタン
+        [SerializeField] private Button ButtonPoint = null;                    // メイン画面 ポイント表示画面へのボタン
+        [SerializeField] private Button ButtonTojiru = null;                   // メイン画面 とじるボタン
+        [SerializeField] private Button ButtonGPS = null;                      // メイン画面 GPSショートカットボタン
 
-        [SerializeField] private Button ButtonPresentBack;              // アイテム一覧画面　もどるボタン
+        [SerializeField] private Button ButtonPresentBack = null;              // アイテム一覧画面　もどるボタン
 
-        [SerializeField] private Button ButtonBackOK;                   // 通信成功画面 もどるボタン
-        [SerializeField] private Button ButtonBackNot;                  // 通信失敗画面 もどるボタン
+        [SerializeField] private Button ButtonBackOK = null;                   // 通信成功画面 もどるボタン
+        [SerializeField] private Button ButtonBackNot = null;                  // 通信失敗画面 もどるボタン
 
-        [SerializeField] private Button ButtonPointBack;                // ポイント表示画面　もどるボタン
+        [SerializeField] private Button ButtonPointBack = null;                // ポイント表示画面　もどるボタン
 
-        [SerializeField] private Button ButtonTushinBack;               // ポイント転送量決定画面　もどるボタン
-        [SerializeField] private Button ButtonTushinSend;               // ポイント転送量決定画面　おくるボタン
-        [SerializeField] private Button ButtonTushinSendAll;            // ポイント転送量決定画面　ぜんぶおくるボタン
-        [SerializeField] private Button[] ButtonTushinUp;               // ポイント転送量決定画面　上ボタン（全４つ）
-        [SerializeField] private Button[] ButtonTushinDown;             // ポイント転送量決定画面　下ボタン（全４つ）
+        [SerializeField] private Button ButtonTushinBack = null;               // ポイント転送量決定画面　もどるボタン
+        [SerializeField] private Button ButtonTushinSend = null;               // ポイント転送量決定画面　おくるボタン
+        [SerializeField] private Button ButtonTushinSendAll = null;            // ポイント転送量決定画面　ぜんぶおくるボタン
+        [SerializeField] private Button[] ButtonTushinUp = null;               // ポイント転送量決定画面　上ボタン（全４つ）
+        [SerializeField] private Button[] ButtonTushinDown = null;             // ポイント転送量決定画面　下ボタン（全４つ）
 
-        [SerializeField] private Button ButtonKakuninYes;               // 確認画面　はいボタン
-        [SerializeField] private Button ButtonKakuninNo;                // 確認画面　いいえボタン
-        [SerializeField] private Button ButtonErrorTojiru;              // エラー画面　とじるボタン
+        [SerializeField] private Button ButtonKakuninYes = null;               // 確認画面　はいボタン
+        [SerializeField] private Button ButtonKakuninNo = null;                // 確認画面　いいえボタン
+        [SerializeField] private Button ButtonErrorTojiru = null;              // エラー画面　とじるボタン
 
-        [SerializeField] private Sprite[] SuujiBlack;                   // 
-        [SerializeField] private Sprite[] SuujiRed;                     // 
+        [SerializeField] private Sprite[] SuujiBlack = null;                   // 
+        [SerializeField] private Sprite[] SuujiRed = null;                     // 
 
-        [SerializeField] private GameObject WakuPrefab;                 // 
-        [SerializeField] private GameObject WakuMIX2Prefab;             // 
+//        [SerializeField] private GameObject WakuPrefab = null;                 // 
+        [SerializeField] private GameObject WakuMIX2Prefab = null;             // 
 
 
 

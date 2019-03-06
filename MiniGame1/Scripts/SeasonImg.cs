@@ -8,15 +8,15 @@ namespace Mix2App.MiniGame1 {
 	[CreateAssetMenu(fileName = "SeasonImg", menuName = "MiniGame1/SeasonImg", order = 1)]
 	public class SeasonImg: ScriptableObject {
 		[Tooltip("タイトル画像")]
-		[SerializeField] private Sprite _ImgTitle;
+		[SerializeField] private Sprite _ImgTitle = null;
 		[Tooltip("背景画像")]
-		[SerializeField] private Sprite _ImgBG;
+		[SerializeField] private Sprite _ImgBG = null;
 		[Tooltip("紅葉")]
-		[SerializeField] private Sprite _ImgMomiji;
+		[SerializeField] private Sprite _ImgMomiji = null;
 		[Tooltip("雲")]
-		[SerializeField] private Sprite _ImgKumo;
+		[SerializeField] private Sprite _ImgKumo = null;
 		[Tooltip("アイテム １０点、２０点、３０点、５０点、１００点、お邪魔")]
-		[SerializeField] private Sprite[] _ImgItem;
+		[SerializeField] private Sprite[] _ImgItem = null;
 
 		public Sprite ImgTitle {
 			get {

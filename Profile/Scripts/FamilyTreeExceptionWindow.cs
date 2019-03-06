@@ -14,7 +14,7 @@ using Mix2App.Lib.Model;
 
 namespace Mix2App.Profile {
     public class FamilyTreeExceptionWindow: UIWindow {
-        [SerializeField, Required] private CharaBehaviour Chara;
+        [SerializeField, Required] private CharaBehaviour Chara = null;
         public void SetupCharacter(TamaChara ch) {
             if (ch != null) {
                 Chara.init(ch);

@@ -12,66 +12,66 @@ using Mix2App.Lib.Utils;
 namespace Mix2App.Marriage{
 	public class Marriage : MonoBehaviour,IReceiver {
 
-		[SerializeField] private GameObject CameraObj;
-		[SerializeField] private GameObject CameraObjMarriage;
+		[SerializeField] private GameObject CameraObj = null;
+		[SerializeField] private GameObject CameraObjMarriage = null;
 
-		[SerializeField] private GameObject EventMarriage;
-		[SerializeField] private GameObject	EventWait;
+		[SerializeField] private GameObject EventMarriage = null;
+		[SerializeField] private GameObject EventWait = null;
 
-		[SerializeField] private GameObject EventStart;				// 開始画面
-		[SerializeField] private GameObject EventTown;				// たまタウン
-		[SerializeField] private GameObject	EventFinale;			// 結婚式
-		[SerializeField] private GameObject	EventGarden;			// 庭園
-		[SerializeField] private GameObject EventBeach;				// 海岸
-		[SerializeField] private GameObject EventPark;				// 遊園地
+		[SerializeField] private GameObject EventStart = null;			// 開始画面
+		[SerializeField] private GameObject EventTown = null;			// たまタウン
+		[SerializeField] private GameObject EventFinale = null;			// 結婚式
+		[SerializeField] private GameObject EventGarden = null;			// 庭園
+		[SerializeField] private GameObject EventBeach = null;			// 海岸
+		[SerializeField] private GameObject EventPark = null;			// 遊園地
 
-		[SerializeField] private GameObject man_stay;				// 男の子、草原での停止
-		[SerializeField] private GameObject man_walk0;				// 男の子、たまタウンの歩き
-		[SerializeField] private GameObject	man_walk1;				// 男の子、遊園地の歩き
-		[SerializeField] private GameObject	man_walk2;				// 男の子、海岸の歩き
-		[SerializeField] private GameObject man_sit;				// 男の子、庭園での座り
-		[SerializeField] private GameObject man_kiss;				// 男の子、庭園でのキッス
-		[SerializeField] private GameObject	man_happy;				// 男の子、結婚式での喜び
+		[SerializeField] private GameObject man_stay = null;			// 男の子、草原での停止
+		[SerializeField] private GameObject man_walk0 = null;			// 男の子、たまタウンの歩き
+		[SerializeField] private GameObject man_walk1 = null;			// 男の子、遊園地の歩き
+		[SerializeField] private GameObject man_walk2 = null;			// 男の子、海岸の歩き
+		[SerializeField] private GameObject man_sit = null;				// 男の子、庭園での座り
+		[SerializeField] private GameObject man_kiss = null;			// 男の子、庭園でのキッス
+		[SerializeField] private GameObject man_happy = null;			// 男の子、結婚式での喜び
 
-		[SerializeField] private GameObject woman_stay;				// 女の子、草原での停止
-		[SerializeField] private GameObject woman_walk0;			// 女の子、たまタウンの歩き
-		[SerializeField] private GameObject woman_walk1;			// 女の子、遊園地の歩き
-		[SerializeField] private GameObject woman_walk2;			// 女の子、海岸の歩き
-		[SerializeField] private GameObject woman_sit;				// 女の子、庭園での座り
-		[SerializeField] private GameObject woman_kiss;				// 女の子、庭園でのキッス
-		[SerializeField] private GameObject woman_happy;			// 女の子、結婚式での喜び
+		[SerializeField] private GameObject woman_stay = null;			// 女の子、草原での停止
+		[SerializeField] private GameObject woman_walk0 = null;			// 女の子、たまタウンの歩き
+		[SerializeField] private GameObject woman_walk1 = null;			// 女の子、遊園地の歩き
+		[SerializeField] private GameObject woman_walk2 = null;			// 女の子、海岸の歩き
+		[SerializeField] private GameObject woman_sit = null;			// 女の子、庭園での座り
+		[SerializeField] private GameObject woman_kiss = null;			// 女の子、庭園でのキッス
+		[SerializeField] private GameObject woman_happy = null;			// 女の子、結婚式での喜び
 
-		[SerializeField] private GameObject omedetouPosition;
-		[SerializeField] private GameObject man_happy2;				// 男の子、結婚式の双子の子
-		[SerializeField] private GameObject woman_happy2;			// 女の子、結婚式の双子の子
-		[SerializeField] private GameObject[] petChara;				
+		[SerializeField] private GameObject omedetouPosition = null;
+		[SerializeField] private GameObject man_happy2 = null;			// 男の子、結婚式の双子の子
+		[SerializeField] private GameObject woman_happy2 = null;		// 女の子、結婚式の双子の子
+		[SerializeField] private GameObject[] petChara = null;				
 
-		[SerializeField] private GameObject manChara1;				// 男の子
-		[SerializeField] private GameObject womanChara1;			// 女の子
-		[SerializeField] private GameObject manChara2;				// 男の子の双子
-		[SerializeField] private GameObject womanChara2;			// 女の子の双子
+		[SerializeField] private GameObject manChara1 = null;			// 男の子
+		[SerializeField] private GameObject womanChara1 = null;			// 女の子
+		[SerializeField] private GameObject manChara2 = null;			// 男の子の双子
+		[SerializeField] private GameObject womanChara2 = null;			// 女の子の双子
 
-		[SerializeField] private GameObject petChara1;				// 男の子のペット
-		[SerializeField] private GameObject petChara2;				// 女の子のペット
+		[SerializeField] private GameObject petChara1 = null;			// 男の子のペット
+		[SerializeField] private GameObject petChara2 = null;			// 女の子のペット
 
-		[SerializeField] private GameObject PanelWhite;
-		[SerializeField] private GameObject PanelWhite2;
+		[SerializeField] private GameObject PanelWhite = null;
+		[SerializeField] private GameObject PanelWhite2 = null;
 
-		[SerializeField] private GameObject EventNet;				// 通信画面一式
-		[SerializeField] private GameObject EventJyunbi;			// たまごっちみーつ準備画面
-		[SerializeField] private GameObject EventJyunbi2;			// たまごっちみーつ失敗説明画面
-		[SerializeField] private GameObject EventSippai;			// 通信失敗画面
-		[SerializeField] private GameObject EventSeikou;			// 通信成功画面
+		[SerializeField] private GameObject EventNet = null;			// 通信画面一式
+		[SerializeField] private GameObject EventJyunbi = null;			// たまごっちみーつ準備画面
+		[SerializeField] private GameObject EventJyunbi2 = null;		// たまごっちみーつ失敗説明画面
+		[SerializeField] private GameObject EventSippai = null;			// 通信失敗画面
+		[SerializeField] private GameObject EventSeikou = null;			// 通信成功画面
 
 		//[SerializeField] private Button ButtonJyunbi;
-		[SerializeField] private Button ButtonSippaiEnd;
-		[SerializeField] private Button ButtonSippaiRetry;
-		[SerializeField] private Button ButtonSeikou;
+		[SerializeField] private Button ButtonSippaiEnd = null;
+		[SerializeField] private Button ButtonSippaiRetry = null;
+		[SerializeField] private Button ButtonSeikou = null;
 
-		[SerializeField] private GameObject EventEgg1;				// 
-		[SerializeField] private GameObject EventEgg2;				// 
+		[SerializeField] private GameObject EventEgg1 = null;			// 
+		[SerializeField] private GameObject EventEgg2 = null;			// 
 
-		[SerializeField] private GameObject EventEggBar;			//
+		[SerializeField] private GameObject EventEggBar = null;			//
 
 
 		private object[]		mparam;

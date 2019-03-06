@@ -18,13 +18,13 @@ namespace Mix2App.Profile {
         /// <summary>
         /// Loaded characters
         /// </summary>
-        [SerializeField, Required] private CharaBehaviour[] Character1;
-        [SerializeField, Required] private CharaBehaviour[] Character2;
+        [SerializeField, Required] private CharaBehaviour[] Character1 = null;
+        [SerializeField, Required] private CharaBehaviour[] Character2 = null;
 
         /// <summary>
         /// Frames list
         /// </summary>
-        [SerializeField, Required] private GameObject[] Frames;
+        [SerializeField, Required] private GameObject[] Frames = null;
 
         public GrowthRecordWindow SetupCharacters(AlbumData[] albums) {
             if (albums.Length==0)

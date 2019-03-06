@@ -20,7 +20,7 @@ namespace Mix2App.Profile.Elements {
         /// <summary>
         /// Current avatar. Assigned by editor.
         /// </summary>
-        [SerializeField, Required] private AvatarBehaviour AvatarPrefab;
+        [SerializeField, Required] private AvatarBehaviour AvatarPrefab = null;
                 
         public int Sex {
             get {

@@ -17,7 +17,7 @@ namespace Mix2App.Profile {
     /// Profile scene core
     /// </summary>
     public class SceneCore: MonoBehaviour, IReceiver {
-        [SerializeField, Required] SelfProfileWindow SelfProfileWindowPrefab;
+        [SerializeField, Required] SelfProfileWindow SelfProfileWindowPrefab = null;
 
         object[] mparam;        
         private void CloseAction() {

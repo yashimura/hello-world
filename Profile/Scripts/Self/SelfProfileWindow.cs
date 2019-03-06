@@ -18,22 +18,22 @@ namespace Mix2App.Profile {
     /// </summary>
     public class SelfProfileWindow: ProfileWindow {
         [Header("Setup profile")]
-        [SerializeField, Required] private ProfileSetupWindow ProfileSetupWindowPrefab;
-        [SerializeField, Required] private Button SetupProfileButton;
+        [SerializeField, Required] private ProfileSetupWindow ProfileSetupWindowPrefab = null;
+        [SerializeField, Required] private Button SetupProfileButton = null;
 
         [Header("Growth Record")]
-        [SerializeField, Required] private GrowthRecordWindow GrowthRecordWindowPrefab;
-        [SerializeField, Required] private Button ShowGrowthRecordButton;
+        [SerializeField, Required] private GrowthRecordWindow GrowthRecordWindowPrefab = null;
+        [SerializeField, Required] private Button ShowGrowthRecordButton = null;
 
         [Header("Friends")]
-        [SerializeField, Required] private FriendListWindow FriendListWindowPrefab;
-        [SerializeField, Required] private Button ShowFriendListButton;
+        [SerializeField, Required] private FriendListWindow FriendListWindowPrefab = null;
+        [SerializeField, Required] private Button ShowFriendListButton = null;
         
         [Header("User ID")]
-        [SerializeField, Required] private GameObject UserIDBalloon1;
-        [SerializeField, Required] private GameObject UserIDBalloon2;
-        [SerializeField, Required] private Text UserIDText;
-        [SerializeField, Required] private Button UserIDButton;
+        [SerializeField, Required] private GameObject UserIDBalloon1 = null;
+        [SerializeField, Required] private GameObject UserIDBalloon2 = null;
+        [SerializeField, Required] private Text UserIDText = null;
+        [SerializeField, Required] private Button UserIDButton = null;
 
 
         private void SetupProfile() {

@@ -11,15 +11,15 @@ using Mix2App.Lib.Utils;
 
 namespace Mix2App.MachiCon{
 	public class Message : MonoBehaviour {
-		[SerializeField] private GameObject EventJikkyou1;			// 実況の吹き出し１
-		[SerializeField] private GameObject EventJikkyou2;			// 実況の吹き出し２
-		[SerializeField] private GameObject EventJikkyouText;		// 実況の表示テキスト１
-		[SerializeField] private GameObject EventJikkyouText2;		// 実況の表示テキスト２
-		[SerializeField] private GameObject EventJikkyouAplichi1;	// アプリっちの表示スプライト１
-		[SerializeField] private GameObject EventJikkyouAplichi2;	// アプリっちの表示スプライト２
-		[SerializeField] private Sprite[]	EventJikkyouImage;		// アプリっちの表示スプライトリスト（普通 = 0、ガイド = 1、喜び = 2、笑顔 = 3、驚き = 4、泣き = 5、普通２ = 6、困る = 7）
+		[SerializeField] private GameObject EventJikkyou1 = null;			// 実況の吹き出し１
+		[SerializeField] private GameObject EventJikkyou2 = null;			// 実況の吹き出し２
+		[SerializeField] private GameObject EventJikkyouText = null;		// 実況の表示テキスト１
+		[SerializeField] private GameObject EventJikkyouText2 = null;		// 実況の表示テキスト２
+		[SerializeField] private GameObject EventJikkyouAplichi1 = null;	// アプリっちの表示スプライト１
+		[SerializeField] private GameObject EventJikkyouAplichi2 = null;	// アプリっちの表示スプライト２
+		[SerializeField] private Sprite[] EventJikkyouImage = null; 		// アプリっちの表示スプライトリスト（普通 = 0、ガイド = 1、喜び = 2、笑顔 = 3、驚き = 4、泣き = 5、普通２ = 6、困る = 7）
 
-		[SerializeField] private GameObject	EventSoudanText;		// アピールタイトル表示テキスト
+		[SerializeField] private GameObject EventSoudanText = null;	    	// アピールタイトル表示テキスト
 
 
 

@@ -21,8 +21,8 @@ namespace Mix2App.Profile {
 
         [Header("Dialogs")]
         [Tooltip("Remove friend confirm dialog")]
-        [SerializeField, Required] private ConfirmDialog RemoveFriendConfirmPrefab;
-        [SerializeField, Required] private Button RemoveFriendButton;
+        [SerializeField, Required] private ConfirmDialog RemoveFriendConfirmPrefab = null;
+        [SerializeField, Required] private Button RemoveFriendButton = null;
 
         public FriendProfileWindow AddFriendRemoveAction(UnityAction action) {
             FriendRemoveEvent.AddListener(action);

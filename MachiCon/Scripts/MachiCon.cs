@@ -15,48 +15,48 @@ using Mix2App.Lib.Net;
 
 namespace Mix2App.MachiCon{
 	public class MachiCon : MonoBehaviour,IReceiver,IDebugReceiver {
-		[SerializeField] private Message	MesDisp;						// メッセージ関連
-		[SerializeField] private GameObject EventCurtain;					// カーテン
-		[SerializeField] private GameObject EventTitle;						// たまキュンパーティータイトル
-		[SerializeField] private GameObject EventTitleClock;				// たまキュンパーティーカウントダウンマーク
-		[SerializeField] private GameObject EventTitleText;					// たまキュンパーティーカウントダウン時間
-		[SerializeField] private Sprite[] EventTitleSprite;
-		[SerializeField] private GameObject[] CharaTamago;					// たまごっち
-		[SerializeField] private GameObject[] CharaTamagochi;				// たまごっち（Image）
-		[SerializeField] private GameObject EventPhase;						// 幕間
-		[SerializeField] private GameObject EventPhaseRing;					// 幕間ナンバーリング
-		[SerializeField] private GameObject EventPhasePTStar;				// 幕間ナンバーエフェクト
-		[SerializeField] private GameObject EventPhaseCount;				// 幕間ナンバー
-		[SerializeField] private Sprite[] EventPhaseSprite;					// 幕間ナンバーデーター
-		[SerializeField] private GameObject EventSoudan;					// 相談
-		[SerializeField] private GameObject EventSoudanChara;				// 旧相談たまごっち
-		[SerializeField] private GameObject EventSoudanTarget;				// 旧相談対象たまごっち
-		[SerializeField] private GameObject EventSoudanTamago;				// 新相談たまごっち（chara,target）
-		[SerializeField] private GameObject EventSoudanAvaterNameOld;		// 旧アバターネーム
-		[SerializeField] private GameObject EventSoudanTamagoNameOld;		// 旧たまごっちネーム
-		[SerializeField] private GameObject EventSoudanAvaterNameNew;		// 新アバターネーム
-		[SerializeField] private GameObject EventSoudanTamagoNameNew;		// 新たまごっちネーム
-		[SerializeField] private GameObject	EventSoudanYesOld;				// 旧Yesボタン
-		[SerializeField] private GameObject	EventSoudanNoOld;				// 旧Noボタン
-		[SerializeField] private GameObject	EventSoudanYesNew;				// 新Yesボタン
-		[SerializeField] private GameObject	EventSoudanNoNew;				// 新Noボタン
-		[SerializeField] private GameObject EventSoudanKumo;				// 雲
-		[SerializeField] private GameObject EventAppeal;					// アピールタイム
-		[SerializeField] private GameObject EventKokuhaku;					// 告白タイム
-		[SerializeField] private GameObject EventWaitStop;					// ちょっとまった！！
-		[SerializeField] private GameObject EventResult;					// 告白結果
-		[SerializeField] private GameObject EventLastResult;				// 最終結果
-		[SerializeField] private GameObject EventEnd;						// おしまい
-		[SerializeField] private GameObject	EventEndMarriage;				// 結婚式へ
-		[SerializeField] private GameObject EventFutago;					// 双子選択
-		[SerializeField] private Button[] EventFutagoButton;				// 双子選択ボタン
-		[SerializeField] private GameObject[] CharaFutago;					// 双子のたまごっち
-		[SerializeField] private GameObject[] CharaFutagoImage;				// 双子のたまごっち（Image）
-		[SerializeField] private GameObject[] CharaFutagoName;				// 双子の名前
-		[SerializeField] private GameObject EventKakunin;					// 結婚確認画面
-		[SerializeField] private GameObject TamagoEffect;
-		[SerializeField] private GameObject	PrgCanvas;
-		[SerializeField] private Sprite[] StampImage;						// スタンプイメージ
+		[SerializeField] private Message MesDisp = null;						// メッセージ関連
+		[SerializeField] private GameObject EventCurtain = null;				// カーテン
+		[SerializeField] private GameObject EventTitle = null;					// たまキュンパーティータイトル
+		[SerializeField] private GameObject EventTitleClock = null;				// たまキュンパーティーカウントダウンマーク
+		[SerializeField] private GameObject EventTitleText = null;				// たまキュンパーティーカウントダウン時間
+		[SerializeField] private Sprite[] EventTitleSprite = null;
+		[SerializeField] private GameObject[] CharaTamago = null;				// たまごっち
+		[SerializeField] private GameObject[] CharaTamagochi = null;			// たまごっち（Image）
+		[SerializeField] private GameObject EventPhase = null;					// 幕間
+		[SerializeField] private GameObject EventPhaseRing = null;				// 幕間ナンバーリング
+		[SerializeField] private GameObject EventPhasePTStar = null;			// 幕間ナンバーエフェクト
+		[SerializeField] private GameObject EventPhaseCount = null;				// 幕間ナンバー
+		[SerializeField] private Sprite[] EventPhaseSprite = null;				// 幕間ナンバーデーター
+		[SerializeField] private GameObject EventSoudan = null;					// 相談
+		[SerializeField] private GameObject EventSoudanChara = null;			// 旧相談たまごっち
+		[SerializeField] private GameObject EventSoudanTarget = null;			// 旧相談対象たまごっち
+		[SerializeField] private GameObject EventSoudanTamago = null;			// 新相談たまごっち（chara,target）
+		[SerializeField] private GameObject EventSoudanAvaterNameOld = null;	// 旧アバターネーム
+		[SerializeField] private GameObject EventSoudanTamagoNameOld = null;	// 旧たまごっちネーム
+		[SerializeField] private GameObject EventSoudanAvaterNameNew = null;	// 新アバターネーム
+		[SerializeField] private GameObject EventSoudanTamagoNameNew = null;	// 新たまごっちネーム
+		[SerializeField] private GameObject EventSoudanYesOld = null;			// 旧Yesボタン
+		[SerializeField] private GameObject EventSoudanNoOld = null;			// 旧Noボタン
+		[SerializeField] private GameObject EventSoudanYesNew = null;			// 新Yesボタン
+		[SerializeField] private GameObject EventSoudanNoNew = null;			// 新Noボタン
+		[SerializeField] private GameObject EventSoudanKumo = null;				// 雲
+		[SerializeField] private GameObject EventAppeal = null;					// アピールタイム
+		[SerializeField] private GameObject EventKokuhaku = null;				// 告白タイム
+		[SerializeField] private GameObject EventWaitStop = null;				// ちょっとまった！！
+		[SerializeField] private GameObject EventResult = null;					// 告白結果
+		[SerializeField] private GameObject EventLastResult = null;				// 最終結果
+		[SerializeField] private GameObject EventEnd = null;					// おしまい
+		[SerializeField] private GameObject EventEndMarriage = null;			// 結婚式へ
+		[SerializeField] private GameObject EventFutago = null;					// 双子選択
+		[SerializeField] private Button[] EventFutagoButton = null;				// 双子選択ボタン
+		[SerializeField] private GameObject[] CharaFutago = null;				// 双子のたまごっち
+		[SerializeField] private GameObject[] CharaFutagoImage = null;			// 双子のたまごっち（Image）
+		[SerializeField] private GameObject[] CharaFutagoName = null;			// 双子の名前
+		[SerializeField] private GameObject EventKakunin = null;				// 結婚確認画面
+		[SerializeField] private GameObject TamagoEffect = null;
+		[SerializeField] private GameObject PrgCanvas = null;
+		[SerializeField] private Sprite[] StampImage = null;					// スタンプイメージ
 
 
 		//private object[]		mparam;

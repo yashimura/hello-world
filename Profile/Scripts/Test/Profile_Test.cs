@@ -13,10 +13,10 @@ using Mix2App.Lib.Model;
 
 namespace Mix2App.Profile.Test {
     public class Profile_Test: MonoBehaviour {
-        [SerializeField] private UserKind UKind;
-        [SerializeField] private UserType UType;
+        [SerializeField] private UserKind UKind = 0;
+        [SerializeField] private UserType UType = 0;
 
-        [SerializeField] private MonoBehaviour TestedCore;
+        [SerializeField] private MonoBehaviour TestedCore = null;
 
         [SerializeField] private bool Ch1Enabled = true;
         [SerializeField] private bool Ch2Enabled = false;

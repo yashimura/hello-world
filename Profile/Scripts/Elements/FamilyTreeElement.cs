@@ -19,25 +19,25 @@ namespace Mix2App.Profile.Elements {
     public class FamilyTreeElement: DataElement<FamilyTree> {
 
         [Tooltip("Title background image")]
-        [SerializeField, Required] private Image BG;
+        [SerializeField, Required] private Image BG = null;
 
         [Tooltip("Text to show generation number")]
-        [SerializeField, Required] private Text GenerationText;
+        [SerializeField, Required] private Text GenerationText = null;
         
         [Header("Edges")]
         [Tooltip("Edge to next generation")]
-        [SerializeField, Required] private GameObject TopEdge;
+        [SerializeField, Required] private GameObject TopEdge = null;
 
         [Tooltip("Edge to left character")]
-        [SerializeField, Required] private GameObject LeftEdge;
+        [SerializeField, Required] private GameObject LeftEdge = null;
 
         [Tooltip("Edge to right character")]
-        [SerializeField, Required] private GameObject RightEdge;
+        [SerializeField, Required] private GameObject RightEdge = null;
 
         [Header("Characters")]
-        [SerializeField, Required] private CharaBehaviour LeftCharacter;
-        [SerializeField, Required] private CharaBehaviour MiddleCharacter;
-        [SerializeField, Required] private CharaBehaviour RightCharacter;
+        [SerializeField, Required] private CharaBehaviour LeftCharacter = null;
+        [SerializeField, Required] private CharaBehaviour MiddleCharacter = null;
+        [SerializeField, Required] private CharaBehaviour RightCharacter = null;
 
         bool mflag;
         int mgene;

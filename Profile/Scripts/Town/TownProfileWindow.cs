@@ -31,22 +31,22 @@ namespace Mix2App.Profile.Town {
         [SerializeField, Required] private ConfirmDialog ProposeConfirm;
 
         [Header("Buttons")]
-        [SerializeField, Required] private Button ProposeButton;
-        [SerializeField, Required] private Button ProfileExchangeButton;
-        [SerializeField, Required] private ConfirmDialog ProfileExchangeDialog;
+        [SerializeField, Required] private Button ProposeButton = null;
+        [SerializeField, Required] private Button ProfileExchangeButton = null;
+        [SerializeField, Required] private ConfirmDialog ProfileExchangeDialog = null;
 
-        [SerializeField, Required] private Button ProfileUpdateButton;
-        [SerializeField, Required] private ConfirmDialog ProfileUpdateDialog;
+        [SerializeField, Required] private Button ProfileUpdateButton = null;
+        [SerializeField, Required] private ConfirmDialog ProfileUpdateDialog = null;
 
 
         [Header("User ID")]
-        [SerializeField, Required] private GameObject UserIDBalloon1;
-        [SerializeField, Required] private GameObject UserIDBalloon2;
-        [SerializeField, Required] private Text UserIDText;
-        [SerializeField, Required] private Button UserIDButton;
+        [SerializeField, Required] private GameObject UserIDBalloon1 = null;
+        [SerializeField, Required] private GameObject UserIDBalloon2 = null;
+        [SerializeField, Required] private Text UserIDText = null;
+        [SerializeField, Required] private Button UserIDButton = null;
 
 		[Header("Object")]
-		[SerializeField] private GameObject BaseObj;
+		[SerializeField] private GameObject BaseObj = null;
 	
 
 
@@ -264,7 +264,7 @@ namespace Mix2App.Profile.Town {
 
 			GameCall call = new GameCall(CallLabel.GET_PROPOSE, mUserPc, mCharaPcNum, mUserNpc, mCharaNpcNum);
 			call.AddListener((bool b, object o) => {
-				ManagerObject.instance.view.change("Propose",
+				ManagerObject.instance.view.change(SceneLabel.PROPOSE,
 					b,									// プロポーズの成否
 					1,									// プロポーズをするので１（プロポーズされた場合は０）
 					mUserPc,							// 自分のユーザー情報

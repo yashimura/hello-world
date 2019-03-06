@@ -18,7 +18,7 @@ namespace Mix2App.Profile {
     /// This window show some list with button-links to profiles
     /// </summary>
     public class FriendListWindow: ElementListDialog<UserDataButton, ProfileBookData> {
-        [SerializeField, Required] private FriendProfileWindow FriendProfileWindowPrefab;
+        [SerializeField, Required] private FriendProfileWindow FriendProfileWindowPrefab = null;
 
         protected override void ElementAdded(UserDataButton element, int element_number) {
             base.ElementAdded(element, element_number);

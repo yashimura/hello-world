@@ -12,7 +12,7 @@ namespace Mix2App.MachiCon
 {
     public class Talk1Controller : MonoBehaviour
     {
-        [SerializeField] private GameObject evtarget;
+        [SerializeField] private GameObject evtarget = null;
 
         public void PrintEvent(string s)
         {

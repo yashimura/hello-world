@@ -13,13 +13,11 @@ using Mix2App.Lib.Utils;
 
 namespace Mix2App.Propose{
 	public class Propose : MonoBehaviour,IReceiver,IReadyable {
-		[SerializeField] private GameObject[] CharaTamago;					// たまごっち
-		[SerializeField] private GameObject EventRoot;
-		[SerializeField] private GameObject EventSky;						// 背景
-		[SerializeField] private GameObject EventWait;						// メイン
-		[SerializeField] private GameObject EventMiss;						// 失敗
-//		[SerializeField] private GameObject EventFutago;					// 双子選択画面
-//		[SerializeField] private GameObject EventKakunin;					// 確認画面
+		[SerializeField] private GameObject[] CharaTamago = null;					// たまごっち
+		[SerializeField] private GameObject EventRoot = null;
+		[SerializeField] private GameObject EventSky = null;						// 背景
+		[SerializeField] private GameObject EventWait = null;						// メイン
+		[SerializeField] private GameObject EventMiss = null;						// 失敗
 
 
 

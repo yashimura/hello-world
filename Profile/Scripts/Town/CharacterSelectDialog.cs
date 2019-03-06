@@ -16,14 +16,14 @@ using Mix2App.Lib.Model;
 namespace Mix2App.Profile.Town {
     public class CharacterSelectDialog: UIWindow {
         [Header("Left choice")]
-        [SerializeField] private CharaBehaviour LeftChoiceCharacter;
-        [SerializeField] private Button LeftChoiceButton;
-        [SerializeField] private Text LeftCharacterNameText;
+        [SerializeField] private CharaBehaviour LeftChoiceCharacter = null;
+        [SerializeField] private Button LeftChoiceButton = null;
+        [SerializeField] private Text LeftCharacterNameText = null;
 
         [Header("Right choice")]
-        [SerializeField] private Button RightChoiceButton;
-        [SerializeField] private CharaBehaviour RightChoiceCharacter;
-        [SerializeField] private Text RightCharacterNameText;
+        [SerializeField] private Button RightChoiceButton = null;
+        [SerializeField] private CharaBehaviour RightChoiceCharacter = null;
+        [SerializeField] private Text RightCharacterNameText = null;
 
         /// <summary>
         /// Action will invoked when user make choice

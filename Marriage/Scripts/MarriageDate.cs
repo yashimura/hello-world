@@ -11,34 +11,34 @@ using Mix2App.Lib.Utils;
 
 namespace Mix2App.MarriageDate{
 	public class MarriageDate : MonoBehaviour,IReceiver {
-		[SerializeField] private GameObject EventDate;
+		[SerializeField] private GameObject EventDate = null;
 
-		[SerializeField] private GameObject	EventEnd;				// 原っぱ
-		[SerializeField] private GameObject	EventGarden;			// 庭園
-		[SerializeField] private GameObject EventBeach;				// 海岸
-		[SerializeField] private GameObject EventPark;				// 遊園地
+		[SerializeField] private GameObject EventEnd = null;			// 原っぱ
+		[SerializeField] private GameObject EventGarden = null;         // 庭園
+        [SerializeField] private GameObject EventBeach = null;          // 海岸
+        [SerializeField] private GameObject EventPark = null;			// 遊園地
 
-		[SerializeField] private GameObject	man_walk1;				// 男の子、遊園地の歩き
-		[SerializeField] private GameObject	man_walk2;				// 男の子、海岸の歩き
-		[SerializeField] private GameObject man_sit;				// 男の子、庭園での座り
-		[SerializeField] private GameObject	man_happy;				// 男の子、原っぱでの喜び
-		[SerializeField] private GameObject	man_walk3;				// 男の子、原っぱでの歩き
+		[SerializeField] private GameObject man_walk1 = null;			// 男の子、遊園地の歩き
+		[SerializeField] private GameObject man_walk2 = null;			// 男の子、海岸の歩き
+		[SerializeField] private GameObject man_sit = null;	    		// 男の子、庭園での座り
+		[SerializeField] private GameObject man_happy = null;			// 男の子、原っぱでの喜び
+		[SerializeField] private GameObject man_walk3 = null;			// 男の子、原っぱでの歩き
 
-		[SerializeField] private GameObject woman_walk1;			// 女の子、遊園地の歩き
-		[SerializeField] private GameObject woman_walk2;			// 女の子、海岸の歩き
-		[SerializeField] private GameObject woman_sit;				// 女の子、庭園での座り
-		[SerializeField] private GameObject woman_happy;			// 女の子、原っぱでの喜び
-		[SerializeField] private GameObject woman_walk3;			// 女の子、原っぱでの歩き
+		[SerializeField] private GameObject woman_walk1 = null;	    	// 女の子、遊園地の歩き
+		[SerializeField] private GameObject woman_walk2 = null;	    	// 女の子、海岸の歩き
+		[SerializeField] private GameObject woman_sit = null;	    	// 女の子、庭園での座り
+		[SerializeField] private GameObject woman_happy = null;			// 女の子、原っぱでの喜び
+		[SerializeField] private GameObject woman_walk3 = null;			// 女の子、原っぱでの歩き
 
-		[SerializeField] private GameObject man_text;				// 男の子、原っぱでのコメント
-		[SerializeField] private GameObject woman_text;				// 女の子、原っぱでのコメント
+		[SerializeField] private GameObject man_text = null;			// 男の子、原っぱでのコメント
+		[SerializeField] private GameObject woman_text = null;			// 女の子、原っぱでのコメント
 
-		[SerializeField] private GameObject manChara1;				// 男の子
-		[SerializeField] private GameObject womanChara1;			// 女の子
+		[SerializeField] private GameObject manChara1 = null;			// 男の子
+		[SerializeField] private GameObject womanChara1 = null;			// 女の子
 
-		[SerializeField] private GameObject EventWhite;
+		[SerializeField] private GameObject EventWhite = null;
 
-		[SerializeField] private Sprite[] StampImage;			// スタンプイメージ
+		[SerializeField] private Sprite[] StampImage = null;			// スタンプイメージ
 	
 		private readonly string[] manMessageTable = new string[]{		// 男の子のメッセージ
 			"またいっしょに\nあそんでほしい（＋語尾）",

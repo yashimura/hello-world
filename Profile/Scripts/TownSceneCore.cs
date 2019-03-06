@@ -14,11 +14,11 @@ using Mix2App.Lib.Model;
 
 namespace Mix2App.Profile.Town {
     public class TownSceneCore: MonoBehaviour, IReceiver {
-        [SerializeField, Required] TownProfileWindow TownProfileWindowPrefab;
-        [SerializeField] GameEventHandler handler;
+        [SerializeField, Required] TownProfileWindow TownProfileWindowPrefab = null;
+        [SerializeField] GameEventHandler handler = null;
 
-		[SerializeField] GameObject[] proposeWindow;
-		[SerializeField] GameObject cameraObj;
+		[SerializeField] GameObject[] proposeWindow = null;
+		[SerializeField] GameObject cameraObj = null;
 
 
 
