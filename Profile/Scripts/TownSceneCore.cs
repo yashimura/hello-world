@@ -39,13 +39,31 @@ namespace Mix2App.Profile.Town {
 
             mparam = parameter;
 
-            if (mparam==null)
-                mparam = new object[] { ManagerObject.instance.player };
-            
-			if (mparam.Length == 1) {
-				cameraObj.transform.GetComponent<Camera> ().depth = 1;
+            if (mparam == null){
+                mparam = new object[] {
+                    ManagerObject.instance.player,
+                    true,
+                    2
+                };
+            }
+
+            object _tmp = true;
+
+            if(!Equals(_tmp,mparam[1]))
+            {
+                Debug.Log("Boolタイプでない");
+                mparam[1] = (bool)true;
+            }
+            else
+            {
+                Debug.Log("Boolタイプである");
+            }
+
+
+            if (mparam.Length == 2) {
+				cameraObj.transform.GetComponent<Camera> ().depth = 2;
 			} else {
-				cameraObj.transform.GetComponent<Camera> ().depth = (int)mparam [1];
+				cameraObj.transform.GetComponent<Camera> ().depth = (int)mparam [2];
 			}
 
 
@@ -61,7 +79,10 @@ namespace Mix2App.Profile.Town {
 
 
 
-			UIManager.proposeWindowSet (proposeWindow);
+            UIManager.GEHandlerSet(handler);
+            UIManager.proposeWindowSet(proposeWindow);
+            UIManager.cameraWindowSet(cameraObj);
+            UIManager.proposeFlagSet((bool)mparam[1]);
 
 
 

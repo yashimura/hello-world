@@ -51,7 +51,8 @@ namespace Mix2App.Profile.Town {
 
 
 		private GameObject[] ProposeWindow;
-		private User mUserPc;
+
+        private User mUserPc;
 		private User mUserNpc;
 		private int mCharaPcNum;
 		private int mCharaNpcNum;
@@ -116,18 +117,14 @@ namespace Mix2App.Profile.Town {
             ProfileWindow wnd = base.SetupUserData(user_data);
 
 			{	// プロポーズボタンを表示するかどうかをチェックする
-				bool _proposeButtonActiveFlag = true;
+				bool _proposeButtonActiveFlag = UIManager.proposeFlagGet();
 
-				mUserPc = ManagerObject.instance.player;
+                mUserPc = ManagerObject.instance.player;
 				mUserNpc = user_data;
 				mCharaPcNum = 0;
 				mCharaNpcNum = 0;
 
-
-//				mUserPc.utype = UserType.MIX2;
-//				mUserPc.chara2 = new TamaChara(16);
-
-
+/*
 				if ((mUserPc.utype != UserType.MIX2) ||						// 自分がみーつユーザーでない
 					(mUserPc.chara1.grow < 4) ||							// 自分がフレンド期になっていない
 					(mUserNpc.utype != UserType.MIX2) ||					// 相手がみーつユーザーでない
@@ -136,7 +133,7 @@ namespace Mix2App.Profile.Town {
 				) {
 					_proposeButtonActiveFlag = false;						// プロポーズボタンを表示しない
 				}
-
+*/
 				if(_proposeButtonActiveFlag){
 					ProposeButton.gameObject.SetActive (true);				// プロポーズボタンの表示
 					ProposeWindow = UIManager.proposeWindowGet ();			// プロポーズ確認画面の登録
@@ -260,21 +257,34 @@ namespace Mix2App.Profile.Town {
 			ProposeJobOff ();
 		}
 		private void Propose0Button_hai(){
-			ManagerObject.instance.sound.playSe (13);
+            int CameraDepth = (int)(UIManager.cameraWindowGet().transform.GetComponent<Camera>().depth + 1);
 
+            ManagerObject.instance.sound.playSe (13);
+
+/*
 			GameCall call = new GameCall(CallLabel.GET_PROPOSE, mUserPc, mCharaPcNum, mUserNpc, mCharaNpcNum);
 			call.AddListener((bool b, object o) => {
-				ManagerObject.instance.view.change(SceneLabel.PROPOSE,
-					b,									// プロポーズの成否
-					1,									// プロポーズをするので１（プロポーズされた場合は０）
-					mUserPc,							// 自分のユーザー情報
-					mCharaPcNum,						// 自分の兄弟のどちらでプロポーズしたか
-					mUserNpc,							// 相手のユーザー情報
-					mCharaNpcNum);						// 相手の兄弟のどちらにプロポーズしたか
+                ManagerObject.instance.view.change(SceneLabel.PROPOSE,
+//					b,									// プロポーズの成否
+                    1,                                  // プロポーズをするので１（プロポーズされた場合は０）
+                    mUserPc,                            // 自分のユーザー情報
+                    mCharaPcNum,                        // 自分の兄弟のどちらでプロポーズしたか
+                    mUserNpc,                           // 相手のユーザー情報
+                    mCharaNpcNum,						// 相手の兄弟のどちらにプロポーズしたか
+                    CameraDepth);
 			});
 			ManagerObject.instance.connect.send(call);
-		}
-		private void Propose1Button_PC1(){
+*/
+            GameEventHandler.OnRemoveSceneEvent += ProposeDelete;
+            ManagerObject.instance.view.add(SceneLabel.PROPOSE,
+                    1,                                  // プロポーズをするので１（プロポーズされた場合は０）
+                    mUserPc,                            // 自分のユーザー情報
+                    mCharaPcNum,                        // 自分の兄弟のどちらでプロポーズしたか
+                    mUserNpc,                           // 相手のユーザー情報
+                    mCharaNpcNum,                       // 相手の兄弟のどちらにプロポーズしたか
+                    CameraDepth);
+        }
+        private void Propose1Button_PC1(){
 			ManagerObject.instance.sound.playSe (12);
 			ProposeStep2(0);							// 自分のたまごっちのchara1を選択
 		}
@@ -311,6 +321,17 @@ namespace Mix2App.Profile.Town {
 			ProposeWindow [2].transform.localPosition = new Vector3 (5000, 0, 0);
 			BaseObj.transform.localPosition = new Vector3 (0, 0, 0);
 		}
+
+        void ProposeDelete(string label)
+        {
+            if (label == SceneLabel.PROPOSE)
+            {
+                GameEventHandler.OnRemoveSceneEvent -= ProposeDelete;
+                ManagerObject.instance.view.delete(SceneLabel.PROPOSE);
+                ProposeButton.gameObject.SetActive(false);              // プロポーズボタンの非表示
+                ProposeJobOff();
+            }
+        }
     }
 }
 

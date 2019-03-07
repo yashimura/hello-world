@@ -12,16 +12,18 @@ using Mix2App.Lib.Utils;
 
 
 namespace Mix2App.Propose{
-	public class Propose : MonoBehaviour,IReceiver,IReadyable {
-		[SerializeField] private GameObject[] CharaTamago = null;					// たまごっち
+	public class Propose : MonoBehaviour,IReceiver,IReadyable,IMessageHandler {
+        [SerializeField] private GameEventHandler GEHandler = null;
+        [SerializeField] private GameObject[] CharaTamago = null;					// たまごっち
 		[SerializeField] private GameObject EventRoot = null;
 		[SerializeField] private GameObject EventSky = null;						// 背景
 		[SerializeField] private GameObject EventWait = null;						// メイン
 		[SerializeField] private GameObject EventMiss = null;						// 失敗
+        [SerializeField] private GameObject CameraObj = null;
 
 
 
-		private readonly string[] manMessageTable1 = new string[]{		// 男の子のメッセージ
+        private readonly string[] manMessageTable1 = new string[]{		// 男の子のメッセージ
 			"すきです！けっこんしたい（＋語尾）",
 			"ひとめぼれ・・・けっこんしたい（＋語尾）",
 			"もう あなたしかいない（＋語尾）",
@@ -82,18 +84,20 @@ namespace Mix2App.Propose{
 		private float[] xSpd = new float[2];								// 雲の移動スピード
 		private float scrnOffX;
 
+        private bool fProposeResult;
 
 
-		void Awake(){
+        void Awake(){
 			Debug.Log ("Propose Awake");
 			mparam = null;
-			mProposeResult = true;
+			mProposeResult = false;
 			mProposeType = 0;
 			mUser1 = null;
 			mUser2 = null;
 			mBrother1 = 0;
 			mBrother2 = 0;
 			mready = false;
+            fProposeResult = true;
 
 			xSpd [0] = Random.Range (0.5f, 1.0f);
 			xSpd [1] = Random.Range (0.5f, 1.0f);
@@ -107,23 +111,26 @@ namespace Mix2App.Propose{
 			//パラメタ詳細は設計書参照
 			if (mparam==null) {
 				mparam = new object[] {
-					true,														// プロポーズ結果　true=成功、false=失敗			bool
-					1,															// プロポーズ種類　0=自分が受けた、1=自分がした	int
-					new TestUser(1,UserKind.ANOTHER,UserType.MIX2,1,16,17,0,1),	// 自分										user
-					1,															// 自分のキャラ種類、							int
-					new TestUser(1,UserKind.ANOTHER,UserType.MIX2,1,23,24,0,1),	// プロポーズ相手、							user
-					1,															// プロポーズキャラ種類							int
+					1,														    // int  プロポーズ種類 0=自分が受けた、1=自分がした
+					new TestUser(1,UserKind.ANOTHER,UserType.MIX2,1,16,17,0,1), // user 自分
+					1,														    // int  自分のキャラ種類
+					new TestUser(1,UserKind.ANOTHER,UserType.MIX2,1,23,24,0,1), // user プロポーズ相手
+					1,														    // int  プロポーズキャラ種類
+                    4,                                                          // int  カメラDepth値
 				};
 			}
 
-			mProposeResult = (bool)mparam [0];
-			mProposeType = (int)mparam [1];
-			mUser1 = (User)mparam [2];
-			mBrother1 = (int)mparam [3];
-			mUser2 = (User)mparam [4];
-			mBrother2 = (int)mparam [5];
+//			mProposeResult = (bool)mparam [0];
+			mProposeType = (int)mparam [0];
+			mUser1 = (User)mparam [1];
+			mBrother1 = (int)mparam [2];
+			mUser2 = (User)mparam [3];
+			mBrother2 = (int)mparam [4];
 
-			StartCoroutine(mStart());
+            CameraObj.transform.GetComponent<Camera>().depth = (int)mparam[5];
+
+
+            StartCoroutine(mStart());
 		}
 
 		void Start(){
@@ -135,7 +142,27 @@ namespace Mix2App.Propose{
 			return mready;
 		}
 
-		void Destroy(){
+        public void OnReceiveMessage(string from, string message)
+        {
+            if(from == "Town")
+            {
+                if(message == "propose_ok")
+                {
+                    // 成功
+                    mProposeResult = true;
+                    fProposeResult = false;
+                }
+                if(message == "propose_ng")
+                {
+                    // 失敗
+                    mProposeResult = false;
+                    fProposeResult = false;
+                }
+            }
+
+        }
+
+        void Destroy(){
 			Debug.Log ("Propose Destroy");
 		}
 
@@ -210,11 +237,16 @@ namespace Mix2App.Propose{
 			EventSky.SetActive (true);
 			EventWait.SetActive (true);
 			if (mProposeType == 1) {
-				// 自分がプロポーズしたのでプロポーズ待機状態を表示する
-				EventWait.transform.Find ("fukidashi_left").gameObject.SetActive (true);
+                fProposeResult = true;
+                GameCall call = new GameCall(CallLabel.SEND_PROPOSE, mUser1, mBrother1, mUser2, mBrother2);
+                call.AddListener(SendPropose);
+                ManagerObject.instance.connect.send(call);
+
+                // 自分がプロポーズしたのでプロポーズ待機状態を表示する
+                EventWait.transform.Find ("fukidashi_left").gameObject.SetActive (true);
 				EventWait.transform.Find ("fukidashi_left/text").gameObject.GetComponent<Text> ().text = "・・・";
-				yield return new WaitForSeconds (15.0f);
-				EventWait.transform.Find ("fukidashi_left").gameObject.SetActive (false);
+                yield return WaitTimer(30);
+                EventWait.transform.Find ("fukidashi_left").gameObject.SetActive (false);
 			}
 
 			// プロポーズ待機状態が終了したので音楽スタートand戻るボタンを消す
@@ -234,15 +266,56 @@ namespace Mix2App.Propose{
 				// 告白が失敗したので左に配置されているたまごっちが演出をする
 				yield return StartCoroutine(TamagochiProposeMiss());
 
-				Debug.Log ("たまタウンへ・・・");
-				ManagerObject.instance.view.change(SceneLabel.TOWN);
-			}
+//				Debug.Log ("たまタウンへ・・・");
+//				ManagerObject.instance.view.change(SceneLabel.TOWN);
+                GEHandler.OnRemoveScene(SceneLabel.PROPOSE);
+            }
 
-			yield return null;
+            yield return null;
 		}
-			
-		// 右のたまごっちの告白演出
-		private IEnumerator TamagochiRightIdou(GameObject _obj){
+
+        void SendPropose(bool success, object data)
+        {
+
+        }
+
+
+        private IEnumerator WaitTimer(int _time)
+        {
+            float _waitSecTime1 = 0.0f;
+            int _waitSecTime2 = _time;
+
+            while (true)
+            {
+                if (!fProposeResult)
+                {
+                    break;
+                }
+
+                _waitSecTime1 += 1.0f * Time.deltaTime;
+                if (_waitSecTime1 >= 1.0f)
+                {
+                    _waitSecTime1 -= 1.0f;
+                    if (_waitSecTime2 == 0)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        _waitSecTime2--;
+                    }
+                }
+
+                yield return null;
+            }
+
+            yield return null;
+        }
+
+
+
+        // 右のたまごっちの告白演出
+        private IEnumerator TamagochiRightIdou(GameObject _obj){
 			Vector3 _pos = new Vector3 (100, -50, 0);					// 右のたまごっちの移動先
 
 			cbCharaTamago [0].gotoAndPlay (MotionLabel.WALK);
