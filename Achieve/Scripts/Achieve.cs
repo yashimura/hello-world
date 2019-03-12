@@ -97,7 +97,7 @@ namespace Mix2App.Achieve
         {
         }
 
-            private void ButtonTojiruClick()
+        private void ButtonTojiruClick()
         {
             ManagerObject.instance.sound.playSe(17);
             ManagerObject.instance.view.change(SceneLabel.HOME);

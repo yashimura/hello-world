@@ -85,6 +85,7 @@ namespace Mix2App.Propose{
 		private float scrnOffX;
 
         private bool fProposeResult;
+        private bool fProposeOff;
 
 
         void Awake(){
@@ -98,6 +99,7 @@ namespace Mix2App.Propose{
 			mBrother2 = 0;
 			mready = false;
             fProposeResult = true;
+            fProposeOff = false;
 
 			xSpd [0] = Random.Range (0.5f, 1.0f);
 			xSpd [1] = Random.Range (0.5f, 1.0f);
@@ -126,9 +128,7 @@ namespace Mix2App.Propose{
 			mBrother1 = (int)mparam [2];
 			mUser2 = (User)mparam [3];
 			mBrother2 = (int)mparam [4];
-
             CameraObj.transform.GetComponent<Camera>().depth = (int)mparam[5];
-
 
             StartCoroutine(mStart());
 		}
@@ -197,12 +197,15 @@ namespace Mix2App.Propose{
 		}
 
 		private void ButtonModoruClick(){
-			ManagerObject.instance.sound.playSe (17);
-			Debug.Log ("たまタウンへ・・・");
-			ManagerObject.instance.view.change(SceneLabel.TOWN);
-		}
+            if (!fProposeOff)
+            {
+                fProposeOff = true;
+                ManagerObject.instance.sound.playSe(17);
+                EventWait.transform.Find("Button_blue_modoru").gameObject.SetActive(false);
+            }
+        }
 
-		private IEnumerator mainLoop(){
+        private IEnumerator mainLoop(){
 			if (mProposeType == 0) {			// 自分がプロポーズを受けた
 				userR = mUser2;
 				userL = mUser1;
@@ -249,28 +252,36 @@ namespace Mix2App.Propose{
                 EventWait.transform.Find ("fukidashi_left").gameObject.SetActive (false);
 			}
 
-			// プロポーズ待機状態が終了したので音楽スタートand戻るボタンを消す
-			EventWait.transform.Find ("Button_blue_modoru").gameObject.SetActive (false);
-			ManagerObject.instance.sound.playBgm (16);
+            if (!fProposeOff)
+            {
+                // プロポーズ待機状態が終了したので音楽スタートand戻るボタンを消す
+                EventWait.transform.Find("Button_blue_modoru").gameObject.SetActive(false);
+                ManagerObject.instance.sound.playBgm(16);
 
-			// 右に配置されているたまごっちを移動させる
-			yield return StartCoroutine(TamagochiRightIdou (EventWait.transform.Find ("tamago/charaR").gameObject));
+                // 右に配置されているたまごっちを移動させる
+                yield return StartCoroutine(TamagochiRightIdou(EventWait.transform.Find("tamago/charaR").gameObject));
 
-			if (mProposeResult == true) {
-				// 告白が成功したので左に配置されているたまごっちが演出をする（少し前に移動する）
-				yield return StartCoroutine(TamagochiProposeSuccess(EventWait.transform.Find("tamago/charaL").gameObject));
+                if (mProposeResult == true)
+                {
+                    // 告白が成功したので左に配置されているたまごっちが演出をする（少し前に移動する）
+                    yield return StartCoroutine(TamagochiProposeSuccess(EventWait.transform.Find("tamago/charaL").gameObject));
 
-				Debug.Log ("結婚へ・・・");
-				ManagerObject.instance.view.change(SceneLabel.MARRIAGE,mProposeType,mUser1,mBrother1,mUser2,mBrother2);
-			} else {
-				// 告白が失敗したので左に配置されているたまごっちが演出をする
-				yield return StartCoroutine(TamagochiProposeMiss());
+                    Debug.Log("結婚へ・・・");
+                    ManagerObject.instance.view.change(SceneLabel.MARRIAGE, mProposeType, mUser1, mBrother1, mUser2, mBrother2);
+                }
+                else
+                {
+                    // 告白が失敗したので左に配置されているたまごっちが演出をする
+                    yield return StartCoroutine(TamagochiProposeMiss());
 
-//				Debug.Log ("たまタウンへ・・・");
-//				ManagerObject.instance.view.change(SceneLabel.TOWN);
+                    GEHandler.OnRemoveScene(SceneLabel.PROPOSE);
+                }
+            }
+            else
+            {
+                // プロポーズ中止されたので終了
                 GEHandler.OnRemoveScene(SceneLabel.PROPOSE);
             }
-
             yield return null;
 		}
 
