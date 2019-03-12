@@ -8,8 +8,7 @@ using Mix2App.Lib.Model;
 using Mix2App.Lib.Events;
 using Mix2App.Lib.View;
 using Mix2App.Lib.Utils;
-
-
+using Mix2App.UI;
 
 namespace Mix2App.Propose{
 	public class Propose : MonoBehaviour,IReceiver,IReadyable,IMessageHandler {
@@ -186,8 +185,11 @@ namespace Mix2App.Propose{
 
 		void Update () {
 			// たまごっちのアニメを反映させる
-			TamagochiImageMove (EventWait, CharaTamago [0], "tamago/charaR/");
-			TamagochiImageMove (EventWait, CharaTamago [1], "tamago/charaL/");
+//			TamagochiImageMove (EventWait, CharaTamago [0], "tamago/charaR/");
+//			TamagochiImageMove (EventWait, CharaTamago [1], "tamago/charaL/");
+
+            UIFunction.TamagochiImageMove(EventWait, CharaTamago[0], "tamago/charaR/");
+            UIFunction.TamagochiImageMove(EventWait, CharaTamago[1], "tamago/charaL/");
 
 			// 雲を移動する
 			if (mready) {
@@ -526,7 +528,7 @@ namespace Mix2App.Propose{
 			_obj.transform.localPosition = _pos;
 		}
 
-
+/*
 		private void TamagochiImageMove(GameObject toObj,GameObject fromObj,string toStr){
 			for (int i = 0; i < fromObj.transform.Find ("Layers").transform.childCount; i++) {
 				toObj.transform.Find (toStr + "CharaImg/Layers/" + fromObj.transform.Find ("Layers").transform.GetChild (i).name).gameObject.transform.SetSiblingIndex (i);
@@ -557,6 +559,6 @@ namespace Mix2App.Propose{
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer3").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localScale;
 			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer4").gameObject.transform.localScale;
 		}
-
+*/
 	}
 }
