@@ -49,6 +49,27 @@ namespace Mix2App.UI
             toObj.transform.Find(toStr + "CharaImg/Layers/Layer4").gameObject.transform.localScale = fromObj.transform.Find("Layers/Layer4").gameObject.transform.localScale;
         }
 
+        public static void TamagochiPetImageMove(GameObject toObj, GameObject fromObj, string toStr)
+        {
+            for (int i = 0; i < fromObj.transform.Find("Layers").transform.childCount; i++)
+            {
+                toObj.transform.Find(toStr + "PetImg/Layers/" + fromObj.transform.Find("Layers").transform.GetChild(i).name).gameObject.transform.SetSiblingIndex(i);
+            }
+
+            toObj.transform.Find(toStr + "PetImg").gameObject.GetComponent<Image>().enabled = false;
+            toObj.transform.Find(toStr + "PetImg/Layers/Layer").gameObject.GetComponent<Image>().enabled = fromObj.transform.Find("Layers/Layer").gameObject.GetComponent<Image>().enabled;
+            toObj.transform.Find(toStr + "PetImg/Layers/Layer (1)").gameObject.GetComponent<Image>().enabled = fromObj.transform.Find("Layers/Layer (1)").gameObject.GetComponent<Image>().enabled;
+
+            toObj.transform.Find(toStr + "PetImg/Layers/Layer").gameObject.GetComponent<Image>().sprite = fromObj.transform.Find("Layers/Layer").gameObject.GetComponent<Image>().sprite;
+            toObj.transform.Find(toStr + "PetImg/Layers/Layer (1)").gameObject.GetComponent<Image>().sprite = fromObj.transform.Find("Layers/Layer (1)").gameObject.GetComponent<Image>().sprite;
+
+            toObj.transform.Find(toStr + "PetImg/Layers/Layer").gameObject.transform.localPosition = fromObj.transform.Find("Layers/Layer").gameObject.transform.localPosition;
+            toObj.transform.Find(toStr + "PetImg/Layers/Layer (1)").gameObject.transform.localPosition = fromObj.transform.Find("Layers/Layer (1)").gameObject.transform.localPosition;
+
+            toObj.transform.Find(toStr + "PetImg/Layers/Layer").gameObject.transform.localScale = fromObj.transform.Find("Layers/Layer").gameObject.transform.localScale;
+            toObj.transform.Find(toStr + "PetImg/Layers/Layer (1)").gameObject.transform.localScale = fromObj.transform.Find("Layers/Layer (1)").gameObject.transform.localScale;
+        }
+
 
 
     }

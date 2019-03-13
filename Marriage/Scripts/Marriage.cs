@@ -991,10 +991,10 @@ namespace Mix2App.Marriage{
 			}
 
 			toObj.transform.Find (toStr + "/PetImg").gameObject.GetComponent<Image> ().enabled = false;
-			toObj.transform.Find (toStr + "/PetImg/Layers/Layer").gameObject.GetComponent<Image> ().enabled = true;
-			toObj.transform.Find (toStr + "/PetImg/Layers/Layer (1)").gameObject.GetComponent<Image> ().enabled = true;
+            toObj.transform.Find(toStr + "/PetImg/Layers/Layer").gameObject.GetComponent<Image>().enabled = fromObj.transform.Find("Layers/Layer").gameObject.GetComponent<Image>().enabled;
+            toObj.transform.Find(toStr + "/PetImg/Layers/Layer (1)").gameObject.GetComponent<Image>().enabled = fromObj.transform.Find("Layers/Layer (1)").gameObject.GetComponent<Image>().enabled;
 
-			toObj.transform.Find (toStr + "/PetImg/Layers/Layer").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer").gameObject.GetComponent<Image> ().sprite;
+            toObj.transform.Find (toStr + "/PetImg/Layers/Layer").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer").gameObject.GetComponent<Image> ().sprite;
 			toObj.transform.Find (toStr + "/PetImg/Layers/Layer (1)").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer (1)").gameObject.GetComponent<Image> ().sprite;
 
 			toObj.transform.Find (toStr + "/PetImg/Layers/Layer").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer").gameObject.transform.localPosition;

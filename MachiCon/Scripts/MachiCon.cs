@@ -249,13 +249,17 @@ namespace Mix2App.MachiCon{
 
 		public void receive(params object[] parameter){
 			Debug.Log ("MachiCon receive");
-			//mparam = parameter;
+            //mparam = parameter;
 
-			// イベントたまキュンか？
-			// コラボたまキュンか？
-			// 通常たまキュンか？
+            // イベントたまキュンか？
+            // コラボたまキュンか？
+            // 通常たまキュンか？
 
-			meventid = (int)parameter[0];
+            if (parameter != null && parameter.Length > 0){
+                meventid = (int)parameter[0];
+            } else {
+                meventid = 0;
+            }
 
 			muser1 = ManagerObject.instance.player;
 			mkind1 = 0;
