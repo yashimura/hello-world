@@ -47,8 +47,6 @@ namespace Mix2App.Achieve
 
 
 
-
-
         private bool mready = false;
         public bool ready()
         {
@@ -102,6 +100,7 @@ namespace Mix2App.Achieve
             ManagerObject.instance.sound.playSe(17);
             ManagerObject.instance.view.change(SceneLabel.HOME);
         }
+
 
 
     }

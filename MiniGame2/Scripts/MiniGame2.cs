@@ -8,39 +8,37 @@ using Mix2App.Lib.Model;
 using Mix2App.Lib.Events;
 using Mix2App.Lib.View;
 using Mix2App.Lib.Utils;
-
-
-
+using Mix2App.UI;
 
 namespace Mix2App.MiniGame2{
 	public class MiniGame2 : MonoBehaviour,IReceiver,IReadyable {
-		[SerializeField] private GameObject[] CharaTamagoMain = null;					// たまごっち（プレイヤー）
-		[SerializeField] private GameObject[] CharaTamagoNpc = null;					// たまごっち（ゲスト）
-		[SerializeField] private GameObject[] CharaTamagoGuest = null;					// たまごっち（お客さん）
+		[SerializeField] private GameObject[] CharaTamagoMain = null;           // たまごっち（プレイヤー）
+        [SerializeField] private GameObject[] CharaTamagoNpc = null;			// たまごっち（ゲスト）
+		[SerializeField] private GameObject[] CharaTamagoGuest = null;			// たまごっち（お客さん）
 		[SerializeField] private GameObject MinigameRoot = null;
-		[SerializeField] private GameObject EventTitle = null;							// タイトル画面
-		[SerializeField] private GameObject EventStart = null;							// スタート画面
-		[SerializeField] private GameObject EventGame = null;							// ゲーム画面
-		[SerializeField] private GameObject EventEnd = null;							// 終了画	面
-		[SerializeField] private GameObject EventResult = null;						// 結果画面
-		[SerializeField] private GameObject EventItemget = null;						// アイテム入手画面
-		[SerializeField] private GameObject EventHelp = null;							// 遊び方説明画面
-		[SerializeField] private GameObject ButtonStart = null;						// タイトル スタートボタン
-		[SerializeField] private GameObject ButtonHelp = null;							// タイトル ヘルプボタン
-		[SerializeField] private GameObject ButtonClose = null;						// タイトル 閉じるボタン
-		[SerializeField] private GameObject ButtonYameru = null;						// ゲーム やめるボタン
-		[SerializeField] private GameObject ButtonTakuhai = null;						// アイテム入手 宅配ボタン
-		[SerializeField] private GameObject ButtonTojiru = null;						// アイテム入手 閉じるボタン
-		[SerializeField] private GameObject ButtonModoru = null;						// 結果 戻るボタン
-		[SerializeField] private GameObject ButtonHelpModoru = null;					// 遊び方説明画面 戻るボタン
-		[SerializeField] private GameObject[] ButtonMenu = null;						// ゲーム メニューボタン（８個）
+		[SerializeField] private GameObject EventTitle = null;					// タイトル画面
+		[SerializeField] private GameObject EventStart = null;					// スタート画面
+		[SerializeField] private GameObject EventGame = null;					// ゲーム画面
+		[SerializeField] private GameObject EventEnd = null;					// 終了画	面
+		[SerializeField] private GameObject EventResult = null;					// 結果画面
+		[SerializeField] private GameObject EventItemget = null;				// アイテム入手画面
+		[SerializeField] private GameObject EventHelp = null;					// 遊び方説明画面
+		[SerializeField] private GameObject ButtonStart = null;					// タイトル スタートボタン
+		[SerializeField] private GameObject ButtonHelp = null;					// タイトル ヘルプボタン
+		[SerializeField] private GameObject ButtonClose = null;					// タイトル 閉じるボタン
+		[SerializeField] private GameObject ButtonYameru = null;				// ゲーム やめるボタン
+		[SerializeField] private GameObject ButtonTakuhai = null;				// アイテム入手 宅配ボタン
+		[SerializeField] private GameObject ButtonTojiru = null;				// アイテム入手 閉じるボタン
+		[SerializeField] private GameObject ButtonModoru = null;				// 結果 戻るボタン
+		[SerializeField] private GameObject ButtonHelpModoru = null;			// 遊び方説明画面 戻るボタン
+		[SerializeField] private GameObject[] ButtonMenu = null;				// ゲーム メニューボタン（８個）
 		[SerializeField] private GameObject EventGameMenu = null;
 		[SerializeField] private GameObject EventGameFukidashi = null;
 		[SerializeField] private GameObject EventGameScore = null;
-		[SerializeField] private Sprite[] MenuImage = null;							// ０：カツ丼、１：プリン、２：サンド、３：ステーキ、４：パスタ、５：オムライス、６：ご飯、７：寿司
-		[SerializeField] private Sprite[] FukidashiImage = null;						// ０：吹き出し１、１：吹き出し２、２：吹き出し３、３：吹き出し４
-		[SerializeField] private Sprite[] CheckImage = null;							// ０：丸、１：バツ
-		[SerializeField] private Sprite[] EventEndSprite = null;						// 終了時の演出スプライト
+		[SerializeField] private Sprite[] MenuImage = null;						// ０：カツ丼、１：プリン、２：サンド、３：ステーキ、４：パスタ、５：オムライス、６：ご飯、７：寿司
+		[SerializeField] private Sprite[] FukidashiImage = null;				// ０：吹き出し１、１：吹き出し２、２：吹き出し３、３：吹き出し４
+		[SerializeField] private Sprite[] CheckImage = null;					// ０：丸、１：バツ
+		[SerializeField] private Sprite[] EventEndSprite = null;				// 終了時の演出スプライト
 
 
 
@@ -1596,13 +1594,13 @@ namespace Mix2App.MiniGame2{
 			EventResult.transform.Find ("chara2").transform.localScale = new Vector3 (2.0f, 2.0f, 1.0f);
 			EventResult.transform.Find ("chara3").transform.localScale = new Vector3 (2.0f, 2.0f, 1.0f);
 
-			TamagochiImageMove (EventResult, CharaTamagoMain [0], "chara/");
-			TamagochiImageMove (EventResult, CharaTamagoMain [1], "charaF/");
+			UIFunction.TamagochiImageMove (EventResult, CharaTamagoMain [0], "chara/");
+			UIFunction.TamagochiImageMove (EventResult, CharaTamagoMain [1], "charaF/");
 
 			for (int i = 0; i < CharaTamagoNpc.Length; i++) {
 				string[] _name = new string[] { "chara0/", "chara1/", "chara2/", "chara3/" };
 				if (NpcDispFlag [i]) {
-					TamagochiImageMove (EventResult, CharaTamagoNpc [i], _name [i]);
+					UIFunction.TamagochiImageMove (EventResult, CharaTamagoNpc [i], _name [i]);
 				}
 			}
 		}
@@ -1624,38 +1622,6 @@ namespace Mix2App.MiniGame2{
 			obj.transform.localPosition = pos;
 		}
 
-		private void TamagochiImageMove(GameObject toObj,GameObject fromObj,string toStr){
-			for (int i = 0; i < fromObj.transform.Find ("Layers").transform.childCount; i++) {
-				toObj.transform.Find (toStr + "CharaImg/Layers/" + fromObj.transform.Find ("Layers").transform.GetChild (i).name).gameObject.transform.SetSiblingIndex (i);
-			}
-
-			toObj.transform.Find (toStr + "CharaImg").gameObject.GetComponent<Image> ().enabled = false;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer0").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer0").gameObject.GetComponent<Image> ().enabled;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer1").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer1").gameObject.GetComponent<Image> ().enabled;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer2").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer2").gameObject.GetComponent<Image> ().enabled;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer3").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer3").gameObject.GetComponent<Image> ().enabled;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer4").gameObject.GetComponent<Image> ().enabled;
-				
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer0").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer0").gameObject.GetComponent<Image> ().sprite;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer1").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer1").gameObject.GetComponent<Image> ().sprite;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer2").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer2").gameObject.GetComponent<Image> ().sprite;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer3").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer3").gameObject.GetComponent<Image> ().sprite;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer4").gameObject.GetComponent<Image> ().sprite;
-
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer0").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer0").gameObject.transform.localPosition;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer1").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer1").gameObject.transform.localPosition;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer2").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer2").gameObject.transform.localPosition;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer3").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localPosition;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer4").gameObject.transform.localPosition;
-
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer0").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer0").gameObject.transform.localScale;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer1").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer1").gameObject.transform.localScale;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer2").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer2").gameObject.transform.localScale;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer3").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localScale;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer4").gameObject.transform.localScale;
-		}
-
-			
 	}
 
 

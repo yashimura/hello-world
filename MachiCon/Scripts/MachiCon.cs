@@ -10,8 +10,7 @@ using Mix2App.Lib.View;
 using Mix2App.Lib.Utils;
 using Mix2App.Lib.Sounds;
 using Mix2App.Lib.Net;
-
-
+using Mix2App.UI;
 
 namespace Mix2App.MachiCon{
 	public class MachiCon : MonoBehaviour,IReceiver,IDebugReceiver {
@@ -431,8 +430,8 @@ namespace Mix2App.MachiCon{
 						buttonFutagoNumber = 0;
 					}
 
-					TamagochiImageMove (CharaFutagoImage [0], CharaFutago [0], "");
-					TamagochiImageMove (CharaFutagoImage [1], CharaFutago [1], "");
+					UIFunction.TamagochiImageMove (CharaFutagoImage [0], CharaFutago [0], "");
+					UIFunction.TamagochiImageMove (CharaFutagoImage [1], CharaFutago [1], "");
 
 					EventTitleLightDisp (false);
 
@@ -446,8 +445,8 @@ namespace Mix2App.MachiCon{
 						mkind1 = buttonFutagoNumber;
 					}
 
-					TamagochiImageMove (CharaFutagoImage [0], CharaFutago [0], "");
-					TamagochiImageMove (CharaFutagoImage [1], CharaFutago [1], "");
+					UIFunction.TamagochiImageMove (CharaFutagoImage [0], CharaFutago [0], "");
+					UIFunction.TamagochiImageMove (CharaFutagoImage [1], CharaFutago [1], "");
 
 					break;
 				}
@@ -929,7 +928,7 @@ namespace Mix2App.MachiCon{
 				}
 
 				for (int i = 0; i < 8; i++) {
-					TamagochiImageMove (CharaTamagochi [i], CharaTamago [i], "");
+					UIFunction.TamagochiImageMove (CharaTamagochi [i], CharaTamago [i], "");
 					if (CharaTamago [i].transform.localScale.x <= 0) {
 						CharaTamagochi [i].transform.localScale = new Vector3 (-2.5f, 2.5f, 1.0f);
 						CharaTamagochi [i].transform.Find ("fukidashi").gameObject.transform.localScale = new Vector3 (-0.42f, 0.42f, 1.0f);
@@ -1002,8 +1001,8 @@ namespace Mix2App.MachiCon{
 
 		// 相談シーンのたまごっちをImageに反映させる
 		private void SoudanTamagoCharaSet (){
-			TamagochiImageMove (EventSoudanTamago, CharaTamago [playerNumber], "chara/");
-			TamagochiImageMove (EventSoudanTamago, CharaTamago [targetNumber], "target/");
+			UIFunction.TamagochiImageMove (EventSoudanTamago, CharaTamago [playerNumber], "chara/");
+			UIFunction.TamagochiImageMove (EventSoudanTamago, CharaTamago [targetNumber], "target/");
 		}
 
 		// 相談シーンのたまごっち入場
@@ -2717,7 +2716,7 @@ namespace Mix2App.MachiCon{
 				MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp12);
 				kokuhakuWaitTime = 120;
 			}
-			TamagochiImageMove (EventWaitStop, CharaTamago [num], "Panel (1)/Image/");
+			UIFunction.TamagochiImageMove (EventWaitStop, CharaTamago [num], "Panel (1)/Image/");
 		}
 			
 		// 告白判定
@@ -3397,40 +3396,6 @@ namespace Mix2App.MachiCon{
 			jobCount = num;
 
 		}
-
-
-		private void TamagochiImageMove(GameObject toObj,GameObject fromObj,string toStr){
-			for (int i = 0; i < fromObj.transform.Find ("Layers").transform.childCount; i++) {
-				toObj.transform.Find (toStr + "CharaImg/Layers/" + fromObj.transform.Find ("Layers").transform.GetChild (i).name).gameObject.transform.SetSiblingIndex (i);
-			}
-
-			toObj.transform.Find (toStr + "CharaImg").gameObject.GetComponent<Image> ().enabled = false;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer0").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer0").gameObject.GetComponent<Image> ().enabled;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer1").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer1").gameObject.GetComponent<Image> ().enabled;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer2").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer2").gameObject.GetComponent<Image> ().enabled;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer3").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer3").gameObject.GetComponent<Image> ().enabled;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer4").gameObject.GetComponent<Image> ().enabled;
-
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer0").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer0").gameObject.GetComponent<Image> ().sprite;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer1").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer1").gameObject.GetComponent<Image> ().sprite;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer2").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer2").gameObject.GetComponent<Image> ().sprite;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer3").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer3").gameObject.GetComponent<Image> ().sprite;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer4").gameObject.GetComponent<Image> ().sprite;
-
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer0").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer0").gameObject.transform.localPosition;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer1").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer1").gameObject.transform.localPosition;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer2").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer2").gameObject.transform.localPosition;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer3").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localPosition;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer4").gameObject.transform.localPosition;
-
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer0").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer0").gameObject.transform.localScale;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer1").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer1").gameObject.transform.localScale;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer2").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer2").gameObject.transform.localScale;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer3").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localScale;
-			toObj.transform.Find (toStr + "CharaImg/Layers/Layer4").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer4").gameObject.transform.localScale;
-
-		}
-
 
 
 

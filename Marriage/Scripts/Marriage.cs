@@ -8,6 +8,7 @@ using Mix2App.Lib.Model;
 using Mix2App.Lib.Events;
 using Mix2App.Lib.View;
 using Mix2App.Lib.Utils;
+using Mix2App.UI;
 
 namespace Mix2App.Marriage{
 	public class Marriage : MonoBehaviour,IReceiver {
@@ -693,28 +694,28 @@ namespace Mix2App.Marriage{
 			}
 
 
-			TamagochiImageMove (EventStart, manChara1, "bg1/manChara");
-			TamagochiImageMove (EventStart, womanChara1, "bg1/womanChara");
+			UIFunction.TamagochiImageMove (EventStart, manChara1, "bg1/manChara/");
+			UIFunction.TamagochiImageMove (EventStart, womanChara1, "bg1/womanChara/");
 
-			TamagochiImageMove (EventTown, manChara1, "Chara/manChara");
-			TamagochiImageMove (EventTown, womanChara1, "Chara/womanChara");
+			UIFunction.TamagochiImageMove (EventTown, manChara1, "Chara/manChara/");
+			UIFunction.TamagochiImageMove (EventTown, womanChara1, "Chara/womanChara/");
 
-			TamagochiImageMove (EventPark, manChara1, "Chara/manChara");
-			TamagochiImageMove (EventPark, womanChara1, "Chara/womanChara");
+			UIFunction.TamagochiImageMove (EventPark, manChara1, "Chara/manChara/");
+			UIFunction.TamagochiImageMove (EventPark, womanChara1, "Chara/womanChara/");
 
-			TamagochiImageMove (EventBeach, manChara1, "Chara/manChara");
-			TamagochiImageMove (EventBeach, womanChara1, "Chara/womanChara");
+			UIFunction.TamagochiImageMove (EventBeach, manChara1, "Chara/manChara/");
+			UIFunction.TamagochiImageMove (EventBeach, womanChara1, "Chara/womanChara/");
 
-			TamagochiImageMove (EventGarden, manChara1, "bg1/manChara");
-			TamagochiImageMove (EventGarden, womanChara1, "bg1/womanChara");
+			UIFunction.TamagochiImageMove (EventGarden, manChara1, "bg1/manChara/");
+			UIFunction.TamagochiImageMove (EventGarden, womanChara1, "bg1/womanChara/");
 
-			TamagochiImageMove (EventFinale, manChara1, "bg/manChara");
-			TamagochiImageMove (EventFinale, womanChara1, "bg/womanChara");
-			TamagochiImageMove (EventFinale, manChara2, "bg/manChara2");
-			TamagochiImageMove (EventFinale, womanChara2, "bg/womanChara2");
+			UIFunction.TamagochiImageMove (EventFinale, manChara1, "bg/manChara/");
+			UIFunction.TamagochiImageMove (EventFinale, womanChara1, "bg/womanChara/");
+			UIFunction.TamagochiImageMove (EventFinale, manChara2, "bg/manChara2/");
+			UIFunction.TamagochiImageMove (EventFinale, womanChara2, "bg/womanChara2/");
 
-			TamagochiPetImageMove (EventFinale, petChara1, "bg/manPet");
-			TamagochiPetImageMove (EventFinale, petChara2, "bg/womanPet");
+			UIFunction.TamagochiPetImageMove (EventFinale, petChara1, "bg/manPet/");
+			UIFunction.TamagochiPetImageMove (EventFinale, petChara2, "bg/womanPet/");
 		}
 
 
@@ -949,59 +950,6 @@ namespace Mix2App.Marriage{
 				return true;
 			}
 			return false;
-		}
-
-
-
-
-		private void TamagochiImageMove(GameObject toObj,GameObject fromObj,string toStr){
-			for (int i = 0; i < fromObj.transform.Find ("Layers").transform.childCount; i++) {
-				toObj.transform.Find (toStr + "/CharaImg/Layers/" + fromObj.transform.Find ("Layers").transform.GetChild (i).name).gameObject.transform.SetSiblingIndex (i);
-			}
-
-			toObj.transform.Find (toStr + "/CharaImg").gameObject.GetComponent<Image> ().enabled = false;
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer0").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer0").gameObject.GetComponent<Image> ().enabled;
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer1").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer1").gameObject.GetComponent<Image> ().enabled;
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer2").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer2").gameObject.GetComponent<Image> ().enabled;
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer3").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer3").gameObject.GetComponent<Image> ().enabled;
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer4").gameObject.GetComponent<Image> ().enabled = fromObj.transform.Find ("Layers/Layer4").gameObject.GetComponent<Image> ().enabled;
-
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer0").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer0").gameObject.GetComponent<Image> ().sprite;
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer1").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer1").gameObject.GetComponent<Image> ().sprite;
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer2").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer2").gameObject.GetComponent<Image> ().sprite;
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer3").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer3").gameObject.GetComponent<Image> ().sprite;
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer4").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer4").gameObject.GetComponent<Image> ().sprite;
-
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer0").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer0").gameObject.transform.localPosition;
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer1").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer1").gameObject.transform.localPosition;
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer2").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer2").gameObject.transform.localPosition;
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer3").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localPosition;
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer4").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer4").gameObject.transform.localPosition;
-
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer0").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer0").gameObject.transform.localScale;
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer1").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer1").gameObject.transform.localScale;
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer2").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer2").gameObject.transform.localScale;
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer3").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer3").gameObject.transform.localScale;
-			toObj.transform.Find (toStr + "/CharaImg/Layers/Layer4").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer4").gameObject.transform.localScale;
-		}
-
-		private void TamagochiPetImageMove(GameObject toObj,GameObject fromObj,string toStr){
-			for (int i = 0; i < fromObj.transform.Find ("Layers").transform.childCount; i++) {
-				toObj.transform.Find (toStr + "/PetImg/Layers/" + fromObj.transform.Find ("Layers").transform.GetChild (i).name).gameObject.transform.SetSiblingIndex (i);
-			}
-
-			toObj.transform.Find (toStr + "/PetImg").gameObject.GetComponent<Image> ().enabled = false;
-            toObj.transform.Find(toStr + "/PetImg/Layers/Layer").gameObject.GetComponent<Image>().enabled = fromObj.transform.Find("Layers/Layer").gameObject.GetComponent<Image>().enabled;
-            toObj.transform.Find(toStr + "/PetImg/Layers/Layer (1)").gameObject.GetComponent<Image>().enabled = fromObj.transform.Find("Layers/Layer (1)").gameObject.GetComponent<Image>().enabled;
-
-            toObj.transform.Find (toStr + "/PetImg/Layers/Layer").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer").gameObject.GetComponent<Image> ().sprite;
-			toObj.transform.Find (toStr + "/PetImg/Layers/Layer (1)").gameObject.GetComponent<Image> ().sprite = fromObj.transform.Find ("Layers/Layer (1)").gameObject.GetComponent<Image> ().sprite;
-
-			toObj.transform.Find (toStr + "/PetImg/Layers/Layer").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer").gameObject.transform.localPosition;
-			toObj.transform.Find (toStr + "/PetImg/Layers/Layer (1)").gameObject.transform.localPosition = fromObj.transform.Find ("Layers/Layer (1)").gameObject.transform.localPosition;
-
-			toObj.transform.Find (toStr + "/PetImg/Layers/Layer").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer").gameObject.transform.localScale;
-			toObj.transform.Find (toStr + "/PetImg/Layers/Layer (1)").gameObject.transform.localScale = fromObj.transform.Find ("Layers/Layer (1)").gameObject.transform.localScale;
 		}
 
 
