@@ -112,7 +112,8 @@ namespace Mix2App.Propose{
 			//パラメタ詳細は設計書参照
 			if (mparam==null) {
 				mparam = new object[] {
-					1,														    // int  プロポーズ種類 0=自分が受けた、1=自分がした
+					0,														    // int  プロポーズ種類 0=自分が受けた、1=自分がした
+                    1,                                                          // int  プロポーズ可否 0=失敗、1=成功（受けた時のみ使用）
 					new TestUser(1,UserKind.ANOTHER,UserType.MIX2,1,16,17,0,1), // user 自分
 					1,														    // int  自分のキャラ種類
 					new TestUser(1,UserKind.ANOTHER,UserType.MIX2,1,23,24,0,1), // user プロポーズ相手
@@ -121,13 +122,23 @@ namespace Mix2App.Propose{
 				};
 			}
 
-//			mProposeResult = (bool)mparam [0];
 			mProposeType = (int)mparam [0];
-			mUser1 = (User)mparam [1];
-			mBrother1 = (int)mparam [2];
-			mUser2 = (User)mparam [3];
-			mBrother2 = (int)mparam [4];
-            CameraObj.transform.GetComponent<Camera>().depth = (int)mparam[5];
+            if(mProposeType == 0)
+            {
+                if ((int)mparam[1] == 0)
+                {
+                    mProposeResult = false;
+                }
+                else
+                {
+                    mProposeResult = true;
+                }
+            }
+            mUser1 = (User)mparam [2];
+			mBrother1 = (int)mparam [3];
+			mUser2 = (User)mparam [4];
+			mBrother2 = (int)mparam [5];
+            CameraObj.transform.GetComponent<Camera>().depth = (int)mparam[6];
 
             StartCoroutine(mStart());
 		}

@@ -261,23 +261,10 @@ namespace Mix2App.Profile.Town {
 
             ManagerObject.instance.sound.playSe (13);
 
-/*
-			GameCall call = new GameCall(CallLabel.GET_PROPOSE, mUserPc, mCharaPcNum, mUserNpc, mCharaNpcNum);
-			call.AddListener((bool b, object o) => {
-                ManagerObject.instance.view.change(SceneLabel.PROPOSE,
-//					b,									// プロポーズの成否
-                    1,                                  // プロポーズをするので１（プロポーズされた場合は０）
-                    mUserPc,                            // 自分のユーザー情報
-                    mCharaPcNum,                        // 自分の兄弟のどちらでプロポーズしたか
-                    mUserNpc,                           // 相手のユーザー情報
-                    mCharaNpcNum,						// 相手の兄弟のどちらにプロポーズしたか
-                    CameraDepth);
-			});
-			ManagerObject.instance.connect.send(call);
-*/
             GameEventHandler.OnRemoveSceneEvent += ProposeDelete;
             ManagerObject.instance.view.add(SceneLabel.PROPOSE,
                     1,                                  // プロポーズをするので１（プロポーズされた場合は０）
+                    0,                                  // プロポーズするのでダミー
                     mUserPc,                            // 自分のユーザー情報
                     mCharaPcNum,                        // 自分の兄弟のどちらでプロポーズしたか
                     mUserNpc,                           // 相手のユーザー情報
@@ -330,6 +317,14 @@ namespace Mix2App.Profile.Town {
                 ManagerObject.instance.view.delete(SceneLabel.PROPOSE);
                 ProposeButton.gameObject.SetActive(false);              // プロポーズボタンの非表示
                 ProposeJobOff();
+
+/*
+                // シーズンを調べて下記の４つのどれを再生するか決定する
+                ManagerObject.instance.sound.playBgm(2);
+                ManagerObject.instance.sound.playBgm(3);
+                ManagerObject.instance.sound.playBgm(4);
+                ManagerObject.instance.sound.playBgm(5);
+*/
             }
         }
     }

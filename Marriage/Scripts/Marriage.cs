@@ -139,6 +139,7 @@ namespace Mix2App.Marriage{
 		private int mkind1;//兄弟種類
 		private int mkind2;//兄弟種類
 		private int mBleSuccess;//結婚通信結果
+        private int mBleErrorCode;
 
 		private bool man2AttendFlag;
 		private bool woman2AttendFlag;
@@ -148,16 +149,17 @@ namespace Mix2App.Marriage{
 
 		private bool retryFlag;
 
-		void Awake(){
-			Debug.Log ("Marriage Awake");
-			mparam=null;
-			muser1=null;
-			muser2=null;
-			mBleSuccess=0;
-			mkind=0;
-			mkind1=0;
-			mkind2=0;
-		}
+        void Awake(){
+            Debug.Log("Marriage Awake");
+            mparam = null;
+            muser1 = null;
+            muser2 = null;
+            mBleSuccess = 0;
+            mBleErrorCode = 0;
+            mkind = 0;
+            mkind1 = 0;
+            mkind2 = 0;
+        }
 
 		public void receive(params object[] parameter){
 			Debug.Log ("Marriage receive");
@@ -334,10 +336,14 @@ namespace Mix2App.Marriage{
 		void mblekekkon(bool success,object data)
 		{
 			Debug.LogFormat("Marriage mblekekkon:{0},{1}",success,data);
-			//dataの内容は設計書を参照
-			//dataを変えたい場合はConnectManagerDriverのBLEKekkon()を変える
-			if (success) mBleSuccess = 1;
-			else mBleSuccess = 2;
+            //dataの内容は設計書を参照
+            //dataを変えたい場合はConnectManagerDriverのBLEKekkon()を変える
+            if (success){
+                mBleSuccess = 1;
+            } else {
+                mBleSuccess = 2;
+                mBleErrorCode = (int)data;
+            }
 		}
 
 		void Update () {
