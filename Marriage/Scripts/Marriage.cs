@@ -63,6 +63,7 @@ namespace Mix2App.Marriage{
 		[SerializeField] private GameObject EventJyunbi2 = null;		// たまごっちみーつ失敗説明画面
 		[SerializeField] private GameObject EventSippai = null;			// 通信失敗画面
 		[SerializeField] private GameObject EventSeikou = null;			// 通信成功画面
+        [SerializeField] private GameObject EventBLESippai = null;      // BLEエラー画面
 
 		//[SerializeField] private Button ButtonJyunbi;
 		[SerializeField] private Button ButtonSippaiEnd = null;
@@ -222,7 +223,9 @@ namespace Mix2App.Marriage{
 			ButtonSippaiEnd.onClick.AddListener (ButtonSippaiEndClick);
 			ButtonSippaiRetry.onClick.AddListener (ButtonSippaiRetryClick);
 			ButtonSeikou.onClick.AddListener (ButtonSeikouClick);
-			EventEgg1.transform.Find("Image").gameObject.GetComponent<Button>().onClick.AddListener (ButtonEggClick);
+            EventBLESippai.transform.Find("Button_blue_tojiru").gameObject.GetComponent<Button>().onClick.AddListener(ButtonBLEClick);
+
+            EventEgg1.transform.Find("Image").gameObject.GetComponent<Button>().onClick.AddListener (ButtonEggClick);
 
 			EventStart.SetActive (false);
 			EventTown.SetActive (false);
@@ -343,6 +346,10 @@ namespace Mix2App.Marriage{
             } else {
                 mBleSuccess = 2;
                 mBleErrorCode = (int)data;
+
+                retryFlag = false;
+                waitCount = 10;
+                jobCount = statusJobCount.marriageJobCount140;
             }
 		}
 
@@ -660,7 +667,9 @@ namespace Mix2App.Marriage{
 					EventJyunbi.SetActive (false);
 					EventSippai.SetActive (false);
 					EventSeikou.SetActive (true);
-					jobCount = statusJobCount.marriageJobCount150;
+                    EventBLESippai.SetActive(false);
+                    
+                    jobCount = statusJobCount.marriageJobCount150;
 					break;
 				}
 			case	statusJobCount.marriageJobCount140:
@@ -676,7 +685,14 @@ namespace Mix2App.Marriage{
 					EventJyunbi.SetActive (false);
 					EventSippai.SetActive (true);
 					EventSeikou.SetActive (false);
-					jobCount = statusJobCount.marriageJobCount150;
+                    EventBLESippai.SetActive(false); 
+                    
+                    if(mBleErrorCode == 7)
+                    {
+                        EventBLESippai.SetActive(true);
+                    }
+
+                    jobCount = statusJobCount.marriageJobCount150;
 					break;
 				}
 			case	statusJobCount.marriageJobCount150:
@@ -976,7 +992,12 @@ namespace Mix2App.Marriage{
 			ManagerObject.instance.sound.playSe (17);
 			ManagerObject.instance.view.change(SceneLabel.HOME);
 		}
-		private void ButtonEggClick(){
+        private void ButtonBLEClick(){
+            ManagerObject.instance.sound.playSe(13);
+            EventBLESippai.SetActive(false);
+        }
+
+        private void ButtonEggClick(){
 			EventEgg1.SetActive (false);
 			StartCoroutine ("WaitEgg");
 		}
