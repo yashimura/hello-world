@@ -68,7 +68,7 @@ namespace Mix2App.MiniGame2{
 		private readonly int GAME_MENU_DIFFICULTY1 = 3;							// ４択メニューに切り替える正解数
 		private readonly int GAME_MENU_DIFFICULTY2 = 6;							// ６択メニューに切り替える正解数	
 		private readonly int GAME_MENU_DIFFICULTY3 = 9;							// ８択メニューに切り替える正解数
-
+/*
 		private readonly int GAME_TAMAGOCHI_GUEST1 = 16;						// お客さんたまごっち１人目（まめっち）
 		private readonly int GAME_TAMAGOCHI_GUEST2 = 17;						// お客さんたまごっち２人目（くちぱっち）
 		private readonly int GAME_TAMAGOCHI_GUEST3 = 29;						// お客さんたまごっち３人目（かっぱっぱっち）
@@ -83,7 +83,7 @@ namespace Mix2App.MiniGame2{
 		private readonly int GAME_TAMAGOCHI_GUEST12 = 43;						// お客さんたまごっち１２人目（マジョリっち）
 
 		private readonly int GAME_TAMAGOCHI_PC = 16;							// 玩具連動していない時のプレイヤー
-
+*/
 		private readonly int GAME_CLEAR_MESSAGE1 = 100;							// 得点未満でゲームクリアメッセージ１を表示
 		private readonly int GAME_CLEAR_MESSAGE2 = 400;							// 得点未満でゲームクリアメッセージ２を表示
 		private readonly int GAME_CLEAR_MESSAGE3 = 700;							// 得点未満でゲームクリアメッセージ３を表示
@@ -109,6 +109,9 @@ namespace Mix2App.MiniGame2{
 		}
 
 		private User muser1;//自分
+        private string mSceneLabel;
+        private int mMinigameID;
+
 
 		void Awake(){
 			Debug.Log ("MiniGame2 Awake");
@@ -130,10 +133,16 @@ namespace Mix2App.MiniGame2{
 			Debug.Log ("MiniGame2 receive");
 			mparam = parameter;
 			if (mparam==null) {
+                mparam = new object[] {
+                    "PapaMama",
+                    2
+                };
 			}
 
+            mSceneLabel = (string)mparam[0];
+            mMinigameID = (int)mparam[1];
 
-			GameCall call = new GameCall (CallLabel.GET_MINIGAME_INFO,2);
+            GameCall call = new GameCall (CallLabel.GET_MINIGAME_INFO,mMinigameID);
 			call.AddListener (mGetMinigameInfo);
 			ManagerObject.instance.connect.send (call);
 		}
@@ -172,10 +181,6 @@ namespace Mix2App.MiniGame2{
 			muser1 = ManagerObject.instance.player;		// たまごっち
 
 
-
-			ManagerObject.instance.sound.playBgm (22);
-
-			MinigameRoot.transform.Find ("bg").gameObject.SetActive (true);
 
 			startEndFlag = false;
 
@@ -236,31 +241,23 @@ namespace Mix2App.MiniGame2{
 				}
 			} else {
 				// 玩具非連動キャラ
-				yield return cbCharaTamagoMain [0].init (new TamaChara (GAME_TAMAGOCHI_PC));	// プレイヤーキャラを登録する
+				yield return cbCharaTamagoMain [0].init (mData.charaList[0]);	                // プレイヤーキャラを登録する
 				futagoFlag = false;
 			}
 			TamagochiMainAnimeSet (0, MotionLabel.IDLE);
 			TamagochiMainAnimeSet (1, MotionLabel.IDLE);
 
-			yield return cbCharaTamagoGuest [0].init (new TamaChara (GAME_TAMAGOCHI_GUEST1));	// お客キャラを登録する
-			yield return cbCharaTamagoGuest [1].init (new TamaChara (GAME_TAMAGOCHI_GUEST2));
-			yield return cbCharaTamagoGuest [2].init (new TamaChara (GAME_TAMAGOCHI_GUEST3));
-			yield return cbCharaTamagoGuest [3].init (new TamaChara (GAME_TAMAGOCHI_GUEST4));
-			yield return cbCharaTamagoGuest [4].init (new TamaChara (GAME_TAMAGOCHI_GUEST5));
-			yield return cbCharaTamagoGuest [5].init (new TamaChara (GAME_TAMAGOCHI_GUEST6));
-			yield return cbCharaTamagoGuest [6].init (new TamaChara (GAME_TAMAGOCHI_GUEST7));
-			yield return cbCharaTamagoGuest [7].init (new TamaChara (GAME_TAMAGOCHI_GUEST8));
-			yield return cbCharaTamagoGuest [8].init (new TamaChara (GAME_TAMAGOCHI_GUEST9));
-			yield return cbCharaTamagoGuest [9].init (new TamaChara (GAME_TAMAGOCHI_GUEST10));
-			yield return cbCharaTamagoGuest [10].init (new TamaChara (GAME_TAMAGOCHI_GUEST11));
-			yield return cbCharaTamagoGuest [11].init (new TamaChara (GAME_TAMAGOCHI_GUEST12));
-			for (int i = 0; i < cbCharaTamagoGuest.Length; i++) {
-				TamagochiGuestAnimeSet (i, MotionLabel.IDLE);
+			for (int i = 0; i < cbCharaTamagoGuest.Length; i++) {                               // お客キャラを登録する
+                yield return cbCharaTamagoGuest[i].init(mData.charaList[i + 1]);
+                TamagochiGuestAnimeSet(i, MotionLabel.IDLE);
 			}
 
 			StartCoroutine ("TamagochiSortLoop");
 
-			startEndFlag = true;
+            ManagerObject.instance.sound.playBgm(22);
+            MinigameRoot.transform.Find("bg").gameObject.SetActive(true);
+
+            startEndFlag = true;
 			mready = true;
 		}
 
@@ -433,9 +430,14 @@ namespace Mix2App.MiniGame2{
 		}
 		private void ButtonCloseClick(){
 			ManagerObject.instance.sound.playSe (17);
-			Debug.Log ("たまタウンへ・・・");
-			ManagerObject.instance.view.change(SceneLabel.TOWN);
-		}
+            if(mSceneLabel == "PapaMama"){
+                Debug.Log("パパママモードへ・・・");
+                ManagerObject.instance.view.change(SceneLabel.PAPA_MAMA);
+            } else {
+                Debug.Log("たまタウンへ・・・あとで変更");
+                ManagerObject.instance.view.change(SceneLabel.TOWN);
+            }
+        }
 		private void ButtonHelpClick(){
 //			EventHelp.SetActive (true);
 			ManagerObject.instance.sound.playSe (11);

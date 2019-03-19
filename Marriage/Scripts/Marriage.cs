@@ -363,7 +363,14 @@ namespace Mix2App.Marriage{
 					EventSippai.SetActive (false);
 					EventSeikou.SetActive (false);
 
-					jobCount = statusJobCount.marriageJobCount010;
+                    EventStart.SetActive(false);
+                    EventTown.SetActive(false);
+                    EventPark.SetActive(false);
+                    EventBeach.SetActive(false);
+                    EventGarden.SetActive(false);
+                    EventFinale.SetActive(false);
+                    
+                    jobCount = statusJobCount.marriageJobCount010;
 					jyunbiButtonFlag = false;
 					waitCount = 1;
 					break;
