@@ -171,11 +171,20 @@ namespace Mix2App.MiniGame2{
 			}
 		}
 		private void mGetMinigameInfoCallBack(int num){
-			ManagerObject.instance.view.change(SceneLabel.TOWN);
-		}
+            if (mSceneLabel == "PapaMama")
+            {
+                Debug.Log("パパママモードへ・・・");
+                ManagerObject.instance.view.change(SceneLabel.PAPA_MAMA);
+            }
+            else
+            {
+                Debug.Log("たまタウンへ・・・");
+                ManagerObject.instance.view.change(SceneLabel.TOWN);
+            }
+        }
 
 
-		IEnumerator mStart(){
+        IEnumerator mStart(){
 			Debug.Log ("MiniGame2 mStart");
 
 			muser1 = ManagerObject.instance.player;		// たまごっち
@@ -434,14 +443,14 @@ namespace Mix2App.MiniGame2{
                 Debug.Log("パパママモードへ・・・");
                 ManagerObject.instance.view.change(SceneLabel.PAPA_MAMA);
             } else {
-                Debug.Log("たまタウンへ・・・あとで変更");
+                Debug.Log("たまタウンへ・・・");
                 ManagerObject.instance.view.change(SceneLabel.TOWN);
             }
         }
 		private void ButtonHelpClick(){
 //			EventHelp.SetActive (true);
 			ManagerObject.instance.sound.playSe (11);
-			ManagerObject.instance.view.dialog("webview",new object[]{"minigame2"},null);
+			ManagerObject.instance.view.dialog("webview",new object[]{"minigame2", mMinigameID},null);
 		}
 		private void ButtonHelpClickCallBack(int num){
 		}
