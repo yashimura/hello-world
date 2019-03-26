@@ -308,7 +308,7 @@ namespace Mix2App.Propose{
 
             while (true)
             {
-                if (!fProposeResult)
+                if (!fProposeResult || fProposeOff)
                 {
                     break;
                 }

@@ -57,7 +57,7 @@ namespace Mix2App.Profile.Town {
 		private int mCharaPcNum;
 		private int mCharaNpcNum;
 
-
+        public int TownBgmId;
 
 		private void ProposeStep3(int _mCharaPcNum, int _mCharaNpcNum) {
 			ProposeWindow [2].transform.localPosition = new Vector3 (5000, 0, 0);
@@ -318,13 +318,8 @@ namespace Mix2App.Profile.Town {
                 ProposeButton.gameObject.SetActive(false);              // プロポーズボタンの非表示
                 ProposeJobOff();
 
-/*
-                // シーズンを調べて下記の４つのどれを再生するか決定する
-                ManagerObject.instance.sound.playBgm(2);
-                ManagerObject.instance.sound.playBgm(3);
-                ManagerObject.instance.sound.playBgm(4);
-                ManagerObject.instance.sound.playBgm(5);
-*/
+                //プロポーズから戻ってきた場合はタウンBGMに戻す
+                ManagerObject.instance.sound.playBgm(TownBgmId);
             }
         }
     }

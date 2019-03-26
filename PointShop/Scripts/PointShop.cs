@@ -25,6 +25,7 @@ namespace Mix2App.PointShop
         [SerializeField] private GameObject PrefabItem = null;
 
 
+
         private const int ITEM_MAX = 100;
 
         private object[] mparam;
@@ -76,6 +77,7 @@ namespace Mix2App.PointShop
             mparam = null;
             mready = false;
             buttonSelectFlag = true;
+            retApplitchi = null;
         }
 
         public void receive(params object[] parameter)
@@ -112,7 +114,7 @@ namespace Mix2App.PointShop
             item.point = 120;
             dataTable.Add(item);
 
-            pointData = 999;
+            pointData = 1000;
 
             StartCoroutine(InitMain());
 
@@ -146,7 +148,6 @@ namespace Mix2App.PointShop
 
         private IEnumerator InitMain()
         {
-
             SetupWdth(ItemContainer, 1.0f);
             prefabItemDataSet();
 
@@ -154,8 +155,6 @@ namespace Mix2App.PointShop
             ButtonModoru.GetComponent<Button>().onClick.AddListener(ButtonClickModoru);
 
             ItemGetEvent.transform.Find("Button_blue_close").gameObject.GetComponent<Button>().onClick.AddListener(ButtonClickClose);
-
-
 
             ApplitchiAnime(ApplitchiAnimeTable.GUIDE);
             MessageJob(MessageTypeTable.MESS1);
@@ -190,10 +189,7 @@ namespace Mix2App.PointShop
                 int ii = i + 0;
                 // アイテム選択ボタンの有効化
                 prefabObj[i].transform.Find("Button_item").gameObject.GetComponent<Button>().onClick.AddListener(() => ButtonClick(ii));
-
-
             }
-
         }
 
         private void ButtonClickHai()
@@ -216,12 +212,25 @@ namespace Mix2App.PointShop
                 ButtonHai.SetActive(false);
                 return;
             }
-/*
-            if ()
-            {
 
+/*
+            if (true)
+            {
                 // アイテム所持MAX
                 ManagerObject.instance.sound.playSe(16);
+
+                if (Random.Range(0, 2) == 0)
+                {
+                    ApplitchiAnime(ApplitchiAnimeTable.SURPRISE);
+                }
+                else
+                {
+                    ApplitchiAnime(ApplitchiAnimeTable.TROUBLE);
+                }
+
+                MessageJob(MessageTypeTable.MESS4);
+                ButtonHai.SetActive(false);
+                return;
             }
 */
 
@@ -272,11 +281,9 @@ namespace Mix2App.PointShop
                 return;
             }
 
-
             ManagerObject.instance.sound.playSe(12);
 
             itemNumber = num;
-
 
             for (int i = 0;i < dataTable.Count && i < ITEM_MAX; i++)
             {
@@ -292,7 +299,6 @@ namespace Mix2App.PointShop
             ApplitchiAnime(ApplitchiAnimeTable.SMILE);
             MessageJob(MessageTypeTable.MESS2);
             ButtonHai.SetActive(true);
-
         }
 
         private void SetupWdth(GameObject container, float GridRatio)
@@ -304,9 +310,7 @@ namespace Mix2App.PointShop
                 {
                     float width = container.GetComponent<RectTransform>().rect.size.x;
                     width = (width - gr.spacing.x * (gr.constraintCount + 1)) / (float)(gr.constraintCount);
-                    Debug.Log(GridRatio);
                     gr.cellSize = new Vector2(width, width * GridRatio);
-                    Debug.Log("cellsize=" + gr.cellSize);
                 }
             }
         }
@@ -347,11 +351,8 @@ namespace Mix2App.PointShop
                 }
             }
 
-
-
             yield return null;
         }
-
 
 
 
@@ -399,7 +400,6 @@ namespace Mix2App.PointShop
                     }
             }
         }
-
 
 
 

@@ -21,12 +21,13 @@ namespace Mix2App.Profile.Town {
 		[SerializeField] GameObject cameraObj = null;
 
 
-
-        object[] mparam;
+        User muser;
+        int mbgmid;
+        bool mproposeflag;
 
         void Awake()
         {
-            mparam = null;
+            
         }
 
         /// <summary>
@@ -37,35 +38,29 @@ namespace Mix2App.Profile.Town {
         public void receive(params object[] parameter) {
             Debug.Log("receive:"+parameter);
 
-            mparam = parameter;
+            object[] mparam;
+            if (parameter == null) mparam = new object[] { };
+            else mparam = parameter;
 
-            if (mparam == null){
-                mparam = new object[] {
-                    ManagerObject.instance.player,
-                    true,
-                    2
-                };
-            }
-
-            object _tmp = true;
-
-            if(!Equals(_tmp,mparam[1]))
-            {
-                Debug.Log("Boolタイプでない");
-                mparam[1] = (bool)true;
-            }
+            if (mparam.Length >= 1 && mparam[0] is User)
+                muser = (User)mparam[0];
             else
-            {
-                Debug.Log("Boolタイプである");
-            }
+                muser = ManagerObject.instance.player;
 
+            if (mparam.Length >= 2 && mparam[1] is int)
+                cameraObj.transform.GetComponent<Camera>().depth = (int)mparam[1];
+            else
+                cameraObj.transform.GetComponent<Camera>().depth = 2;
 
-            if (mparam.Length == 2) {
-				cameraObj.transform.GetComponent<Camera> ().depth = 2;
-			} else {
-				cameraObj.transform.GetComponent<Camera> ().depth = (int)mparam [2];
-			}
+            if (mparam.Length >= 3 && mparam[2] is bool)
+                mproposeflag = (bool)mparam[2];
+            else
+                mproposeflag = false;
 
+            if (mparam.Length >= 4 && mparam[3] is int)
+                mbgmid = (int)mparam[3];
+            else
+                mbgmid = 2;//春テーマ
 
             StartCoroutine(mstart());
         }
@@ -82,14 +77,14 @@ namespace Mix2App.Profile.Town {
             UIManager.GEHandlerSet(handler);
             UIManager.proposeWindowSet(proposeWindow);
             UIManager.cameraWindowSet(cameraObj);
-            UIManager.proposeFlagSet((bool)mparam[1]);
+            UIManager.proposeFlagSet(mproposeflag);
 
 
 
-            User user = (User)mparam[0];
-            UIManager.ShowModal(TownProfileWindowPrefab)
-				.SetupUserData(user)
-                .AddCloseAction(() => {
+            TownProfileWindow tpwindow = UIManager.ShowModal(TownProfileWindowPrefab);
+            tpwindow.TownBgmId = mbgmid;
+            tpwindow.SetupUserData(muser)
+                    .AddCloseAction(() => {
                     // Setup back action
                     // Mix2App.Lib.ManagerObject.instance.view.back();
 
