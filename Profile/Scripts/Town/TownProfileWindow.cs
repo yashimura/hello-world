@@ -261,7 +261,6 @@ namespace Mix2App.Profile.Town {
 
             ManagerObject.instance.sound.playSe (13);
 
-            GameEventHandler.OnRemoveSceneEvent += ProposeDelete;
             ManagerObject.instance.view.add(SceneLabel.PROPOSE,
                     1,                                  // プロポーズをするので１（プロポーズされた場合は０）
                     0,                                  // プロポーズするのでダミー
@@ -313,7 +312,6 @@ namespace Mix2App.Profile.Town {
         {
             if (label == SceneLabel.PROPOSE)
             {
-                GameEventHandler.OnRemoveSceneEvent -= ProposeDelete;
                 ManagerObject.instance.view.delete(SceneLabel.PROPOSE);
                 ProposeButton.gameObject.SetActive(false);              // プロポーズボタンの非表示
                 ProposeJobOff();
@@ -322,6 +320,18 @@ namespace Mix2App.Profile.Town {
                 ManagerObject.instance.sound.playBgm(TownBgmId);
             }
         }
+
+        public void ProposeCallBackAdd()
+        {
+            GameEventHandler.OnRemoveSceneEvent += ProposeDelete;
+        }
+        public void ProposeCallBackDel()
+        {
+            GameEventHandler.OnRemoveSceneEvent -= ProposeDelete;
+        }
+
+
+
     }
 }
 

@@ -27,8 +27,14 @@ namespace Mix2App.Profile.Town {
 
         void Awake()
         {
-            
+
         }
+
+        void OnDestroy()
+        {
+            tpwindow.ProposeCallBackDel();
+        }
+
 
         /// <summary>
         /// Receive data from scene controller
@@ -65,6 +71,8 @@ namespace Mix2App.Profile.Town {
             StartCoroutine(mstart());
         }
 
+        private TownProfileWindow tpwindow;
+
         IEnumerator mstart()
         {
 
@@ -80,8 +88,8 @@ namespace Mix2App.Profile.Town {
             UIManager.proposeFlagSet(mproposeflag);
 
 
-
-            TownProfileWindow tpwindow = UIManager.ShowModal(TownProfileWindowPrefab);
+            tpwindow = UIManager.ShowModal(TownProfileWindowPrefab);
+            tpwindow.ProposeCallBackAdd();
             tpwindow.TownBgmId = mbgmid;
             tpwindow.SetupUserData(muser)
                     .AddCloseAction(() => {
