@@ -64,7 +64,7 @@ namespace Mix2App.PointShop
             ///<summary>プレゼントアイテム</summary>
             public ItemData items;
 
-            ///<summary>集めたごっちポイント</summary>
+            ///<summary>集めたポイント</summary>
             public int point;
         }
 
@@ -149,7 +149,8 @@ namespace Mix2App.PointShop
         private IEnumerator InitMain()
         {
             SetupWdth(ItemContainer, 1.0f);
-            prefabItemDataSet();
+            // プレハブを登録する
+            PrefabItemDataSet();
 
             ButtonHai.GetComponent<Button>().onClick.AddListener(ButtonClickHai);
             ButtonModoru.GetComponent<Button>().onClick.AddListener(ButtonClickModoru);
@@ -166,7 +167,7 @@ namespace Mix2App.PointShop
             yield return null;
         }
 
-        private void prefabItemDataSet()
+        private void PrefabItemDataSet()
         {
             for (int i = 0; i < dataTable.Count && i < ITEM_MAX; i++)
             {
@@ -322,8 +323,6 @@ namespace Mix2App.PointShop
         private IEnumerator ShoppingPointJob()
         {
             int _subPoint = dataTable[itemNumber].point;
-
-//            ManagerObject.instance.sound.playSe(5);
 
             while (true)
             {
