@@ -20,8 +20,8 @@ namespace Mix2App.PointShop
         [SerializeField] private GameObject ButtonModoru = null;
         [SerializeField] private GameObject ButtonHai = null;
         [SerializeField] private GameObject ItemGetEvent = null;
-        [SerializeField] private GameObject[] FukidashiMessage = null;  // 0：いらっしゃい、1：交換しますか、2：ポイントが足りない、3：持ち物がいっぱい、4：毎度あり
-        [SerializeField] private Sprite[] ApplitchiImage = null;        // アプリっちの表示スプライトリスト
+        [SerializeField] private GameObject[] FukidashiMessage = null;
+        [SerializeField] private Sprite[] ApplitchiImage = null;
         [SerializeField] private GameObject PrefabItem = null;
 
 
@@ -29,10 +29,12 @@ namespace Mix2App.PointShop
         private const int ITEM_MAX = 100;
 
         private object[] mparam;
+        private int mMinigameID;                                        // ミニゲームID
         private GameObject[] prefabObj = new GameObject[ITEM_MAX];
         private int itemNumber;
         private bool buttonSelectFlag = true;
-        private int pointData;
+        private int pointData;                                          // コラボポイントの数
+        private int itemCount;                                          // 所持アイテムの数
 
         private enum ApplitchiAnimeTable
         {
@@ -59,15 +61,14 @@ namespace Mix2App.PointShop
 
 
 
-        public struct PointShopData
+        private struct PointShopData
         {
-            ///<summary>プレゼントアイテム</summary>
+            //アイテム
             public ItemData items;
 
-            ///<summary>集めたポイント</summary>
+            //集めたポイント
             public int point;
         }
-
         private List<PointShopData> dataTable;
 
 
@@ -86,7 +87,14 @@ namespace Mix2App.PointShop
 
             if (mparam == null)
             {
+                mparam = new object[] {
+                    3,                  // int ミニゲーム２のイベントID
+                };
             }
+
+            mMinigameID = (int)mparam[0];
+
+
 
             dataTable = new List<PointShopData>();
 
@@ -114,11 +122,10 @@ namespace Mix2App.PointShop
             item.point = 120;
             dataTable.Add(item);
 
-            pointData = 1000;
+            pointData = 1000;           // コラボポイントの数
+            itemCount = 0;              // 所持アイテムの数
 
             StartCoroutine(InitMain());
-
-
         }
 
         private bool mready = false;
@@ -149,12 +156,13 @@ namespace Mix2App.PointShop
         private IEnumerator InitMain()
         {
             SetupWdth(ItemContainer, 1.0f);
+
             // プレハブを登録する
             PrefabItemDataSet();
 
+            // ボタンの制御関数を登録する
             ButtonHai.GetComponent<Button>().onClick.AddListener(ButtonClickHai);
             ButtonModoru.GetComponent<Button>().onClick.AddListener(ButtonClickModoru);
-
             ItemGetEvent.transform.Find("Button_blue_close").gameObject.GetComponent<Button>().onClick.AddListener(ButtonClickClose);
 
             ApplitchiAnime(ApplitchiAnimeTable.GUIDE);
@@ -214,8 +222,7 @@ namespace Mix2App.PointShop
                 return;
             }
 
-/*
-            if (true)
+            if (itemCount >= 99)
             {
                 // アイテム所持MAX
                 ManagerObject.instance.sound.playSe(16);
@@ -233,7 +240,6 @@ namespace Mix2App.PointShop
                 ButtonHai.SetActive(false);
                 return;
             }
-*/
 
             ManagerObject.instance.sound.playSe(13);
 
@@ -255,7 +261,7 @@ namespace Mix2App.PointShop
             ManagerObject.instance.sound.playSe(17);
 
             Debug.Log("MiniGame2に戻る・・・");
-            ManagerObject.instance.view.change(SceneLabel.MINIGAME2, "Town", 3);
+            ManagerObject.instance.view.change(SceneLabel.MINIGAME2, "Town", mMinigameID);
         }
 
         private void ButtonClickClose()
@@ -318,8 +324,7 @@ namespace Mix2App.PointShop
 
 
 
-
-
+        // アイテムを購入したのでポイントを減らす処理
         private IEnumerator ShoppingPointJob()
         {
             int _subPoint = dataTable[itemNumber].point;
@@ -338,6 +343,7 @@ namespace Mix2App.PointShop
                 {
                     yield return new WaitForSeconds(0.5f);
 
+                    // 結果画面を表示する
                     ItemBehaviour ibItem;
                     ibItem = ItemGetEvent.transform.Find("ItemView").gameObject.GetComponent<ItemBehaviour>();
                     ibItem.init(dataTable[itemNumber].items);
@@ -345,6 +351,14 @@ namespace Mix2App.PointShop
                     ItemGetEvent.transform.localPosition = new Vector3(0, 0, 0);
 
                     ManagerObject.instance.sound.playSe(15);
+
+
+
+                    // ここでアイテム購入情報などを送信する？      購入したアイテム、購入金額・・・
+
+
+
+                    itemCount++;                // 所持アイテム数を増やす
 
                     break;
                 }
@@ -355,45 +369,44 @@ namespace Mix2App.PointShop
 
 
 
-
-
         private void MessageJob(MessageTypeTable num)
         {
             FukidashiChara.SetActive(true);
             for(int i = 0;i < FukidashiMessage.Length; i++)
             {
+                // メッセージを一度全部消す
                 FukidashiMessage[i].SetActive(false);
             }
 
             switch (num)
             {
                 case MessageTypeTable.MESS1:
-                    {
+                    {   // いらっしゃい
                         FukidashiMessage[0].SetActive(true);
                         break;
                     }
                 case MessageTypeTable.MESS2:
-                    {
+                    {   // 交換しますか？
                         FukidashiMessage[1].SetActive(true);
                         break;
                     }
                 case MessageTypeTable.MESS3:
-                    {
+                    {   // ポイントが足りない
                         FukidashiMessage[2].SetActive(true);
                         break;
                     }
                 case MessageTypeTable.MESS4:
-                    {
+                    {   // 持ち物がいっぱい
                         FukidashiMessage[3].SetActive(true);
                         break;
                     }
                 case MessageTypeTable.MESS5:
-                    {
+                    {   // 毎度あり
                         FukidashiMessage[4].SetActive(true);
                         break;
                     }
                 case MessageTypeTable.MESS_OFF:
-                    {
+                    {   // メッセージオフ
                         FukidashiChara.SetActive(false);
                         break;
                     }
@@ -402,6 +415,7 @@ namespace Mix2App.PointShop
 
 
 
+        // アプリッチのアニメを変更する
         private void ApplitchiAnime(ApplitchiAnimeTable num)
         {
             if (animeFlag != num)
@@ -420,6 +434,11 @@ namespace Mix2App.PointShop
 
                 switch (animeFlag)
                 {
+                    case ApplitchiAnimeTable.NORMAL:
+                        {   // 普通
+                            retApplitchi = StartCoroutine(ApplitchiAnimeNORMAL());
+                            break;
+                        }
                     case ApplitchiAnimeTable.GUIDE:
                         {   // ガイド
                             retApplitchi = StartCoroutine(ApplitchiAnimeGUIDE());
@@ -455,6 +474,39 @@ namespace Mix2App.PointShop
         }
 
 
+
+        // 普通
+        private IEnumerator ApplitchiAnimeNORMAL()
+        {
+            ApplitchiChara.GetComponent<Image>().sprite = ApplitchiImage[5];
+
+            while (true)
+            {
+                ApplitchiChara.transform.localScale = new Vector3(5.0f, 5.0f, 1.0f);
+                ApplitchiChara.transform.localPosition = new Vector3(517.0f, -153.0f + 1f, 0.0f);
+                yield return new WaitForSeconds(0.5f);
+                ApplitchiChara.transform.localPosition = new Vector3(517.0f, -153.0f - 1f, 0.0f);
+                yield return new WaitForSeconds(0.5f);
+                ApplitchiChara.transform.localPosition = new Vector3(517.0f, -153.0f + 1f, 0.0f);
+                yield return new WaitForSeconds(0.5f);
+                ApplitchiChara.transform.localPosition = new Vector3(517.0f, -153.0f - 1f, 0.0f);
+                yield return new WaitForSeconds(0.5f);
+                ApplitchiChara.transform.localPosition = new Vector3(517.0f, -153.0f, 0.0f);
+                yield return new WaitForSeconds(0.5f);
+
+                ApplitchiChara.transform.localScale = new Vector3(-5.0f, 5.0f, 1.0f);
+                ApplitchiChara.transform.localPosition = new Vector3(517.0f, -153.0f + 1f, 0.0f);
+                yield return new WaitForSeconds(0.5f);
+                ApplitchiChara.transform.localPosition = new Vector3(517.0f, -153.0f - 1f, 0.0f);
+                yield return new WaitForSeconds(0.5f);
+                ApplitchiChara.transform.localPosition = new Vector3(517.0f, -153.0f + 1f, 0.0f);
+                yield return new WaitForSeconds(0.5f);
+                ApplitchiChara.transform.localPosition = new Vector3(517.0f, -153.0f - 1f, 0.0f);
+                yield return new WaitForSeconds(0.5f);
+                ApplitchiChara.transform.localPosition = new Vector3(517.0f, -153.0f, 0.0f);
+                yield return new WaitForSeconds(0.5f);
+            }
+        }
 
         // ガイド
         private IEnumerator ApplitchiAnimeGUIDE()
@@ -597,6 +649,8 @@ namespace Mix2App.PointShop
                 yield return new WaitForSeconds(0.5f);
             }
         }
+
+
 
     }
 }

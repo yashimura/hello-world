@@ -277,7 +277,12 @@ namespace Mix2App.Propose{
                     yield return StartCoroutine(TamagochiProposeSuccess(EventWait.transform.Find("tamago/charaL").gameObject));
 
                     Debug.Log("結婚へ・・・");
-                    ManagerObject.instance.view.change(SceneLabel.MARRIAGE, mProposeType, mUser1, mBrother1, mUser2, mBrother2);
+                    //ManagerObject.instance.view.change(SceneLabel.MARRIAGE, mProposeType, mUser1, mBrother1, mUser2, mBrother2);
+
+                    //タウンから結婚へ移動するので、タウンから出たという情報を送信する必要がある
+                    object[] exitparam = new object[] { mProposeType, mUser1, mBrother1, mUser2, mBrother2 };
+                    GameCall call = new GameCall(CallLabel.EXIT_TOWN, SceneLabel.MARRIAGE, exitparam);
+                    ManagerObject.instance.connect.send(call);
                 }
                 else
                 {
