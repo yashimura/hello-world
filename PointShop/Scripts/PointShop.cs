@@ -29,11 +29,12 @@ namespace Mix2App.PointShop
         private const int ITEM_MAX = 100;
 
         private object[] mparam;
+        private ShopInfoData dataShop;                                  // ショップ情報
+        private ShopInfoData dataShopTemp;                              // ショップ情報
         private int mMinigameID;                                        // ミニゲームID
         private GameObject[] prefabObj = new GameObject[ITEM_MAX];
         private int itemNumber;
         private bool buttonSelectFlag = true;
-        private int pointData;                                          // コラボポイントの数
         private int itemCount;                                          // 所持アイテムの数
 
         private enum ApplitchiAnimeTable
@@ -61,18 +62,6 @@ namespace Mix2App.PointShop
 
 
 
-        private struct PointShopData
-        {
-            //アイテム
-            public ItemData items;
-
-            //集めたポイント
-            public int point;
-        }
-        private List<PointShopData> dataTable;
-
-
-
         void Awake()
         {
             mparam = null;
@@ -96,37 +85,38 @@ namespace Mix2App.PointShop
 
 
 
-            dataTable = new List<PointShopData>();
-
-            PointShopData item = new PointShopData();
-            item.items.code = "tg18_as16058_1";
-            item.items.title = "テストアイテム";
-            item.items.kind = 0;
-            item.items.version = "tg18";
-            item.point = 100;
-            dataTable.Add(item);
-
-            item = new PointShopData();
-            item.items.code = "tg18_as16055_1";
-            item.items.title = "テストアイテム";
-            item.items.kind = 0;
-            item.items.version = "tg18";
-            item.point = 110;
-            dataTable.Add(item);
-
-            item = new PointShopData();
-            item.items.code = "tg18_as16053_1";
-            item.items.title = "テストアイテム";
-            item.items.kind = 0;
-            item.items.version = "tg18";
-            item.point = 120;
-            dataTable.Add(item);
-
-            pointData = 1000;           // コラボポイントの数
             itemCount = 0;              // 所持アイテムの数
 
-            StartCoroutine(InitMain());
+
+
+            GameCall call = new GameCall(CallLabel.GET_SHOP_INFO, mMinigameID);
+            call.AddListener(mGetShopInfo);
+            ManagerObject.instance.connect.send(call);
         }
+
+
+        void mGetShopInfo(bool success, object data)
+        {
+            Debug.Log(success + "/" + data);
+            if (success)
+            {
+                dataShop = (ShopInfoData)data;
+                StartCoroutine(InitMain());
+            }
+            else
+            {
+                if ((int)data == 1)
+                {
+                    mready = true;
+                    ManagerObject.instance.view.dialog("alert", new object[] { "pointoshop", (int)data }, mGetShopInfoCallBack);
+                }
+            }
+        }
+        private void mGetShopInfoCallBack(int num)
+        {
+            ManagerObject.instance.view.change(SceneLabel.TOWN);
+        }
+
 
         private bool mready = false;
         public bool ready()
@@ -168,7 +158,7 @@ namespace Mix2App.PointShop
             ApplitchiAnime(ApplitchiAnimeTable.GUIDE);
             MessageJob(MessageTypeTable.MESS1);
 
-            PointNumber.GetComponent<Text>().text = pointData.ToString();
+            PointNumber.GetComponent<Text>().text = ManagerObject.instance.player.evp.ToString();
 
             mready = true;
 
@@ -177,7 +167,7 @@ namespace Mix2App.PointShop
 
         private void PrefabItemDataSet()
         {
-            for (int i = 0; i < dataTable.Count && i < ITEM_MAX; i++)
+            for (int i = 0; i < dataShop.itemlist.Count && i < ITEM_MAX; i++)
             {
                 // プレハブを登録
                 prefabObj[i] = (GameObject)Instantiate(PrefabItem);
@@ -187,13 +177,13 @@ namespace Mix2App.PointShop
                 // アイテムを表示
                 ItemBehaviour ibItem;
                 ibItem = prefabObj[i].transform.Find("Button_item/ItemView").gameObject.GetComponent<ItemBehaviour>();
-                ibItem.init(dataTable[i].items);
+                ibItem.init(dataShop.itemlist[i].item);
                 ibItem = prefabObj[i].transform.Find("Item_selected/ItemView").gameObject.GetComponent<ItemBehaviour>();
-                ibItem.init(dataTable[i].items);
+                ibItem.init(dataShop.itemlist[i].item);
 
                 // ポイントを表示
-                prefabObj[i].transform.Find("Button_item/item_num").gameObject.GetComponent<Text>().text = dataTable[i].point.ToString();
-                prefabObj[i].transform.Find("Item_selected/item_num").gameObject.GetComponent<Text>().text = dataTable[i].point.ToString();
+                prefabObj[i].transform.Find("Button_item/item_num").gameObject.GetComponent<Text>().text = dataShop.itemlist[i].price.ToString();
+                prefabObj[i].transform.Find("Item_selected/item_num").gameObject.GetComponent<Text>().text = dataShop.itemlist[i].price.ToString();
 
                 int ii = i + 0;
                 // アイテム選択ボタンの有効化
@@ -203,12 +193,49 @@ namespace Mix2App.PointShop
 
         private void ButtonClickHai()
         {
-            if (dataTable[itemNumber].point > pointData)
+            if (!buttonSelectFlag)
+            {
+                return;
+            }
+            buttonSelectFlag = false;
+
+            GameCall call = new GameCall(CallLabel.BUY_SHOP_ITEM, mMinigameID,dataShop.itemlist[itemNumber]);
+            call.AddListener(mBuyShopItem);
+            ManagerObject.instance.connect.send(call);
+        }
+
+
+        void mBuyShopItem(bool success, object data)
+        {
+            Debug.Log(success + "/" + data);
+            if (success)
+            {
+                dataShopTemp = (ShopInfoData)data;
+                ButtonClickHaiSub(0);
+            }
+            else
+            {
+                if ((int)data == 1)
+                {
+                    ManagerObject.instance.view.dialog("alert", new object[] { "pointoshop", (int)data }, mGetShopInfoCallBack);
+                }
+                if(((int)data == 2) && ((int)data == 3))
+                {
+                    dataShopTemp = dataShop;
+                    ButtonClickHaiSub((int)data);
+                }
+            }
+        }
+
+
+
+        private void ButtonClickHaiSub(int num){
+            if (num == 2)
             {
                 // ポイント不足
                 ManagerObject.instance.sound.playSe(16);
 
-                if(Random.Range(0,2) == 0)
+                if (Random.Range(0, 2) == 0)
                 {
                     ApplitchiAnime(ApplitchiAnimeTable.CRY);
                 }
@@ -219,10 +246,11 @@ namespace Mix2App.PointShop
 
                 MessageJob(MessageTypeTable.MESS3);
                 ButtonHai.SetActive(false);
+                buttonSelectFlag = true;
                 return;
             }
 
-            if (itemCount >= 99)
+            if (num == 3)
             {
                 // アイテム所持MAX
                 ManagerObject.instance.sound.playSe(16);
@@ -238,6 +266,7 @@ namespace Mix2App.PointShop
 
                 MessageJob(MessageTypeTable.MESS4);
                 ButtonHai.SetActive(false);
+                buttonSelectFlag = true;
                 return;
             }
 
@@ -272,7 +301,7 @@ namespace Mix2App.PointShop
             ApplitchiAnime(ApplitchiAnimeTable.GUIDE);
             MessageJob(MessageTypeTable.MESS1);
 
-            for (int i = 0; i < dataTable.Count && i < ITEM_MAX; i++)
+            for (int i = 0; i < dataShop.itemlist.Count && i < ITEM_MAX; i++)
             {
                 prefabObj[i].transform.Find("Button_item").gameObject.SetActive(true);
                 prefabObj[i].transform.Find("Item_selected").gameObject.SetActive(true);
@@ -292,7 +321,7 @@ namespace Mix2App.PointShop
 
             itemNumber = num;
 
-            for (int i = 0;i < dataTable.Count && i < ITEM_MAX; i++)
+            for (int i = 0;i < dataShop.itemlist.Count && i < ITEM_MAX; i++)
             {
                 prefabObj[i].transform.Find("Button_item").gameObject.SetActive(true);
                 prefabObj[i].transform.Find("Item_selected").gameObject.SetActive(true);
@@ -327,15 +356,16 @@ namespace Mix2App.PointShop
         // アイテムを購入したのでポイントを減らす処理
         private IEnumerator ShoppingPointJob()
         {
-            int _subPoint = dataTable[itemNumber].point;
+            int _subPoint = dataShop.itemlist[itemNumber].price;
+            int _mainPoint = ManagerObject.instance.player.evp;
 
             while (true)
             {
                 ManagerObject.instance.sound.playSe(6);
                 _subPoint--;
-                pointData--;
+                _mainPoint--;
 
-                PointNumber.GetComponent<Text>().text = pointData.ToString();
+                PointNumber.GetComponent<Text>().text = _mainPoint.ToString();
 
                 yield return new WaitForSeconds(0.01f);
 
@@ -346,7 +376,7 @@ namespace Mix2App.PointShop
                     // 結果画面を表示する
                     ItemBehaviour ibItem;
                     ibItem = ItemGetEvent.transform.Find("ItemView").gameObject.GetComponent<ItemBehaviour>();
-                    ibItem.init(dataTable[itemNumber].items);
+                    ibItem.init(dataShop.itemlist[itemNumber].item);
 
                     ItemGetEvent.transform.localPosition = new Vector3(0, 0, 0);
 
