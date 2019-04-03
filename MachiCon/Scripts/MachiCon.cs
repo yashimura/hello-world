@@ -311,20 +311,41 @@ namespace Mix2App.MachiCon{
 		
 		void mgetroominf(bool success,object data)
 		{
-			// dataの内容は設計書参照
-			// dataを変更したいときはConnectManagerDriverのGetRoomInfo()を変更する
-			mpdata = (PartyData)data;
-			StartCoroutine(mstart());
+            if (success)
+            {
+                // dataの内容は設計書参照
+                // dataを変更したいときはConnectManagerDriverのGetRoomInfo()を変更する
+                mpdata = (PartyData)data;
+                StartCoroutine(mstart());
+            }
+            else
+            {
+                int errno = (int)data;
+                ManagerObject.instance.view.dialog("alert", new object[] { "machicon", errno }, (ret) => {
+                    ManagerObject.instance.view.change(SceneLabel.TOWN);
+                });
+            }
+
 		}
 
 		private PartyResultData prdata;
 		void mgetroomres(bool success,object data)
 		{
-			mresult=true;
-			// dataの内容は設計書参照
-			// dataを変更したいときはConnectManagerDriverのGetRoomResult()を変更する
-			prdata = (PartyResultData)data;
-		}
+            if (success)
+            {
+                mresult = true;
+                // dataの内容は設計書参照
+                // dataを変更したいときはConnectManagerDriverのGetRoomResult()を変更する
+                prdata = (PartyResultData)data;
+            }
+            else
+            {
+                int errno = (int)data;
+                ManagerObject.instance.view.dialog("alert",new object[] { "machicon", errno },(ret)=> {
+                    ManagerObject.instance.view.change(SceneLabel.TOWN);
+                });
+            }
+        }
 
 		IEnumerator mstart()
 		{

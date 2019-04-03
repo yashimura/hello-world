@@ -17,7 +17,7 @@ namespace Mix2App.Friends
         [SerializeField] private GameObject ToyFriendContainer = null;
         [SerializeField] private GameObject ApplyContainer = null;
         [SerializeField] private GameObject SearchContainer = null;
-//        [SerializeField] private GameObject EventMenu = null;          // 初期選択画面
+        [SerializeField] private GameObject EventMenu = null;          // 初期選択画面
         [SerializeField] private GameObject EventNoteApp = null;       // 友達手帳アプリの友達
         [SerializeField] private GameObject EventNoteMIX2 = null;      // 友達手帳MIX2の友達
         [SerializeField] private GameObject EventNoteRenraku = null;   // 友達手帳の連絡帳
@@ -56,6 +56,7 @@ namespace Mix2App.Friends
         [SerializeField] private Button BtnKakuninNo = null;           // いいえボタン
 
         [SerializeField] private Sprite[] ImgNumber = null;            // ００から２０まで
+        [SerializeField] private Sprite[] ImgHeart = null;
 
         [SerializeField] private GameObject PrefabApp = null;
         [SerializeField] private GameObject PrefabMIX2 = null;
@@ -106,6 +107,10 @@ namespace Mix2App.Friends
             BtnMenuSearch.interactable = ManagerObject.instance.app.enabledViewSearchFriend;
 
             msearchin = EventSearch.transform.Find("InputCode").gameObject.GetComponent<InputField>();
+
+            appfriendsCount = 0;
+            toyfriendsCount = 0;
+            applysCount = 0;
         }
 
         void OnEnable()
@@ -141,11 +146,13 @@ namespace Mix2App.Friends
         void Start()
         {
             Debug.Log("Friends start");
+            EventMenu.SetActive(true);
             EventNoteApp.SetActive(true);
             EventNoteMIX2.SetActive(true);
             EventNoteRenraku.SetActive(true);
             EventSearch.SetActive(true);
 
+            FriendSetActive(EventMenu, false);
             FriendSetActive(EventNoteApp, false);
             FriendSetActive(EventNoteMIX2, false);
             FriendSetActive(EventNoteRenraku, false);
@@ -180,6 +187,10 @@ namespace Mix2App.Friends
             BtnKakuninTojiru.onClick.AddListener(BtnKakuninTojiruClick);            // とじるボタン
             BtnKakuninYes.onClick.AddListener(BtnKakuninYesClick);                  // はいボタン
             BtnKakuninNo.onClick.AddListener(BtnKakuninNoClick);                    // いいえボタン
+
+
+            EventMenuOpen();
+
 
             minited = true;
         }
@@ -217,7 +228,23 @@ namespace Mix2App.Friends
 
         void Update()
         {
-
+            if (minited)
+            {
+                if (applysCount != 0)
+                {
+                    EventMenu.transform.Find("renraku_ari").gameObject.SetActive(true);
+                    EventNoteApp.transform.Find("daishi/tab3/heart").gameObject.GetComponent<Image>().sprite = ImgHeart[0];
+                    EventNoteMIX2.transform.Find("daishi/tab3/heart").gameObject.GetComponent<Image>().sprite = ImgHeart[0];
+                    EventNoteRenraku.transform.Find("daishi/tab3/heart").gameObject.GetComponent<Image>().sprite = ImgHeart[0];
+                }
+                else
+                {
+                    EventMenu.transform.Find("renraku_ari").gameObject.SetActive(false);
+                    EventNoteApp.transform.Find("daishi/tab3/heart").gameObject.GetComponent<Image>().sprite = ImgHeart[1];
+                    EventNoteMIX2.transform.Find("daishi/tab3/heart").gameObject.GetComponent<Image>().sprite = ImgHeart[1];
+                    EventNoteRenraku.transform.Find("daishi/tab3/heart").gameObject.GetComponent<Image>().sprite = ImgHeart[1];
+                }
+            }
         }
 
         private bool FriendSearchBtnFlag;
@@ -260,11 +287,9 @@ namespace Mix2App.Friends
             }
         }
 
-        // 友達手帳へのボタン
-        private void BtnMenuTechoClick()
+        // 初期選択画面を開く時にデータをロードするようにした
+        private void EventMenuOpen()
         {
-            ManagerObject.instance.sound.playSe(11);
-
             // フレンド情報を取得
             GameCall call = new GameCall(CallLabel.GET_FRIEND_INFO);
             call.AddListener(mGetFriendInfo);
@@ -277,7 +302,15 @@ namespace Mix2App.Friends
 
             // 友達手帳のデータを登録する
             NoteDataSet();
+            FriendSetActive(EventMenu, true);
+        }
 
+
+
+        // 友達手帳へのボタン
+        private void BtnMenuTechoClick()
+        {
+            ManagerObject.instance.sound.playSe(11);
             FriendNoteChange(friendTabTable.NoteApp);
         }
 
@@ -424,6 +457,7 @@ namespace Mix2App.Friends
             ManagerObject.instance.sound.playSe(17);
 
             FriendSetActive(EventSearch, false);
+            EventMenuOpen();
 
             FriendSearchBtnFlag = false;
         }
@@ -554,8 +588,6 @@ namespace Mix2App.Friends
         // 友達手帳のタブ変更
         private void FriendNoteChange(friendTabTable type)
         {
-            //Vector3 _Pos = new Vector3(0.0f, 0.0f, 0.0f);
-
             switch (type)
             {
                 case friendTabTable.NoteApp:
@@ -584,6 +616,7 @@ namespace Mix2App.Friends
                         FriendSetActive(EventNoteApp, false);
                         FriendSetActive(EventNoteMIX2, false);
                         FriendSetActive(EventNoteRenraku, false);
+                        EventMenuOpen();
                         break;
                     }
             }
