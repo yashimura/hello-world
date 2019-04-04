@@ -35,7 +35,6 @@ namespace Mix2App.PointShop
         private GameObject[] prefabObj = new GameObject[ITEM_MAX];
         private int itemNumber;
         private bool buttonSelectFlag = true;
-        private int itemCount;                                          // 所持アイテムの数
 
         private enum ApplitchiAnimeTable
         {
@@ -85,10 +84,6 @@ namespace Mix2App.PointShop
 
 
 
-            itemCount = 0;              // 所持アイテムの数
-
-
-
             GameCall call = new GameCall(CallLabel.GET_SHOP_INFO, mMinigameID);
             call.AddListener(mGetShopInfo);
             ManagerObject.instance.connect.send(call);
@@ -108,12 +103,13 @@ namespace Mix2App.PointShop
                 if ((int)data == 1)
                 {
                     mready = true;
-                    ManagerObject.instance.view.dialog("alert", new object[] { "pointoshop", (int)data }, mGetShopInfoCallBack);
+                    ManagerObject.instance.view.dialog("alert", new object[] { "pointshop", (int)data }, mGetShopInfoCallBack);
                 }
             }
         }
         private void mGetShopInfoCallBack(int num)
         {
+            // 開催期限切れなのでタウンに移動する
             ManagerObject.instance.view.change(SceneLabel.TOWN);
         }
 
@@ -158,8 +154,6 @@ namespace Mix2App.PointShop
             ApplitchiAnime(ApplitchiAnimeTable.GUIDE);
             MessageJob(MessageTypeTable.MESS1);
 
-            PointNumber.GetComponent<Text>().text = ManagerObject.instance.player.evp.ToString();
-
             mready = true;
 
             yield return null;
@@ -167,6 +161,11 @@ namespace Mix2App.PointShop
 
         private void PrefabItemDataSet()
         {
+            foreach (Transform n in ItemContainer.transform)
+            {
+                GameObject.Destroy(n.gameObject);
+            }
+
             for (int i = 0; i < dataShop.itemlist.Count && i < ITEM_MAX; i++)
             {
                 // プレハブを登録
@@ -189,6 +188,9 @@ namespace Mix2App.PointShop
                 // アイテム選択ボタンの有効化
                 prefabObj[i].transform.Find("Button_item").gameObject.GetComponent<Button>().onClick.AddListener(() => ButtonClick(ii));
             }
+
+            maxPoint = ManagerObject.instance.player.evp;
+            PointNumber.GetComponent<Text>().text = maxPoint.ToString();
         }
 
         private void ButtonClickHai()
@@ -198,6 +200,7 @@ namespace Mix2App.PointShop
                 return;
             }
             buttonSelectFlag = false;
+            ManagerObject.instance.sound.playSe(13);
 
             GameCall call = new GameCall(CallLabel.BUY_SHOP_ITEM, mMinigameID,dataShop.itemlist[itemNumber]);
             call.AddListener(mBuyShopItem);
@@ -217,9 +220,9 @@ namespace Mix2App.PointShop
             {
                 if ((int)data == 1)
                 {
-                    ManagerObject.instance.view.dialog("alert", new object[] { "pointoshop", (int)data }, mGetShopInfoCallBack);
+                    ManagerObject.instance.view.dialog("alert", new object[] { "pointshop", (int)data }, mGetShopInfoCallBack);
                 }
-                if(((int)data == 2) && ((int)data == 3))
+                if(((int)data == 2) || ((int)data == 3))
                 {
                     dataShopTemp = dataShop;
                     ButtonClickHaiSub((int)data);
@@ -230,10 +233,10 @@ namespace Mix2App.PointShop
 
 
         private void ButtonClickHaiSub(int num){
-            if (num == 2)
+            if (num == 3)
             {
                 // ポイント不足
-                ManagerObject.instance.sound.playSe(16);
+//                ManagerObject.instance.sound.playSe(16);
 
                 if (Random.Range(0, 2) == 0)
                 {
@@ -247,13 +250,17 @@ namespace Mix2App.PointShop
                 MessageJob(MessageTypeTable.MESS3);
                 ButtonHai.SetActive(false);
                 buttonSelectFlag = true;
+
+                // プレハブを登録する
+                PrefabItemDataSet();
+
                 return;
             }
 
-            if (num == 3)
+            if (num == 2)
             {
                 // アイテム所持MAX
-                ManagerObject.instance.sound.playSe(16);
+//                ManagerObject.instance.sound.playSe(16);
 
                 if (Random.Range(0, 2) == 0)
                 {
@@ -267,10 +274,14 @@ namespace Mix2App.PointShop
                 MessageJob(MessageTypeTable.MESS4);
                 ButtonHai.SetActive(false);
                 buttonSelectFlag = true;
+
+                // プレハブを登録する
+                PrefabItemDataSet();
+
                 return;
             }
 
-            ManagerObject.instance.sound.playSe(13);
+//            ManagerObject.instance.sound.playSe(13);
 
             ApplitchiAnime(ApplitchiAnimeTable.HAPPY);
             MessageJob(MessageTypeTable.MESS5);
@@ -353,23 +364,17 @@ namespace Mix2App.PointShop
 
 
 
+        int maxPoint = 0;
+        int nowPoint = 0;
+
         // アイテムを購入したのでポイントを減らす処理
         private IEnumerator ShoppingPointJob()
         {
-            int _subPoint = dataShop.itemlist[itemNumber].price;
-            int _mainPoint = ManagerObject.instance.player.evp;
+            nowPoint = ManagerObject.instance.player.evp;
 
             while (true)
             {
-                ManagerObject.instance.sound.playSe(6);
-                _subPoint--;
-                _mainPoint--;
-
-                PointNumber.GetComponent<Text>().text = _mainPoint.ToString();
-
-                yield return new WaitForSeconds(0.01f);
-
-                if(_subPoint == 0)
+                if (maxPoint == nowPoint)
                 {
                     yield return new WaitForSeconds(0.5f);
 
@@ -382,16 +387,19 @@ namespace Mix2App.PointShop
 
                     ManagerObject.instance.sound.playSe(15);
 
-
-
-                    // ここでアイテム購入情報などを送信する？      購入したアイテム、購入金額・・・
-
-
-
-                    itemCount++;                // 所持アイテム数を増やす
+                    dataShop = dataShopTemp;
+                    // プレハブを登録する
+                    PrefabItemDataSet();
 
                     break;
                 }
+
+                ManagerObject.instance.sound.playSe(6);
+                maxPoint--;
+
+                PointNumber.GetComponent<Text>().text = maxPoint.ToString();
+
+                yield return new WaitForSeconds(0.01f);
             }
 
             yield return null;
