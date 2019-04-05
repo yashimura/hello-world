@@ -18,13 +18,19 @@ namespace Mix2App.Achieve
         [SerializeField] private GameObject EventRoot = null;
 
 
-        private AchieveData mData;
+        private List<AchieveData> mData;
         private object[] mparam;                                            // 他のシーンからくるパラメータ
+        private bool loopFlag = true;
+        private bool endFlag = false;
+
 
 
         void Awake()
         {
             mparam = null;
+
+            loopFlag = true;
+            endFlag = false;
         }
 
         public void receive(params object[] parameter)
@@ -34,12 +40,13 @@ namespace Mix2App.Achieve
             if (mparam == null)
             {
                 mparam = new object[] {
-                    new AchieveData(),
+                    new List<AchieveData>(),
                     4,                                                          // int  カメラDepth値
                 };
 
+
             }
-            mData = (AchieveData)mparam[0];
+            mData = (List<AchieveData>)mparam[0];
 
             CameraObj.transform.GetComponent<Camera>().depth = (int)mparam[1];
 
@@ -60,28 +67,64 @@ namespace Mix2App.Achieve
         {
         }
 
+
         IEnumerator mStart()
         {
-            RewardBehaviour _rb = EventRoot.transform.Find("clear_dialog/RewardView").gameObject.GetComponent<RewardBehaviour>();
-            _rb.init(mData.reward);                                             // 報酬セット
+            EventRoot.transform.Find("clear_dialog/base/Button_blue_tojiru").gameObject.GetComponent<Button>().onClick.AddListener(ButtonTojiruClick);
 
-            EventRoot.transform.Find("clear_dialog/Button_blue_tojiru").gameObject.GetComponent<Button>().onClick.AddListener(ButtonTojiruClick);
+            DispOff();
+
+            yield return null;
 
             mready = true;
 
+            loopFlag = true;
+
+            for(int i = 0;i < mData.Count; i++)
+            {
+                RewardBehaviour _rb = EventRoot.transform.Find("clear_dialog/base/RewardView").gameObject.GetComponent<RewardBehaviour>();
+                _rb.init(mData[i].reward);                                             // 報酬セット
+
+                DispOn();
+
+                while (loopFlag)
+                {
+                    yield return null;
+                }
+                DispOff();
+                loopFlag = true;
+                yield return new WaitForSeconds(0.1f);
+            }
+
+            endFlag = true;
             yield return null;
         }
 
         void Update()
         {
+            if (endFlag)
+            {
+                GEHandler.OnRemoveScene(SceneLabel.ACHIEVE_CLEAR);
+                endFlag = false;
+            }
         }
 
         private void ButtonTojiruClick()
         {
             ManagerObject.instance.sound.playSe(17);
-            GEHandler.OnRemoveScene(SceneLabel.ACHIEVE_CLEAR);
+            loopFlag = false;
         }
 
+
+        private void DispOff()
+        {
+            EventRoot.transform.Find("clear_dialog/base").gameObject.transform.localPosition = new Vector3(0, 5000, 0);
+        }
+
+        private void DispOn()
+        {
+            EventRoot.transform.Find("clear_dialog/base").gameObject.transform.localPosition = new Vector3(0, 0, 0);
+        }
 
 
     }

@@ -16,6 +16,9 @@ namespace Mix2App.Home
     {
         //[SerializeField] protected GameObject[] views;
         [SerializeField] protected GameObject[] meetsBtns=null;
+        [SerializeField] protected GameEventHandler GEHandler = null;
+        [SerializeField] protected GameObject CameraObj = null;
+
         private object[] mparam;
         private bool mready;
         //private int vid;
@@ -34,10 +37,13 @@ namespace Mix2App.Home
             //vid=0;
             //foreach (GameObject view in views)
             //{
-                //view.SetActive(false);
+            //view.SetActive(false);
             //}
+
+            GameEventHandler.OnRemoveSceneEvent += AchieveClearDelete;
+
         }
-        
+
         /// <summary>
         /// 画面遷移のパラメタ受け取り.
         /// 
@@ -55,6 +61,13 @@ namespace Mix2App.Home
         {
             return mready;
         }
+
+        void OnDestroy()
+        {
+            GameEventHandler.OnRemoveSceneEvent -= AchieveClearDelete;
+        }
+
+
 
         IEnumerator Start()
         {
@@ -133,6 +146,18 @@ namespace Mix2App.Home
             }
 
             //TODO 達成アチーブがある場合は、アチーブ成功画面を呼び出す
+
+            if(hidata.achieves != null)
+            {
+                if (hidata.achieves.Count != 0)
+                {
+                    int CameraDepth = (int)(CameraObj.transform.GetComponent<Camera>().depth + 1);
+                    ManagerObject.instance.view.add(SceneLabel.ACHIEVE_CLEAR,
+                            hidata.achieves,
+                            CameraDepth);
+                }
+            }
+
         }
 
         private void closehelp(int result)
@@ -192,6 +217,15 @@ namespace Mix2App.Home
             else
 	    		ManagerObject.instance.view.change(label);
 		}
+
+
+        void AchieveClearDelete(string label)
+        {
+            if (label == SceneLabel.ACHIEVE_CLEAR)
+            {
+                ManagerObject.instance.view.delete(SceneLabel.ACHIEVE_CLEAR);
+            }
+        }
 
 
     }
