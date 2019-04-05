@@ -94,7 +94,11 @@ namespace Mix2App.Friends
         private readonly string MsgDataTable_5 = "」と\nおわかれしますか？";
         private readonly string MsgDataTable_6 = "」と\nともだちに なりますか？";
         private readonly string MsgDataTable_7 = "」と\nともだちに なりません";
-        private readonly string MsgDataTable_8 = "」の\nともだちが いっぱいで とうろくできません";
+        private readonly string MsgDataTable_8 = "あなたの「アプリのともだち」が\nいっぱいで とうろくできません\n「ともだちてちょう」から さくじょしてください";
+        private readonly string MsgDataTable_9 = "」の\nともだちが いっぱいで とうろくできません";
+        private readonly string MsgDataTable_10 = "「みーつのともだち」を かくにんしてください";
+        private readonly string MsgDataTable_11 = "」を\nともだちてちょうに とうろくしました";
+        private readonly string MsgDataTable_12 = "」と\nともだちに なりませんでした";
 
         private bool minited;
         private InputField msearchin;
@@ -501,13 +505,12 @@ namespace Mix2App.Friends
         {
             ManagerObject.instance.sound.playSe(13);
 
-            KakuninModeOff();
+//            KakuninModeOff();
 
             switch (YesNoModeFlag)
             {
                 case YesNoModeTable.APPLY_FRIEND:
                     {   // フレンド申請
-                        //				int _id = int.Parse (prefabObjSearch [ReqUserNumber].transform.Find ("IDbase/ID").gameObject.GetComponent<Text> ().text);
                         GameCall call = new GameCall(CallLabel.APPLY_FRIEND, mFriendSearchData[ReqUserNumber]);
                         call.AddListener(mApplyFriend);
                         ManagerObject.instance.connect.send(call);
@@ -515,6 +518,8 @@ namespace Mix2App.Friends
                     }
                 case YesNoModeTable.DELETE_FRIEND:
                     {   // フレンドを削除する
+                        KakuninModeOff();
+
                         GameCall call = new GameCall(CallLabel.DELETE_FRIEND, mFriendData.appfriends[SakujoNumber]);
                         call.AddListener(mDeleteFriend);
                         ManagerObject.instance.connect.send(call);
@@ -1030,6 +1035,8 @@ namespace Mix2App.Friends
             Debug.LogFormat("Friends mApplyFriend:{0},{1}", success, data);
             string _mes;
 
+            KakuninModeOff();
+
             if (success)
             {
                 // 成功
@@ -1139,6 +1146,8 @@ namespace Mix2App.Friends
                 // 友達手帳のデータを登録する
                 mFriendData = (FriendData)data;
                 NoteDataSet();
+
+                FriendReqSuccessDisp(mFriendData.applys[FriendYNNumber].user);
             }
             else
             {
@@ -1183,6 +1192,54 @@ namespace Mix2App.Friends
             }
         }
 
+        private void FriendReqSuccessDisp(User _user)
+        {
+            string _mes;
+
+            if (_user.chara2 != null)
+            {
+                _mes = MsgDataTable_1;
+                _mes = _mes + _user.chara1.cname;
+                _mes = _mes + MsgDataTable_2;
+                _mes = _mes + _user.chara2.cname;
+            }
+            else
+            {
+                _mes = MsgDataTable_1;
+                _mes = _mes + _user.chara1.cname;
+            }
+
+            switch (YesNoModeFlag)
+            {
+                case YesNoModeTable.REPLY_FRIEND_YES:
+                    {   // 友達になりました
+                        EventResult.SetActive(true);
+                        EventResult.transform.Find("2_tomodachini narimashita").gameObject.SetActive(true);
+                        EventResult.transform.Find("Text_Arial").gameObject.SetActive(true);
+                        EventResult.transform.Find("Text 2").gameObject.SetActive(true);
+
+                        EventResult.transform.Find("Text_Arial").gameObject.GetComponent<Text>().text = userNicknameChange(_user.nickname);
+
+                        _mes = _mes + MsgDataTable_11;
+                        EventResult.transform.Find("Text 2").gameObject.GetComponent<Text>().text = _mes;
+                        break;
+                    }
+                case YesNoModeTable.REPLY_FRIEND_NO:
+                    {   // 友達キャンセルしました
+                        EventResult.SetActive(true);
+                        EventResult.transform.Find("Text_Arial").gameObject.SetActive(true);
+                        EventResult.transform.Find("Text 4").gameObject.SetActive(true);
+
+                        EventResult.transform.Find("Text_Arial").gameObject.GetComponent<Text>().text = userNicknameChange(_user.nickname);
+
+                        _mes = _mes + MsgDataTable_12;
+                        EventResult.transform.Find("Text 4").gameObject.GetComponent<Text>().text = _mes;
+                        break;
+                    }
+            }
+            KakuninModeOff();
+        }
+
         private void FriendReqErrorDisp(User _user, int _mode)
         {
             string _mes;
@@ -1194,6 +1251,7 @@ namespace Mix2App.Friends
                         EventResult.SetActive(true);
                         EventResult.transform.Find("3_touroku dekimasen").gameObject.SetActive(true);
                         EventResult.transform.Find("Text 3-1").gameObject.SetActive(true);
+                        EventResult.transform.Find("Text 3-1").gameObject.GetComponent<Text>().text = MsgDataTable_8;
                         break;
                     }
                 case 2:
@@ -1211,13 +1269,13 @@ namespace Mix2App.Friends
                             _mes = _mes + _user.chara1.cname;
                             _mes = _mes + MsgDataTable_2;
                             _mes = _mes + _user.chara2.cname;
-                            _mes = _mes + MsgDataTable_8;
+                            _mes = _mes + MsgDataTable_9;
                         }
                         else
                         {
                             _mes = MsgDataTable_1;
                             _mes = _mes + _user.chara1.cname;
-                            _mes = _mes + MsgDataTable_8;
+                            _mes = _mes + MsgDataTable_9;
                         }
                         EventResult.transform.Find("Text 3-2").gameObject.GetComponent<Text>().text = _mes;
                         break;
@@ -1227,9 +1285,11 @@ namespace Mix2App.Friends
                         EventResult.SetActive(true);
                         EventResult.transform.Find("0_touroku zumi").gameObject.SetActive(true);
                         EventResult.transform.Find("Text 0").gameObject.SetActive(true);
+                        EventResult.transform.Find("Text 0").gameObject.GetComponent<Text>().text = MsgDataTable_10;
                         break;
                     }
             }
+            KakuninModeOff();
         }
 
         private string userNicknameChange(string baseStr)
