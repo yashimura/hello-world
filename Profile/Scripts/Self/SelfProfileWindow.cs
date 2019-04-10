@@ -67,6 +67,8 @@ namespace Mix2App.Profile {
             AddButtonTapListner(ShowGrowthRecordButton, ShowGrowthRecord);
             AddButtonTapListner(ShowFriendListButton, ShowFriendlist);
 
+            UserIDButton.onClick.AddListener(UserIDButtonClick);
+/*
             AddButtonTapListner(UserIDButton, () => {
                 if (UserIDBalloon1.activeSelf&&!UserIDBalloon2.activeSelf) 
                 {
@@ -80,6 +82,24 @@ namespace Mix2App.Profile {
                     UserIDBalloon2.SetActive(false);
                 }
             });
+*/            
+        }
+
+        void UserIDButtonClick()
+        {
+            if (UserIDBalloon1.activeSelf && !UserIDBalloon2.activeSelf)
+            {
+                UserIDBalloon1.SetActive(false);
+                UserIDBalloon2.SetActive(true);
+                UserIDText.text = UserData.code;
+                Lib.ManagerObject.instance.sound.playSe(11);
+            }
+            else if (!UserIDBalloon1.activeSelf && UserIDBalloon2.activeSelf)
+            {
+                UserIDBalloon1.SetActive(true);
+                UserIDBalloon2.SetActive(false);
+                Lib.ManagerObject.instance.sound.playSe(11);
+            }
         }
 
         public override ProfileWindow SetupUserData(User user_data) {

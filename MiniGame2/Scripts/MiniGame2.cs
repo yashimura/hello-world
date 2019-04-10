@@ -38,11 +38,13 @@ namespace Mix2App.MiniGame2{
 		[SerializeField] private Sprite[] MenuImage = null;						// ０：カツ丼、１：プリン、２：サンド、３：ステーキ、４：パスタ、５：オムライス、６：ご飯、７：寿司
 		[SerializeField] private Sprite[] FukidashiImage = null;				// ０：吹き出し１、１：吹き出し２、２：吹き出し３、３：吹き出し４
 		[SerializeField] private Sprite[] CheckImage = null;					// ０：丸、１：バツ
-		[SerializeField] private Sprite[] EventEndSprite = null;				// 終了時の演出スプライト
+		[SerializeField] private Sprite[] EventEndSprite = null;                // 終了時の演出スプライト
+
+        [SerializeField] private MiniGame2EventImg[] tempData = null;           // あとでアセットに切り替える
 
 
 
-		private object[]		mparam;
+        private object[]		mparam;
 
 		private CharaBehaviour[] cbCharaTamagoMain = new CharaBehaviour[2];		// プレイヤー
 		private CharaBehaviour[] cbCharaTamagoNpc = new CharaBehaviour[4];		// ゲスト（最大４人）
@@ -187,11 +189,13 @@ namespace Mix2App.MiniGame2{
         IEnumerator mStart(){
 			Debug.Log ("MiniGame2 mStart");
 
-			muser1 = ManagerObject.instance.player;		// たまごっち
+			muser1 = ManagerObject.instance.player;     // たまごっち
 
 
+            EventSpriteSet();
 
-			startEndFlag = false;
+
+            startEndFlag = false;
 
 			ButtonStart.GetComponent<Button> ().onClick.AddListener (ButtonStartClick);
 			ButtonClose.GetComponent<Button> ().onClick.AddListener (ButtonCloseClick);
@@ -1633,7 +1637,27 @@ namespace Mix2App.MiniGame2{
 			obj.transform.localPosition = pos;
 		}
 
-	}
 
+
+
+
+        private void EventSpriteSet()
+        {
+            MiniGame2EventImg _data;
+            if (mSceneLabel == "PapaMama")
+            {
+                _data = tempData[0];
+            }
+            else
+            {
+                _data = tempData[1];
+            }
+
+            MinigameRoot.transform.Find("bg").gameObject.GetComponent<Image>().sprite = _data.ImgBG;
+            MinigameRoot.transform.Find("title/title").gameObject.GetComponent<Image>().sprite = _data.ImgTitle;
+
+        }
+
+    }
 
 }

@@ -82,7 +82,7 @@ namespace Mix2App.Achieve
                 prefabObj[i].name = "AchieveList" + i.ToString();
 
                 // 背景の色を偶数、奇数で変更する
-                if((i & 1) == 0)
+                if ((i & 1) == 0)
                 {
                     prefabObj[i].GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
                 }

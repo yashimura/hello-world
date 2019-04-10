@@ -117,11 +117,13 @@ namespace Mix2App.Profile {
                 KuchiguseBalloon1.SetActive(false);
                 KuchiguseBalloon2.SetActive(true);
                 KuchiguseText.text = KuchiguseText_Data;
+                Lib.ManagerObject.instance.sound.playSe(11);
             }
             else if (!KuchiguseBalloon1.activeSelf&&KuchiguseBalloon2.activeSelf)
             {
                 KuchiguseBalloon1.SetActive(true);
                 KuchiguseBalloon2.SetActive(false);
+                Lib.ManagerObject.instance.sound.playSe(11);
             }
         }
         

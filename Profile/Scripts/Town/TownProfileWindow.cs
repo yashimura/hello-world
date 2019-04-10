@@ -98,6 +98,8 @@ namespace Mix2App.Profile.Town {
 
             AddButtonTapListner(ProposeButton, Propose);        
 
+            UserIDButton.onClick.AddListener(UserIDButtonClick);
+/*
             AddButtonTapListner(UserIDButton, () => {
                 if (UserIDBalloon1.activeSelf&&!UserIDBalloon2.activeSelf) 
                 {
@@ -111,8 +113,26 @@ namespace Mix2App.Profile.Town {
                     UserIDBalloon2.SetActive(false);
                 }
             });              
+*/            
         }
-        
+
+        void UserIDButtonClick()
+        {
+            if (UserIDBalloon1.activeSelf && !UserIDBalloon2.activeSelf)
+            {
+                UserIDBalloon1.SetActive(false);
+                UserIDBalloon2.SetActive(true);
+                UserIDText.text = UserData.code;
+                Lib.ManagerObject.instance.sound.playSe(11);
+            }
+            else if (!UserIDBalloon1.activeSelf && UserIDBalloon2.activeSelf)
+            {
+                UserIDBalloon1.SetActive(true);
+                UserIDBalloon2.SetActive(false);
+                Lib.ManagerObject.instance.sound.playSe(11);
+            }
+        }
+
         public override ProfileWindow SetupUserData(User user_data) {
             ProfileWindow wnd = base.SetupUserData(user_data);
 
