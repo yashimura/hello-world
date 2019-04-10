@@ -1143,11 +1143,13 @@ namespace Mix2App.Friends
                     Destroy(prefabObjRenraku[i]);
                 }
 
+                User _user = mFriendData.applys[FriendYNNumber].user;
+
                 // 友達手帳のデータを登録する
                 mFriendData = (FriendData)data;
                 NoteDataSet();
 
-                FriendReqSuccessDisp(mFriendData.applys[FriendYNNumber].user);
+                FriendReqSuccessDisp(_user);
             }
             else
             {

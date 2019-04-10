@@ -19,10 +19,14 @@ namespace Mix2App.PointShop
         [SerializeField] private GameObject PointNumber = null;
         [SerializeField] private GameObject ButtonModoru = null;
         [SerializeField] private GameObject ButtonHai = null;
+        [SerializeField] private GameObject ItemSelectEvent = null;
         [SerializeField] private GameObject ItemGetEvent = null;
         [SerializeField] private GameObject[] FukidashiMessage = null;
         [SerializeField] private Sprite[] ApplitchiImage = null;
         [SerializeField] private GameObject PrefabItem = null;
+
+        [SerializeField] private PointShopEventImg tempData = null;
+
 
 
 
@@ -141,6 +145,10 @@ namespace Mix2App.PointShop
 
         private IEnumerator InitMain()
         {
+            // イベントごとにスプライトを変更する
+            EventSpriteSet();
+
+
             SetupWdth(ItemContainer, 1.0f);
 
             // プレハブを登録する
@@ -153,6 +161,8 @@ namespace Mix2App.PointShop
 
             ApplitchiAnime(ApplitchiAnimeTable.GUIDE);
             MessageJob(MessageTypeTable.MESS1);
+
+            ItemSelectEvent.transform.localPosition = new Vector3(0, 5, 0);
 
             mready = true;
 
@@ -690,5 +700,19 @@ namespace Mix2App.PointShop
 
 
 
+        private void EventSpriteSet()
+        {
+            PointShopEventImg _data = tempData;
+
+            ItemSelectEvent.GetComponent<Image>().sprite = _data.ImgBase;
+
+
+        }
+
+
+
+
+
     }
+
 }

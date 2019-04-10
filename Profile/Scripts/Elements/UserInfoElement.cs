@@ -48,7 +48,7 @@ namespace Mix2App.Profile {
         public void SetupProfile(User user) {
             AvatarPrefab.SetupAvatar(user.avatar);
             UserNameText.text = user.nickname;
-
+            /* fallback font で対応するので不要
             if (user.utype!=UserType.MIX2&&(user.enableBnIdLink||user.enableLineLink))
             {
                 UserNameText.font = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
@@ -60,7 +60,7 @@ namespace Mix2App.Profile {
                 UserNameText.font = Resources.Load<Font>("Fonts/tmgc_name");
                 UserNameText.resizeTextForBestFit = false;
             }
-
+            */
         }
 
         /// <summary>
