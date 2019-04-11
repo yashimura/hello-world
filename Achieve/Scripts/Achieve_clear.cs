@@ -85,7 +85,7 @@ namespace Mix2App.Achieve
                 RewardBehaviour _rb = EventRoot.transform.Find("clear_dialog/base/RewardView").gameObject.GetComponent<RewardBehaviour>();
                 _rb.init(mData[i].reward);                                             // 報酬セット
 
-                EventRoot.transform.Find("clear_dialog/base/Text").gameObject.GetComponent<Text>().text = mData[i].atitle + "\n" + "クリアしました！";
+                EventRoot.transform.Find("clear_dialog/base/Text").gameObject.GetComponent<Text>().text = mData[i].atitle;
 
                 DispOn();
 

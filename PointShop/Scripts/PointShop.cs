@@ -390,7 +390,7 @@ namespace Mix2App.PointShop
 
                     // 結果画面を表示する
                     ItemBehaviour ibItem;
-                    ibItem = ItemGetEvent.transform.Find("ItemView").gameObject.GetComponent<ItemBehaviour>();
+                    ibItem = ItemGetEvent.transform.Find("Item/ItemView").gameObject.GetComponent<ItemBehaviour>();
                     ibItem.init(dataShop.itemlist[itemNumber].item);
 
                     ItemGetEvent.transform.localPosition = new Vector3(0, 0, 0);

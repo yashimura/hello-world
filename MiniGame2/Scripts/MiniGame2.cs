@@ -40,6 +40,7 @@ namespace Mix2App.MiniGame2{
 		[SerializeField] private Sprite[] CheckImage = null;					// ０：丸、１：バツ
 		[SerializeField] private Sprite[] EventEndSprite = null;                // 終了時の演出スプライト
 
+        [SerializeField] private GameObject EventColaboShop = null;             // コラボショップタイトル画面
         [SerializeField] private MiniGame2EventImg[] tempData = null;           // あとでアセットに切り替える
 
 
@@ -192,10 +193,17 @@ namespace Mix2App.MiniGame2{
 			muser1 = ManagerObject.instance.player;     // たまごっち
 
 
+
             EventSpriteSet();
 
 
+
             startEndFlag = false;
+
+            EventColaboShop.transform.Find("Button_red_b_game").gameObject.GetComponent<Button>().onClick.AddListener(ButtonStartClick);
+            EventColaboShop.transform.Find("Button_blue_close").gameObject.GetComponent<Button>().onClick.AddListener(ButtonCloseClick);
+            EventColaboShop.transform.Find("Button_red_b_change").gameObject.GetComponent<Button>().onClick.AddListener(ButtonChangeClick);
+
 
 			ButtonStart.GetComponent<Button> ().onClick.AddListener (ButtonStartClick);
 			ButtonClose.GetComponent<Button> ().onClick.AddListener (ButtonCloseClick);
@@ -288,7 +296,7 @@ namespace Mix2App.MiniGame2{
 			case	statusJobCount.minigame2JobCount000:
 				{
 					if (startEndFlag) {
-						EventTitle.SetActive (true);
+                        EventTitleDisp(true);
 						jobCount = statusJobCount.minigame2JobCount010;
 						TamagoCharaPositionInit ();
 						nowScore = 0;
@@ -307,7 +315,7 @@ namespace Mix2App.MiniGame2{
 				}
 			case	statusJobCount.minigame2JobCount020:
 				{
-					EventTitle.SetActive (false);
+                    EventTitleDisp(false);
 					jobCount = statusJobCount.minigame2JobCount030;
 					StartCoroutine (tamagochiCharaInit (statusJobCount.minigame2JobCount040));
 					break;
@@ -408,7 +416,7 @@ namespace Mix2App.MiniGame2{
 					if (ResultMainLoop ()) {										// 結果画面処理
 						jobCount = statusJobCount.minigame2JobCount000;
 						EventResult.SetActive (false);
-						EventTitle.SetActive (true);
+                        EventTitleDisp(true);
 					}
 					TamagoAnimeSprite ();											// たまごっちのアニメをImageに反映する
 					break;
@@ -451,7 +459,14 @@ namespace Mix2App.MiniGame2{
                 ManagerObject.instance.view.change(SceneLabel.TOWN);
             }
         }
-		private void ButtonHelpClick(){
+        private void ButtonChangeClick()
+        {
+            ManagerObject.instance.sound.playSe(11);
+            Debug.Log("ポイントショップへ・・・");
+            ManagerObject.instance.view.change(SceneLabel.POINT_SHOP, mMinigameID);
+        }
+
+        private void ButtonHelpClick(){
 //			EventHelp.SetActive (true);
 			ManagerObject.instance.sound.playSe (11);
 			ManagerObject.instance.view.dialog("webview",new object[]{"minigame2", mMinigameID},null);
@@ -1471,27 +1486,20 @@ namespace Mix2App.MiniGame2{
 					ManagerObject.instance.sound.playSe (23);
 
 					EventItemget.transform.Find ("getpoints_text").gameObject.SetActive (false);
-					EventItemget.transform.Find ("GotchiView").gameObject.SetActive (false);
 					EventItemget.transform.Find ("getitem_text").gameObject.SetActive (false);
-					EventItemget.transform.Find ("ItemView").gameObject.SetActive (false);
 
 					if (mResultData.reward.kind == RewardKind.ITEM) {
 						// アイテムが褒賞品
 						EventItemget.transform.Find ("getitem_text").gameObject.SetActive (true);
-						EventItemget.transform.Find ("ItemView").gameObject.SetActive (true);
-
-						ItemBehaviour ibItem = EventItemget.transform.Find ("ItemView").gameObject.GetComponent<ItemBehaviour> ();
-						ibItem.init (mResultData.reward.item);
 					} else {
 						// ごっちポイントが褒賞品
 						EventItemget.transform.Find ("getpoints_text").gameObject.SetActive (true);
-						EventItemget.transform.Find ("GotchiView").gameObject.SetActive (true);
-
-						GotchiBehaviour gbPoint = EventItemget.transform.Find ("GotchiView").gameObject.GetComponent<GotchiBehaviour> ();
-						gbPoint.init (mResultData.reward.point);
 					}
 
-					resultItemGetFlag = false;
+                    RewardBehaviour rbItem = EventItemget.transform.Find("RewardView").gameObject.GetComponent<RewardBehaviour>();
+                    rbItem.init(mResultData.reward);
+
+                    resultItemGetFlag = false;
 					resultLoopCount = statusResult.resultJobCount100;
 					break;
 				}
@@ -1638,7 +1646,18 @@ namespace Mix2App.MiniGame2{
 		}
 
 
-
+        private void EventTitleDisp(bool _flag)
+        {
+            if(mSceneLabel == "PapaMama")
+            {
+                EventTitle.SetActive(_flag);
+            }
+            else
+            {
+                EventColaboShop.SetActive(_flag);
+                EventColaboShop.transform.Find("Point/points_text").gameObject.GetComponent<Text>().text = ManagerObject.instance.player.evp.ToString();
+            }
+        }
 
 
         private void EventSpriteSet()
@@ -1659,5 +1678,6 @@ namespace Mix2App.MiniGame2{
         }
 
     }
+
 
 }
