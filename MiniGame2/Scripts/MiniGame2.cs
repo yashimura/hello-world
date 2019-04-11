@@ -203,6 +203,7 @@ namespace Mix2App.MiniGame2{
             EventColaboShop.transform.Find("Button_red_b_game").gameObject.GetComponent<Button>().onClick.AddListener(ButtonStartClick);
             EventColaboShop.transform.Find("Button_blue_close").gameObject.GetComponent<Button>().onClick.AddListener(ButtonCloseClick);
             EventColaboShop.transform.Find("Button_red_b_change").gameObject.GetComponent<Button>().onClick.AddListener(ButtonChangeClick);
+            EventColaboShop.transform.Find("Button_red_help").gameObject.GetComponent<Button>().onClick.AddListener(ButtonHelpClick);
 
 
 			ButtonStart.GetComponent<Button> ().onClick.AddListener (ButtonStartClick);
@@ -467,11 +468,8 @@ namespace Mix2App.MiniGame2{
         }
 
         private void ButtonHelpClick(){
-//			EventHelp.SetActive (true);
 			ManagerObject.instance.sound.playSe (11);
 			ManagerObject.instance.view.dialog("webview",new object[]{"minigame2", mMinigameID},null);
-		}
-		private void ButtonHelpClickCallBack(int num){
 		}
 		private void ButtonHelpModoruClick(){
 			EventHelp.SetActive (false);
@@ -1675,6 +1673,7 @@ namespace Mix2App.MiniGame2{
             MinigameRoot.transform.Find("bg").gameObject.GetComponent<Image>().sprite = _data.ImgBG;
             MinigameRoot.transform.Find("title/title").gameObject.GetComponent<Image>().sprite = _data.ImgTitle;
 
+            EventColaboShop.transform.Find("banner").gameObject.GetComponent<Image>().sprite = _data.ImgBanner;
         }
 
     }

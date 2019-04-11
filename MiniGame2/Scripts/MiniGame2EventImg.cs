@@ -13,6 +13,8 @@ namespace Mix2App.MiniGame2
         [SerializeField] private Sprite _ImgBG = null;
         [Tooltip("タイトル画像")]
         [SerializeField] private Sprite _ImgTitle = null;
+        [Tooltip("タイトルバナー画像")]
+        [SerializeField] private Sprite _ImgBanner = null;
 
         public Sprite ImgBG
         {
@@ -26,6 +28,13 @@ namespace Mix2App.MiniGame2
             get
             {
                 return _ImgTitle;
+            }
+        }
+        public Sprite ImgBanner
+        {
+            get
+            {
+                return _ImgBanner;
             }
         }
 
