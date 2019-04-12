@@ -74,6 +74,8 @@ namespace Mix2App.Achieve
 
         private void PrefabSet()
         {
+            string _mes;
+
             for (int i = 0; i < mData.Count && i < LIST_MAX; i++)
             {
                 // プレハブを登録
@@ -81,22 +83,47 @@ namespace Mix2App.Achieve
                 prefabObj[i].transform.SetParent(Container.transform, false);
                 prefabObj[i].name = "AchieveList" + i.ToString();
 
-                // 背景の色を偶数、奇数で変更する
-                if ((i & 1) == 0)
-                {
-                    prefabObj[i].GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+                // アチーブメントのタイトルを登録
+                prefabObj[i].transform.Find("Title").gameObject.GetComponent<Text>().text = mData[i].atitle;
+
+                if(mData[i].completed)
+                {   // クリア状況
+                    Sprite _sp1, _sp2;
+
+                    _mes = "クリア";
+
+                    // 背景と仕切り線を偶数、奇数で変更する
+                    if ((i & 1) == 0)
+                    {
+                        _sp1 = prefabObj[i].transform.Find("clearList1").gameObject.GetComponent<Image>().sprite;
+                        _sp2 = prefabObj[i].transform.Find("clearShikiri1").gameObject.GetComponent<Image>().sprite;
+                    }
+                    else
+                    {
+                        _sp1 = prefabObj[i].transform.Find("clearList2").gameObject.GetComponent<Image>().sprite;
+                        _sp2 = prefabObj[i].transform.Find("clearShikiri2").gameObject.GetComponent<Image>().sprite;
+                    }
+                    prefabObj[i].GetComponent<Image>().sprite = _sp1;
+                    prefabObj[i].transform.Find("shikiri").gameObject.GetComponent<Image>().sprite = _sp2;
                 }
                 else
-                {
-                    prefabObj[i].GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.0f);
-                }
+                {   // 現在進行状況
+                    _mes = "あと" + mData[i].count.ToString() + "かい";
 
-                // アチーブメントのタイトルと回数を登録
-                prefabObj[i].transform.Find("Title").gameObject.GetComponent<Text>().text = mData[i].atitle;
-                prefabObj[i].transform.Find("Times").gameObject.GetComponent<Text>().text = "あと" + mData[i].count.ToString() + "かい";
+                    // 背景の色を偶数、奇数で変更する
+                    if ((i & 1) == 0)
+                    {
+                        prefabObj[i].GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+                    }
+                    else
+                    {
+                        prefabObj[i].GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.0f);
+                    }
+                }
+                // アチーブメントの進行状況を登録する
+                prefabObj[i].transform.Find("Times").gameObject.GetComponent<Text>().text = _mes;
             }
         }
-
 
         void Update()
         {
