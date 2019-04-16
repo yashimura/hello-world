@@ -375,12 +375,14 @@ namespace Mix2App.PointShop
 
 
         int maxPoint = 0;
-        int nowPoint = 0;
 
         // アイテムを購入したのでポイントを減らす処理
         private IEnumerator ShoppingPointJob()
         {
-            nowPoint = ManagerObject.instance.player.evp;
+            int nowPoint = ManagerObject.instance.player.evp;
+
+            float _pointSub = ((float)(maxPoint - nowPoint) / 100.0f);
+            float _pointBase = maxPoint;
 
             while (true)
             {
@@ -405,8 +407,13 @@ namespace Mix2App.PointShop
                 }
 
                 ManagerObject.instance.sound.playSe(6);
-                maxPoint--;
 
+                _pointBase -= _pointSub;
+                maxPoint = (int)_pointBase;
+                if(maxPoint <= nowPoint)
+                {
+                    maxPoint = nowPoint;
+                }
                 PointNumber.GetComponent<Text>().text = maxPoint.ToString();
 
                 yield return new WaitForSeconds(0.01f);

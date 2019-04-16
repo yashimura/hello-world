@@ -35,7 +35,7 @@ namespace Mix2App.MiniGame2{
 		[SerializeField] private GameObject EventGameMenu = null;
 		[SerializeField] private GameObject EventGameFukidashi = null;
 		[SerializeField] private GameObject EventGameScore = null;
-		[SerializeField] private Sprite[] MenuImage = null;						// ０：カツ丼、１：プリン、２：サンド、３：ステーキ、４：パスタ、５：オムライス、６：ご飯、７：寿司
+		[SerializeField] private Sprite[] MenuImage = null;						// ０：ハンバーガー、１：ホットケーキ、２：ピザ、３：ステーキ、４：パスタ、５：パフェ、６：エビフライ、７：カレー
 		[SerializeField] private Sprite[] FukidashiImage = null;				// ０：吹き出し１、１：吹き出し２、２：吹き出し３、３：吹き出し４
 		[SerializeField] private Sprite[] CheckImage = null;					// ０：丸、１：バツ
 		[SerializeField] private Sprite[] EventEndSprite = null;                // 終了時の演出スプライト
@@ -1674,6 +1674,20 @@ namespace Mix2App.MiniGame2{
             MinigameRoot.transform.Find("title/title").gameObject.GetComponent<Image>().sprite = _data.ImgTitle;
 
             EventColaboShop.transform.Find("banner").gameObject.GetComponent<Image>().sprite = _data.ImgBanner;
+
+            // メニューのスプライトを差し替える
+            for(int i= 0;i < _data.ImgItem.Length; i++)
+            {
+                MenuImage[i] = _data.ImgItem[i];
+            }
+            EventGameMenu.transform.Find("menu1").gameObject.GetComponent<Image>().sprite = _data.ImgItem[0];
+            EventGameMenu.transform.Find("menu2").gameObject.GetComponent<Image>().sprite = _data.ImgItem[1];
+            EventGameMenu.transform.Find("menu3").gameObject.GetComponent<Image>().sprite = _data.ImgItem[2];
+            EventGameMenu.transform.Find("menu4").gameObject.GetComponent<Image>().sprite = _data.ImgItem[3];
+            EventGameMenu.transform.Find("menu5").gameObject.GetComponent<Image>().sprite = _data.ImgItem[4];
+            EventGameMenu.transform.Find("menu6").gameObject.GetComponent<Image>().sprite = _data.ImgItem[5];
+            EventGameMenu.transform.Find("menu7").gameObject.GetComponent<Image>().sprite = _data.ImgItem[6];
+            EventGameMenu.transform.Find("menu8").gameObject.GetComponent<Image>().sprite = _data.ImgItem[7];
         }
 
     }
