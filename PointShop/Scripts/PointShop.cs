@@ -191,8 +191,8 @@ namespace Mix2App.PointShop
                 ibItem.init(dataShop.itemlist[i].item);
 
                 // ポイントを表示
-                prefabObj[i].transform.Find("Button_item/item_num").gameObject.GetComponent<Text>().text = dataShop.itemlist[i].price.ToString();
-                prefabObj[i].transform.Find("Item_selected/item_num").gameObject.GetComponent<Text>().text = dataShop.itemlist[i].price.ToString();
+                prefabObj[i].transform.Find("Button_item/item_num").gameObject.GetComponent<Text>().text = "CP " + dataShop.itemlist[i].price.ToString();
+                prefabObj[i].transform.Find("Item_selected/item_num").gameObject.GetComponent<Text>().text = "CP " + dataShop.itemlist[i].price.ToString();
 
                 int ii = i + 0;
                 // アイテム選択ボタンの有効化
@@ -201,6 +201,13 @@ namespace Mix2App.PointShop
 
             maxPoint = ManagerObject.instance.player.evp;
             PointNumber.GetComponent<Text>().text = maxPoint.ToString();
+
+            bool _flag = false;
+//            if(dataShop.itemlist.Count > 4)
+//            {
+                _flag = true;
+//            }
+            ItemSelectEvent.transform.Find("Comment").gameObject.SetActive(_flag);
         }
 
         private void ButtonClickHai()
