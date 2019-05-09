@@ -25,8 +25,6 @@ namespace Mix2App.PointShop
         [SerializeField] private Sprite[] ApplitchiImage = null;
         [SerializeField] private GameObject PrefabItem = null;
 
-        [SerializeField] private PointShopEventImg tempData = null;
-
 
 
 
@@ -716,7 +714,7 @@ namespace Mix2App.PointShop
 
         private void EventSpriteSet()
         {
-            PointShopEventImg _data = tempData;
+            PointShopEventImg _data = dataShop.assetbundle.LoadAllAssets<PointShopEventImg>()[0];
 
             ItemSelectEvent.GetComponent<Image>().sprite = _data.ImgBase;
 

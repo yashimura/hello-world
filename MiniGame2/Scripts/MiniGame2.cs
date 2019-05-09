@@ -41,7 +41,7 @@ namespace Mix2App.MiniGame2{
 		[SerializeField] private Sprite[] EventEndSprite = null;                // 終了時の演出スプライト
 
         [SerializeField] private GameObject EventColaboShop = null;             // コラボショップタイトル画面
-        [SerializeField] private MiniGame2EventImg[] tempData = null;           // あとでアセットに切り替える
+//        [SerializeField] private MiniGame2EventImg[] tempData = null;           // あとでアセットに切り替える
 
 
 
@@ -1660,6 +1660,7 @@ namespace Mix2App.MiniGame2{
 
         private void EventSpriteSet()
         {
+/*
             MiniGame2EventImg _data;
             if (mSceneLabel == "PapaMama")
             {
@@ -1669,6 +1670,9 @@ namespace Mix2App.MiniGame2{
             {
                 _data = tempData[1];
             }
+*/
+            MiniGame2EventImg _data = mData.assetBundle.LoadAllAssets<MiniGame2EventImg>()[0];
+
 
             MinigameRoot.transform.Find("bg").gameObject.GetComponent<Image>().sprite = _data.ImgBG;
             MinigameRoot.transform.Find("title/title").gameObject.GetComponent<Image>().sprite = _data.ImgTitle;

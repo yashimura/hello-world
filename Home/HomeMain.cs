@@ -21,13 +21,11 @@ namespace Mix2App.Home
 
         private object[] mparam;
         private bool mready;
-        //private int vid;
         private string mcnews;
         private string mcbbs;
         private string minfo;
         private string meinfo;
         private string mtoday;
-        //private string mlabel;
 
         void Awake()
         {

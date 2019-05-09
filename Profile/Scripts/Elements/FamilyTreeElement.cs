@@ -38,7 +38,7 @@ namespace Mix2App.Profile.Elements {
         [SerializeField, Required] private CharaBehaviour LeftCharacter = null;
         [SerializeField, Required] private CharaBehaviour MiddleCharacter = null;
         [SerializeField, Required] private CharaBehaviour RightCharacter = null;
-
+        [SerializeField, Required] private GameObject Obaketchi = null;
         bool mflag;
         int mgene;
 
@@ -77,24 +77,39 @@ namespace Mix2App.Profile.Elements {
 
             RightEdge.SetActive(false);
 
-            if (data.chara1 != null)
-                MiddleCharacter.init(data.chara1);
-            else
-                MiddleCharacter.gameObject.SetActive(false);
 
-            if (data.chara2 != null && data.twins)
-                RightCharacter.init(data.chara2);
-            else 
-                RightCharacter.gameObject.SetActive(false);
-
-            if (data.chara3 != null && data.marriage) {
-                LeftCharacter.init(data.chara3);
-                LeftEdge.SetActive(true);
-            } 
-            else
+            if (data.death)
             {
+                // 死亡フラグが立っているときは、おばけっちを表示する
+                Obaketchi.SetActive(true);
+
+                MiddleCharacter.gameObject.SetActive(false);
+                RightCharacter.gameObject.SetActive(false);
                 LeftCharacter.gameObject.SetActive(false);
                 LeftEdge.SetActive(false);
+            }
+            else
+            {
+                if (data.chara1 != null)
+                    MiddleCharacter.init(data.chara1);
+                else
+                    MiddleCharacter.gameObject.SetActive(false);
+
+                if (data.chara2 != null && data.twins)
+                    RightCharacter.init(data.chara2);
+                else
+                    RightCharacter.gameObject.SetActive(false);
+
+                if (data.chara3 != null && data.marriage)
+                {
+                    LeftCharacter.init(data.chara3);
+                    LeftEdge.SetActive(true);
+                }
+                else
+                {
+                    LeftCharacter.gameObject.SetActive(false);
+                    LeftEdge.SetActive(false);
+                }
             }
         }
     }
