@@ -716,9 +716,9 @@ namespace Mix2App.PointShop
         {
             PointShopEventImg _data = dataShop.assetbundle.LoadAllAssets<PointShopEventImg>()[0];
 
+
+
             ItemSelectEvent.GetComponent<Image>().sprite = _data.ImgBase;
-
-
         }
 
 
