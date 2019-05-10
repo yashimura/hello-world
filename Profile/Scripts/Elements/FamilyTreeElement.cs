@@ -77,10 +77,9 @@ namespace Mix2App.Profile.Elements {
 
             RightEdge.SetActive(false);
 
-
-            if (data.death)
+            if (data.death && data.chara1.grow < 4)
             {
-                // 死亡フラグが立っているときは、おばけっちを表示する
+                // 死亡フラグが立っているときで、フレンド期未満のときは、おばけっちを表示する
                 Obaketchi.SetActive(true);
 
                 MiddleCharacter.gameObject.SetActive(false);
