@@ -83,7 +83,7 @@ namespace Mix2App.Profile {
                 Chara1.init(ch1);
                 Chara2.init(ch2);
 
-                TamaNameText.text = ch1.cname + " と " + ch2.cname;
+                TamaNameText.text = ch1.cname + " と\n" + ch2.cname;
             } else if (ch1 != null) {
                 Chara0.gameObject.SetActive(true);
                 Chara1.gameObject.SetActive(false);

@@ -242,7 +242,7 @@ namespace Mix2App.TownEvent
                     {
                         cbCharaTamago[0].gotoAndPlay(MotionLabel.GLAD1);
 
-                        ManagerObject.instance.sound.playSe(30);
+                        ManagerObject.instance.sound.playSe(18);
                     }
                     if (muser1.chara2 != null)
                     {
@@ -257,7 +257,7 @@ namespace Mix2App.TownEvent
                     if (!TreasureFlag)
                     {
                         TreasureFlag = true;
-                        ManagerObject.instance.sound.playSe(26);
+                        ManagerObject.instance.sound.playSe(22);
                     }
                 }
             }
@@ -269,7 +269,10 @@ namespace Mix2App.TownEvent
 
         IEnumerator mainSELoop()
         {
-            yield return new WaitForSeconds(3.0f);
+            yield return new WaitForSeconds(3.3f);
+            ManagerObject.instance.sound.playSe(24);
+            yield return new WaitForSeconds(0.5f);
+            ManagerObject.instance.sound.playSe(24);
         }
 
     }
