@@ -1659,6 +1659,12 @@ namespace Mix2App.MiniGame2{
 
         private void EventSpriteSet()
         {
+            if(mData.assetBundle == null)
+            {
+                // アセットバンドルがない場合この下の処理を無視する。
+                return;
+            }
+
             MiniGame2EventImg _data = mData.assetBundle.LoadAllAssets<MiniGame2EventImg>()[0];
 
 
