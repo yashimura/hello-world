@@ -121,8 +121,8 @@ namespace Mix2App.MiniGame2{
 			mparam = parameter;
 			if (mparam==null) {
                 mparam = new object[] {
-                    "PapaMama",
-                    2
+                    "Town",
+                    3
                 };
 			}
 
@@ -1349,7 +1349,7 @@ namespace Mix2App.MiniGame2{
 					EventResult.transform.Find ("treasure_open").gameObject.SetActive (false);
 					EventResult.transform.Find ("Button_blue_modoru").gameObject.SetActive (false);
 
-					if ((nowScore == 0) || (!mResultData.rewardFlag)) {
+					if ((nowScore == 0) || (!mResultData.rewardFlag) || (mSceneLabel != "PapaMama")) {
 						if (!futagoFlag) {
 							EventResult.transform.Find ("chara").gameObject.transform.localPosition = new Vector3 (250.0f, -320.0f, 0.0f);
 						} else {
@@ -1422,8 +1422,16 @@ namespace Mix2App.MiniGame2{
 							resultItemGetFlag = true;														// 褒賞品が手に入らないのでそのまま終了
 							resultLoopCount = statusResult.resultJobCount100;
 						} else {
-							ManagerObject.instance.sound.playSe (9);
-						}
+                                if (mSceneLabel != "PapaMama")
+                                {
+                                    resultLoopCount = statusResult.resultJobCount090;
+                                }
+                                else
+                                {
+                                    ManagerObject.instance.sound.playSe(9);
+                                }
+
+                            }
 					}
 					break;
 				}
