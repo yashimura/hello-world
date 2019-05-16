@@ -58,7 +58,7 @@ namespace Mix2App.MiniGame2{
 		private bool[] NpcDispFlag = new bool[4];
 		private TamaChara[] NpcBaseTamaChara = new TamaChara[4];
 		private bool futagoFlag;
-
+        private int GuestMaxNumber;
 
 		private readonly float MENU_IDOU_SPEED = 30.0f;							// メニューの移動速度
 		private readonly int GAME_PLAY_TIME = 60;								// ゲームプレイ制限時間
@@ -70,22 +70,7 @@ namespace Mix2App.MiniGame2{
 		private readonly int GAME_MENU_DIFFICULTY1 = 3;							// ４択メニューに切り替える正解数
 		private readonly int GAME_MENU_DIFFICULTY2 = 6;							// ６択メニューに切り替える正解数	
 		private readonly int GAME_MENU_DIFFICULTY3 = 9;							// ８択メニューに切り替える正解数
-/*
-		private readonly int GAME_TAMAGOCHI_GUEST1 = 16;						// お客さんたまごっち１人目（まめっち）
-		private readonly int GAME_TAMAGOCHI_GUEST2 = 17;						// お客さんたまごっち２人目（くちぱっち）
-		private readonly int GAME_TAMAGOCHI_GUEST3 = 29;						// お客さんたまごっち３人目（かっぱっぱっち）
-		private readonly int GAME_TAMAGOCHI_GUEST4 = 31;						// お客さんたまごっち４人目（はたけもーっち）
-		private readonly int GAME_TAMAGOCHI_GUEST5 = 38;						// お客さんたまごっち５人目（かりすまっち）
-		private readonly int GAME_TAMAGOCHI_GUEST6 = 19;						// お客さんたまごっち６人目（ラブリっち）
-		private readonly int GAME_TAMAGOCHI_GUEST7 = 23;						// お客さんたまごっち７人目（にじふわっち）
-		private readonly int GAME_TAMAGOCHI_GUEST8 = 28;						// お客さんたまごっち８人目（ピザリーナっち）
-		private readonly int GAME_TAMAGOCHI_GUEST9 = 30;						// お客さんたまごっち９人目（チェリチェリっち）
-		private readonly int GAME_TAMAGOCHI_GUEST10 = 33;						// お客さんたまごっち１０人目（ボンネっち）
-		private readonly int GAME_TAMAGOCHI_GUEST11 = 41;						// お客さんたまごっち１１人目（フェアリっち）
-		private readonly int GAME_TAMAGOCHI_GUEST12 = 43;						// お客さんたまごっち１２人目（マジョリっち）
 
-		private readonly int GAME_TAMAGOCHI_PC = 16;							// 玩具連動していない時のプレイヤー
-*/
 		private readonly int GAME_CLEAR_MESSAGE1 = 100;							// 得点未満でゲームクリアメッセージ１を表示
 		private readonly int GAME_CLEAR_MESSAGE2 = 400;							// 得点未満でゲームクリアメッセージ２を表示
 		private readonly int GAME_CLEAR_MESSAGE3 = 700;							// 得点未満でゲームクリアメッセージ３を表示
@@ -254,7 +239,7 @@ namespace Mix2App.MiniGame2{
 			for (int i = 0; i < CharaTamagoGuest.Length; i++) {
 				cbCharaTamagoGuest [i] = CharaTamagoGuest [i].GetComponent<CharaBehaviour> ();	// お客キャラ
 			}
-			if ((muser1.utype == UserType.MIX) || (muser1.utype == UserType.MIX2)) {
+			if ((muser1.utype == UserType.MIX) || (muser1.utype == UserType.MIX2) || (mSceneLabel != "PapaMama")) {
 				// 玩具連動キャラ
 				yield return cbCharaTamagoMain [0].init (muser1.chara1);						// プレイヤーキャラを登録する
 				if (futagoFlag) {
@@ -267,8 +252,15 @@ namespace Mix2App.MiniGame2{
 			}
 			TamagochiMainAnimeSet (0, MotionLabel.IDLE);
 			TamagochiMainAnimeSet (1, MotionLabel.IDLE);
+           
+            // お客さんの参加数を登録する
+            GuestMaxNumber = mData.charaList.Count - 1;
+            if(GuestMaxNumber < 10)
+            {
+                Debug.LogError("お客さんの参加人数が足りない");
+            }
 
-			for (int i = 0; i < cbCharaTamagoGuest.Length; i++) {                               // お客キャラを登録する
+            for (int i = 0; i < cbCharaTamagoGuest.Length && i < GuestMaxNumber; i++) {                               // お客キャラを登録する
                 yield return cbCharaTamagoGuest[i].init(mData.charaList[i + 1]);
                 TamagochiGuestAnimeSet(i, MotionLabel.IDLE);
 			}
@@ -623,12 +615,12 @@ namespace Mix2App.MiniGame2{
 		private IEnumerator TamagochiNextIdou(){
 			_NextPos [tamagochiIdouTable [0]] = new Vector3 (-500.0f, -250.0f, 0.0f);
 
-			for (int i = 1; i < 12; i++) {
+			for (int i = 1; i < GuestMaxNumber; i++) {
 				_NextPos [i] = CharaTamagoGuest [tamagochiIdouTable [i - 1]].transform.localPosition;
 			}
 
 			StartCoroutine(TamagoNextIdou0(tamagochiIdouTable[0],_NextPos[0]));
-			for (int i = 1; i < 12; i++) {
+			for (int i = 1; i < GuestMaxNumber; i++) {
 				StartCoroutine (TamagoNextIdou (tamagochiIdouTable [i], _NextPos [i]));
 			}
 
@@ -709,7 +701,7 @@ namespace Mix2App.MiniGame2{
 
 		private int[] tamagochiIdouTable = new int[12];
 		private void TamagochiGameIdouInit(){
-			for (int i = 0; i < 12; i++) {
+			for (int i = 0; i < GuestMaxNumber; i++) {
 				tamagochiIdouTable [i] = i;
 			}
 			_NextCounter = 0;
@@ -721,12 +713,12 @@ namespace Mix2App.MiniGame2{
 				_NextFlag = true;
 			}
 
-			if (_NextCounter == 12) {
+			if (_NextCounter == GuestMaxNumber) {
 				int _hzn = tamagochiIdouTable [0];
-				for (int num = 0; num < 11; num++) {
+				for (int num = 0; num < GuestMaxNumber - 1; num++) {
 					tamagochiIdouTable [num] = tamagochiIdouTable [num + 1];
 				}
-				tamagochiIdouTable [11] = _hzn;
+				tamagochiIdouTable [GuestMaxNumber - 1] = _hzn;
 
 				_NextCounter = 0;
 				_NextFlag = false;
