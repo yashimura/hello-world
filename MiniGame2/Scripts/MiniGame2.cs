@@ -1475,15 +1475,36 @@ namespace Mix2App.MiniGame2{
 					ManagerObject.instance.sound.playSe (23);
 
 					EventItemget.transform.Find ("getpoints_text").gameObject.SetActive (false);
-					EventItemget.transform.Find ("getitem_text").gameObject.SetActive (false);
+                    EventItemget.transform.Find("getitem_text").gameObject.SetActive(false);
+                    EventItemget.transform.Find("getcolabo_text").gameObject.SetActive(false);
+                    EventItemget.transform.Find("Button_red_takuhai").gameObject.SetActive(true);
+                    EventItemget.transform.Find("Button_blue_tojiru").gameObject.transform.localPosition = new Vector3(250, -330, 0);
+                        switch (mResultData.reward.kind)
+                        {
+                            case RewardKind.ITEM:
+                                {
+                                    // アイテムが褒賞品
+                                    EventItemget.transform.Find("getitem_text").gameObject.SetActive(true);
+                                    break;
+                                }
+                            case RewardKind.GOTCHI_PT:
+                                {
+                                    // ごっちポイントが褒賞品
+                                    EventItemget.transform.Find("getpoints_text").gameObject.SetActive(true);
+                                    break;
+                                }
+                            default:
+                                {
+                                    // イベントポイントが褒賞品
+                                    EventItemget.transform.Find("getcolabo_text").gameObject.SetActive(true);
+                                    EventItemget.transform.Find("Button_red_takuhai").gameObject.SetActive(false);
+                                    EventItemget.transform.Find("Button_blue_tojiru").gameObject.transform.localPosition = new Vector3(0, -330, 0);
 
-					if (mResultData.reward.kind == RewardKind.ITEM) {
-						// アイテムが褒賞品
-						EventItemget.transform.Find ("getitem_text").gameObject.SetActive (true);
-					} else {
-						// ごっちポイントが褒賞品
-						EventItemget.transform.Find ("getpoints_text").gameObject.SetActive (true);
-					}
+                                    break;
+                                }
+                        }
+
+
 
                     RewardBehaviour rbItem = EventItemget.transform.Find("RewardView").gameObject.GetComponent<RewardBehaviour>();
                     rbItem.init(mResultData.reward);
