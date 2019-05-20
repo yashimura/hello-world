@@ -146,6 +146,11 @@ namespace Mix2App.PointShop
             // イベントごとにスプライトを変更する
             EventSpriteSet();
 
+            float kk1 = 1024f / 2048f;
+            float kk2 = (float)Screen.height / (float)Screen.width;
+            float kk3 = (kk2 < kk1) ? kk2 / kk1 : 1.0f;
+            ItemSelectEvent.transform.localScale = new Vector3(kk3, kk3, 1);
+            ItemGetEvent.transform.localScale = new Vector3(kk3, kk3, 1);
 
             SetupWdth(ItemContainer, 1.0f);
 

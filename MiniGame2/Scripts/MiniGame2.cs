@@ -180,6 +180,10 @@ namespace Mix2App.MiniGame2{
 
             EventSpriteSet();
 
+            float kk1 = 1024f / 2048f;
+            float kk2 = (float)Screen.height / (float)Screen.width;
+            float kk3 = (kk2 < kk1) ? kk2 / kk1 : 1.0f;
+            EventColaboShop.transform.localScale = new Vector3(kk3, kk3, 1);
 
 
             startEndFlag = false;
