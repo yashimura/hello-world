@@ -1697,7 +1697,7 @@ namespace Mix2App.MiniGame2{
             MinigameRoot.transform.Find("bg").gameObject.GetComponent<Image>().sprite = _data.ImgBG;
             MinigameRoot.transform.Find("title/title").gameObject.GetComponent<Image>().sprite = _data.ImgTitle;
 
-            EventColaboShop.transform.Find("banner").gameObject.GetComponent<Image>().sprite = _data.ImgBanner;
+            EventColaboShop.gameObject.GetComponent<Image>().sprite = _data.ImgBanner;
 
             // メニューのスプライトを差し替える
             for(int i= 0;i < _data.ImgItem.Length; i++)
