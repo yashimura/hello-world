@@ -767,29 +767,34 @@ namespace Mix2App.MiniGame2{
 			}
 
 			string _status = status;
-			switch(_status){
-			case	MotionLabel.GLAD1:
-				{
-					switch (Random.Range (0, 3)) {
-					case	0:
-						{
-							_status = MotionLabel.GLAD1;
-							break;
-						}
-					case	1:
-						{
-							_status = MotionLabel.GLAD2;
-							break;
-						}
-					default:
-						{
-							_status = MotionLabel.GLAD3;
-							break;
-						}
-					}
-					break;
-				}
-			}
+            switch (_status)
+            {
+                case MotionLabel.GLAD1:
+                    {
+                        if (mSceneLabel == "PapaMama")
+                        {
+                            switch (Random.Range(0, 3))
+                            {
+                                case 0:
+                                    {
+                                        _status = MotionLabel.GLAD1;
+                                        break;
+                                    }
+                                case 1:
+                                    {
+                                        _status = MotionLabel.GLAD2;
+                                        break;
+                                    }
+                                default:
+                                    {
+                                        _status = MotionLabel.GLAD3;
+                                        break;
+                                    }
+                            }
+                        }
+                        break;
+                    }
+            }
 
 			if (cbCharaTamagoNpc [num].nowlabel != _status) {
 				cbCharaTamagoNpc [num].gotoAndPlay (_status);
@@ -797,29 +802,35 @@ namespace Mix2App.MiniGame2{
 		}
 		private void TamagochiGuestAnimeSet(int num,string status,bool flag = false){
 			string _status = status;
-			switch (_status) {
-			case	MotionLabel.GLAD1:
-				{
-					switch (Random.Range (0, 3)) {
-					case	0:
-						{
-							_status = MotionLabel.GLAD1;
-							break;
-						}
-					case	1:
-						{
-							_status = MotionLabel.GLAD2;
-							break;
-						}
-					default:
-						{
-							_status = MotionLabel.GLAD3;
-							break;
-						}
-					}
-					break;
-				}
-			}
+
+            switch (_status)
+            {
+                case MotionLabel.GLAD1:
+                    {
+                        if (mSceneLabel == "PapaMama")
+                        {
+                            switch (Random.Range(0, 3))
+                            {
+                                case 0:
+                                    {
+                                        _status = MotionLabel.GLAD1;
+                                        break;
+                                    }
+                                case 1:
+                                    {
+                                        _status = MotionLabel.GLAD2;
+                                        break;
+                                    }
+                                default:
+                                    {
+                                        _status = MotionLabel.GLAD3;
+                                        break;
+                                    }
+                            }
+                        }
+                        break;
+                    }
+            }
 
 			if (cbCharaTamagoGuest [num].nowlabel != _status) {
 				cbCharaTamagoGuest [num].gotoAndPlay (_status);
