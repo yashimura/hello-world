@@ -156,7 +156,8 @@ namespace Mix2App.MiniGame1{
 				StartCoroutine (mStart ());
 			} else {
 				if ((int)data == 4) {
-					mready = true;
+                    MinigameRoot.transform.Find("base/bg").gameObject.SetActive(true);
+                    mready = true;
 					ManagerObject.instance.view.dialog ("alert", new object[]{ "minigame1",(int)data}, mGetMinigameInfoCallBack);
 				}
 			}
