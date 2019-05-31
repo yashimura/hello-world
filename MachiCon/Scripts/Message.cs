@@ -168,57 +168,117 @@ namespace Mix2App.MachiCon{
 			JikkyouImageTable.SMILE,
 			JikkyouImageTable.SMILE,
 		};
-			
-		// 相談タイム用男の子みーつユーザー
-		private readonly string[] SoudanTimeMesManType01 = new string[] {
-			"このコと なかよくしたい（＋語尾）",
-			"このコが きになる（＋語尾）",
-			"このコを みているとドキドキする（＋語尾）",
-		};
-		// 相談タイム用女の子みーつユーザー
-		private readonly string[] SoudanTimeMesWomanType01 = new string[] {
-			"このコと なかよくしたい（＋語尾）",
-			"このコが きになる（＋語尾）",
-			"このコを みているとドキドキする（＋語尾）",
-		};
+
+        // 相談タイム用男の子みーつユーザー
+        private readonly string[,] SoudanTimeMesManType01 = new string[2,3] {
+            {
+            "このコと なかよくしたい（＋語尾）",
+            "このコが きになる（＋語尾）",
+            "このコを みているとドキドキする（＋語尾）",
+            },
+            {
+            "I think I might like this girl",
+            "I'm interested in this girl",
+            "My heart flutters when I see this girl",
+            }
+        };
+        // 相談タイム用女の子みーつユーザー
+		private readonly string[,] SoudanTimeMesWomanType01 = new string[2,3] {
+            {
+            "このコと なかよくしたい（＋語尾）",
+            "このコが きになる（＋語尾）",
+            "このコを みているとドキドキする（＋語尾）",
+            },
+            {
+            "I'm sure I'll fall in love with him",
+            "I want to be in love with him",
+            "I want to be friends with him",
+            }
+        };
 		// 相談タイム用男の子みーつユーザー以外
-		private readonly string[] SoudanTimeMesManType02 = new string[] {
-			"このコのこと どうおもう？",
-			"このコと デートにいきたいな",
-			"このコと なかよくなりたいな",
-		};
+		private readonly string[,] SoudanTimeMesManType02 = new string[,] {
+            {
+            "このコのこと どうおもう？",
+            "このコと デートにいきたいな",
+            "このコと なかよくなりたいな",
+            }
+            ,
+            {
+            "このコのこと どうおもう？",
+            "このコと デートにいきたいな",
+            "このコと なかよくなりたいな",
+            }
+        };
 		// 相談タイム用女の子みーつユーザー以外
-		private readonly string[] SoudanTimeMesWomanType02 = new string[] {
-			"このコのこと どうおもう？",
-			"このコと デートにいけたらいいな",
-			"このコと なかよくなりたいな",
-		};
+		private readonly string[,] SoudanTimeMesWomanType02 = new string[,] {
+            {
+            "このコのこと どうおもう？",
+            "このコと デートにいけたらいいな",
+            "このコと なかよくなりたいな",
+            }
+            ,
+            {
+            "このコのこと どうおもう？",
+            "このコと デートにいけたらいいな",
+            "このコと なかよくなりたいな",
+            }
+        };
 
 		// 告白宣言メッセージ
-		private readonly string[] KokuhakuAttackMesType01 = new string[] {
-			"すきです！けっこんしたい（＋語尾）",
-			"ひとめぼれ・・・けっこんしたい（＋語尾）",
-			"もう あなたしかいない（＋語尾）",
-			"あなたを しあわせにしたい（＋語尾）",
-			"いっしょになってほしい（＋語尾）",
-		};
+		private readonly string[,] KokuhakuAttackMesType01 = new string[,] {
+            {
+            "すきです！けっこんしたい（＋語尾）",
+            "ひとめぼれ・・・けっこんしたい（＋語尾）",
+            "もう あなたしかいない（＋語尾）",
+            "あなたを しあわせにしたい（＋語尾）",
+            "いっしょになってほしい（＋語尾）",
+            }
+            ,
+            {
+            "I want to marry you.",
+            "I fell in love at first sight...\nI want to marry you.",
+            "You are the only one.",
+            "I want to make you happy.",
+            "I want you to hang out with me.",
+            }
+        };
 
 		// 告白受諾メッセージ
-		private readonly string[] KokuhakuReturnMesType01 = new string[]{
-			"あなたと いっしょにいたい（＋語尾）",
-			"むねのドキドキが とまらない（＋語尾）",
-			"あなたと けっこんしたい（＋語尾）",
-			"なかよくしてほしい（＋語尾）",
-			"かんげきしちゃった（＋語尾）",
-		};
+		private readonly string[,] KokuhakuReturnMesType01 = new string[,]{
+            {
+            "あなたと いっしょにいたい（＋語尾）",
+            "むねのドキドキが とまらない（＋語尾）",
+            "あなたと けっこんしたい（＋語尾）",
+            "なかよくしてほしい（＋語尾）",
+            "かんげきしちゃった（＋語尾）",
+            }
+            ,
+            {
+            "I want to spend time with you.",
+            "I can't stop my heart fluttering",
+            "I want to marry you",
+            "I want to be friends",
+            "I was moved.",
+            }
+        };
 		// 告白拒否メッセージ
-		private readonly string[] KokuhakuReturnMesType02 = new string[]{
-			"あきらめてほしい（＋語尾）",
-			"ほかに すきなあいてがいる（＋語尾）",
-			"すこし かんがえたい（＋語尾）",
-			"おともだちならいい（＋語尾）",
-			"あなたと けっこんできない（＋語尾）",
-		};
+		private readonly string[,] KokuhakuReturnMesType02 = new string[,]{
+            {
+            "あきらめてほしい（＋語尾）",
+            "ほかに すきなあいてがいる（＋語尾）",
+            "すこし かんがえたい（＋語尾）",
+            "おともだちならいい（＋語尾）",
+            "あなたと けっこんできない（＋語尾）",
+            }
+            ,
+            {
+            "I'm sorry, I'm not interested",
+            "There's someone else I like",
+            "I need to think for a while",
+            "I don't mind just being friends",
+            "I can't marry you.",
+            }
+        };
 
 
 		private enum JikkyouImageTable{
@@ -758,22 +818,22 @@ namespace Mix2App.MachiCon{
 			case	SoudanMesTable.SoudanMesDispMan1:
 				{
 					// みーつユーザー男の子
-					EventSoudanText.GetComponent<Text> ().text = SoudanTimeMesManType01 [Random.Range (0, SoudanTimeMesManType01.Length)].Replace("（＋語尾）",_gobi);
+					EventSoudanText.GetComponent<Text> ().text = SoudanTimeMesManType01 [_lang,Random.Range (0, SoudanTimeMesManType01.GetLength(1))].Replace("（＋語尾）",_gobi);
 					break;
 				}
 			case	SoudanMesTable.SoudanMesDispWoman1:
 				{	// みーつユーザー女の子
-					EventSoudanText.GetComponent<Text> ().text = SoudanTimeMesWomanType01 [Random.Range (0, SoudanTimeMesWomanType01.Length)].Replace("（＋語尾）",_gobi);
+					EventSoudanText.GetComponent<Text> ().text = SoudanTimeMesWomanType01 [_lang,Random.Range (0, SoudanTimeMesWomanType01.GetLength(1))].Replace("（＋語尾）",_gobi);
 					break;
 				}
 			case	SoudanMesTable.SoudanMesDispMan2:
 				{	// みーつユーザー以外男の子
-					EventSoudanText.GetComponent<Text> ().text = SoudanTimeMesManType02 [Random.Range (0, SoudanTimeMesManType02.Length)];
+					EventSoudanText.GetComponent<Text> ().text = SoudanTimeMesManType02 [_lang,Random.Range (0, SoudanTimeMesManType02.GetLength(1))];
 					break;
 				}
 			case	SoudanMesTable.SoudanMesDispWoman2:
 				{	// みーつユーザー以外女の子
-					EventSoudanText.GetComponent<Text> ().text = SoudanTimeMesWomanType02 [Random.Range (0, SoudanTimeMesWomanType02.Length)];
+					EventSoudanText.GetComponent<Text> ().text = SoudanTimeMesWomanType02 [_lang,Random.Range (0, SoudanTimeMesWomanType02.GetLength(1))];
 					break;
 				}
 			default:
@@ -789,7 +849,7 @@ namespace Mix2App.MachiCon{
 
 
 		public string KokuhakuMesDispMan(string _gobi,int _lang){
-			return KokuhakuAttackMesType01 [Random.Range (0, KokuhakuAttackMesType01.Length)].Replace("（＋語尾）",_gobi);
+			return KokuhakuAttackMesType01 [_lang,Random.Range (0, KokuhakuAttackMesType01.GetLength(1))].Replace("（＋語尾）",_gobi);
 		}
 
 		public string KokuhakuMesDisp(KokuhakuMesTable flag,string _gobi,int _lang){
@@ -798,12 +858,12 @@ namespace Mix2App.MachiCon{
 			switch (flag) {
 			case	KokuhakuMesTable.KokuhakuMesDispOK:
 				{	// 告白受諾メッセージ
-					retMes = KokuhakuReturnMesType01 [Random.Range (0, KokuhakuReturnMesType01.Length)].Replace("（＋語尾）",_gobi);
+					retMes = KokuhakuReturnMesType01 [_lang,Random.Range (0, KokuhakuReturnMesType01.GetLength(1))].Replace("（＋語尾）",_gobi);
 					break;
 				}
 			case	KokuhakuMesTable.KokuhakuMesDispNo:
 				{	// 告白拒否メッセージ
-					retMes = KokuhakuReturnMesType02 [Random.Range (0, KokuhakuReturnMesType02.Length)].Replace("（＋語尾）",_gobi);
+					retMes = KokuhakuReturnMesType02 [_lang,Random.Range (0, KokuhakuReturnMesType02.GetLength(1))].Replace("（＋語尾）",_gobi);
 					break;
 				}
 			default:

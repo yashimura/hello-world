@@ -22,48 +22,108 @@ namespace Mix2App.Propose{
 
 
 
-        private readonly string[] manMessageTable1 = new string[]{		// 男の子のメッセージ
-			"すきです！けっこんしたい（＋語尾）",
-			"ひとめぼれ・・・けっこんしたい（＋語尾）",
-			"もう あなたしかいない（＋語尾）",
-			"あなたを しあわせにしたい（＋語尾）",
-			"いっしょになってほしい（＋語尾）",
-		};
-		private readonly string[] womanMessageTable1 = new string[]{	// 女の子のメッセージ
-			"あなたと いっしょにいたい（＋語尾）",
-			"あなたしかみえない（＋語尾）",
-			"いっしょにいてほしい（＋語尾）",
-			"おねがいっ！けっこんしたい（＋語尾）",
-			"あなたへの スキがとまらない（＋語尾）",
-		};
-		private readonly string[] manMessageTable2 = new string[]{		// 男の子のメッセージ
-			"あなたと けっこんしたい（＋語尾）",
-			"もう あなたしかいない（＋語尾）",
-			"すごくうれしい（＋語尾）",
-			"しあわせになりたい（＋語尾）",
-			"かんげきした（＋語尾）",
-		};
-		private readonly string[] womanMessageTable2 = new string[]{	// 女の子のメッセージ
-			"いつも となりにいてほしい（＋語尾）",
-			"むねのドキドキが とまらない（＋語尾）",
-			"あなたとなら けっこんしたい（＋語尾）",
-			"なかよくしてほしい（＋語尾）",
-			"かんげきしちゃった（＋語尾）",
-		};
-		private readonly string[] manMessageTable3 = new string[]{		// 男の子のメッセージ
-			"ごめんとしかいえない（＋語尾）",
-			"あなたと けっこんできない（＋語尾）",
-			"あきらめてほしい（＋語尾）",
-			"ぼくには もったいない（＋語尾）",
-			"ほかに すきなひとがいる（＋語尾）",
-		};
-		private readonly string[] womanMessageTable3 = new string[]{	// 女の子のメッセージ
-			"あきらめてほしい（＋語尾）",
-			"ほかに すきなあいてがいる（＋語尾）",
-			"すこし かんがえたい（＋語尾）",
-			"おともだちならいい（＋語尾）",
-			"あなたと けっこんできない（＋語尾）",
-		};
+        private readonly string[,] manMessageTable1 = new string[,]{        // 男の子のメッセージ
+            {
+            "すきです！けっこんしたい（＋語尾）",
+            "ひとめぼれ・・・けっこんしたい（＋語尾）",
+            "もう あなたしかいない（＋語尾）",
+            "あなたを しあわせにしたい（＋語尾）",
+            "いっしょになってほしい（＋語尾）",
+            }
+            ,
+            {
+            "I want to marry you.",
+            "I fell in love at first sight...\nI want to marry you.",
+            "You are the only one.",
+            "I want to make you happy.",
+            "I want you to hang out with\nme.",
+            }
+        };
+		private readonly string[,] womanMessageTable1 = new string[,]{  // 女の子のメッセージ
+            {
+            "あなたと いっしょにいたい（＋語尾）",
+            "あなたしかみえない（＋語尾）",
+            "いっしょにいてほしい（＋語尾）",
+            "おねがいっ！けっこんしたい（＋語尾）",
+            "あなたへの スキがとまらない（＋語尾）",
+            }
+            ,
+            {
+            "I want to spend time with you.",
+            "I can only see you.",
+            "I want you to spend time with\nme.",
+            "Please marry me!",
+            "I'm interested in you",
+            }
+        };
+		private readonly string[,] manMessageTable2 = new string[,]{        // 男の子のメッセージ
+            {
+            "あなたと けっこんしたい（＋語尾）",
+            "もう あなたしかいない（＋語尾）",
+            "すごくうれしい（＋語尾）",
+            "しあわせになりたい（＋語尾）",
+            "かんげきした（＋語尾）",
+            }
+            ,
+            {
+            "I want to marry you.",
+            "You are the only one.",
+            "I am so happy.",
+            "I want to be happy.",
+            "I was moved.",
+            }
+        };
+		private readonly string[,] womanMessageTable2 = new string[,]{  // 女の子のメッセージ
+            {
+            "いつも となりにいてほしい（＋語尾）",
+            "むねのドキドキが とまらない（＋語尾）",
+            "あなたとなら けっこんしたい（＋語尾）",
+            "なかよくしてほしい（＋語尾）",
+            "かんげきしちゃった（＋語尾）",
+            }
+            ,
+            {
+            "I always want you to be\naround.",
+            "My heart won't stop\nfluttering.",
+            "I want to marry you.",
+            "I want to be friends.",
+            "I was moved.",
+            }
+        };
+		private readonly string[,] manMessageTable3 = new string[,]{        // 男の子のメッセージ
+            {
+            "ごめんとしかいえない（＋語尾）",
+            "あなたと けっこんできない（＋語尾）",
+            "あきらめてほしい（＋語尾）",
+            "ぼくには もったいない（＋語尾）",
+            "ほかに すきなひとがいる（＋語尾）",
+            }
+            ,
+            {
+            "All I can say is I'm sorry.",
+            "I can't marry you.",
+            "I'm sorry, I'm not interested",
+            "You're too good for me.",
+            "I like someone else.",
+            }
+        };
+		private readonly string[,] womanMessageTable3 = new string[,]{  // 女の子のメッセージ
+            {
+            "あきらめてほしい（＋語尾）",
+            "ほかに すきなあいてがいる（＋語尾）",
+            "すこし かんがえたい（＋語尾）",
+            "おともだちならいい（＋語尾）",
+            "あなたと けっこんできない（＋語尾）",
+            }
+            ,
+            {
+            "I'm sorry, I'm not interested",
+            "I like someone else.",
+            "I need to think for a while.",
+            "I don't mind just being\nfriends.",
+            "I can't marry you.",
+            }
+        };
 
 
 
@@ -359,16 +419,22 @@ namespace Mix2App.Propose{
 
 			// 告白メッセージを表示
 			string _gobi;
+            int _lang;
 			if (brotherR == 0) {
 				_gobi = userR.chara1.wend;
+                _lang = 0;
 			} else {
 				_gobi = userR.chara2.wend;
+                _lang = 0;
 			}
-			if (userR.chara1.sex == 0) {
-				EventWait.transform.Find ("fukidashi_right/text").gameObject.GetComponent<Text> ().text = manMessageTable1 [Random.Range (0, manMessageTable1.Length)].Replace ("（＋語尾）", _gobi);
-			} else {
-				EventWait.transform.Find ("fukidashi_right/text").gameObject.GetComponent<Text> ().text = womanMessageTable1 [Random.Range (0, womanMessageTable1.Length)].Replace ("（＋語尾）", _gobi);
-			}
+            if (userR.chara1.sex == 0)
+            {
+                EventWait.transform.Find("fukidashi_right/text").gameObject.GetComponent<Text>().text = manMessageTable1[_lang,Random.Range(0, manMessageTable1.GetLength(1))].Replace("（＋語尾）", _gobi);
+            }
+            else
+            {
+                EventWait.transform.Find("fukidashi_right/text").gameObject.GetComponent<Text>().text = womanMessageTable1[_lang,Random.Range(0, womanMessageTable1.GetLength(1))].Replace("（＋語尾）", _gobi);
+            }
 			EventWait.transform.Find ("fukidashi_right").gameObject.SetActive (true);
 
 			yield return new WaitForSeconds (3.0f);
@@ -403,16 +469,25 @@ namespace Mix2App.Propose{
 
 			// 告白OKメッセージを表示
 			string _gobi;
-			if (brotherL == 0) {
-				_gobi = userL.chara1.wend;
-			} else {
-				_gobi = userL.chara2.wend;
-			}
-			if (userL.chara1.sex == 0) {
-				EventWait.transform.Find ("fukidashi_left2/text").gameObject.GetComponent<Text> ().text = manMessageTable2 [Random.Range (0, manMessageTable2.Length)].Replace ("（＋語尾）", _gobi);
-			} else {
-				EventWait.transform.Find ("fukidashi_left2/text").gameObject.GetComponent<Text> ().text = womanMessageTable2 [Random.Range (0, womanMessageTable2.Length)].Replace ("（＋語尾）", _gobi);
-			}
+            int _lang;
+            if (brotherL == 0)
+            {
+                _gobi = userL.chara1.wend;
+                _lang = 0;
+            }
+            else
+            {
+                _gobi = userL.chara2.wend;
+                _lang = 0;
+            }
+            if (userL.chara1.sex == 0)
+            {
+                EventWait.transform.Find("fukidashi_left2/text").gameObject.GetComponent<Text>().text = manMessageTable2[_lang,Random.Range(0, manMessageTable2.GetLength(1))].Replace("（＋語尾）", _gobi);
+            }
+            else
+            {
+                EventWait.transform.Find("fukidashi_left2/text").gameObject.GetComponent<Text>().text = womanMessageTable2[_lang,Random.Range(0, womanMessageTable2.GetLength(1))].Replace("（＋語尾）", _gobi);
+            }
 			EventWait.transform.Find ("fukidashi_left2").gameObject.SetActive (true);
 
 			yield return new WaitForSeconds (2.0f);
@@ -449,16 +524,25 @@ namespace Mix2App.Propose{
 
 			// 告白Noメッセージを表示
 			string _gobi;
-			if (brotherL == 0) {
-				_gobi = userL.chara1.wend;
-			} else {
-				_gobi = userL.chara2.wend;
-			}
-			if (userL.chara1.sex == 0) {
-				EventWait.transform.Find ("fukidashi_left/text").gameObject.GetComponent<Text> ().text = manMessageTable3 [Random.Range (0, manMessageTable3.Length)].Replace ("（＋語尾）", _gobi);
-			} else {
-				EventWait.transform.Find ("fukidashi_left/text").gameObject.GetComponent<Text> ().text = womanMessageTable3 [Random.Range (0, womanMessageTable3.Length)].Replace ("（＋語尾）", _gobi);
-			}
+            int _lang;
+            if (brotherL == 0)
+            {
+                _gobi = userL.chara1.wend;
+                _lang = 0;
+            }
+            else
+            {
+                _gobi = userL.chara2.wend;
+                _lang = 0;
+            }
+            if (userL.chara1.sex == 0)
+            {
+                EventWait.transform.Find("fukidashi_left/text").gameObject.GetComponent<Text>().text = manMessageTable3[_lang,Random.Range(0, manMessageTable3.GetLength(1))].Replace("（＋語尾）", _gobi);
+            }
+            else
+            {
+                EventWait.transform.Find("fukidashi_left/text").gameObject.GetComponent<Text>().text = womanMessageTable3[_lang,Random.Range(0, womanMessageTable3.GetLength(1))].Replace("（＋語尾）", _gobi);
+            }
 			EventWait.transform.Find ("fukidashi_left").gameObject.SetActive (true);
 
 			ManagerObject.instance.sound.playJingle (18);
