@@ -1146,12 +1146,13 @@ namespace Mix2App.MachiCon{
 		// num:告白された女の子の番号（０〜３）、msgFlag:メッセージの種類（true:肯定、false:否定）
 		private void FukidashiMessageKokuhakuReturn(int num,bool msgFlag){
 			string _gobiMes = mpdata.members [num + 4].user.GetCharaAt (mkindTable[num + 4]).wend;
+            int _lang = 0;
 
-			if (msgFlag) {		// 告白肯定のメッセージ
-				CharaTamagochi [num + 4].transform.Find ("fukidashi/comment/text").gameObject.GetComponent<Text> ().text = MesDisp.KokuhakuMesDisp (Message.KokuhakuMesTable.KokuhakuMesDispOK,_gobiMes);
+			if (msgFlag) {      // 告白肯定のメッセージ
+                CharaTamagochi[num + 4].transform.Find("fukidashi/comment/text").gameObject.GetComponent<Text>().text = MesDisp.KokuhakuMesDisp(Message.KokuhakuMesTable.KokuhakuMesDispOK, _gobiMes, _lang);
 				MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp13);
-			} else {			// 告白否定のメッセージ
-				CharaTamagochi [num + 4].transform.Find ("fukidashi/comment/text").gameObject.GetComponent<Text> ().text = MesDisp.KokuhakuMesDisp (Message.KokuhakuMesTable.KokuhakuMesDispNo,_gobiMes);
+			} else {            // 告白否定のメッセージ
+                CharaTamagochi[num + 4].transform.Find("fukidashi/comment/text").gameObject.GetComponent<Text>().text = MesDisp.KokuhakuMesDisp(Message.KokuhakuMesTable.KokuhakuMesDispNo, _gobiMes, _lang);
 				MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp14);
 			}
 
@@ -1200,43 +1201,54 @@ namespace Mix2App.MachiCon{
 			MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDispOff);
 		}
 
-		// 相談時のタイトルメッセージ
-		private void SoudanMessageDisp(){
-			string _gobi = mpdata.members [playerNumber].user.GetCharaAt (mkindTable[playerNumber]).wend;
+        // 相談時のタイトルメッセージ
+        private void SoudanMessageDisp()
+        {
+            string _gobi = mpdata.members[playerNumber].user.GetCharaAt(mkindTable[playerNumber]).wend;
 
-			UserType ut = mpdata.members [playerNumber].user.utype;
+            UserType ut = mpdata.members[playerNumber].user.utype;
 
-			switch (playerNumber) {
-			case	0:
-			case	1:
-			case	2:
-			case	3:
-				{
-					if (ut == UserType.MIX2) {
-						// みーつユーザー男の子
-						MesDisp.SoudanMesDisp (Message.SoudanMesTable.SoudanMesDispMan1, _gobi);
-					} else {
-						// みーつユーザー以外男の子
-						MesDisp.SoudanMesDisp (Message.SoudanMesTable.SoudanMesDispMan2, _gobi);
-					}
-					break;
-				}
-			case	4:
-			case	5:
-			case	6:
-			case	7:
-				{
-					if (ut == UserType.MIX2) {
-						// みーつユーザー女の子
-						MesDisp.SoudanMesDisp (Message.SoudanMesTable.SoudanMesDispWoman1, _gobi);
-					} else {
-						// みーつユーザー以外女の子
-						MesDisp.SoudanMesDisp (Message.SoudanMesTable.SoudanMesDispWoman2, _gobi);
-					}
-					break;
-				}
-			}
-		}
+            int _lang = 0;
+
+
+            switch (playerNumber)
+            {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    {
+                        if (ut == UserType.MIX2)
+                        {
+                            // みーつユーザー男の子
+                            MesDisp.SoudanMesDisp(Message.SoudanMesTable.SoudanMesDispMan1, _gobi, _lang);
+                        }
+                        else
+                        {
+                            // みーつユーザー以外男の子
+                            MesDisp.SoudanMesDisp(Message.SoudanMesTable.SoudanMesDispMan2, _gobi, _lang);
+                        }
+                        break;
+                    }
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                    {
+                        if (ut == UserType.MIX2)
+                        {
+                            // みーつユーザー女の子
+                            MesDisp.SoudanMesDisp(Message.SoudanMesTable.SoudanMesDispWoman1, _gobi, _lang);
+                        }
+                        else
+                        {
+                            // みーつユーザー以外女の子
+                            MesDisp.SoudanMesDisp(Message.SoudanMesTable.SoudanMesDispWoman2, _gobi, _lang);
+                        }
+                        break;
+                    }
+            }
+        }
 			
 		// アピールタイムの初期配置
 		private void AppealPositionChangeInit(){
@@ -2078,10 +2090,13 @@ namespace Mix2App.MachiCon{
 					kokuhakuManNumber = 0;
 					kokuhakuOkFlag = false;
 
-					kokuhakuManMessage [0] = MesDisp.KokuhakuMesDispMan (mpdata.members [0].user.GetCharaAt (mkindTable[0]).wend);	// 告白宣言メッセージをここで決定
-					kokuhakuManMessage [1] = MesDisp.KokuhakuMesDispMan (mpdata.members [1].user.GetCharaAt (mkindTable[1]).wend);
-					kokuhakuManMessage [2] = MesDisp.KokuhakuMesDispMan (mpdata.members [2].user.GetCharaAt (mkindTable[2]).wend);
-					kokuhakuManMessage [3] = MesDisp.KokuhakuMesDispMan (mpdata.members [3].user.GetCharaAt (mkindTable[3]).wend);
+                    int _lang = 0;
+
+                    // 告白宣言メッセージをここで決定
+                    kokuhakuManMessage[0] = MesDisp.KokuhakuMesDispMan(mpdata.members[0].user.GetCharaAt(mkindTable[0]).wend, _lang);
+                    kokuhakuManMessage[1] = MesDisp.KokuhakuMesDispMan(mpdata.members[1].user.GetCharaAt(mkindTable[1]).wend, _lang);
+                    kokuhakuManMessage[2] = MesDisp.KokuhakuMesDispMan(mpdata.members[2].user.GetCharaAt(mkindTable[2]).wend, _lang);
+                    kokuhakuManMessage[3] = MesDisp.KokuhakuMesDispMan(mpdata.members[3].user.GetCharaAt(mkindTable[3]).wend, _lang);
 					break;
 				}
 			case	statusKokuhakuCount.kokuhakuCount010:

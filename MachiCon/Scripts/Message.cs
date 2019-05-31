@@ -751,7 +751,7 @@ namespace Mix2App.MachiCon{
 		}
 
 		// 相談タイム用
-		public void SoudanMesDisp(SoudanMesTable flag,string _gobi = ""){
+		public void SoudanMesDisp(SoudanMesTable flag,string _gobi = "",int _lang = 0){
 			bool _flag = true;
 
 			switch (flag) {
@@ -788,11 +788,11 @@ namespace Mix2App.MachiCon{
 		}
 
 
-		public string KokuhakuMesDispMan(string _gobi){
+		public string KokuhakuMesDispMan(string _gobi,int _lang){
 			return KokuhakuAttackMesType01 [Random.Range (0, KokuhakuAttackMesType01.Length)].Replace("（＋語尾）",_gobi);
 		}
 
-		public string KokuhakuMesDisp(KokuhakuMesTable flag,string _gobi){
+		public string KokuhakuMesDisp(KokuhakuMesTable flag,string _gobi,int _lang){
 			string	retMes = "";
 
 			switch (flag) {
