@@ -170,7 +170,7 @@ namespace Mix2App.MachiCon{
 		};
 
         // 相談タイム用男の子みーつユーザー
-        private readonly string[,] SoudanTimeMesManType01 = new string[2,3] {
+        private readonly string[,] SoudanTimeMesManType01 = new string[,] {
             {
             "このコと なかよくしたい（＋語尾）",
             "このコが きになる（＋語尾）",
@@ -183,7 +183,7 @@ namespace Mix2App.MachiCon{
             }
         };
         // 相談タイム用女の子みーつユーザー
-		private readonly string[,] SoudanTimeMesWomanType01 = new string[2,3] {
+		private readonly string[,] SoudanTimeMesWomanType01 = new string[,] {
             {
             "このコと なかよくしたい（＋語尾）",
             "このコが きになる（＋語尾）",
