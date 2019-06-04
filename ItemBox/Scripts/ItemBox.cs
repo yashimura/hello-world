@@ -152,6 +152,8 @@ namespace Mix2App.ItemBox
             ButtonTushinDown[2].onClick.AddListener(ButtonTushinDown10Click);
             ButtonTushinDown[3].onClick.AddListener(ButtonTushinDown1Click);
 
+
+            EventTushinNot.transform.Find("Button_mouichido").gameObject.GetComponent<Button>().onClick.AddListener(ButtonRetryClick);
         }
 
         // シーンパーツの表示のON/OFFの代わりにY座標移動で対応
@@ -254,6 +256,15 @@ namespace Mix2App.ItemBox
             ManagerObject.instance.sound.playSe(17);
 
             EventTushinNot.SetActive(false);
+        }
+        // 通信失敗画面のもう一度ボタン
+        private void ButtonRetryClick()
+        {
+            ManagerObject.instance.sound.playSe(13);
+
+            EventTushinNot.SetActive(false);
+
+            PresentSendJob2();
         }
         // ごっちポイント表示画面のもどるボタン（MIX2以外用）
         private void ButtonPointBackClick()
