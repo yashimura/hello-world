@@ -1146,7 +1146,7 @@ namespace Mix2App.MachiCon{
 		// num:告白された女の子の番号（０〜３）、msgFlag:メッセージの種類（true:肯定、false:否定）
 		private void FukidashiMessageKokuhakuReturn(int num,bool msgFlag){
 			string _gobiMes = mpdata.members [num + 4].user.GetCharaAt (mkindTable[num + 4]).wend;
-            int _lang = 0;
+            int _lang = mpdata.members[num+ 4].user.toyFlag - 1;
 
 			if (msgFlag) {      // 告白肯定のメッセージ
                 CharaTamagochi[num + 4].transform.Find("fukidashi/comment/text").gameObject.GetComponent<Text>().text = MesDisp.KokuhakuMesDisp(Message.KokuhakuMesTable.KokuhakuMesDispOK, _gobiMes, _lang);
@@ -1208,7 +1208,7 @@ namespace Mix2App.MachiCon{
 
             UserType ut = mpdata.members[playerNumber].user.utype;
 
-            int _lang = 0;
+            int _lang = mpdata.members[playerNumber].user.toyFlag - 1;
 
 
             switch (playerNumber)
@@ -2090,13 +2090,11 @@ namespace Mix2App.MachiCon{
 					kokuhakuManNumber = 0;
 					kokuhakuOkFlag = false;
 
-                    int _lang = 0;
-
                     // 告白宣言メッセージをここで決定
-                    kokuhakuManMessage[0] = MesDisp.KokuhakuMesDispMan(mpdata.members[0].user.GetCharaAt(mkindTable[0]).wend, _lang);
-                    kokuhakuManMessage[1] = MesDisp.KokuhakuMesDispMan(mpdata.members[1].user.GetCharaAt(mkindTable[1]).wend, _lang);
-                    kokuhakuManMessage[2] = MesDisp.KokuhakuMesDispMan(mpdata.members[2].user.GetCharaAt(mkindTable[2]).wend, _lang);
-                    kokuhakuManMessage[3] = MesDisp.KokuhakuMesDispMan(mpdata.members[3].user.GetCharaAt(mkindTable[3]).wend, _lang);
+                    kokuhakuManMessage[0] = MesDisp.KokuhakuMesDispMan(mpdata.members[0].user.GetCharaAt(mkindTable[0]).wend, mpdata.members[0].user.toyFlag - 1);
+                    kokuhakuManMessage[1] = MesDisp.KokuhakuMesDispMan(mpdata.members[1].user.GetCharaAt(mkindTable[1]).wend, mpdata.members[1].user.toyFlag - 1);
+                    kokuhakuManMessage[2] = MesDisp.KokuhakuMesDispMan(mpdata.members[2].user.GetCharaAt(mkindTable[2]).wend, mpdata.members[2].user.toyFlag - 1);
+                    kokuhakuManMessage[3] = MesDisp.KokuhakuMesDispMan(mpdata.members[3].user.GetCharaAt(mkindTable[3]).wend, mpdata.members[3].user.toyFlag - 1);
 					break;
 				}
 			case	statusKokuhakuCount.kokuhakuCount010:
