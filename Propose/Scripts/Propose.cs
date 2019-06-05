@@ -34,12 +34,12 @@ namespace Mix2App.Propose{
             {
             "I want to marry you.",
             "I fell in love at first sight...\nI want to marry you.",
-            "You are the only one.",
+            "You are the only one for me!",
             "I want to make you happy.",
-            "I want you to hang out with\nme.",
+            "I want to hang out with you!",
             }
         };
-		private readonly string[,] womanMessageTable1 = new string[,]{  // 女の子のメッセージ
+        private readonly string[,] womanMessageTable1 = new string[,]{  // 女の子のメッセージ
             {
             "あなたと いっしょにいたい（＋語尾）",
             "あなたしかみえない（＋語尾）",
@@ -56,7 +56,7 @@ namespace Mix2App.Propose{
             "I'm interested in you",
             }
         };
-		private readonly string[,] manMessageTable2 = new string[,]{        // 男の子のメッセージ
+        private readonly string[,] manMessageTable2 = new string[,]{        // 男の子のメッセージ
             {
             "あなたと けっこんしたい（＋語尾）",
             "もう あなたしかいない（＋語尾）",
@@ -73,7 +73,7 @@ namespace Mix2App.Propose{
             "I was moved.",
             }
         };
-		private readonly string[,] womanMessageTable2 = new string[,]{  // 女の子のメッセージ
+        private readonly string[,] womanMessageTable2 = new string[,]{  // 女の子のメッセージ
             {
             "いつも となりにいてほしい（＋語尾）",
             "むねのドキドキが とまらない（＋語尾）",
@@ -83,14 +83,14 @@ namespace Mix2App.Propose{
             }
             ,
             {
-            "I always want you to be\naround.",
+            "I always want to be around\nyou!",
             "My heart won't stop\nfluttering.",
             "I want to marry you.",
             "I want to be friends.",
             "I was moved.",
             }
         };
-		private readonly string[,] manMessageTable3 = new string[,]{        // 男の子のメッセージ
+        private readonly string[,] manMessageTable3 = new string[,]{        // 男の子のメッセージ
             {
             "ごめんとしかいえない（＋語尾）",
             "あなたと けっこんできない（＋語尾）",
@@ -107,7 +107,7 @@ namespace Mix2App.Propose{
             "I like someone else.",
             }
         };
-		private readonly string[,] womanMessageTable3 = new string[,]{  // 女の子のメッセージ
+        private readonly string[,] womanMessageTable3 = new string[,]{  // 女の子のメッセージ
             {
             "あきらめてほしい（＋語尾）",
             "ほかに すきなあいてがいる（＋語尾）",
@@ -127,7 +127,25 @@ namespace Mix2App.Propose{
 
 
 
-		private object[] mparam;											// 他のシーンからくるパラメータ
+        private readonly string[] fukidashiRightTable = new string[]
+        {
+            "fukidashi_right",
+            "fukidashi_right_en",
+        };
+        private readonly string[] fukidashiLeftTable = new string[]
+        {
+            "fukidashi_left",
+            "fukidashi_left_en",
+        };
+        private readonly string[] fukidashiLeft2Table = new string[]
+        {
+            "fukidashi_left2",
+            "fukidashi_left2_en",
+        };
+
+
+
+        private object[] mparam;											// 他のシーンからくるパラメータ
 		private bool mProposeResult;										// プロポーズ結果
 		private int mProposeType;											// プロポーズの種類
 		private User mUser1;												// 自分
@@ -419,6 +437,9 @@ namespace Mix2App.Propose{
 
 			// 告白メッセージを表示
 			string _gobi;
+            string[,] _messageLanguage;
+            string _targetObject;
+            string _targetObject_text;
             int _lang = userR.toyFlag - 1;
             if (_lang == -1) _lang = 0;
 
@@ -427,17 +448,22 @@ namespace Mix2App.Propose{
 			} else {
 				_gobi = userR.chara2.wend;
 			}
+            _targetObject = fukidashiRightTable[_lang];
+            _targetObject_text = _targetObject + "/text";
             if (userR.chara1.sex == 0)
             {
-                EventWait.transform.Find("fukidashi_right/text").gameObject.GetComponent<Text>().text = manMessageTable1[_lang,Random.Range(0, manMessageTable1.GetLength(1))].Replace("（＋語尾）", _gobi);
+                _messageLanguage = manMessageTable1;
             }
             else
             {
-                EventWait.transform.Find("fukidashi_right/text").gameObject.GetComponent<Text>().text = womanMessageTable1[_lang,Random.Range(0, womanMessageTable1.GetLength(1))].Replace("（＋語尾）", _gobi);
+                _messageLanguage = womanMessageTable1;
             }
-			EventWait.transform.Find ("fukidashi_right").gameObject.SetActive (true);
 
-			yield return new WaitForSeconds (3.0f);
+            EventWait.transform.Find(_targetObject_text).gameObject.GetComponent<Text>().text =
+                _messageLanguage[_lang, Random.Range(0, _messageLanguage.GetLength(1))].Replace("（＋語尾）", _gobi);
+            EventWait.transform.Find(_targetObject).gameObject.SetActive(true);
+
+            yield return new WaitForSeconds (3.0f);
 		}
 
 		// 左のたまごっちの告白OK演出
@@ -455,10 +481,13 @@ namespace Mix2App.Propose{
 				yield return null;
 			}
 
-			// 告白メッセージを消す
-			EventWait.transform.Find ("fukidashi_right").gameObject.SetActive (false);
+            // 告白メッセージを消す
+            for (int i = 0; i < fukidashiRightTable.Length; i++)
+            {
+                EventWait.transform.Find(fukidashiRightTable[i]).gameObject.SetActive(false);
+            }
 
-			if (Random.Range (0, 2) == 0) {
+            if (Random.Range (0, 2) == 0) {
 				cbCharaTamago [1].gotoAndPlay (MotionLabel.SHY2);
 			} else {
 				cbCharaTamago [1].gotoAndPlay (MotionLabel.SHY3);
@@ -469,6 +498,9 @@ namespace Mix2App.Propose{
 
 			// 告白OKメッセージを表示
 			string _gobi;
+            string[,] _messageLanguage;
+            string _targetObject;
+            string _targetObject_text;
             int _lang = userL.toyFlag - 1;
             if (_lang == -1) _lang = 0;
 
@@ -480,23 +512,30 @@ namespace Mix2App.Propose{
             {
                 _gobi = userL.chara2.wend;
             }
+            _targetObject = fukidashiLeft2Table[_lang];
+            _targetObject_text = _targetObject + "/text";
             if (userL.chara1.sex == 0)
             {
-                EventWait.transform.Find("fukidashi_left2/text").gameObject.GetComponent<Text>().text = manMessageTable2[_lang,Random.Range(0, manMessageTable2.GetLength(1))].Replace("（＋語尾）", _gobi);
+                _messageLanguage = manMessageTable2;
             }
             else
             {
-                EventWait.transform.Find("fukidashi_left2/text").gameObject.GetComponent<Text>().text = womanMessageTable2[_lang,Random.Range(0, womanMessageTable2.GetLength(1))].Replace("（＋語尾）", _gobi);
+                _messageLanguage = womanMessageTable2;
             }
-			EventWait.transform.Find ("fukidashi_left2").gameObject.SetActive (true);
+            EventWait.transform.Find(_targetObject_text).gameObject.GetComponent<Text>().text =
+                _messageLanguage[_lang, Random.Range(0, _messageLanguage.GetLength(1))].Replace("（＋語尾）", _gobi);
+            EventWait.transform.Find(_targetObject).gameObject.SetActive(true);
 
-			yield return new WaitForSeconds (2.0f);
+            yield return new WaitForSeconds (2.0f);
 
-			// 告白OKメッセージを消す
-			EventWait.transform.Find ("fukidashi_left2").gameObject.SetActive (false);
+            // 告白OKメッセージを消す
+            for (int i = 0; i < fukidashiLeft2Table.Length; i++)
+            {
+                EventWait.transform.Find(fukidashiLeft2Table[i]).gameObject.SetActive(false);
+            }
 
-			// たまごっちを喜び状態にする
-			TamagochiRandomGlad (cbCharaTamago [0]);
+            // たまごっちを喜び状態にする
+            TamagochiRandomGlad(cbCharaTamago [0]);
 			TamagochiRandomGlad (cbCharaTamago [1]);
 
 			yield return new WaitForSeconds (3.0f);
@@ -519,11 +558,17 @@ namespace Mix2App.Propose{
 
 		// 左のたまごっちの告白No演出
 		private IEnumerator TamagochiProposeMiss(){
-			// 告白メッセージを消す
-			EventWait.transform.Find ("fukidashi_right").gameObject.SetActive (false);
+            // 告白メッセージを消す
+            for (int i = 0; i < fukidashiRightTable.Length; i++)
+            {
+                EventWait.transform.Find(fukidashiRightTable[i]).gameObject.SetActive(false);
+            }
 
-			// 告白Noメッセージを表示
-			string _gobi;
+            // 告白Noメッセージを表示
+            string _gobi;
+            string[,] _messageLanguage;
+            string _targetObject;
+            string _targetObject_text;
             int _lang = userL.toyFlag - 1;
             if (_lang == -1) _lang = 0;
 
@@ -535,17 +580,23 @@ namespace Mix2App.Propose{
             {
                 _gobi = userL.chara2.wend;
             }
+
+            _targetObject = fukidashiLeftTable[_lang];
+            _targetObject_text = _targetObject + "/text";
             if (userL.chara1.sex == 0)
             {
-                EventWait.transform.Find("fukidashi_left/text").gameObject.GetComponent<Text>().text = manMessageTable3[_lang,Random.Range(0, manMessageTable3.GetLength(1))].Replace("（＋語尾）", _gobi);
+                _messageLanguage = manMessageTable3;
             }
             else
             {
-                EventWait.transform.Find("fukidashi_left/text").gameObject.GetComponent<Text>().text = womanMessageTable3[_lang,Random.Range(0, womanMessageTable3.GetLength(1))].Replace("（＋語尾）", _gobi);
+                _messageLanguage = womanMessageTable3;
             }
-			EventWait.transform.Find ("fukidashi_left").gameObject.SetActive (true);
 
-			ManagerObject.instance.sound.playJingle (18);
+            EventWait.transform.Find(_targetObject_text).gameObject.GetComponent<Text>().text =
+                _messageLanguage[_lang, Random.Range(0, _messageLanguage.GetLength(1))].Replace("（＋語尾）", _gobi);
+            EventWait.transform.Find(_targetObject).gameObject.SetActive(true);
+
+            ManagerObject.instance.sound.playJingle (18);
 				
 			cbCharaTamago [0].gotoAndPlay (MotionLabel.SHOCK);
 			yield return new WaitForSeconds (0.5f);
