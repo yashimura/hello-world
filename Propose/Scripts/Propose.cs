@@ -420,6 +420,8 @@ namespace Mix2App.Propose{
 			// 告白メッセージを表示
 			string _gobi;
             int _lang = userR.toyFlag - 1;
+            if (_lang == -1) _lang = 0;
+
 			if (brotherR == 0) {
 				_gobi = userR.chara1.wend;
 			} else {
@@ -468,6 +470,8 @@ namespace Mix2App.Propose{
 			// 告白OKメッセージを表示
 			string _gobi;
             int _lang = userL.toyFlag - 1;
+            if (_lang == -1) _lang = 0;
+
             if (brotherL == 0)
             {
                 _gobi = userL.chara1.wend;
@@ -521,6 +525,8 @@ namespace Mix2App.Propose{
 			// 告白Noメッセージを表示
 			string _gobi;
             int _lang = userL.toyFlag - 1;
+            if (_lang == -1) _lang = 0;
+
             if (brotherL == 0)
             {
                 _gobi = userL.chara1.wend;

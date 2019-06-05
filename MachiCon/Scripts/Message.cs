@@ -814,6 +814,8 @@ namespace Mix2App.MachiCon{
 		public void SoudanMesDisp(SoudanMesTable flag,string _gobi = "",int _lang = 0){
 			bool _flag = true;
 
+            if (_lang == -1) _lang = 0;
+
 			switch (flag) {
 			case	SoudanMesTable.SoudanMesDispMan1:
 				{
@@ -849,11 +851,14 @@ namespace Mix2App.MachiCon{
 
 
 		public string KokuhakuMesDispMan(string _gobi,int _lang){
+            if (_lang == -1) _lang = 0;
+
 			return KokuhakuAttackMesType01 [_lang,Random.Range (0, KokuhakuAttackMesType01.GetLength(1))].Replace("（＋語尾）",_gobi);
 		}
 
 		public string KokuhakuMesDisp(KokuhakuMesTable flag,string _gobi,int _lang){
 			string	retMes = "";
+            if (_lang == -1) _lang = 0;
 
 			switch (flag) {
 			case	KokuhakuMesTable.KokuhakuMesDispOK:
