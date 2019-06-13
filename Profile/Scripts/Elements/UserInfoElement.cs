@@ -151,9 +151,35 @@ namespace Mix2App.Profile {
             // if (data.utype == UserType.GEST)
             //     KuchiguseBalloon.SetActive(false);
 
-            // HOKKAIDO=1 SECRET=0
-            int listindex = data.bplace-1;
-            if (listindex<0) listindex = 48;
+            // 日本は 0-99 を割り当て。ひみつは 0（内部コード）
+            // 内部コードは、ひみつ=0、ほっかいどう=1　....　かいがい=48
+            // 画像の並びは、ほっかいどう=0　....　かいがい=47、ひみつ=48（49-99は、ダミーとして ひみつ とする）
+            //
+            // 北米は 100-199 を割り当て。SECRETは 100(内部コード)
+            // 内部コードは、Secret=100、Alabama=101、　....　Other=165
+            // 画像の並びは、Secret=100、Alabama=101、　....　Other=165（166-199は、ダミーとして Secret とする）
+            //
+            // ※画像の並び最後の要素（内部コードの最終番号 + 1）は、各国の「ひみつ」に当たるものを配置する
+            //
+            //内部コードを画像の並び順に変換し、出身地画像を設定する
+            int listindex = data.bplace;
+
+            if( listindex < 100)
+            {
+                //日本のユーザー 0-99
+                listindex = data.bplace-1;  // 1 減らす
+                if (listindex<0) listindex = 48;    //ひみつ とする
+            }
+            else if( listindex < 200)
+            {
+                //北米のユーザー 100-199
+                //listindex = data.bplace;  //そのまま
+            }
+            else
+            {
+                //その他（不正）
+                listindex = 48;    //ひみつ とする
+            }
             PrefectureElementPrefab.SetPrefecture(listindex);
         }
 
