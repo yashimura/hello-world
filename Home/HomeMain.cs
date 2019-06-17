@@ -18,6 +18,7 @@ namespace Mix2App.Home
         [SerializeField] protected GameObject[] meetsBtns=null;
         [SerializeField] protected GameEventHandler GEHandler = null;
         [SerializeField] protected GameObject CameraObj = null;
+        [SerializeField] protected GameObject LineView = null;
 
         private object[] mparam;
         private bool mready;
@@ -129,8 +130,14 @@ namespace Mix2App.Home
                 } else if (mcbbs!=mtoday) {
                     ManagerObject.instance.view.dialog("webview",new object[]{"bbs",meinfo},closebbs);
                 }
+
+                if (ManagerObject.instance.player.utype == UserType.LINE)
+                {
+                    LineView.SetActive(true);
+//                    LineView.transform.Find("Button_blue_close").gameObject.GetComponent<Button>().onClick.AddListener(ButtonCloseClick);
+                }
             }
-            
+
             //　ユーザータイプでみーつボタンの表示切替
             if (ManagerObject.instance.player.utype==UserType.MIX2)
             {
@@ -143,9 +150,11 @@ namespace Mix2App.Home
                 meetsBtns[1].SetActive(false);
             }
 
+
+
             //TODO 達成アチーブがある場合は、アチーブ成功画面を呼び出す
 
-            if(hidata.achieves != null)
+            if (hidata.achieves != null)
             {
                 if (hidata.achieves.Count != 0)
                 {
@@ -224,6 +233,13 @@ namespace Mix2App.Home
                 ManagerObject.instance.view.delete(SceneLabel.ACHIEVE_CLEAR);
             }
         }
+
+        public void ButtonCloseClick()
+        {
+            ManagerObject.instance.sound.playSe(17);
+            LineView.SetActive(false);
+        }
+
 
 
     }
