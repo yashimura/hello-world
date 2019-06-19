@@ -27,6 +27,8 @@ namespace Mix2App.Home
         private string minfo;
         private string meinfo;
         private string mtoday;
+        private int mstat;
+        private HomeInfoData mhidata;
 
         void Awake()
         {
@@ -38,7 +40,7 @@ namespace Mix2App.Home
             //{
             //view.SetActive(false);
             //}
-
+            mstat = 0;
             GameEventHandler.OnRemoveSceneEvent += AchieveClearDelete;
 
         }
@@ -54,6 +56,8 @@ namespace Mix2App.Home
         {
             Debug.Log("Home.receive");
             mparam = parameter;
+
+            StartCoroutine(mstart());
         }
 
         public bool ready ()
@@ -68,7 +72,7 @@ namespace Mix2App.Home
 
 
 
-        IEnumerator Start()
+        IEnumerator mstart()
         {
             Debug.Log("Home.Start");
 
@@ -76,6 +80,8 @@ namespace Mix2App.Home
                 // 単体テストの時はreceiverが機能しないのでパラメタをでっちあげる
                 mparam = new object[]{1};
             }
+
+            mstat = 0;
 
             HomeInfoData? qdata=null;
             GameCall call = new GameCall(
@@ -90,11 +96,11 @@ namespace Mix2App.Home
 
             while(qdata==null) yield return null;
 
-            HomeInfoData hidata = (HomeInfoData)qdata;
+            mhidata = (HomeInfoData)qdata;
 
-            minfo = hidata.infoHtml;
-            meinfo = hidata.eventInfoHtml;
-            bool eflag = hidata.eventflag;
+            minfo = mhidata.infoHtml;
+            meinfo = mhidata.eventInfoHtml;
+            bool eflag = mhidata.eventflag;
 
             DateTime dt = System.DateTime.Now;
             mtoday = meinfo+"_"+dt.ToString("yyMMdd");
@@ -116,30 +122,8 @@ namespace Mix2App.Home
                 yield return ManagerObject.instance.connect.send(call);
             }
 
-            ManagerObject.instance.sound.playBgm(1);
-            mready = true;
-
-            //ログインからのホームの時は、強制表示チェック
-            if (ManagerObject.instance.view.GetBackLabel()==null)
-            {
-                if ((ManagerObject.instance.app.checkedHelp & 1) != 1)
-                {
-                    ManagerObject.instance.view.dialog("webview",new object[]{"home"},closehelp);
-                } else if (mcnews!=minfo) {
-                    ManagerObject.instance.view.dialog("webview",new object[]{"news",minfo},closenews);
-                } else if (mcbbs!=mtoday) {
-                    ManagerObject.instance.view.dialog("webview",new object[]{"bbs",meinfo},closebbs);
-                }
-
-                if (ManagerObject.instance.player.utype == UserType.LINE)
-                {
-                    LineView.SetActive(true);
-//                    LineView.transform.Find("Button_blue_close").gameObject.GetComponent<Button>().onClick.AddListener(ButtonCloseClick);
-                }
-            }
-
             //　ユーザータイプでみーつボタンの表示切替
-            if (ManagerObject.instance.player.utype==UserType.MIX2)
+            if (ManagerObject.instance.player.utype == UserType.MIX2)
             {
                 meetsBtns[0].SetActive(false);
                 meetsBtns[1].SetActive(true);
@@ -150,21 +134,21 @@ namespace Mix2App.Home
                 meetsBtns[1].SetActive(false);
             }
 
-
-
-            //TODO 達成アチーブがある場合は、アチーブ成功画面を呼び出す
-
-            if (hidata.achieves != null)
+            //ログインからのホームの時は、強制表示チェック
+            if (ManagerObject.instance.view.GetBackLabel()==null)
             {
-                if (hidata.achieves.Count != 0)
+                if (ManagerObject.instance.player.utype == UserType.LINE)
                 {
-                    int CameraDepth = (int)(CameraObj.transform.GetComponent<Camera>().depth + 1);
-                    ManagerObject.instance.view.add(SceneLabel.ACHIEVE_CLEAR,
-                            hidata.achieves,
-                            CameraDepth);
+                    mstat = 300;
+                }
+                else
+                {
+                    mstat = 100;
                 }
             }
 
+            ManagerObject.instance.sound.playBgm(1);
+            mready = true;
         }
 
         private void closehelp(int result)
@@ -177,11 +161,7 @@ namespace Mix2App.Home
             PlayerPrefs.SetInt("CheckedHelp",ManagerObject.instance.app.checkedHelp);
             PlayerPrefs.Save();
 
-            // ヘルプ後はお知らせ及び掲示板チェック
-            if (mcnews!=minfo)
-                ManagerObject.instance.view.dialog("webview",new object[]{"news",minfo},closenews);
-            else if (mcbbs!=mtoday)
-                ManagerObject.instance.view.dialog("webview",new object[]{"bbs",meinfo},closebbs);
+            if (mstat == 101) mstat++;
         }
 
         private void closebbs(int result)
@@ -191,6 +171,8 @@ namespace Mix2App.Home
             ManagerObject.instance.app.checkedBbs = mtoday;
             PlayerPrefs.SetString("CheckedBbs",mtoday);
             PlayerPrefs.Save();
+
+            if (mstat == 121) mstat++;
         }
 
         private void closenews(int result)
@@ -201,9 +183,7 @@ namespace Mix2App.Home
             PlayerPrefs.SetString("CheckedNews",minfo);
             PlayerPrefs.Save();
 
-            // お知らせ後は掲示板チェック
-            if (mcbbs!=mtoday)
-                ManagerObject.instance.view.dialog("webview",new object[]{"bbs",meinfo},closebbs);
+            if (mstat == 111) mstat++;
         }
 
         public void clickbutton(string label)
@@ -213,9 +193,7 @@ namespace Mix2App.Home
 
             if (label=="Setting")
 	    		ManagerObject.instance.view.change(label,true);
-            else if (label=="Town"&&
-                ManagerObject.instance.player.utype!=UserType.MIX&&
-                ManagerObject.instance.player.utype!=UserType.MIX2)
+            else if (label=="Town"&& ManagerObject.instance.player.chara1.IsTamgo)
 	    		ManagerObject.instance.view.change("GestGate");
             else if (label=="add_news")
 	    		ManagerObject.instance.view.dialog("webview",new object[]{"news",minfo},closenews);
@@ -238,9 +216,84 @@ namespace Mix2App.Home
         {
             ManagerObject.instance.sound.playSe(17);
             LineView.SetActive(false);
+
+            if (mstat == 301) mstat++;
         }
 
+        public void Update()
+        {
+            switch(mstat)
+            {
+                case 100:
+                    if ((ManagerObject.instance.app.checkedHelp & 1) != 1)
+                    {
+                        mstat++;
+                        ManagerObject.instance.view.dialog("webview", new object[] { "home" }, closehelp);
+                    }
+                    else
+                    {
+                        mstat+=2;
+                    }
+                    break;
+                case 102:                    
+                    mstat = 110;
+                    break;
 
+                case 110:
+                    if (mcnews != minfo)
+                    {
+                        mstat++;
+                        ManagerObject.instance.view.dialog("webview", new object[] { "news", minfo }, closenews);
+                    }
+                    else
+                    {
+                        mstat+=2;
+                    }
+                    break;
+                case 112:
+                    mstat = 120;
+                    break;
+
+                case 120:
+                    if (mcbbs != mtoday)
+                    {
+                        mstat++;
+                        ManagerObject.instance.view.dialog("webview", new object[] { "bbs", meinfo }, closebbs);
+                    }
+                    else
+                    {
+                        mstat+=2;
+                    }
+                    break;
+                case 122:
+                    mstat = 200;
+                    break;
+
+                case 200:
+                    mstat++;
+                    //達成アチーブがある場合は、アチーブ成功画面を呼び出す
+                    if (mhidata.achieves != null && mhidata.achieves.Count != 0)
+                    {
+                        int CameraDepth = (int)(CameraObj.transform.GetComponent<Camera>().depth + 1);
+                        ManagerObject.instance.view.add(SceneLabel.ACHIEVE_CLEAR,
+                                mhidata.achieves,
+                                CameraDepth);
+                    }
+                    break;
+
+                case 300:
+                    mstat++;
+                    LineView.SetActive(true);
+                    //LineView.transform.Find("Button_blue_close").gameObject.GetComponent<Button>().onClick.AddListener(ButtonCloseClick);
+                    break;
+                case 302:
+                    mstat = 100;
+                    break;
+
+                default:
+                    break;
+            }
+        }
 
     }
 }
