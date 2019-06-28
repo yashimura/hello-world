@@ -42,6 +42,7 @@ namespace Mix2App.Profile {
 
         [SerializeField] private GameObject IineObj = null;
         [SerializeField] private Sprite[] sexImage = null;
+        [SerializeField] private string ProfileMode = "";
 
 
 
@@ -68,6 +69,11 @@ namespace Mix2App.Profile {
             }
             */
 
+            if(IineObj == null)
+            {
+                return;
+            }
+
             IineObj.transform.Find("seibetsu").gameObject.GetComponent<Image>().sprite = sexImage[user.chara1.sex];
             IineObj.transform.Find("9999").gameObject.GetComponent<Text>().text = Random.Range(0, 9999).ToString();
             IineObj.transform.Find("99999").gameObject.GetComponent<Text>().text = Random.Range(0, 99999).ToString();
@@ -81,15 +87,23 @@ namespace Mix2App.Profile {
             {
                 IineObj.transform.Find("iine_off").gameObject.SetActive(false);
                 IineObj.transform.Find("iine_button").gameObject.SetActive(true);
-                IineObj.transform.Find("iine_button").gameObject.GetComponent<Button>().onClick.AddListener(IineButtonClick);
+                IineObj.transform.Find("iine_button/Button_iine").gameObject.GetComponent<Button>().onClick.AddListener(IineButtonClick);
             }
 
         }
 
         private void IineButtonClick()
         {
-            Lib.ManagerObject.instance.sound.playSe(17);
-            UIWindow.Close2();
+            Lib.ManagerObject.instance.sound.playSe(13);
+
+            if(ProfileMode != "Town")
+            {
+                Lib.ManagerObject.instance.view.back();
+            }
+            else
+            {
+                Town.TownSceneCore.SceneClose();
+            }
         }
 
 

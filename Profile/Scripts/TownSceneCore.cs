@@ -98,6 +98,13 @@ namespace Mix2App.Profile.Town {
 
                     handler.OnRemoveScene(SceneLabel.PROFILE_TOWN);
             });
+
+            UIManager.GEHandlerSet(handler);
+        }
+
+        public static void SceneClose()
+        {
+            UIManager.GEHandlerGet().OnRemoveScene(SceneLabel.PROFILE_TOWN);
         }
     }
 }
