@@ -39,6 +39,12 @@ namespace Mix2App.Profile {
         [Header("Prefecture setup")]
         [SerializeField, Required] private PrefectureElement PrefectureElementPrefab = null;
 
+
+        [SerializeField] private GameObject IineObj = null;
+        [SerializeField] private Sprite[] sexImage = null;
+
+
+
         private string KuchiguseText_Data;
 
         /// <summary>
@@ -61,7 +67,32 @@ namespace Mix2App.Profile {
                 UserNameText.resizeTextForBestFit = false;
             }
             */
+
+            IineObj.transform.Find("seibetsu").gameObject.GetComponent<Image>().sprite = sexImage[user.chara1.sex];
+            IineObj.transform.Find("9999").gameObject.GetComponent<Text>().text = Random.Range(0, 9999).ToString();
+            IineObj.transform.Find("99999").gameObject.GetComponent<Text>().text = Random.Range(0, 99999).ToString();
+
+            if(Random.Range(0,2) == 0)
+            {
+                IineObj.transform.Find("iine_off").gameObject.SetActive(true);
+                IineObj.transform.Find("iine_button").gameObject.SetActive(false);
+            }
+            else
+            {
+                IineObj.transform.Find("iine_off").gameObject.SetActive(false);
+                IineObj.transform.Find("iine_button").gameObject.SetActive(true);
+                IineObj.transform.Find("iine_button").gameObject.GetComponent<Button>().onClick.AddListener(IineButtonClick);
+            }
+
         }
+
+        private void IineButtonClick()
+        {
+            Lib.ManagerObject.instance.sound.playSe(17);
+            UIWindow.Close2();
+        }
+
+
 
         /// <summary>
         /// Setup prefecture number

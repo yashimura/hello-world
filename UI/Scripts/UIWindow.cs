@@ -37,6 +37,15 @@ namespace Mix2App.UI {
             GameObject.Destroy(this.gameObject);
         }
 
+        public static void Close2()
+        {
+/*
+            if (CloseWindowAction != null)
+                CloseWindowAction.Invoke();
+            GameObject.Destroy(gameObject);
+*/
+        }
+
         protected const int SE_Tap = 11;
         protected const int SE_Choice = 12;
         protected const int SE_OK = 13;
