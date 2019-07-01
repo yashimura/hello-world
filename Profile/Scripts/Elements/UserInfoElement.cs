@@ -78,8 +78,10 @@ namespace Mix2App.Profile {
             IineObj.transform.Find("9999").gameObject.GetComponent<Text>().text = Random.Range(0, 9999).ToString();
             IineObj.transform.Find("99999").gameObject.GetComponent<Text>().text = Random.Range(0, 99999).ToString();
 
-            if(Random.Range(0,2) == 0)
+
+            if(ProfileMode != "Town")
             {
+                // ボタンは表示しない
                 IineObj.transform.Find("iine_off").gameObject.SetActive(true);
                 IineObj.transform.Find("iine_button").gameObject.SetActive(false);
             }
@@ -95,7 +97,9 @@ namespace Mix2App.Profile {
         private void IineButtonClick()
         {
             Lib.ManagerObject.instance.sound.playSe(13);
+            Town.TownSceneCore.SceneClose();
 
+/*
             if(ProfileMode != "Town")
             {
                 Lib.ManagerObject.instance.view.back();
@@ -104,6 +108,7 @@ namespace Mix2App.Profile {
             {
                 Town.TownSceneCore.SceneClose();
             }
+*/
         }
 
 
