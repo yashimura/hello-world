@@ -59,13 +59,14 @@ namespace Mix2App.TownEvent
             if (mparam == null)
             {
                 mparam = new object[] {
+                    new RewardData (),  // 報酬
                     4,					// Depth値
 				};
             }
 
-            if (mparam.Length == 1)
+            if (mparam.Length == 2)
             {
-                CameraObj.transform.GetComponent<Camera>().depth = (int)mparam[0];
+                CameraObj.transform.GetComponent<Camera>().depth = (int)mparam[1];
             }
             else
             {
