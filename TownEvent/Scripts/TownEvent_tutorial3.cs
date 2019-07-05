@@ -77,7 +77,7 @@ namespace Mix2App.TownEvent
         private void ButtonClick()
         {
             ManagerObject.instance.sound.playSe(17);
-            Application.OpenURL("https://google.co.jp/");
+//            Application.OpenURL("https://google.co.jp/");
             GEHandler.OnRemoveScene(SceneLabel.TOWN_EVENT + "_tutorial3");
         }
 
