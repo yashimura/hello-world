@@ -11,6 +11,7 @@ using Mix2App.UI;
 using Mix2App.Profile.Elements;
 using Mix2App.Lib.View;
 using Mix2App.Lib.Model;
+using Mix2App.Lib.Events;
 
 namespace Mix2App.Profile {
     /// <summary>
@@ -47,6 +48,7 @@ namespace Mix2App.Profile {
 
 
         private string KuchiguseText_Data;
+        private User userData;
 
         /// <summary>
         /// Update user data
@@ -74,12 +76,13 @@ namespace Mix2App.Profile {
                 return;
             }
 
-            IineObj.transform.Find("seibetsu").gameObject.GetComponent<Image>().sprite = sexImage[user.chara1.sex];
-            IineObj.transform.Find("9999").gameObject.GetComponent<Text>().text = Random.Range(0, 9999).ToString();
-            IineObj.transform.Find("99999").gameObject.GetComponent<Text>().text = Random.Range(0, 99999).ToString();
+            userData = user;
 
+            IineObj.transform.Find("seibetsu").gameObject.GetComponent<Image>().sprite = sexImage[user.chara1.sex];     // 性別
+            IineObj.transform.Find("9999").gameObject.GetComponent<Text>().text = user.like.ToString();                 // いいねしてもらった数
+            IineObj.transform.Find("99999").gameObject.GetComponent<Text>().text = user.likeTotal.ToString();           // いいねしてもらった総数
 
-            if(ProfileMode != "Town")
+            if ((ProfileMode != "Town") || (user.likeRemain == 0))
             {
                 // ボタンは表示しない
                 IineObj.transform.Find("iine_off").gameObject.SetActive(true);
@@ -87,6 +90,7 @@ namespace Mix2App.Profile {
             }
             else
             {
+                // ボタンを表示する
                 IineObj.transform.Find("iine_off").gameObject.SetActive(false);
                 IineObj.transform.Find("iine_button").gameObject.SetActive(true);
                 IineObj.transform.Find("iine_button/Button_iine").gameObject.GetComponent<Button>().onClick.AddListener(IineButtonClick);
@@ -97,20 +101,27 @@ namespace Mix2App.Profile {
         private void IineButtonClick()
         {
             Lib.ManagerObject.instance.sound.playSe(13);
+
+            // いいねが押されたのでライブラリに状況を送信する
+            GameCall call = new GameCall(CallLabel.SEND_LIKE, userData);
+            call.AddListener(SendLike);
+            Lib.ManagerObject.instance.connect.send(call);
+
+            // タウンプロファイルから抜ける。（基本いいねボタンは、タウンプロファイルにしかない予定）
             Town.TownSceneCore.SceneClose();
 
 /*
-            if(ProfileMode != "Town")
-            {
-                Lib.ManagerObject.instance.view.back();
-            }
-            else
-            {
-                Town.TownSceneCore.SceneClose();
-            }
+            // プロファイルから抜ける場合
+            Lib.ManagerObject.instance.view.back();
+            // タウンプロファイルから抜ける場合
+            Town.TownSceneCore.SceneClose();
 */
         }
 
+        void SendLike(bool success, object data)
+        {
+
+        }
 
 
         /// <summary>
