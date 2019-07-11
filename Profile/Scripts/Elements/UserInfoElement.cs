@@ -56,7 +56,8 @@ namespace Mix2App.Profile {
         /// <param name="user"></param>
         public void SetupProfile(User user) {
             AvatarPrefab.SetupAvatar(user.avatar);
-            UserNameText.text = user.nickname;
+            UserNameText.text = UIFunction.UserNicknameRetInsert(UIFunction.UserNicknameChange(user.nickname));
+
             /* fallback font で対応するので不要
             if (user.utype!=UserType.MIX2&&(user.enableBnIdLink||user.enableLineLink))
             {

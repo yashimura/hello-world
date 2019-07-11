@@ -28,8 +28,11 @@ namespace Mix2App.Profile.Elements {
 
         public override void SetData(ProfileBookData data) {
             pbookData = data;
-            UserNameCaption.text = data.user.nickname;
+            UserNameCaption.text = UIFunction.UserNicknameRetInsert(UIFunction.UserNicknameChange(data.user.nickname));
             Character.init(data.user.chara1);
         }
+
+
+
     }
 }

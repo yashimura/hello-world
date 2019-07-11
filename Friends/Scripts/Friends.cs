@@ -1319,7 +1319,7 @@ namespace Mix2App.Friends
 
             if (baseStr != null)
             {
-                if (baseStr.Length > 10)
+                if (baseStr.Length > 12)
                 {
                     retStr = baseStr.Insert(10, "\n");
                 }

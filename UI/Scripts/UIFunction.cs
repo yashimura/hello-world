@@ -70,6 +70,53 @@ namespace Mix2App.UI
             toObj.transform.Find(toStr + "PetImg/Layers/Layer (1)").gameObject.transform.localScale = fromObj.transform.Find("Layers/Layer (1)").gameObject.transform.localScale;
         }
 
+        /// <summary>
+        /// 文字列が２０文字以上の場合１９文字目と２０文字目を……に変更して２０文字にする。
+        /// </summary>
+        /// <param name="baseStr"></param>
+        /// <returns></returns>
+        public static string UserNicknameChange(string baseStr)
+        {
+            string retStr = baseStr;
+
+            if (baseStr != null)
+            {
+                if (baseStr.Length > 20)
+                {
+                    retStr = baseStr.Remove(18, baseStr.Length - 18);
+                    retStr = retStr + "……";
+                }
+            }
+            else
+            {
+                retStr = "";
+            }
+
+            return retStr;
+        }
+       /// <summary>
+       /// 文字列が１３文字以上なら１０文字で改行する。
+       /// </summary>
+       /// <param name="baseStr"></param>
+       /// <returns></returns>
+        public static string UserNicknameRetInsert(string baseStr)
+        {
+            string retStr = baseStr;
+
+            if (baseStr != null)
+            {
+                if (baseStr.Length > 12)
+                {
+                    retStr = baseStr.Insert(10, "\n");
+                }
+            }
+            else
+            {
+                retStr = "";
+            }
+
+            return retStr;
+        }
 
 
     }
