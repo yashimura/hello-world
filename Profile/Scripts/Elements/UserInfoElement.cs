@@ -79,6 +79,16 @@ namespace Mix2App.Profile {
 
             userData = user;
 
+            if (user.chara1.IsTamgo)
+            {
+                // 卵の時は、表示位置を少し右にずらす
+                Vector3 _pos = TamaNameText.gameObject.transform.localPosition;
+                _pos.x += 40.0f;
+                TamaNameText.gameObject.transform.localPosition = _pos;
+            }
+
+
+            IineObj.transform.Find("seibetsu").gameObject.SetActive(!user.chara1.IsTamgo);                              // 卵の時は性別を表示しない
             IineObj.transform.Find("seibetsu").gameObject.GetComponent<Image>().sprite = sexImage[user.chara1.sex];     // 性別
             IineObj.transform.Find("9999").gameObject.GetComponent<Text>().text = user.like.ToString();                 // いいねしてもらった数
             IineObj.transform.Find("99999").gameObject.GetComponent<Text>().text = user.likeTotal.ToString();           // いいねしてもらった総数
