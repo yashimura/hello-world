@@ -50,7 +50,7 @@ namespace Mix2App.Profile.Test {
                 calbums = new List<AlbumData>(),
                 chara1 = (Ch1Enabled) ? new TamaChara(backbodylist[Random.Range(0, backbodylist.Count)]) : null,
                 chara2 = (Ch2Enabled) ? (new TamaChara(backbodylist[Random.Range(0, backbodylist.Count)])) : null,
-                friends1 = new List<User>(),
+                friends1 = new List<Friend>(),
                 bplace = Random.Range(0, 48),
                 ukind = UKind,
                 utype = UType
@@ -66,7 +66,7 @@ namespace Mix2App.Profile.Test {
             count = Random.Range(3, 40);
 
             for (int i = 0; i < count; i++)
-                usr.friends1.Add(new User(0) {
+                usr.friends1.Add(new Friend(0,0) {
                     chara1 = new TamaChara(backbodylist[Random.Range(0, backbodylist.Count)]),
                     pet = new TamaPet(Random.Range(700, 710)),
                 });
