@@ -67,7 +67,7 @@ namespace Mix2App.TownEvent
         {
             Debug.Log("mStart");
 
-            MainObj.transform.Find("tutorial/bt_close").gameObject.GetComponent<Button>().onClick.AddListener(ButtonClick);
+            MainObj.transform.Find("tutorial/bt_next").gameObject.GetComponent<Button>().onClick.AddListener(ButtonClick);
 
             mready = true;
 
@@ -78,7 +78,7 @@ namespace Mix2App.TownEvent
         private void ButtonClick()
         {
             ManagerObject.instance.sound.playSe(17);
-//            Application.OpenURL("https://google.co.jp/");
+            Application.OpenURL("https://tamagotch.channel.or.jp/member/campaigns/summercampaign2019/");
             GEHandler.OnRemoveScene(SceneLabel.TOWN_EVENT + "_tutorial3");
         }
 
