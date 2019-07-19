@@ -269,7 +269,7 @@ namespace Mix2App.MachiCon{
 			EventKakunin.transform.Find ("window_kakunin/Button_hai").gameObject.GetComponent<Button> ().onClick.AddListener (ButtonKakuninYesClick);
 			EventKakunin.transform.Find ("window_kakunin/Button_iie").gameObject.GetComponent<Button> ().onClick.AddListener (ButtonKakuninNoClick);
 
-			jobCount = statusJobCount.machiconJobCount020;							// 双子選択画面を飛ばす場合
+            jobCount = statusJobCount.machiconJobCount020;                          // 双子選択画面を飛ばす場合
 
 
 
@@ -277,7 +277,36 @@ namespace Mix2App.MachiCon{
 
 
 
-			if (muser1.utype == UserType.MIX2) {
+            float use_screen_x = Screen.currentResolution.width;
+            float use_screen_y = Screen.currentResolution.height;
+#if UNITY_EDITOR
+            use_screen_x = Screen.width;
+            use_screen_y = Screen.height;
+#endif
+            float num;
+            if (use_screen_x >= use_screen_y)
+            {
+                num = use_screen_x / use_screen_y;
+            }
+            else
+            {
+                num = use_screen_y / use_screen_x;
+            }
+            GameObject _obj = GameObject.Find("Canvas_front");
+            if ((num > 1.33f) && (num < 1.34f))
+            {   // 3:4の時のみ画面を拡大表示
+                PrgCanvas.transform.Find("soudan/tamagochi").gameObject.GetComponent<Transform>().transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                _obj.transform.Find("_machicon_curtain/Jikkyou").gameObject.GetComponent<Transform>().transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+            }
+            else
+            {   // 3:4の時以外の画面を拡大表示
+                PrgCanvas.transform.Find("soudan/tamagochi").gameObject.GetComponent<Transform>().transform.localScale = new Vector3(0.95f, 0.95f, 1.0f);
+                _obj.transform.Find("_machicon_curtain/Jikkyou").gameObject.GetComponent<Transform>().transform.localScale = new Vector3(0.95f, 0.95f, 1.0f);
+            }
+
+
+
+            if (muser1.utype == UserType.MIX2) {
 				stampFlag = false;			// たまごっちの喋るコメントあり
 			} else {
 				stampFlag = true;			// たまごっちのコメントはスタンプ

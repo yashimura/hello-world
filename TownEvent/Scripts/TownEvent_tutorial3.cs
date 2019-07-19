@@ -67,6 +67,14 @@ namespace Mix2App.TownEvent
         {
             Debug.Log("mStart");
 
+            //39:18や21:9などの縦長スクリーンサイズに対応する
+            //アスペクト比に応じて、画面のscaleを調整する。
+            float kk1 = 1024f / 2048f;
+            float kk2 = (float)Screen.height / (float)Screen.width;
+            float kk3 = (kk2 < kk1) ? kk2 / kk1 : 1.0f;
+            MainObj.transform.Find("tutorial").gameObject.transform.localScale = new Vector3(kk3, kk3, 1);
+
+
             MainObj.transform.Find("tutorial/bt_next").gameObject.GetComponent<Button>().onClick.AddListener(ButtonClick);
 
             mready = true;

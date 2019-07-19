@@ -227,8 +227,16 @@ namespace Mix2App.MiniGame2{
 			} else {
 				num = use_screen_y / use_screen_x;
 			}
+            if ((num > 1.33f) && (num < 1.34f))
+            {   // 3:4の時のみ画面を拡大表示
+                EventGame.GetComponent<Transform>().transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+            }
+            else
+            {   // 3:4の時以外の画面を拡大表示
+                EventGame.GetComponent<Transform>().transform.localScale = new Vector3(0.95f, 0.95f, 1.0f);
+            }
 
-			if (muser1.chara2 == null) {
+            if (muser1.chara2 == null) {
 				futagoFlag = false;
 			} else {
 				futagoFlag = true;
@@ -528,10 +536,10 @@ namespace Mix2App.MiniGame2{
 
 		private void TamagochiLoopInit(){
 			Vector2[] _initTableNpc = new Vector2[] {
-				new Vector2 (-450.0f, 380.0f),
-				new Vector2 ( 450.0f, 380.0f),
-				new Vector2 (-700.0f, 380.0f),
-				new Vector2 ( 700.0f, 380.0f),
+				new Vector2 (-450.0f, 370.0f),
+				new Vector2 ( 450.0f, 370.0f),
+				new Vector2 (-700.0f, 370.0f),
+				new Vector2 ( 700.0f, 370.0f),
 			};
 
 			for (int i = 0; i < CharaTamagoGuest.Length; i++) {
@@ -551,7 +559,7 @@ namespace Mix2App.MiniGame2{
 				} else {
 					pos.x = 5000.0f * i;
 				}
-				pos.y = 380.0f;
+				pos.y = 370.0f;
 				CharaTamagoMain [i].transform.localPosition = pos;
 			}
 
@@ -918,7 +926,12 @@ namespace Mix2App.MiniGame2{
 		}
 
 		private void GameMainInit(){
-			posMenu.x = 1500.0f;
+            for (int i = 0; i < 8; i++)
+            {
+                ButtonMenu[i].SetActive(false);
+                ButtonMenu[i].transform.localScale = new Vector3(4, 4, 1);
+            }
+            posMenu.x = 1500.0f;
 			EventGameMenu.transform.localPosition = posMenu;
 			seikaiCount = 0;
 			menuCount = 2;
