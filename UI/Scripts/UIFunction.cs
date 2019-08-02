@@ -47,6 +47,13 @@ namespace Mix2App.UI
             toObj.transform.Find(toStr + "CharaImg/Layers/Layer2").gameObject.transform.localScale = fromObj.transform.Find("Layers/Layer2").gameObject.transform.localScale;
             toObj.transform.Find(toStr + "CharaImg/Layers/Layer3").gameObject.transform.localScale = fromObj.transform.Find("Layers/Layer3").gameObject.transform.localScale;
             toObj.transform.Find(toStr + "CharaImg/Layers/Layer4").gameObject.transform.localScale = fromObj.transform.Find("Layers/Layer4").gameObject.transform.localScale;
+
+            toObj.transform.Find(toStr + "CharaImg/Layers/Layer0").gameObject.transform.localRotation = fromObj.transform.Find("Layers/Layer0").gameObject.transform.localRotation;
+            toObj.transform.Find(toStr + "CharaImg/Layers/Layer1").gameObject.transform.localRotation = fromObj.transform.Find("Layers/Layer1").gameObject.transform.localRotation;
+            toObj.transform.Find(toStr + "CharaImg/Layers/Layer2").gameObject.transform.localRotation = fromObj.transform.Find("Layers/Layer2").gameObject.transform.localRotation;
+            toObj.transform.Find(toStr + "CharaImg/Layers/Layer3").gameObject.transform.localRotation = fromObj.transform.Find("Layers/Layer3").gameObject.transform.localRotation;
+            toObj.transform.Find(toStr + "CharaImg/Layers/Layer4").gameObject.transform.localRotation = fromObj.transform.Find("Layers/Layer4").gameObject.transform.localRotation;
+
         }
 
         public static void TamagochiPetImageMove(GameObject toObj, GameObject fromObj, string toStr)
@@ -68,6 +75,9 @@ namespace Mix2App.UI
 
             toObj.transform.Find(toStr + "PetImg/Layers/Layer").gameObject.transform.localScale = fromObj.transform.Find("Layers/Layer").gameObject.transform.localScale;
             toObj.transform.Find(toStr + "PetImg/Layers/Layer (1)").gameObject.transform.localScale = fromObj.transform.Find("Layers/Layer (1)").gameObject.transform.localScale;
+
+            toObj.transform.Find(toStr + "PetImg/Layers/Layer").gameObject.transform.localRotation = fromObj.transform.Find("Layers/Layer").gameObject.transform.localRotation;
+            toObj.transform.Find(toStr + "PetImg/Layers/Layer (1)").gameObject.transform.localRotation = fromObj.transform.Find("Layers/Layer (1)").gameObject.transform.localRotation;
         }
 
         /// <summary>

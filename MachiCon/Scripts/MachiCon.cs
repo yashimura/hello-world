@@ -1053,10 +1053,14 @@ namespace Mix2App.MachiCon{
 		private void SoudanTamagoCharaSet (){
 			UIFunction.TamagochiImageMove (EventSoudanTamago, CharaTamago [playerNumber], "chara/");
 			UIFunction.TamagochiImageMove (EventSoudanTamago, CharaTamago [targetNumber], "target/");
-		}
 
-		// 相談シーンのたまごっち入場
-		private IEnumerator SoudanTamagoFlameIn(){
+            // CharaImageのLayersの順番が下記の２行を入れないと正しく反映されない時がある。（Unityのバグ？）
+            EventResult.transform.Find("yes").gameObject.SetActive(true);
+            EventResult.transform.Find("yes").gameObject.SetActive(false);
+        }
+
+        // 相談シーンのたまごっち入場
+        private IEnumerator SoudanTamagoFlameIn(){
 			float[] soudanJumpTable = new float[] {
 				-12.0f, -9.0f, -9.0f, -6.0f, -6.0f, -6.0f, -3.0f, -3.0f, -3.0f, -3.0f, 0.0f, 0.0f, 0.0f,
 				0.0f, 0.0f, 0.0f, 3.0f, 3.0f, 3.0f, 3.0f, 6.0f, 6.0f, 6.0f, 9.0f, 9.0f, 12.0f,
