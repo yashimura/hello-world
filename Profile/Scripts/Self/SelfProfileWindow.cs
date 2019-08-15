@@ -35,6 +35,8 @@ namespace Mix2App.Profile {
         [SerializeField, Required] private Text UserIDText = null;
         [SerializeField, Required] private Button UserIDButton = null;
 
+        [Header("Object")]
+        [SerializeField] private GameObject BaseObj = null;
 
         private void SetupProfile() {
             ProfileSetupWindow wnd = UIManager.ShowModal(ProfileSetupWindowPrefab)
@@ -107,8 +109,36 @@ namespace Mix2App.Profile {
 
             UserIDBalloon1.SetActive((user_data.code!=null&&user_data.code!=""));
             UserIDBalloon2.SetActive(false);
-            
+
+            if (UIFunction.TutorialFlagGet())
+            {
+                UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("CLIENT/Button rect/SetupProfileButton").GetComponent<Button>(), false);
+                UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("CLIENT/Button rect/Buttons/FamilyTreeButton").GetComponent<Button>(), false);
+                UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("CLIENT/Button rect/Buttons/GrowthRecordButton").GetComponent<Button>(), false);
+                UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("CLIENT/Button rect/Buttons/ProfileViewButton").GetComponent<Button>(), false);
+                UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("BackButton").GetComponent<Button>(), false);
+
+                UIFunction.ButtonClickModeChenage(GameObject.Find("kuchiguse_btn").GetComponent<Button>(), false);
+                UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("CLIENT/id_btn").GetComponent<Button>(), false);
+
+            }
+
+
             return wnd;
         }
+
+
+        private void Update()
+        {
+            if (UIFunction.TutorialFlagGet())
+            {
+                if(UIFunction.TutorialCountGet() == UIFunction.TUTORIAL_COUNTER.ButtonTrueStart)
+                {
+                    UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.ButtonTrueEnd);
+                    UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("BackButton").GetComponent<Button>(), true);
+                }
+            }
+        }
+
     }
 }

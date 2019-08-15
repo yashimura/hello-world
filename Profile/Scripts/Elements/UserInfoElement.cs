@@ -18,13 +18,14 @@ namespace Mix2App.Profile {
     /// Block of user-info elements:
     /// Avatar, UserName, Characters, CharaName, Prefecture
     /// </summary>
-    public class UserInfoElement: UIElement {
+    public class UserInfoElement : UIElement
+    {
         private User UserData;
 
         [Header("Avatar settings")]
         [SerializeField, Required] private AvatarElement AvatarPrefab = null;
         [SerializeField, Required] private Text UserNameText = null;
-                
+
         [Header("Tama character settings")]
         [SerializeField, Required] private CharaBehaviour Chara0 = null;
         [SerializeField, Required] private CharaBehaviour Chara1 = null;
@@ -54,7 +55,8 @@ namespace Mix2App.Profile {
         /// Update user data
         /// </summary>
         /// <param name="user"></param>
-        public void SetupProfile(User user) {
+        public void SetupProfile(User user)
+        {
             AvatarPrefab.SetupAvatar(user.avatar);
             UserNameText.text = UIFunction.UserNicknameRetInsert(UIFunction.UserNicknameChange(user.nickname));
 
@@ -72,7 +74,7 @@ namespace Mix2App.Profile {
             }
             */
 
-            if(IineObj == null)
+            if (IineObj == null)
             {
                 return;
             }
@@ -107,6 +109,11 @@ namespace Mix2App.Profile {
                 IineObj.transform.Find("iine_button/Button_iine").gameObject.GetComponent<Button>().onClick.AddListener(IineButtonClick);
             }
 
+            if (UIFunction.TutorialFlagGet())
+            {
+                // チュートリアル中はいいねボタンを無効化
+                UIFunction.ButtonClickModeChenage(IineObj.transform.Find("iine_button/Button_iine").GetComponent<Button>(),false);
+            }
         }
 
         private void IineButtonClick()
@@ -121,12 +128,12 @@ namespace Mix2App.Profile {
             // タウンプロファイルから抜ける。（基本いいねボタンは、タウンプロファイルにしかない予定）
             Town.TownSceneCore.SceneClose();
 
-/*
-            // プロファイルから抜ける場合
-            Lib.ManagerObject.instance.view.back();
-            // タウンプロファイルから抜ける場合
-            Town.TownSceneCore.SceneClose();
-*/
+            /*
+                        // プロファイルから抜ける場合
+                        Lib.ManagerObject.instance.view.back();
+                        // タウンプロファイルから抜ける場合
+                        Town.TownSceneCore.SceneClose();
+            */
         }
 
         void SendLike(bool success, object data)
@@ -139,15 +146,19 @@ namespace Mix2App.Profile {
         /// Setup prefecture number
         /// </summary>
         /// <param name="place"></param>
-        public void SetupPrefecture(int place) {
+        public void SetupPrefecture(int place)
+        {
             PrefectureElementPrefab.SetPrefecture(place);
         }
-        
-        private void ClearTamaName() {
+
+        private void ClearTamaName()
+        {
             TamaNameText.text = "";
         }
-        private void SetupCharacters(TamaChara ch1, TamaChara ch2) {
-            if (ch1 != null && ch2 != null) {
+        private void SetupCharacters(TamaChara ch1, TamaChara ch2)
+        {
+            if (ch1 != null && ch2 != null)
+            {
                 Chara0.gameObject.SetActive(false);
                 Chara1.gameObject.SetActive(true);
                 Chara2.gameObject.SetActive(true);
@@ -156,7 +167,9 @@ namespace Mix2App.Profile {
                 Chara2.init(ch2);
 
                 TamaNameText.text = ch1.cname + " と\n" + ch2.cname;
-            } else if (ch1 != null) {
+            }
+            else if (ch1 != null)
+            {
                 Chara0.gameObject.SetActive(true);
                 Chara1.gameObject.SetActive(false);
                 Chara2.gameObject.SetActive(false);
@@ -164,7 +177,9 @@ namespace Mix2App.Profile {
                 Chara0.init(ch1);
 
                 TamaNameText.text = ch1.cname;
-            } else if (ch2 != null) {
+            }
+            else if (ch2 != null)
+            {
                 Chara0.gameObject.SetActive(true);
                 Chara1.gameObject.SetActive(false);
                 Chara2.gameObject.SetActive(false);
@@ -175,49 +190,56 @@ namespace Mix2App.Profile {
             }
 
             // ballon set false when wstyle = ""
-            KuchiguseBalloon1.SetActive((ch1.wstyle!=null&&ch1.wstyle.Length>0));
+            KuchiguseBalloon1.SetActive((ch1.wstyle != null && ch1.wstyle.Length > 0));
             KuchiguseBalloon2.SetActive(false);
             KuchiguseText_Data = ch1.wstyle;
         }
-        
+
         /// <summary>
         /// Assign this to active Kuchiguse button
         /// </summary>
-        public void KuchiguseClick() {
-            if (KuchiguseBalloon1.activeSelf&&!KuchiguseBalloon2.activeSelf)
+        public void KuchiguseClick()
+        {
+            if (KuchiguseBalloon1.activeSelf && !KuchiguseBalloon2.activeSelf)
             {
                 KuchiguseBalloon1.SetActive(false);
                 KuchiguseBalloon2.SetActive(true);
                 KuchiguseText.text = KuchiguseText_Data;
                 Lib.ManagerObject.instance.sound.playSe(11);
             }
-            else if (!KuchiguseBalloon1.activeSelf&&KuchiguseBalloon2.activeSelf)
+            else if (!KuchiguseBalloon1.activeSelf && KuchiguseBalloon2.activeSelf)
             {
                 KuchiguseBalloon1.SetActive(true);
                 KuchiguseBalloon2.SetActive(false);
                 Lib.ManagerObject.instance.sound.playSe(11);
             }
         }
-        
+
         /// <summary>
         /// Sets user data.
         /// Also update all info fields
         /// </summary>
         /// <param name="data"></param>
-        public void SetupUserData(User data) {
+        public void SetupUserData(User data)
+        {
             UserData = data;
 
             SetupProfile(UserData);
             ClearTamaName();
             SetupCharacters(UserData.chara1, UserData.chara2);
-            if (UserData.pet != null) {
-                try {
+            if (UserData.pet != null)
+            {
+                try
+                {
                     Pet1.gameObject.SetActive(true);
                     Pet1.init(UserData.pet);
-                } catch (System.Exception e) {
+                }
+                catch (System.Exception e)
+                {
                     Debug.LogError(e.Message, this);
                 }
-            } else
+            }
+            else
                 Pet1.gameObject.SetActive(false);
 
             // if (data.utype == UserType.GEST)
@@ -236,13 +258,13 @@ namespace Mix2App.Profile {
             //内部コードを画像の並び順に変換し、出身地画像を設定する
             int listindex = data.bplace;
 
-            if( listindex < 100)
+            if (listindex < 100)
             {
                 //日本のユーザー 0-99
-                listindex = data.bplace-1;  // 1 減らす
-                if (listindex<0) listindex = 48;    //ひみつ とする
+                listindex = data.bplace - 1;  // 1 減らす
+                if (listindex < 0) listindex = 48;    //ひみつ とする
             }
-            else if( listindex < 200)
+            else if (listindex < 200)
             {
                 //北米のユーザー 100-199
                 //listindex = data.bplace;  //そのまま
@@ -258,8 +280,23 @@ namespace Mix2App.Profile {
         /// <summary>
         /// If some user data changed - update fields
         /// </summary>
-        public void UpdateInfo() {
+        public void UpdateInfo()
+        {
             SetupUserData(UserData);
+        }
+
+        private void Update()
+        {
+            if (UIFunction.TutorialFlagGet())
+            {
+                if(UIFunction.TutorialCountGet() == UIFunction.TUTORIAL_COUNTER.ButtonTrueStart)
+                {
+                    UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.ButtonTrueEnd);
+
+                    // ボタン制御を再開
+                    UIFunction.ButtonClickModeChenage(IineObj.transform.Find("iine_button/Button_iine").gameObject.GetComponent<Button>(), true);
+                }
+            }
         }
     }
 }

@@ -7,6 +7,7 @@
 ////
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using Mix2App.Lib;
 using Mix2App.Lib.Events;
 using Mix2App.UI;
@@ -19,7 +20,24 @@ namespace Mix2App.Profile {
     public class SceneCore: MonoBehaviour, IReceiver {
         [SerializeField, Required] SelfProfileWindow SelfProfileWindowPrefab = null;
 
-        object[] mparam;        
+        [SerializeField] GameObject baseObj = null;
+
+        object[] mparam;
+
+        bool mTutorialFlag;
+        int mTutorialRoute;
+        int mTutorialStep;
+
+
+        private readonly string[] MessageTable001 = new string[]
+        {
+            "あなたの ナウたまの いいねは\nここで かくにんできるぷり♪",
+            "いままで あつめた\nいいねのかずは こっちぷり！",
+            "つぎは いいねの しかたぷり\nみーつパークに もどるぷり！",
+        };
+
+
+
         private void CloseAction() {
             ManagerObject.instance.view.back();
         }
@@ -47,10 +65,29 @@ namespace Mix2App.Profile {
                 mparam = new object[] { ManagerObject.instance.player };
         }
 
+        void OnDestroy()
+        {
+            UIFunction.TutorialDataAllClear();
+        }
+
         IEnumerator Start()
         {
             while (mparam==null)
                 yield return null;
+
+            if (mparam.Length >= 3 && mparam[1] is int && mparam[2] is int)
+            {
+                mTutorialFlag = true;
+                mTutorialRoute = (int)mparam[1];
+                mTutorialStep = (int)mparam[2];
+            }
+            else
+            {
+                mTutorialFlag = false;
+                mTutorialRoute = 0;
+                mTutorialStep = 0;
+            }
+            UIFunction.TutorialDataAllSet(mTutorialFlag, mTutorialRoute, mTutorialStep);
 
             AvatarElementSelectWindow.InitData();
 
@@ -72,6 +109,58 @@ namespace Mix2App.Profile {
                 });
                 ManagerObject.instance.connect.send(call);
             }
+
+            if (mTutorialFlag)
+            {
+                StartCoroutine(TutorialIineSetumei());
+            }
+
         }
+
+        IEnumerator TutorialIineSetumei()
+        {
+            yield return new WaitForSeconds(0.5f);
+            for (int i = 0; i < 2; i++)
+            {
+                TutorialMessageDataSet(MessageTable001[i]);
+                TutorialMessageWindowDisp(true);
+                yield return new WaitForSeconds(0.1f);
+                while (true)
+                {
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        break;
+                    }
+                    yield return null;
+                }
+            }
+            TutorialMessageDataSet(MessageTable001[2]);
+            TutorialMessageWindowDisp(true);
+            yield return new WaitForSeconds(0.1f);
+
+            UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.ButtonTrueStart);         // 戻るボタンを有効化
+
+            yield return null;
+        }
+
+
+
+        private void TutorialMessageWindowDisp(bool flag)
+        {
+            if (flag)
+            {
+                baseObj.transform.Find("tutorial").gameObject.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
+            }
+            else
+            {
+                baseObj.transform.Find("tutorial").gameObject.transform.localPosition = new Vector3(5000.0f, 0.0f, 0.0f);
+            }
+        }
+
+        private void TutorialMessageDataSet(string _mes)
+        {
+            baseObj.transform.Find("tutorial/Window_up/aplich_set/fukidasi/Text").GetComponent<Text>().text = _mes;
+        }
+
     }
 }

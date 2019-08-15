@@ -781,7 +781,13 @@ MonoBehaviour:
   UserIDText: {fileID: 5506495310459569381}
   UserIDButton: {fileID: 1079979391588048173}
   BaseObj: {fileID: 4368719250435374506}
+  TutorialSprite:
+  - {fileID: 21300010, guid: 7df4e0bb88040f14c8eb90dfe2639c4f, type: 3}
+  - {fileID: 21300002, guid: 7df4e0bb88040f14c8eb90dfe2639c4f, type: 3}
   TownBgmId: 2
+  TutorialFlag: 0
+  TutorialRoot: 0
+  TutorialStep: 0
 --- !u!1 &4405198690777487288
 GameObject:
   m_ObjectHideFlags: 0
@@ -2101,11 +2107,6 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7423623881146313515, guid: a30ad0a8e74f68f4e8c679c7afc55f77,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -0.9999924
-      objectReference: {fileID: 0}
     - target: {fileID: 7423732736821081107, guid: a30ad0a8e74f68f4e8c679c7afc55f77,
         type: 3}
       propertyPath: m_SizeDelta.y
@@ -2125,6 +2126,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423623881146313515, guid: a30ad0a8e74f68f4e8c679c7afc55f77,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.9999924
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a30ad0a8e74f68f4e8c679c7afc55f77, type: 3}

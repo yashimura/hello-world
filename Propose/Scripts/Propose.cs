@@ -153,6 +153,8 @@ namespace Mix2App.Propose{
 		private int mBrother1;												// 自分の兄弟種類
 		private int mBrother2;												// 相手の兄弟種類
 
+        private bool mTutorialFlag = false;
+
 		private User userR, userL;
 		private int brotherR, brotherL;
 
@@ -177,6 +179,7 @@ namespace Mix2App.Propose{
 			mready = false;
             fProposeResult = true;
             fProposeOff = false;
+            mTutorialFlag = false;
 
 			xSpd [0] = Random.Range (0.5f, 1.0f);
 			xSpd [1] = Random.Range (0.5f, 1.0f);
@@ -190,13 +193,14 @@ namespace Mix2App.Propose{
 			//パラメタ詳細は設計書参照
 			if (mparam==null) {
 				mparam = new object[] {
-					0,														    // int  プロポーズ種類 0=自分が受けた、1=自分がした
+					1,														    // int  プロポーズ種類 0=自分が受けた、1=自分がした
                     1,                                                          // int  プロポーズ可否 0=失敗、1=成功（受けた時のみ使用）
 					new TestUser(1,UserKind.ANOTHER,UserType.MIX2,1,16,17,0,1), // user 自分
 					1,														    // int  自分のキャラ種類
 					new TestUser(1,UserKind.ANOTHER,UserType.MIX2,1,23,24,0,1), // user プロポーズ相手
 					1,														    // int  プロポーズキャラ種類
                     4,                                                          // int  カメラDepth値
+//                    1,                                                          // チュートリアルの時のみこのパラメータがある
 				};
 			}
 
@@ -217,6 +221,16 @@ namespace Mix2App.Propose{
 			mUser2 = (User)mparam [4];
 			mBrother2 = (int)mparam [5];
             CameraObj.transform.GetComponent<Camera>().depth = (int)mparam[6];
+
+            if(mparam.Length >= 8)
+            {
+                mTutorialFlag = true;   // チュートリアルでのプロポーズ処理
+                mProposeResult = false; // チュートリアルでは必ず失敗
+            }
+            else
+            {
+                mTutorialFlag = false;
+            }
 
             StartCoroutine(mStart());
 		}
@@ -267,7 +281,15 @@ namespace Mix2App.Propose{
 			cbCharaTamago[0] = CharaTamago[0].GetComponent<CharaBehaviour> ();		// 
 			cbCharaTamago[1] = CharaTamago[1].GetComponent<CharaBehaviour> ();		// 
 
-			StartCoroutine(mainLoop());
+
+            if (mTutorialFlag)
+            {
+                // チュートリアル中のプロポーズなので戻るボタンは非表示
+                EventWait.transform.Find("Button_blue_modoru").gameObject.SetActive(false);
+            }
+
+
+            StartCoroutine(mainLoop());
 
 			yield return null;
 		}
@@ -329,9 +351,12 @@ namespace Mix2App.Propose{
 			EventWait.SetActive (true);
 			if (mProposeType == 1) {
                 fProposeResult = true;
-                GameCall call = new GameCall(CallLabel.SEND_PROPOSE, mUser1, mBrother1, mUser2, mBrother2);
-                call.AddListener(SendPropose);
-                ManagerObject.instance.connect.send(call);
+                if (!mTutorialFlag)
+                {
+                    GameCall call = new GameCall(CallLabel.SEND_PROPOSE, mUser1, mBrother1, mUser2, mBrother2);
+                    call.AddListener(SendPropose);
+                    ManagerObject.instance.connect.send(call);
+                }
 
                 // 自分がプロポーズしたのでプロポーズ待機状態を表示する
                 EventWait.transform.Find ("fukidashi_left").gameObject.SetActive (true);
@@ -408,6 +433,12 @@ namespace Mix2App.Propose{
                     {
                         _waitSecTime2--;
                     }
+                }
+
+                if(mTutorialFlag && _waitSecTime2 <= 25.0f)
+                {
+                    // チュートリアルは約5秒で失敗処理に移行
+                    break;
                 }
 
                 yield return null;

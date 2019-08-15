@@ -47,8 +47,9 @@ namespace Mix2App.Profile.Town {
 
 		[Header("Object")]
 		[SerializeField] private GameObject BaseObj = null;
-	
 
+        [Header("Image")]
+        [SerializeField] private Sprite[] TutorialSprite = null;
 
 		private GameObject[] ProposeWindow;
 
@@ -58,6 +59,8 @@ namespace Mix2App.Profile.Town {
 		private int mCharaNpcNum;
 
         public int TownBgmId;
+
+
 
 		private void ProposeStep3(int _mCharaPcNum, int _mCharaNpcNum) {
 			ProposeWindow [2].transform.localPosition = new Vector3 (5000, 0, 0);
@@ -91,6 +94,11 @@ namespace Mix2App.Profile.Town {
 			} else {
 				ProposeStep2 (0);
 			}
+
+            if (UIFunction.TutorialFlagGet())
+            {
+                UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.TutorialClear);
+            }
         }
 
         public override void Setup() {
@@ -136,85 +144,117 @@ namespace Mix2App.Profile.Town {
         public override ProfileWindow SetupUserData(User user_data) {
             ProfileWindow wnd = base.SetupUserData(user_data);
 
-			{	// プロポーズボタンを表示するかどうかをチェックする
-				bool _proposeButtonActiveFlag = UIManager.proposeFlagGet();
-
-                mUserPc = ManagerObject.instance.player;
-				mUserNpc = user_data;
-				mCharaPcNum = 0;
-				mCharaNpcNum = 0;
-
-/*
-				if ((mUserPc.utype != UserType.MIX2) ||						// 自分がみーつユーザーでない
-					(mUserPc.chara1.grow < 4) ||							// 自分がフレンド期になっていない
-					(mUserNpc.utype != UserType.MIX2) ||					// 相手がみーつユーザーでない
-					(mUserNpc.chara1.grow < 4)	||							// 相手がフレンド期になっていない
-					(mUserPc.chara1.sex == mUserNpc.chara1.sex)				// 同性
-				) {
-					_proposeButtonActiveFlag = false;						// プロポーズボタンを表示しない
-				}
-*/
-				if(_proposeButtonActiveFlag){
-					ProposeButton.gameObject.SetActive (true);				// プロポーズボタンの表示
-					ProposeWindow = UIManager.proposeWindowGet ();			// プロポーズ確認画面の登録
-					StartCoroutine (TamagochiCharaSet ());					// プロポーズ確認画面のたまごっちの登録
-					ProposeButtonSet ();									// プロポーズ確認画面のボタンの有効化
-				}
-			}
-
-            //他者のユーザーコードは表示しない
-            UserIDBalloon1.SetActive(false);
-            UserIDBalloon2.SetActive(false);
-            
-            if (Lib.ManagerObject.instance.player.containsProfiles(user_data.code))
+            if (!UIFunction.TutorialFlagGet())
             {
-                //close
-                ProfileUpdateButton.gameObject.SetActive(true);
-                ProfileExchangeButton.gameObject.SetActive(false);
-                AddButtonTapListner(ProfileUpdateButton, ()=> {
-                    UIManager.ShowModal(ProfileUpdateDialog, false).AddOKAction(() => {
-                        GameEventHandler.OnRemoveSceneEvent += onremove;
-                        Lib.ManagerObject.instance.view.add(
-                            // label, palyer, user, kind, depth
-                            SceneLabel.PROFILE_EXCHANGE, Lib.ManagerObject.instance.player, UserData, 1, 2
-                        );
-                    });
-                });
-            }
-            else
-            {
-                //close
-                if (user_data.ukind!=UserKind.NPC)
+                {   // プロポーズボタンを表示するかどうかをチェックする
+                    bool _proposeButtonActiveFlag = UIManager.proposeFlagGet();
+
+                    mUserPc = ManagerObject.instance.player;
+                    mUserNpc = user_data;
+                    mCharaPcNum = 0;
+                    mCharaNpcNum = 0;
+
+                    if (_proposeButtonActiveFlag)
+                    {
+                        ProposeButton.gameObject.SetActive(true);               // プロポーズボタンの表示
+                        ProposeWindow = UIManager.proposeWindowGet();           // プロポーズ確認画面の登録
+                        StartCoroutine(TamagochiCharaSet());                    // プロポーズ確認画面のたまごっちの登録
+                        ProposeButtonSet();                                     // プロポーズ確認画面のボタンの有効化
+                    }
+                }
+
+                //他者のユーザーコードは表示しない
+                UserIDBalloon1.SetActive(false);
+                UserIDBalloon2.SetActive(false);
+
+                if (Lib.ManagerObject.instance.player.containsProfiles(user_data.code))
                 {
-                    ProfileUpdateButton.gameObject.SetActive(false);
-                    ProfileExchangeButton.gameObject.SetActive(true);
+                    //close
+                    ProfileUpdateButton.gameObject.SetActive(true);
+                    ProfileExchangeButton.gameObject.SetActive(false);
+                    AddButtonTapListner(ProfileUpdateButton, () =>
+                    {
+                        UIManager.ShowModal(ProfileUpdateDialog, false).AddOKAction(() =>
+                        {
+                            GameEventHandler.OnRemoveSceneEvent += onremove;
+                            Lib.ManagerObject.instance.view.add(
+                                // label, palyer, user, kind, depth
+                                SceneLabel.PROFILE_EXCHANGE, Lib.ManagerObject.instance.player, UserData, 1, 2
+                            );
+                        });
+                    });
                 }
                 else
                 {
-                    ProfileUpdateButton.gameObject.SetActive(false);
-                    ProfileExchangeButton.gameObject.SetActive(false);
-                }
-                AddButtonTapListner(ProfileExchangeButton, ()=> {
-                    UIManager.ShowModal(ProfileExchangeDialog, false).AddOKAction(() => {
-                        GameEventHandler.OnRemoveSceneEvent += onremove;
-                        Lib.ManagerObject.instance.view.add(
-                            // label, palyer, user, kind, depth
-                            SceneLabel.PROFILE_EXCHANGE, Lib.ManagerObject.instance.player, UserData, 0, 2
-                        );
+                    //close
+                    if (user_data.ukind != UserKind.NPC)
+                    {
+                        ProfileUpdateButton.gameObject.SetActive(false);
+                        ProfileExchangeButton.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        ProfileUpdateButton.gameObject.SetActive(false);
+                        ProfileExchangeButton.gameObject.SetActive(false);
+                    }
+                    AddButtonTapListner(ProfileExchangeButton, () =>
+                    {
+                        UIManager.ShowModal(ProfileExchangeDialog, false).AddOKAction(() =>
+                        {
+                            GameEventHandler.OnRemoveSceneEvent += onremove;
+                            Lib.ManagerObject.instance.view.add(
+                                // label, palyer, user, kind, depth
+                                SceneLabel.PROFILE_EXCHANGE, Lib.ManagerObject.instance.player, UserData, 0, 2
+                            );
+                        });
                     });
-                });
+                }
+
+                if ((!ProfileUpdateButton.gameObject.activeSelf) && (!ProfileExchangeButton.gameObject.activeSelf))
+                {
+                    // 「交換」「更新」ボタンが非表示の時、プロボーズボタンの表示位置を「交換」「更新」の位置に変更する
+                    ProposeButton.gameObject.transform.localPosition = ProfileUpdateButton.gameObject.transform.localPosition;
+                }
+
+            }
+            else
+            {
+                // チュートリアル中は全てのボタンを表示
+
+                mUserPc = ManagerObject.instance.player;
+                mUserNpc = user_data;
+                mCharaPcNum = 0;
+                mCharaNpcNum = 0;
+
+                ProposeButton.gameObject.SetActive(true);               // プロポーズボタンの表示
+                ProposeWindow = UIManager.proposeWindowGet();           // プロポーズ確認画面の登録
+                StartCoroutine(TamagochiCharaSet());                    // プロポーズ確認画面のたまごっちの登録
+                ProposeButtonSet();                                     // プロポーズ確認画面のボタンの有効化
+
+                //他者のユーザーコードは表示しない
+                UserIDBalloon1.SetActive(false);
+                UserIDBalloon2.SetActive(false);
+
+                ProfileUpdateButton.gameObject.SetActive(false);
+                ProfileExchangeButton.gameObject.SetActive(true);
+
+                // チュートリアル中は全てのボタン制御をオフ
+                UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("CLIENT/Button rect/Buttons/FamilyTreeButton").GetComponent<Button>(),false);
+                UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("CLIENT/Button rect/Buttons/ExchangeProfileButton").GetComponent<Button>(),false);
+                UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("CLIENT/Button rect/Buttons/ProposeButton").GetComponent<Button>(),false);
+                UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("BackButton").GetComponent<Button>(),false);
+
+                if ((UIFunction.TutorialRouteGet() == 1) && (UIFunction.TutorialStepGet() == 1))
+                {
+                    // ゲストルートでプロポーズステップの時のみ処理する
+                    StartCoroutine(ProposeButtonAnime());
+                }
+
             }
 
 
 
-			if ((!ProfileUpdateButton.gameObject.activeSelf) && (!ProfileExchangeButton.gameObject.activeSelf)) {
-				// 「交換」「更新」ボタンが非表示の時、プロボーズボタンの表示位置を「交換」「更新」の位置に変更する
-				ProposeButton.gameObject.transform.localPosition = ProfileUpdateButton.gameObject.transform.localPosition;
-			}
-
-
-
-			return wnd;
+            return wnd;
         }
 
         void onremove(string label)
@@ -227,9 +267,34 @@ namespace Mix2App.Profile.Town {
             }
         }
 
+        private void Update()
+        {
+            if (UIFunction.TutorialFlagGet())
+            {
+                if (UIFunction.TutorialCountGet() == UIFunction.TUTORIAL_COUNTER.ButtonTrueStart)
+                {
+                    UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.ButtonTrueEnd);
+
+                    // ボタン制御を再開
+                    UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("CLIENT/Button rect/Buttons/ProposeButton").GetComponent<Button>(), true);
+                }
+            }
+
+        }
+
+        IEnumerator ProposeButtonAnime()
+        {
+            while (true)
+            {
+                BaseObj.transform.Find("CLIENT/Button rect/Buttons/ProposeButton").GetComponent<Image>().sprite = TutorialSprite[0];
+                yield return new WaitForSeconds(0.5f);
+                BaseObj.transform.Find("CLIENT/Button rect/Buttons/ProposeButton").GetComponent<Image>().sprite = TutorialSprite[1];
+                yield return new WaitForSeconds(0.5f);
+            }
+        }
 
 
-		IEnumerator TamagochiCharaSet(){
+        IEnumerator TamagochiCharaSet(){
 			CharaBehaviour _cb;
 
 			// プレイヤーたまごっちを設定する
@@ -281,14 +346,30 @@ namespace Mix2App.Profile.Town {
 
             ManagerObject.instance.sound.playSe (13);
 
-            ManagerObject.instance.view.add(SceneLabel.PROPOSE,
-                    1,                                  // プロポーズをするので１（プロポーズされた場合は０）
-                    0,                                  // プロポーズするのでダミー
-                    mUserPc,                            // 自分のユーザー情報
-                    mCharaPcNum,                        // 自分の兄弟のどちらでプロポーズしたか
-                    mUserNpc,                           // 相手のユーザー情報
-                    mCharaNpcNum,                       // 相手の兄弟のどちらにプロポーズしたか
-                    CameraDepth);
+            if (UIFunction.TutorialFlagGet())
+            {
+                // チュートリアル中
+                ManagerObject.instance.view.add(SceneLabel.PROPOSE,
+                        1,                                  // プロポーズをするので１（プロポーズされた場合は０）
+                        0,                                  // プロポーズするのでダミー
+                        mUserPc,                            // 自分のユーザー情報
+                        mCharaPcNum,                        // 自分の兄弟のどちらでプロポーズしたか
+                        mUserNpc,                           // 相手のユーザー情報
+                        mCharaNpcNum,                       // 相手の兄弟のどちらにプロポーズしたか
+                        CameraDepth,
+                        0);
+            }
+            else
+            {
+                ManagerObject.instance.view.add(SceneLabel.PROPOSE,
+                        1,                                  // プロポーズをするので１（プロポーズされた場合は０）
+                        0,                                  // プロポーズするのでダミー
+                        mUserPc,                            // 自分のユーザー情報
+                        mCharaPcNum,                        // 自分の兄弟のどちらでプロポーズしたか
+                        mUserNpc,                           // 相手のユーザー情報
+                        mCharaNpcNum,                       // 相手の兄弟のどちらにプロポーズしたか
+                        CameraDepth);
+            }
         }
         private void Propose1Button_PC1(){
 			ManagerObject.instance.sound.playSe (12);
@@ -338,6 +419,11 @@ namespace Mix2App.Profile.Town {
 
                 //プロポーズから戻ってきた場合はタウンBGMに戻す
                 ManagerObject.instance.sound.playBgm(TownBgmId);
+
+                if (UIFunction.TutorialFlagGet())
+                {
+                    UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.ProposeEnd);
+                }
             }
         }
 

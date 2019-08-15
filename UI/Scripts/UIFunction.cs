@@ -13,9 +13,6 @@ namespace Mix2App.UI
 {
     public class UIFunction : MonoBehaviour
     {
-
-
-
         public static void TamagochiImageMove(GameObject toObj, GameObject fromObj, string toStr)
         {
             for (int i = 0; i < fromObj.transform.Find("Layers").transform.childCount; i++)
@@ -104,11 +101,11 @@ namespace Mix2App.UI
 
             return retStr;
         }
-       /// <summary>
-       /// 文字列が１３文字以上なら１０文字で改行する。
-       /// </summary>
-       /// <param name="baseStr"></param>
-       /// <returns></returns>
+        /// <summary>
+        /// 文字列が１３文字以上なら１０文字で改行する。
+        /// </summary>
+        /// <param name="baseStr"></param>
+        /// <returns></returns>
         public static string UserNicknameRetInsert(string baseStr)
         {
             string retStr = baseStr;
@@ -126,6 +123,68 @@ namespace Mix2App.UI
             }
 
             return retStr;
+        }
+
+        /// <summary>
+        /// ボタンの制御モードの変更
+        /// </summary>
+        /// <param name="_btn"></param>
+        /// <param name="_flag"></param>
+        public static void ButtonClickModeChenage(Button _btn,bool _flag)
+        {
+            // ボタン制御を変更
+            _btn.enabled = _flag;
+        }    
+
+
+        private static bool _tutorialFlag;
+        private static int _tutorialRoute;
+        private static int _tutorialStep;
+        private static TUTORIAL_COUNTER _tutorialCount;
+
+        public static void TutorialDataAllClear()
+        {
+            _tutorialFlag = false;
+            _tutorialRoute = 0;
+            _tutorialStep = 0;
+            _tutorialCount = 0;
+        }
+        public static void TutorialDataAllSet(bool _flag,int _route,int _step)
+        {
+            _tutorialFlag = _flag;
+            _tutorialRoute = _route;
+            _tutorialStep = _step;
+            _tutorialCount = TUTORIAL_COUNTER.Normal;
+        }
+        public static bool TutorialFlagGet()
+        {
+            return _tutorialFlag;
+        }
+        public static int TutorialRouteGet()
+        {
+            return _tutorialRoute;
+        }
+        public static int TutorialStepGet()
+        {
+            return _tutorialStep;
+        }
+
+        public enum TUTORIAL_COUNTER
+        {
+            Normal,
+            ButtonTrueStart,
+            ButtonTrueEnd,
+            TutorialClear,
+            ProposeEnd,
+        };
+
+        public static void TutorialCountSet(TUTORIAL_COUNTER _cnt)
+        {
+            _tutorialCount = _cnt;
+        }
+        public static TUTORIAL_COUNTER TutorialCountGet()
+        {
+            return _tutorialCount;
         }
 
 
