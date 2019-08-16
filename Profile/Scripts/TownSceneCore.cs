@@ -56,6 +56,12 @@ namespace Mix2App.Profile.Town
             "さっそく「プロポーズ」ボタンを タップするぷり！",
         };
 
+        private readonly string[] MessageTable004 = new string[]
+        {
+            "ステキなナウたまがいたらいいねするぷり！\nつぎは「プロポーズ」についてぷり！\n\n「おわる」ボタンをタップすると\n「あそびかた」を おわるぷり",
+            "きになるナウたまがいたら 「プロポーズ」するぷり！\nつぎは「たまキュン♥パーティー」についてぷり！\n\n「おわる」ボタンをタップすると\n「あそびかた」を おわるぷり",
+        };
+
         void Awake()
         {
 
@@ -267,7 +273,13 @@ namespace Mix2App.Profile.Town
                     }
             }
 
-            SceneClose();
+            baseObj.transform.Find("meets2_8_skip/tutorial_kakunin/Button_hai").GetComponent<Button>().onClick.AddListener(ButtonSkipClick);
+            baseObj.transform.Find("meets2_8_skip/tutorial_kakunin/Button_iie").GetComponent<Button>().onClick.AddListener(ButtonNextClick);
+            baseObj.transform.Find("meets2_8_skip/tutorial_kakunin/Button_iie (1)").GetComponent<Button>().onClick.AddListener(ButtonEndClick);
+            baseObj.transform.Find("meets2_8_skip/tutorial_kakunin/3/Text").GetComponent<Text>().text = MessageTable004[1];
+            baseObj.transform.Find("meets2_8_skip").gameObject.SetActive(true);
+
+//            SceneClose();
             yield return null;
         }
 
@@ -287,6 +299,22 @@ namespace Mix2App.Profile.Town
         private void TutorialMessageDataSet(string _mes)
         {
             baseObj.transform.Find("tutorial/Window_up/aplich_set/fukidasi/Text").GetComponent<Text>().text = _mes;
+        }
+
+        private void ButtonNextClick()
+        {
+            ManagerObject.instance.sound.playSe(13);
+            SceneClose();
+        }
+        private void ButtonEndClick()
+        {
+            ManagerObject.instance.sound.playSe(13);
+            SceneClose();
+        }
+        private void ButtonSkipClick()
+        {
+            ManagerObject.instance.sound.playSe(13);
+            SceneClose();
         }
 
 
