@@ -62,6 +62,8 @@ namespace Mix2App.Profile.Town
             "きになるナウたまがいたら 「プロポーズ」するぷり！\nつぎは「たまキュン♥パーティー」についてぷり！\n\n「おわる」ボタンをタップすると\n「あそびかた」を おわるぷり",
         };
 
+
+
         void Awake()
         {
 
@@ -168,12 +170,16 @@ namespace Mix2App.Profile.Town
                 {
                     case 0:
                         {
+                            baseObj.transform.Find("tutorial/Window_up/main").transform.localPosition = new Vector3(150.0f, -150.0f, 0.0f);
+
                             StartCoroutine(TutorialIine());
 
                             break;
                         }
                     default:
                         {
+                            baseObj.transform.Find("tutorial/Window_up/main").transform.localPosition = new Vector3(830.0f, 80.0f, 0.0f);
+
                             StartCoroutine(TutorialPropose());
 
                             break;

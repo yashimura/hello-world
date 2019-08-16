@@ -37,6 +37,14 @@ namespace Mix2App.Profile {
         };
 
 
+        private Vector3[] YajirusiPosTable = new Vector3[]
+        {
+            new Vector3(-80.0f,-180.0f,0.0f),
+            new Vector3(470.0f,-180.0f,0.0f),
+            new Vector3(830.0f,-200.0f,0.0f),
+        };
+
+
 
         private void CloseAction() {
             ManagerObject.instance.view.back();
@@ -123,6 +131,7 @@ namespace Mix2App.Profile {
             for (int i = 0; i < 2; i++)
             {
                 TutorialMessageDataSet(MessageTable001[i]);
+                baseObj.transform.Find("tutorial/Window_up/main").transform.localPosition = YajirusiPosTable[i];
                 TutorialMessageWindowDisp(true);
                 yield return new WaitForSeconds(0.1f);
                 while (true)
@@ -135,6 +144,7 @@ namespace Mix2App.Profile {
                 }
             }
             TutorialMessageDataSet(MessageTable001[2]);
+            baseObj.transform.Find("tutorial/Window_up/main").transform.localPosition = YajirusiPosTable[2];
             TutorialMessageWindowDisp(true);
             yield return new WaitForSeconds(0.1f);
 

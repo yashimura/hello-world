@@ -186,6 +186,7 @@ GameObject:
   - component: {fileID: 111329818}
   - component: {fileID: 111329817}
   - component: {fileID: 111329816}
+  - component: {fileID: 111329819}
   m_Layer: 0
   m_Name: Tutorial_yajirusi
   m_TagString: Untagged
@@ -220,7 +221,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 111329814}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 830aa0cb44f3bdd4ea8d3e58d6fbd226, type: 3}
   m_Name: 
@@ -266,6 +267,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 111329814}
   m_CullTransparentMesh: 0
+--- !u!114 &111329819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 111329814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d57a2e1f5cfc74266a449f4dd8ad3f49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  whoite: {fileID: 948528906}
+  speed: 4
+  yajirusipow: 4
+  interval: 0.1
 --- !u!1 &619353774
 GameObject:
   m_ObjectHideFlags: 0
