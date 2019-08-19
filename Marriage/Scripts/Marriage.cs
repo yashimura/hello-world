@@ -147,8 +147,12 @@ namespace Mix2App.Marriage{
 		private bool manPetAttendFlag;
 		private bool womanPetAttendFlag;
 
+        private bool mTutorialFlag;
+        private int mTutorialRoute;
+        private int mTutorialStep;
 
-		private bool retryFlag;
+
+        private bool retryFlag;
 
         void Awake(){
             Debug.Log("Marriage Awake");
@@ -188,7 +192,18 @@ namespace Mix2App.Marriage{
 			muser2 = (User)mparam[3];
 			mkind2 = (int)mparam[4];
 
-			jobCount = statusJobCount.marriageJobCount000;
+            if (mparam.Length > 5)
+            {
+                mTutorialFlag = true;
+                mTutorialRoute = (int)mparam[5];
+                mTutorialStep = (int)mparam[6];
+            }
+            else
+            {
+                mTutorialFlag = false;
+            }
+
+            jobCount = statusJobCount.marriageJobCount000;
 			startEndFlag = false;
 			waitCount = 1;
 
@@ -989,16 +1004,33 @@ namespace Mix2App.Marriage{
 		}
 		private void ButtonSippaiEndClick(){
 			ManagerObject.instance.sound.playSe (17);
-			ManagerObject.instance.view.change(SceneLabel.TOWN);
-		}
-		private void ButtonSippaiRetryClick(){
+            if (!mTutorialFlag)
+            {
+                ManagerObject.instance.view.change(SceneLabel.TOWN);
+            }
+            else
+            {
+                // チュートリアル中の定数を追加する必要がある
+                ManagerObject.instance.view.change(SceneLabel.TOWN, mTutorialRoute, mTutorialStep);
+            }
+
+        }
+        private void ButtonSippaiRetryClick(){
 			ManagerObject.instance.sound.playSe (13);
 			retryFlag = true;
 		}
 		private void ButtonSeikouClick(){
 			ManagerObject.instance.sound.playSe (17);
-			ManagerObject.instance.view.change(SceneLabel.HOME);
-		}
+            if (!mTutorialFlag)
+            {
+                ManagerObject.instance.view.change(SceneLabel.HOME);
+            }
+            else
+            {
+                // チュートリアル中の定数を追加する必要がある
+                ManagerObject.instance.view.change(SceneLabel.HOME, mTutorialRoute, mTutorialStep);
+            }
+        }
         private void ButtonBLEClick(){
             ManagerObject.instance.sound.playSe(13);
             EventBLESippai.SetActive(false);

@@ -128,8 +128,18 @@ namespace Mix2App.MachiCon{
 		}
 
 		private int meventid;
+        private bool mTutorialFlag;
+        private int mTutorialRoute;
+        private int mTutorialStep;
 
-		private statusKokuhakuCount kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount000;
+        private readonly string[] MessageTable001 = new string[]
+        {
+            "「そうだんタイム」では あなたのナウたまが \nきになったコについて そうだんしてくるぷりよ！",
+            "あなたのきもちを \n「いいね！」ボタンか 「う〜ん…」ボタンから\nえらぶぷり！",
+            "ステキなナウたまぷり！\n「いいね！」ボタンを タップぷり！",
+        };
+
+        private statusKokuhakuCount kokuhakuTimeLoopCount = statusKokuhakuCount.kokuhakuCount000;
 		private enum statusKokuhakuCount{
 			kokuhakuCount000,
 			kokuhakuCount010,
@@ -256,9 +266,22 @@ namespace Mix2App.MachiCon{
 
             if (parameter != null && parameter.Length > 0){
                 meventid = (int)parameter[0];
+                if (parameter.Length > 1)
+                {
+                    mTutorialFlag = true;
+                    mTutorialRoute = (int)parameter[1];
+                    mTutorialStep = (int)parameter[2];
+                }
+                else
+                {
+                    mTutorialFlag = false;
+                }
             } else {
                 meventid = 0;
+                mTutorialFlag = false;
             }
+            mTutorialFlag = true;
+
 
 			muser1 = ManagerObject.instance.player;
 			mkind1 = 0;
@@ -675,15 +698,23 @@ namespace Mix2App.MachiCon{
 				}
 			case	statusJobCount.machiconJobCount170:
 				{
-					if (EventSoudan.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).normalizedTime >= 1.0f) {
-						jobCount = statusJobCount.machiconJobCount180;
-						SoudanMessageDisp ();													// 相談タイトルメッセージ設定
+                        if (EventSoudan.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
+                        {
+                            jobCount = statusJobCount.machiconJobCount180;
+                            SoudanMessageDisp();                                                    // 相談タイトルメッセージ設定
 
-						EventSoudanPartsDisp (true);
-						MesDisp.JikkyouMesDisp (Message.JikkyouMesTable.JikkyouMesDisp07);
+                            EventSoudanPartsDisp(true);
+                            MesDisp.JikkyouMesDisp(Message.JikkyouMesTable.JikkyouMesDisp07);
 
-						StartCoroutine ("AppealTimeWait");										// APPEAL_LIMIT_TIME秒間でキー入力待ち終了
-					}
+                            if (!mTutorialFlag)
+                            {
+                                StartCoroutine("AppealTimeWait");										// APPEAL_LIMIT_TIME秒間でキー入力待ち終了
+                            }
+                            else
+                            {
+                                StartCoroutine("AppealTimeTutorial");               					// キー入力待ち終了
+                            }
+                        }
 
 					SoudanTamagoCharaSet ();													// 相談シーンのたまごっちのアニメ
 					break;
@@ -940,22 +971,56 @@ namespace Mix2App.MachiCon{
 				{
 					if (WaitTimeSubLoop ()) {
 						EventEnd.SetActive (false);
-						if (playerResultFlag) {
-							Debug.Log ("ユーザーの結婚フラグ：" + mpMember1.canMarried);
-							Debug.Log ("告白相手の結婚フラグ：" + mpMember2.canMarried);
-							if((mpMember1.canMarried) && (mpMember2.canMarried)){
-								Debug.Log ("結婚イベントへ・・・");
-								ManagerObject.instance.view.change(SceneLabel.MARRIAGE,mkind,muser1,mkind1,muser2,mkind2);
-							} else {
-								Debug.Log ("デートイベントへ・・・");
-								ManagerObject.instance.view.change(SceneLabel.MARRIAGE_DATE,mkind,muser1,mkind1,muser2,mkind2);
-							}
-						} else {
-							Debug.Log ("たまタウンへ・・・");
-							ManagerObject.instance.view.change (SceneLabel.TOWN);
-						}
+							if (!mTutorialFlag)
+							{
+								if (playerResultFlag)
+								{
+									Debug.Log("ユーザーの結婚フラグ：" + mpMember1.canMarried);
+									Debug.Log("告白相手の結婚フラグ：" + mpMember2.canMarried);
 
-						jobCount = statusJobCount.machiconJobCount370;
+									if ((mpMember1.canMarried) && (mpMember2.canMarried))
+									{
+										Debug.Log("結婚イベントへ・・・");
+										ManagerObject.instance.view.change(SceneLabel.MARRIAGE, mkind, muser1, mkind1, muser2, mkind2);
+									}
+									else
+									{
+										Debug.Log("デートイベントへ・・・");
+										ManagerObject.instance.view.change(SceneLabel.MARRIAGE_DATE, mkind, muser1, mkind1, muser2, mkind2);
+									}
+								}
+								else
+								{
+									Debug.Log("たまタウンへ・・・");
+									ManagerObject.instance.view.change(SceneLabel.TOWN);
+								}
+							}
+							else
+							{
+								if (playerResultFlag)
+								{
+									Debug.Log("ユーザーの結婚フラグ：" + mpMember1.canMarried);
+									Debug.Log("告白相手の結婚フラグ：" + mpMember2.canMarried);
+
+									if ((mpMember1.canMarried) && (mpMember2.canMarried))
+									{
+										Debug.Log("チュートリアル結婚イベントへ・・・");
+										ManagerObject.instance.view.change(SceneLabel.MARRIAGE, mkind, muser1, mkind1, muser2, mkind2, mTutorialRoute, mTutorialStep);
+									}
+									else
+									{
+										Debug.Log("チュートリアルデートイベントへ・・・");
+										ManagerObject.instance.view.change(SceneLabel.MARRIAGE_DATE, mkind, muser1, mkind1, muser2, mkind2, mTutorialRoute, mTutorialStep);
+									}
+								}
+								else
+								{
+									Debug.Log("チュートリアルたまタウンへ・・・");
+									ManagerObject.instance.view.change(SceneLabel.TOWN, mTutorialRoute, mTutorialStep);
+								}
+							}
+
+							jobCount = statusJobCount.machiconJobCount370;
 					}
 					break;
 				}
@@ -3498,8 +3563,63 @@ namespace Mix2App.MachiCon{
 			buttonFlag = true;
 		}
 
-		// Yesボタンが押された時
-		private void ButtneYesClick(){
+        private IEnumerator AppealTimeTutorial()
+        {
+            EventSoudanYesNew.GetComponent<Button>().enabled = false;
+            EventSoudanNoNew.GetComponent<Button>().enabled = false;
+
+            if(sceneNumber == 0)
+            {
+                TutorialMessageDataSet(MessageTable001[0]);
+                PrgCanvas.transform.Find("tutorial").gameObject.SetActive(true);
+                yield return new WaitForSeconds(0.1f);
+                while (true)
+                {
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        break;
+                    }
+                    yield return null;
+                }
+                PrgCanvas.transform.Find("tutorial/Window_up/main").gameObject.SetActive(true);
+                PrgCanvas.transform.Find("tutorial/Window_up/sub").gameObject.SetActive(true);
+                TutorialMessageDataSet(MessageTable001[1]);
+                PrgCanvas.transform.Find("tutorial").gameObject.SetActive(true);
+                yield return new WaitForSeconds(0.1f);
+                EventSoudanYesNew.GetComponent<Button>().enabled = true;
+                EventSoudanNoNew.GetComponent<Button>().enabled = true;
+            }
+            else
+            {
+                PrgCanvas.transform.Find("tutorial/Window_up/main").gameObject.SetActive(true);
+                TutorialMessageDataSet(MessageTable001[2]);
+                PrgCanvas.transform.Find("tutorial").gameObject.SetActive(true);
+                yield return new WaitForSeconds(0.1f);
+                EventSoudanYesNew.GetComponent<Button>().enabled = true;
+            }
+
+            while (true)
+            {
+                if (buttonFlag)
+                {
+                    break;
+                }
+                yield return null;
+            }
+
+            PrgCanvas.transform.Find("tutorial").gameObject.SetActive(false);
+            PrgCanvas.transform.Find("tutorial/Window_up/main").gameObject.SetActive(false);
+            PrgCanvas.transform.Find("tutorial/Window_up/sub").gameObject.SetActive(false);
+
+        }
+        private void TutorialMessageDataSet(string _mes)
+        {
+            PrgCanvas.transform.Find("tutorial/Window_up/aplich_set/fukidasi/Text").GetComponent<Text>().text = _mes;
+        }
+
+
+        // Yesボタンが押された時
+        private void ButtneYesClick(){
 			ManagerObject.instance.sound.playSe (13);
 
 			LoveManWomanNumberSet (10);		// 好感度を１０上げる

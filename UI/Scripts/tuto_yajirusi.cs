@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class profile_yajirusi : MonoBehaviour
+public class tuto_yajirusi : MonoBehaviour
 {
     public GameObject whoite;
     private Vector3 defaultPos;
