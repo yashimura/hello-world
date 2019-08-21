@@ -138,42 +138,37 @@ namespace Mix2App.UI
 
 
         private static bool _tutorialFlag;
-        private static int _tutorialRoute;
-        private static int _tutorialStep;
+        private static int _tutorialStepID;
         private static TUTORIAL_COUNTER _tutorialCount;
 
         public static void TutorialDataAllClear()
         {
             _tutorialFlag = false;
-            _tutorialRoute = 0;
-            _tutorialStep = 0;
+            _tutorialStepID = 0;
             _tutorialCount = 0;
         }
-        public static void TutorialDataAllSet(bool _flag,int _route,int _step)
+        public static void TutorialDataAllSet(bool _flag,int _step)
         {
             _tutorialFlag = _flag;
-            _tutorialRoute = _route;
-            _tutorialStep = _step;
+            _tutorialStepID = _step;
             _tutorialCount = TUTORIAL_COUNTER.Normal;
         }
         public static bool TutorialFlagGet()
         {
             return _tutorialFlag;
         }
-        public static int TutorialRouteGet()
-        {
-            return _tutorialRoute;
-        }
         public static int TutorialStepGet()
         {
-            return _tutorialStep;
+            return _tutorialStepID;
         }
 
         public enum TUTORIAL_COUNTER
         {
             Normal,
-            ButtonTrueStart,
-            ButtonTrueEnd,
+            ProposeButtonTrueStart,
+            ProposeButtonTrueEnd,
+            IineButtonTrueStart,
+            IineButtonTrueEnd,
             TutorialClear,
             ProposeEnd,
         };

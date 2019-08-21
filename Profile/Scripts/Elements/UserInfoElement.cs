@@ -289,9 +289,9 @@ namespace Mix2App.Profile {
         {
             if (UIFunction.TutorialFlagGet())
             {
-                if(UIFunction.TutorialCountGet() == UIFunction.TUTORIAL_COUNTER.ButtonTrueStart)
+                if(UIFunction.TutorialCountGet() == UIFunction.TUTORIAL_COUNTER.IineButtonTrueStart)
                 {
-                    UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.ButtonTrueEnd);
+                    UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.IineButtonTrueEnd);
 
                     // ボタン制御を再開
                     UIFunction.ButtonClickModeChenage(IineObj.transform.Find("iine_button/Button_iine").gameObject.GetComponent<Button>(), true);

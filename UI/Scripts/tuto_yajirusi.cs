@@ -9,6 +9,7 @@ public class tuto_yajirusi : MonoBehaviour
     public GameObject whoite;
     private Vector3 defaultPos;
     public float speed = 4f;
+    public float fspeed = 4f;
     public float yajirusipow = 4f;
     public float interval = 0.1f;
 
@@ -26,6 +27,7 @@ public class tuto_yajirusi : MonoBehaviour
     void Update()
     {
         //矢印上下運動
+        //rb.MovePosition(new Vector3(defaultPos.x, defaultPos.y + Mathf.PingPong(Time.time, 2), defaultPos.z));
         this.gameObject.transform.localPosition = new Vector3(this.gameObject.transform.localPosition.x, defaultPos.y + Mathf.PingPong(Time.time * speed, yajirusipow), this.gameObject.transform.localPosition.z);
 
         //明滅
@@ -35,12 +37,12 @@ public class tuto_yajirusi : MonoBehaviour
     private Color GetAlphaColor(Color color)
     {
         //time += Time.deltaTime * 5.0f * speed;
-        time += Time.deltaTime * speed;
+        time += Time.deltaTime * fspeed;
 
         color.a = Mathf.Sin(time) * 0.5f + 0.5f;
         //color.a = Mathf.Abs(Mathf.Sin(time));
         return color;
     }
 
-    
+
 }

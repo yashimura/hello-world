@@ -132,9 +132,9 @@ namespace Mix2App.Profile {
         {
             if (UIFunction.TutorialFlagGet())
             {
-                if(UIFunction.TutorialCountGet() == UIFunction.TUTORIAL_COUNTER.ButtonTrueStart)
+                if(UIFunction.TutorialCountGet() == UIFunction.TUTORIAL_COUNTER.ProposeButtonTrueStart)
                 {
-                    UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.ButtonTrueEnd);
+                    UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.ProposeButtonTrueEnd);
                     UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("BackButton").GetComponent<Button>(), true);
                 }
             }

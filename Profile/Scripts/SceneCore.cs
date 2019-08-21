@@ -25,8 +25,7 @@ namespace Mix2App.Profile {
         object[] mparam;
 
         bool mTutorialFlag;
-        int mTutorialRoute;
-        int mTutorialStep;
+        int mTutorialStepID;
 
 
         private readonly string[] MessageTable001 = new string[]
@@ -47,7 +46,14 @@ namespace Mix2App.Profile {
 
 
         private void CloseAction() {
-            ManagerObject.instance.view.back();
+            if (!mTutorialFlag)
+            {
+                ManagerObject.instance.view.back();
+            }
+            else
+            {
+                ManagerObject.instance.view.change(SceneLabel.SETTING, mTutorialStepID + 1);
+            }
         }
 
         private User GetSampleUser() {
@@ -57,6 +63,8 @@ namespace Mix2App.Profile {
         void Awake()
         {
             mparam=null;
+            mTutorialFlag = false;
+            mTutorialStepID = 0;
         }
 
         /// <summary>
@@ -67,7 +75,7 @@ namespace Mix2App.Profile {
         public void receive(params object[] parameter) {
             Debug.Log("receive");
 
-            if (mparam != null)
+            if (parameter != null)
                 mparam = parameter;
             else
                 mparam = new object[] { ManagerObject.instance.player };
@@ -83,19 +91,17 @@ namespace Mix2App.Profile {
             while (mparam==null)
                 yield return null;
 
-            if (mparam.Length >= 3 && mparam[1] is int && mparam[2] is int)
+            if (mparam.Length >= 2 && mparam[1] is int)
             {
                 mTutorialFlag = true;
-                mTutorialRoute = (int)mparam[1];
-                mTutorialStep = (int)mparam[2];
+                mTutorialStepID = (int)mparam[1];
+                if (mTutorialStepID == 0)
+                {
+                    mTutorialFlag = false;
+                }
             }
-            else
-            {
-                mTutorialFlag = false;
-                mTutorialRoute = 0;
-                mTutorialStep = 0;
-            }
-            UIFunction.TutorialDataAllSet(mTutorialFlag, mTutorialRoute, mTutorialStep);
+
+            UIFunction.TutorialDataAllSet(mTutorialFlag, mTutorialStepID);
 
             AvatarElementSelectWindow.InitData();
 
@@ -148,7 +154,7 @@ namespace Mix2App.Profile {
             TutorialMessageWindowDisp(true);
             yield return new WaitForSeconds(0.1f);
 
-            UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.ButtonTrueStart);         // 戻るボタンを有効化
+            UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.ProposeButtonTrueStart);         // 戻るボタンを有効化
 
             yield return null;
         }

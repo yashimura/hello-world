@@ -129,8 +129,7 @@ namespace Mix2App.MachiCon{
 
 		private int meventid;
         private bool mTutorialFlag;
-        private int mTutorialRoute;
-        private int mTutorialStep;
+        private int mTutorialStepID;
 
         private readonly string[] MessageTable001 = new string[]
         {
@@ -217,7 +216,11 @@ namespace Mix2App.MachiCon{
 				maskdatas [i].askUid = 0;
 				maskdatas [i].result = 2;
 			}
-		}
+
+            mTutorialFlag = false;
+            mTutorialStepID = 0;
+
+        }
 
 		public void dreceive(string command,string[] parameter)
 		{
@@ -269,18 +272,16 @@ namespace Mix2App.MachiCon{
                 if (parameter.Length > 1)
                 {
                     mTutorialFlag = true;
-                    mTutorialRoute = (int)parameter[1];
-                    mTutorialStep = (int)parameter[2];
-                }
-                else
-                {
-                    mTutorialFlag = false;
+                    mTutorialStepID = (int)parameter[1];
+                    if (mTutorialStepID == 0)
+                    {
+                        mTutorialFlag = false;
+                    }
                 }
             } else {
                 meventid = 0;
-                mTutorialFlag = false;
             }
-            mTutorialFlag = true;
+
 
 
 			muser1 = ManagerObject.instance.player;
@@ -1005,18 +1006,18 @@ namespace Mix2App.MachiCon{
 									if ((mpMember1.canMarried) && (mpMember2.canMarried))
 									{
 										Debug.Log("チュートリアル結婚イベントへ・・・");
-										ManagerObject.instance.view.change(SceneLabel.MARRIAGE, mkind, muser1, mkind1, muser2, mkind2, mTutorialRoute, mTutorialStep);
+										ManagerObject.instance.view.change(SceneLabel.MARRIAGE, mkind, muser1, mkind1, muser2, mkind2, 220);
 									}
 									else
 									{
 										Debug.Log("チュートリアルデートイベントへ・・・");
-										ManagerObject.instance.view.change(SceneLabel.MARRIAGE_DATE, mkind, muser1, mkind1, muser2, mkind2, mTutorialRoute, mTutorialStep);
+										ManagerObject.instance.view.change(SceneLabel.MARRIAGE_DATE, mkind, muser1, mkind1, muser2, mkind2, 117);
 									}
 								}
 								else
 								{
 									Debug.Log("チュートリアルたまタウンへ・・・");
-									ManagerObject.instance.view.change(SceneLabel.TOWN, mTutorialRoute, mTutorialStep);
+									ManagerObject.instance.view.change(SceneLabel.TOWN, 221);
 								}
 							}
 

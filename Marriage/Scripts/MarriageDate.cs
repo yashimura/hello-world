@@ -96,8 +96,7 @@ namespace Mix2App.MarriageDate{
 		private int mkind2;//兄弟種類
 
         private bool mTutorialFlag;
-        private int mTutorialRoute;
-        private int mTutorialStep;
+        private int mTutorialStepID;
 
         void Awake(){
 			Debug.Log ("MarriageDate Awake");
@@ -108,6 +107,9 @@ namespace Mix2App.MarriageDate{
 			//mkind=0;
 			mkind1=0;
 			mkind2=0;
+
+            mTutorialFlag = false;
+            mTutorialStepID = 0;
 		}
 
 		public void receive(params object[] parameter){
@@ -139,22 +141,21 @@ namespace Mix2App.MarriageDate{
             if (mparam.Length > 5)
             {
                 mTutorialFlag = true;
-                mTutorialRoute = (int)mparam[5];
-                mTutorialStep = (int)mparam[6];
+                mTutorialStepID = (int)mparam[5];
+                if (mTutorialStepID == 0)
+                {
+                    mTutorialFlag = false;
+                }
             }
-            else
-            {
-                mTutorialFlag = false;
-            }
 
 
-//			muser1.utype = UserType.MIX;
-//			muser2.utype = UserType.MIX;
+            //			muser1.utype = UserType.MIX;
+            //			muser2.utype = UserType.MIX;
 
 
 
 
-			jobCount = statusJobCount.marriageJobCount000;
+            jobCount = statusJobCount.marriageJobCount000;
 			startEndFlag = false;
 			waitCount = 1;
 
@@ -392,7 +393,7 @@ namespace Mix2App.MarriageDate{
                         else
                         {
                             // チュートリアル中の定数を追加する必要がある
-                            ManagerObject.instance.view.change(SceneLabel.TOWN, mTutorialRoute, mTutorialStep);
+                            ManagerObject.instance.view.change(SceneLabel.TOWN, 118);
                         }
 
                         break;

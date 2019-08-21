@@ -30,13 +30,12 @@ namespace Mix2App.Profile.Town
         bool mproposeflag;
 
         bool mTutorialFlag;
-        int mTutorialRoute;
-        int mTutorialStep;
+        int mTutorialStepID;
 
 
         private readonly string[] MessageTable001 = new string[]
         {
-            "いいねするときは\n<color=red>「いいね」</color>ボタンを タップするぷり！",
+            "いいねするときは\n「いいね」ボタンを タップするぷり！",
         };
 
         private readonly string[] MessageTable002 = new string[]
@@ -56,17 +55,13 @@ namespace Mix2App.Profile.Town
             "さっそく「プロポーズ」ボタンを タップするぷり！",
         };
 
-        private readonly string[] MessageTable004 = new string[]
-        {
-            "ステキなナウたまがいたらいいねするぷり！\nつぎは「プロポーズ」についてぷり！\n\n「おわる」ボタンをタップすると\n「あそびかた」を おわるぷり",
-            "きになるナウたまがいたら 「プロポーズ」するぷり！\nつぎは「たまキュン♥パーティー」についてぷり！\n\n「おわる」ボタンをタップすると\n「あそびかた」を おわるぷり",
-        };
 
 
 
         void Awake()
         {
-
+            mTutorialFlag = false;
+            mTutorialStepID = 0;
         }
 
         void OnDestroy()
@@ -110,18 +105,17 @@ namespace Mix2App.Profile.Town
             else
                 mbgmid = 2;//春テーマ
 
-            if (mparam.Length >= 6 && mparam[4] is int && mparam[5] is int)
+            if (mparam.Length >= 5 && mparam[4] is int)
             {
                 mTutorialFlag = true;
-                mTutorialRoute = (int)mparam[4];
-                mTutorialStep = (int)mparam[5];
+                mTutorialStepID = (int)mparam[4];
+                if (mTutorialStepID == 0)
+                {
+                    mTutorialFlag = false;
+                }
             }
-            else
-            {
-                mTutorialFlag = true;   //false;
-                mTutorialRoute = 2;      //0;
-                mTutorialStep = 1;      //0;
-            }
+
+
 
             StartCoroutine(mstart());
         }
@@ -148,7 +142,7 @@ namespace Mix2App.Profile.Town
             UIManager.cameraWindowSet(cameraObj);
             UIManager.proposeFlagSet(mproposeflag);
 
-            UIFunction.TutorialDataAllSet(mTutorialFlag, mTutorialRoute, mTutorialStep);
+            UIFunction.TutorialDataAllSet(mTutorialFlag, mTutorialStepID);
 
             tpwindow = UIManager.ShowModal(TownProfileWindowPrefab);
             tpwindow.ProposeCallBackAdd();
@@ -166,9 +160,10 @@ namespace Mix2App.Profile.Town
 
             if (mTutorialFlag)
             {
-                switch (mTutorialStep)
+                switch (mTutorialStepID)
                 {
-                    case 0:
+                    case 110:   // ゲストルートいいねの仕方
+                    case 211:   // みーつルートいいねの仕方
                         {
                             baseObj.transform.Find("tutorial/Window_up/main").transform.localPosition = new Vector3(150.0f, -150.0f, 0.0f);
 
@@ -211,7 +206,7 @@ namespace Mix2App.Profile.Town
             TutorialMessageDataSet(MessageTable001[0]);
             TutorialMessageWindowDisp(true);
             yield return new WaitForSeconds(0.1f);
-            UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.ButtonTrueStart);         // いいねボタンを有効化
+            UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.IineButtonTrueStart);         // いいねボタンを有効化
 
             yield return null;
         }
@@ -219,73 +214,60 @@ namespace Mix2App.Profile.Town
         private IEnumerator TutorialPropose()
         {
             yield return new WaitForSeconds(0.5f);
-            switch (mTutorialRoute)
+            if (mTutorialStepID == 113)
             {
-                case 1:
+                // ゲストルート
+                for (int i = 0; i < 4; i++)
+                {
+                    TutorialMessageDataSet(MessageTable002[i]);
+                    TutorialMessageWindowDisp(true);
+                    yield return new WaitForSeconds(0.1f);
+                    while (true)
                     {
-                        // ゲストルート
-                        for (int i = 0; i < 4; i++)
+                        if (Input.GetMouseButtonDown(0))
                         {
-                            TutorialMessageDataSet(MessageTable002[i]);
-                            TutorialMessageWindowDisp(true);
-                            yield return new WaitForSeconds(0.1f);
-                            while (true)
-                            {
-                                if (Input.GetMouseButtonDown(0))
-                                {
-                                    break;
-                                }
-                                yield return null;
-                            }
+                            break;
                         }
-
-                        break;
+                        yield return null;
                     }
-                case 2:
+                }
+            }
+            else
+            {
+                // 玩具連動ルート
+                for (int i = 0; i < 4; i++)
+                {
+                    TutorialMessageDataSet(MessageTable003[i]);
+                    TutorialMessageWindowDisp(true);
+                    yield return new WaitForSeconds(0.1f);
+                    while (true)
                     {
-                        // 玩具連動ルート
-                        for (int i = 0; i < 4; i++)
+                        if (Input.GetMouseButtonDown(0))
                         {
-                            TutorialMessageDataSet(MessageTable003[i]);
-                            TutorialMessageWindowDisp(true);
-                            yield return new WaitForSeconds(0.1f);
-                            while (true)
-                            {
-                                if (Input.GetMouseButtonDown(0))
-                                {
-                                    break;
-                                }
-                                yield return null;
-                            }
+                            break;
                         }
-
-                        if (mproposeflag)
-                        {
-                            TutorialMessageDataSet(MessageTable003[4]);
-                            TutorialMessageWindowDisp(true);
-                            yield return new WaitForSeconds(0.1f);
-                            UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.ButtonTrueStart);         // プロポーズボタンを有効化
-                            while (true)
-                            {
-                                yield return null;
-                                if(UIFunction.TutorialCountGet() == UIFunction.TUTORIAL_COUNTER.ProposeEnd)
-                                {
-                                    break;
-                                }
-                            }
-                        }
-
-                        break;
+                        yield return null;
                     }
+                }
+
+                if (mproposeflag)
+                {
+                    TutorialMessageDataSet(MessageTable003[4]);
+                    TutorialMessageWindowDisp(true);
+                    yield return new WaitForSeconds(0.1f);
+                    UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.ProposeButtonTrueStart);         // プロポーズボタンを有効化
+                    while (true)
+                    {
+                        yield return null;
+                        if (UIFunction.TutorialCountGet() == UIFunction.TUTORIAL_COUNTER.ProposeEnd)
+                        {
+                            break;
+                        }
+                    }
+                }
             }
 
-            baseObj.transform.Find("meets2_8_skip/tutorial_kakunin/Button_hai").GetComponent<Button>().onClick.AddListener(ButtonSkipClick);
-            baseObj.transform.Find("meets2_8_skip/tutorial_kakunin/Button_iie").GetComponent<Button>().onClick.AddListener(ButtonNextClick);
-            baseObj.transform.Find("meets2_8_skip/tutorial_kakunin/Button_iie (1)").GetComponent<Button>().onClick.AddListener(ButtonEndClick);
-            baseObj.transform.Find("meets2_8_skip/tutorial_kakunin/3/Text").GetComponent<Text>().text = MessageTable004[1];
-            baseObj.transform.Find("meets2_8_skip").gameObject.SetActive(true);
-
-//            SceneClose();
+            SceneClose();
             yield return null;
         }
 
@@ -307,21 +289,6 @@ namespace Mix2App.Profile.Town
             baseObj.transform.Find("tutorial/Window_up/aplich_set/fukidasi/Text").GetComponent<Text>().text = _mes;
         }
 
-        private void ButtonNextClick()
-        {
-            ManagerObject.instance.sound.playSe(13);
-            SceneClose();
-        }
-        private void ButtonEndClick()
-        {
-            ManagerObject.instance.sound.playSe(13);
-            SceneClose();
-        }
-        private void ButtonSkipClick()
-        {
-            ManagerObject.instance.sound.playSe(13);
-            SceneClose();
-        }
 
 
     }

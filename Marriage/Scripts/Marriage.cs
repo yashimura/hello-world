@@ -148,8 +148,7 @@ namespace Mix2App.Marriage{
 		private bool womanPetAttendFlag;
 
         private bool mTutorialFlag;
-        private int mTutorialRoute;
-        private int mTutorialStep;
+        private int mTutorialStepID;
 
 
         private bool retryFlag;
@@ -164,6 +163,9 @@ namespace Mix2App.Marriage{
             mkind = 0;
             mkind1 = 0;
             mkind2 = 0;
+
+            mTutorialFlag = false;
+            mTutorialStepID = 0;
         }
 
 		public void receive(params object[] parameter){
@@ -195,12 +197,11 @@ namespace Mix2App.Marriage{
             if (mparam.Length > 5)
             {
                 mTutorialFlag = true;
-                mTutorialRoute = (int)mparam[5];
-                mTutorialStep = (int)mparam[6];
-            }
-            else
-            {
-                mTutorialFlag = false;
+                mTutorialStepID = (int)mparam[5];
+                if (mTutorialStepID == 0)
+                {
+                    mTutorialFlag = false;
+                }
             }
 
             jobCount = statusJobCount.marriageJobCount000;
@@ -1011,7 +1012,7 @@ namespace Mix2App.Marriage{
             else
             {
                 // チュートリアル中の定数を追加する必要がある
-                ManagerObject.instance.view.change(SceneLabel.TOWN, mTutorialRoute, mTutorialStep);
+                ManagerObject.instance.view.change(SceneLabel.TOWN, 221);
             }
 
         }
@@ -1028,7 +1029,7 @@ namespace Mix2App.Marriage{
             else
             {
                 // チュートリアル中の定数を追加する必要がある
-                ManagerObject.instance.view.change(SceneLabel.HOME, mTutorialRoute, mTutorialStep);
+                ManagerObject.instance.view.change(SceneLabel.HOME, 222);
             }
         }
         private void ButtonBLEClick(){

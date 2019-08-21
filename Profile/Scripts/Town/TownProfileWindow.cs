@@ -48,9 +48,6 @@ namespace Mix2App.Profile.Town {
 		[Header("Object")]
 		[SerializeField] private GameObject BaseObj = null;
 
-        [Header("Image")]
-        [SerializeField] private Sprite[] TutorialSprite = null;
-
 		private GameObject[] ProposeWindow;
 
         private User mUserPc;
@@ -244,12 +241,11 @@ namespace Mix2App.Profile.Town {
                 UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("CLIENT/Button rect/Buttons/ProposeButton").GetComponent<Button>(),false);
                 UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("BackButton").GetComponent<Button>(),false);
 
-                if ((UIFunction.TutorialRouteGet() == 1) && (UIFunction.TutorialStepGet() == 1))
+                if (UIFunction.TutorialStepGet() == 113)
                 {
                     // ゲストルートでプロポーズステップの時のみ処理する
-                    StartCoroutine(ProposeButtonAnime());
+                    BaseObj.transform.Find("CLIENT/Button rect/Buttons/ProposeButton/Tutorial_waku").gameObject.SetActive(true);
                 }
-
             }
 
 
@@ -271,26 +267,15 @@ namespace Mix2App.Profile.Town {
         {
             if (UIFunction.TutorialFlagGet())
             {
-                if (UIFunction.TutorialCountGet() == UIFunction.TUTORIAL_COUNTER.ButtonTrueStart)
+                if (UIFunction.TutorialCountGet() == UIFunction.TUTORIAL_COUNTER.ProposeButtonTrueStart)
                 {
-                    UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.ButtonTrueEnd);
+                    UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.ProposeButtonTrueEnd);
 
                     // ボタン制御を再開
                     UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("CLIENT/Button rect/Buttons/ProposeButton").GetComponent<Button>(), true);
                 }
             }
 
-        }
-
-        IEnumerator ProposeButtonAnime()
-        {
-            while (true)
-            {
-                BaseObj.transform.Find("CLIENT/Button rect/Buttons/ProposeButton").GetComponent<Image>().sprite = TutorialSprite[0];
-                yield return new WaitForSeconds(0.5f);
-                BaseObj.transform.Find("CLIENT/Button rect/Buttons/ProposeButton").GetComponent<Image>().sprite = TutorialSprite[1];
-                yield return new WaitForSeconds(0.5f);
-            }
         }
 
 
