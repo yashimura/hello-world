@@ -224,12 +224,11 @@ namespace Mix2App.Propose{
 
             if(mparam.Length >= 8)
             {
-                mTutorialFlag = true;   // チュートリアルでのプロポーズ処理
-                mProposeResult = false; // チュートリアルでは必ず失敗
-            }
-            else
-            {
-                mTutorialFlag = false;
+                if ((int)mparam[7] != 0)
+                {
+                    mTutorialFlag = true;   // チュートリアルでのプロポーズ処理
+                    mProposeResult = false; // チュートリアルでは必ず失敗
+                }
             }
 
             StartCoroutine(mStart());

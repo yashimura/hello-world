@@ -241,7 +241,7 @@ namespace Mix2App.Profile.Town {
                 UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("CLIENT/Button rect/Buttons/ProposeButton").GetComponent<Button>(),false);
                 UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("BackButton").GetComponent<Button>(),false);
 
-                if (UIFunction.TutorialStepGet() == 113)
+                if (UIFunction.TutorialStepIDGet() == 113)
                 {
                     // ゲストルートでプロポーズステップの時のみ処理する
                     BaseObj.transform.Find("CLIENT/Button rect/Buttons/ProposeButton/Tutorial_waku").gameObject.SetActive(true);
@@ -342,7 +342,7 @@ namespace Mix2App.Profile.Town {
                         mUserNpc,                           // 相手のユーザー情報
                         mCharaNpcNum,                       // 相手の兄弟のどちらにプロポーズしたか
                         CameraDepth,
-                        0);
+                        UIFunction.TutorialStepIDGet());
             }
             else
             {

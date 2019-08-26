@@ -147,17 +147,17 @@ namespace Mix2App.UI
             _tutorialStepID = 0;
             _tutorialCount = 0;
         }
-        public static void TutorialDataAllSet(bool _flag,int _step)
+        public static void TutorialDataAllSet(bool _flag,int _stepID)
         {
             _tutorialFlag = _flag;
-            _tutorialStepID = _step;
+            _tutorialStepID = _stepID;
             _tutorialCount = TUTORIAL_COUNTER.Normal;
         }
         public static bool TutorialFlagGet()
         {
             return _tutorialFlag;
         }
-        public static int TutorialStepGet()
+        public static int TutorialStepIDGet()
         {
             return _tutorialStepID;
         }

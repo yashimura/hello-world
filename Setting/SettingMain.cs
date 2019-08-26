@@ -85,8 +85,6 @@ namespace Mix2App.Setting
                 mTutorialFlag = false;
             }
 
-
-
             changeview(1);
 
             if (mTutorialFlag)

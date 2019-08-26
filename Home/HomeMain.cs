@@ -173,6 +173,7 @@ namespace Mix2App.Home
             }
 */
 
+
             //ログインからのホームの時は、強制表示チェック
             if (ManagerObject.instance.view.GetBackLabel()==null)
             {
@@ -399,29 +400,28 @@ namespace Mix2App.Home
         private int tutorialCounter;
         IEnumerator TutorialLoopStart()
         {
-            if(ManagerObject.instance.player.utype == UserType.MIX2)
+            tutorialCounter = 0;
+            BaseObj.transform.Find("startcheck_1").gameObject.SetActive(true);
+            while (true)
             {
-                // 玩具連動ずみなので確認などをしないでタウンへ誘導
-                mTutorialFlag = true;
-                mTutorialStepID = 202;
-                StartCoroutine(TutorialMainLoop());
-            }
-            else
-            {
-                tutorialCounter = 0;
-                BaseObj.transform.Find("startcheck_1").gameObject.SetActive(true);
-                while (true)
+                if (tutorialCounter != 0)
                 {
-                    if (tutorialCounter != 0)
-                    {
-                        break;
-                    }
-                    yield return null;
+                    break;
                 }
+                yield return null;
+            }
+            BaseObj.transform.Find("startcheck_1").gameObject.SetActive(false);
 
-                BaseObj.transform.Find("startcheck_1").gameObject.SetActive(false);
-
-                if (tutorialCounter == 1)
+            if (tutorialCounter == 1)
+            {
+                if (ManagerObject.instance.player.utype == UserType.MIX2)
+                {
+                    // 玩具連動ずみなのでタウンへ誘導
+                    mTutorialFlag = true;
+                    mTutorialStepID = 202;
+                    StartCoroutine(TutorialMainLoop());
+                }
+                else
                 {
                     tutorialCounter = 0;
                     BaseObj.transform.Find("startcheck_2").gameObject.SetActive(true);
@@ -433,7 +433,6 @@ namespace Mix2App.Home
                         }
                         yield return null;
                     }
-
                     BaseObj.transform.Find("startcheck_2").gameObject.SetActive(false);
 
                     if (tutorialCounter == 1)
@@ -450,7 +449,7 @@ namespace Mix2App.Home
                     StartCoroutine(TutorialMainLoop());
                 }
             }
-
+ 
             yield return null;
         }
 

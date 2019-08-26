@@ -115,8 +115,6 @@ namespace Mix2App.Profile.Town
                 }
             }
 
-
-
             StartCoroutine(mstart());
         }
 
@@ -171,7 +169,7 @@ namespace Mix2App.Profile.Town
 
                             break;
                         }
-                    default:
+                    default:    // 113,214
                         {
                             baseObj.transform.Find("tutorial/Window_up/main").transform.localPosition = new Vector3(830.0f, 80.0f, 0.0f);
 
