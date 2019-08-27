@@ -35,6 +35,7 @@ namespace Mix2App.Home
 
         private bool mTutorialFlag;
         private int mTutorialStepID;
+        private AchieveData achieveData;
 
         private readonly string[] MessageTable001 = new string[]
         {
@@ -111,6 +112,8 @@ namespace Mix2App.Home
                     }
                 }
             }
+
+
 
             mstat = 0;
 
@@ -262,6 +265,11 @@ namespace Mix2App.Home
             if (label == SceneLabel.ACHIEVE_CLEAR)
             {
                 ManagerObject.instance.view.delete(SceneLabel.ACHIEVE_CLEAR);
+
+                if((mTutorialFlag) && (mTutorialLoopFlag))
+                {
+                    mTutorialLoopFlag = false;
+                }
             }
         }
 
@@ -351,7 +359,7 @@ namespace Mix2App.Home
                     mstat++;
                     if (mTutorialFlag)
                     {
-                        if (mTutorialStepID != 222)
+                        if ((mTutorialStepID != 119) && (mTutorialStepID != 222))
                         {
                             StartCoroutine(TutorialLoopStart());
                         }
@@ -361,7 +369,17 @@ namespace Mix2App.Home
                         }
                     }
                     break;
-
+                case 401:
+                    break;
+                case 402:
+                    mstat++;
+                    {
+                        int CameraDepth = (int)(CameraObj.transform.GetComponent<Camera>().depth + 1);
+                        ManagerObject.instance.view.add(SceneLabel.ACHIEVE_CLEAR,
+                                achieveData,
+                                CameraDepth);
+                    }
+                    break;
 
 
                 default:
@@ -453,6 +471,9 @@ namespace Mix2App.Home
             yield return null;
         }
 
+
+        private bool mTutorialLoopFlag = false;
+
         IEnumerator TutorialMainLoop()
         {
             ButtonClickValid(false);
@@ -488,6 +509,27 @@ namespace Mix2App.Home
                     }
                 default:        // 119,222
                     {
+
+/*
+                        mTutorialLoopFlag = true;
+                        // 終了処理のアチーブメントを取得する。
+                        GameCall call = new GameCall(CallLabel.END_TUTORIAL,mTutorialStepID);
+                        call.AddListener(mendtutorial);
+                        ManagerObject.instance.connect.send(call);
+                        while (mTutorialLoopFlag)
+                            yield return null;
+
+                        if (achieveData.count != 0)
+                        {
+                            mTutorialLoopFlag = true;
+                            mstat = 402;
+                            // アチーブ表示中はここでループ
+                            while (mTutorialLoopFlag)
+                                yield return null;
+                        }
+*/
+
+
                         Vector3 _pos;
 
                         BaseObj.transform.Find("tutorial/Window_up").gameObject.SetActive(true);
@@ -543,6 +585,15 @@ namespace Mix2App.Home
 
 
             yield return null;
+        }
+
+        void mendtutorial(bool success, object data)
+        {
+            mTutorialLoopFlag = false;
+            if (success)
+            {
+                achieveData = (AchieveData)data;
+            }
         }
 
         private void ButtonClickValid(bool _flag)
