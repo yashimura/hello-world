@@ -85,6 +85,7 @@ namespace Mix2App.Setting
                 mTutorialFlag = false;
             }
 
+
             changeview(1);
 
             if (mTutorialFlag)
@@ -243,6 +244,15 @@ namespace Mix2App.Setting
                 baseObj.transform.Find("tutorial/Window_up").gameObject.SetActive(false);
                 baseObj.transform.Find("tutorial/Window_down").gameObject.SetActive(true);
                 baseObj.transform.Find("tutorial/Window_down/aplich_set/fukidasi/Text").GetComponent<Text>().text = MessageTable001[0];
+
+
+                float kk1 = 1024f / 2048f;
+                float kk2 = (float)Screen.height / (float)Screen.width;
+                float kk3 = (kk2 < kk1) ? kk2 / kk1 : 1.0f;
+                Vector3 _pos = baseObj.transform.Find("1_window_setting/LayoutPanel1/LayoutPanel2/bt_plof").position;
+                _pos.x = _pos.x + (3.6f * kk3);
+                _pos.y = _pos.y + 10.5f;
+                baseObj.transform.Find("tutorial/Window_down/main").position = _pos;
             }
             else
             {
@@ -251,6 +261,10 @@ namespace Mix2App.Setting
                 baseObj.transform.Find("tutorial/Window_up").gameObject.SetActive(true);
                 baseObj.transform.Find("tutorial/Window_down").gameObject.SetActive(false);
                 baseObj.transform.Find("tutorial/Window_up/aplich_set/fukidasi/Text").GetComponent<Text>().text = MessageTable001[1];
+
+                Vector3 _pos = baseObj.transform.Find("1_window_setting/bt_close").position;
+                _pos.y = _pos.y + 3.3f;
+                baseObj.transform.Find("tutorial/Window_up/main").position = _pos;
             }
 
 

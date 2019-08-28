@@ -35,7 +35,7 @@ namespace Mix2App.Home
 
         private bool mTutorialFlag;
         private int mTutorialStepID;
-        private AchieveData achieveData;
+        private List<AchieveData> mTutorialAchieveData;
 
         private readonly string[] MessageTable001 = new string[]
         {
@@ -112,8 +112,6 @@ namespace Mix2App.Home
                     }
                 }
             }
-
-
 
             mstat = 0;
 
@@ -376,7 +374,7 @@ namespace Mix2App.Home
                     {
                         int CameraDepth = (int)(CameraObj.transform.GetComponent<Camera>().depth + 1);
                         ManagerObject.instance.view.add(SceneLabel.ACHIEVE_CLEAR,
-                                achieveData,
+                                mTutorialAchieveData,
                                 CameraDepth);
                     }
                     break;
@@ -485,6 +483,7 @@ namespace Mix2App.Home
             {
                 case 101:
                 case 202:
+                default:
                     {
                         BaseObj.transform.Find("tutorial/Window_down").gameObject.SetActive(true);
                         BaseObj.transform.Find("tutorial/Window_down/aplich_set/fukidasi/Text").GetComponent<Text>().text = MessageTable001[0];
@@ -507,9 +506,9 @@ namespace Mix2App.Home
                         BaseObj.transform.Find("tutorial/Window_down/main").position = _pos;
                         break;
                     }
-                default:        // 119,222
+                case 119:
+                case 222:
                     {
-
 /*
                         mTutorialLoopFlag = true;
                         // 終了処理のアチーブメントを取得する。
@@ -519,7 +518,7 @@ namespace Mix2App.Home
                         while (mTutorialLoopFlag)
                             yield return null;
 
-                        if (achieveData.count != 0)
+                        if (mTutorialAchieveData.Count != 0)
                         {
                             mTutorialLoopFlag = true;
                             mstat = 402;
@@ -528,7 +527,6 @@ namespace Mix2App.Home
                                 yield return null;
                         }
 */
-
 
                         Vector3 _pos;
 
@@ -570,7 +568,7 @@ namespace Mix2App.Home
 
 
 
-                        // チュートリアル閲覧済フラグを立てる
+                        // チュートリアル閲覧済フラグを立てる?
                         // mTutorialStepID が 119 の時はゲストルート閲覧済にする
                         // mTutorialStepID が 222 の時はみーつルート閲覧済にする
 
@@ -592,7 +590,11 @@ namespace Mix2App.Home
             mTutorialLoopFlag = false;
             if (success)
             {
-                achieveData = (AchieveData)data;
+                mTutorialAchieveData = (List<AchieveData>)data;
+            }
+            else
+            {
+                mTutorialAchieveData = new List<AchieveData>();
             }
         }
 
