@@ -167,13 +167,12 @@ namespace Mix2App.Home
             }
 
 /*
-            if (mhidata.tutorialFlag == 0)
+            if ((mhidata.tutorialFlag == 0) && (ManagerObject.instance.player.utype != UserType.LINE))
             {
-                // チュートリアル未閲覧なのでチュートリアル強制開催
+                // チュートリアル未閲覧なのでチュートリアル強制開催、ただし、LINEユーザーの場合開催しない
                 mTutorialFlag = true;
             }
 */
-
 
             //ログインからのホームの時は、強制表示チェック
             if (ManagerObject.instance.view.GetBackLabel()==null)

@@ -527,7 +527,7 @@ namespace Mix2App.MachiCon{
 			case	statusJobCount.machiconJobCount020:
 				{
 					//ルーム情報取得、メンバーマッチング処理
-					//パラメタは設計書参照
+					//パラメタは設計書参照　チュートリアルの時改修が必要？
 					GameCall call = new GameCall(CallLabel.GET_ROOM_INFO,mkind1,meventid);
 					call.AddListener(mgetroominf);
 					ManagerObject.instance.connect.send(call);
@@ -788,7 +788,7 @@ namespace Mix2App.MachiCon{
 
 						if (sceneNumber == 1) {													// アピールタイム２回目が開始されたのでデータ転送開始
 							//相談送信、全メンバーの相談処理を完了後、告白結果取得
-							// パラメタは設計書参照
+							// パラメタは設計書参照　チュートリアルの時改修が必要？
 							//TODO masklistは現在何も反映していないので適宜設定を
 							GameCall call = new GameCall(CallLabel.GET_ROOM_RESULT,mpdata.roomId,maskdatas,mpdata.members);
 							call.AddListener(mgetroomres);
