@@ -8,10 +8,10 @@ public class tuto_yajirusi : MonoBehaviour
 {
     public GameObject whoite;
     private Vector3 defaultPos;
-    public float speed = 4f;
-    public float fspeed = 4f;
-    public float yajirusipow = 4f;
-    public float interval = 0.1f;
+    private float speed = 120f;
+    private float fspeed = 4f;
+    private float yajirusipow = 60f;
+    private float interval = 0.1f;
 
     private Image image;
     private float time;
