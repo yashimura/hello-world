@@ -93,24 +93,22 @@ namespace Mix2App.Home
         {
             Debug.Log("Home.Start");
 
-/*
+            /*
             if (mparam==null) {
                 // 単体テストの時はreceiverが機能しないのでパラメタをでっちあげる
                 mparam = new object[]{1};
             }
-*/
+            */
 
-            if(mparam != null)
+            mTutorialStepID = 0;
+            mTutorialFlag = false;
+
+            if (mparam != null)
             {
                 if (mparam.Length >= 1 && mparam[0] is int)
-                {
-                    mTutorialFlag = true;
                     mTutorialStepID = (int)mparam[0];
-                    if (mTutorialStepID == 0)
-                    {
-                        mTutorialFlag = false;
-                    }
-                }
+
+                mTutorialFlag = (mTutorialStepID > 0);
             }
 
             mstat = 0;
@@ -281,15 +279,16 @@ namespace Mix2App.Home
             switch(mstat)
             {
                 case 100:
-                    if ((ManagerObject.instance.app.checkedHelp & 1) != 1)
-                    {
-                        mstat++;
-                        ManagerObject.instance.view.dialog("webview", new object[] { "home" }, closehelp);
-                    }
-                    else
-                    {
+                    //チュートリアル実装に伴い遊び方表示は削除
+                    //if ((ManagerObject.instance.app.checkedHelp & 1) != 1)
+                    //{
+                        //mstat++;
+                        //ManagerObject.instance.view.dialog("webview", new object[] { "home" }, closehelp);
+                    //}
+                    //else
+                    //{
                         mstat+=2;
-                    }
+                    //}
                     break;
                 case 102:                    
                     mstat = 110;
@@ -462,6 +461,10 @@ namespace Mix2App.Home
                     StartCoroutine(TutorialMainLoop());
                 }
             }
+            else
+            {
+                mTutorialFlag = false;
+            }
  
             yield return null;
         }
@@ -561,16 +564,11 @@ namespace Mix2App.Home
                         mTutorialFlag = false;
                         mTutorialStepID = 0;
 
+                        // チュートリアル閲覧済フラグを立てるのはライブラリ側
+                        // ユーザー種別に応じて判定してのでルートは気にしない
 
-
-                        // チュートリアル閲覧済フラグを立てる?
-                        // mTutorialStepID が 119 の時はゲストルート閲覧済にする
-                        // mTutorialStepID が 222 の時はみーつルート閲覧済にする
-
-
-
-
-                        ManagerObject.instance.view.dialog("webview", new object[] { "home" }, null);
+                        //遊び方画面は不要
+                        //ManagerObject.instance.view.dialog("webview", new object[] { "home" }, null);
 
                         break;
                     }
