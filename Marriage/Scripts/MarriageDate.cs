@@ -393,7 +393,7 @@ namespace Mix2App.MarriageDate{
                         else
                         {
                             // チュートリアル中の定数を追加する必要がある
-                            ManagerObject.instance.view.change(SceneLabel.TOWN, 118);
+                            ManagerObject.instance.view.change(SceneLabel.TOWN, null, 118);
                         }
 
                         break;

@@ -375,7 +375,14 @@ namespace Mix2App.MachiCon{
             {
                 int errno = (int)data;
                 ManagerObject.instance.view.dialog("alert", new object[] { "machicon", errno }, (ret) => {
-                    ManagerObject.instance.view.change(SceneLabel.TOWN);
+                    if (!mTutorialFlag)
+                    {
+                        ManagerObject.instance.view.change(SceneLabel.TOWN);
+                    }
+                    else
+                    {
+                        ManagerObject.instance.view.change(SceneLabel.TOWN,null,221);
+                    }
                 });
             }
 
@@ -395,7 +402,14 @@ namespace Mix2App.MachiCon{
             {
                 int errno = (int)data;
                 ManagerObject.instance.view.dialog("alert",new object[] { "machicon", errno },(ret)=> {
-                    ManagerObject.instance.view.change(SceneLabel.TOWN);
+                    if (!mTutorialFlag)
+                    {
+                        ManagerObject.instance.view.change(SceneLabel.TOWN);
+                    }
+                    else
+                    {
+                        ManagerObject.instance.view.change(SceneLabel.TOWN, null, 221);
+                    }
                 });
             }
         }
@@ -1019,7 +1033,7 @@ namespace Mix2App.MachiCon{
 								else
 								{
 									Debug.Log("チュートリアルたまタウンへ・・・");
-									ManagerObject.instance.view.change(SceneLabel.TOWN, 221);
+                                    ManagerObject.instance.view.change(SceneLabel.TOWN, null, 221);
 								}
 							}
 

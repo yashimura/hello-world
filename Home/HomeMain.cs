@@ -166,13 +166,11 @@ namespace Mix2App.Home
                 meetsBtns[1].SetActive(false);
             }
 
-/*
             if ((mhidata.tutorialFlag == 0) && (ManagerObject.instance.player.utype != UserType.LINE))
             {
                 // チュートリアル未閲覧なのでチュートリアル強制開催、ただし、LINEユーザーの場合開催しない
                 mTutorialFlag = true;
             }
-*/
 
             //ログインからのホームの時は、強制表示チェック
             if (ManagerObject.instance.view.GetBackLabel()==null)
@@ -508,7 +506,6 @@ namespace Mix2App.Home
                 case 119:
                 case 222:
                     {
-/*
                         mTutorialLoopFlag = true;
                         // 終了処理のアチーブメントを取得する。
                         GameCall call = new GameCall(CallLabel.END_TUTORIAL,mTutorialStepID);
@@ -525,7 +522,6 @@ namespace Mix2App.Home
                             while (mTutorialLoopFlag)
                                 yield return null;
                         }
-*/
 
                         Vector3 _pos;
 

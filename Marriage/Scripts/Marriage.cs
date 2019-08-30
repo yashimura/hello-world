@@ -1012,7 +1012,7 @@ namespace Mix2App.Marriage{
             else
             {
                 // チュートリアル中の定数を追加する必要がある
-                ManagerObject.instance.view.change(SceneLabel.TOWN, 221);
+                ManagerObject.instance.view.change(SceneLabel.TOWN, null, 221);
             }
 
         }
