@@ -97,7 +97,11 @@ namespace Mix2App.Setting
         public void clickClose()
         {
             ManagerObject.instance.sound.playSe(17);
-            ManagerObject.instance.view.back();
+
+            if (mTutorialStepID>0)
+                ManagerObject.instance.view.change(SceneLabel.TOWN, null, mTutorialStepID + 1);
+            else
+                ManagerObject.instance.view.back();
         }
 
         public void OnClickBack()

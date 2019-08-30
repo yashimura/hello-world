@@ -249,7 +249,7 @@ namespace Mix2App.Home
             else if (label=="add_bbs")
 	    		ManagerObject.instance.view.dialog("webview",new object[]{"bbs",meinfo},closebbs);
             else if (label == "Town" && mTutorialFlag)
-                ManagerObject.instance.view.change(label, 204);
+                ManagerObject.instance.view.change(label, null, 204);
             else if (label == "ToyLink" && mTutorialFlag)
                 ManagerObject.instance.view.change(label, 203);
             else
