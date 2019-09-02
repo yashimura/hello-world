@@ -40,7 +40,7 @@ namespace Mix2App.Profile.Town
 
         private readonly string[] MessageTable002 = new string[]
         {
-            "きになるナウたまの プロフィールがめんを ひらいたとき\n「プロポーズ」ボタンがあれば プロポーズできるぷり♥",
+            "きになるナウたまの プロフィールがめんを \nひらいたとき 「プロポーズ」ボタンがあれば\nプロポーズできるぷり♥",
             "プロポーズできるのは・・・\nあなたのナウたまが 「たまごっちみーつ」から\nこのアプリに おでかけしてきていること・・・",
             "あなたと あいてのナウたまが\n<color=red>フレンドき</color> であること\nあと <color=red>いせい</color> のときぷり！",
             "「プロポーズ」ボタンがあれば\nけっこんできると おもえばいいぷり♪",
@@ -48,7 +48,7 @@ namespace Mix2App.Profile.Town
 
         private readonly string[] MessageTable003 = new string[]
         {
-            "きになるナウたまの プロフィールがめんを ひらいたとき\n「プロポーズ」ボタンがあれば プロポーズできるぷり♥",
+            "きになるナウたまの プロフィールがめんを \nひらいたとき 「プロポーズ」ボタンがあれば\nプロポーズできるぷり♥",
             "プロポーズできるのは・・・\nあなたのナウたまが 「たまごっちみーつ」から\nこのアプリに おでかけしてきていること・・・",
             "あなたと あいてのナウたまが\n<color=red>フレンドき</color> であること\nあと <color=red>いせい</color> のときぷり！",
             "「プロポーズ」ボタンがあれば\nけっこんできると おもえばいいぷり♪",
@@ -203,7 +203,7 @@ namespace Mix2App.Profile.Town
             yield return new WaitForSeconds(0.5f);
             TutorialMessageDataSet(MessageTable001[0]);
             TutorialMessageWindowDisp(true);
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.5f);
             UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.IineButtonTrueStart);         // いいねボタンを有効化
 
             yield return null;
@@ -219,7 +219,7 @@ namespace Mix2App.Profile.Town
                 {
                     TutorialMessageDataSet(MessageTable002[i]);
                     TutorialMessageWindowDisp(true);
-                    yield return new WaitForSeconds(0.1f);
+                    yield return new WaitForSeconds(0.5f);
                     while (true)
                     {
                         if (Input.GetMouseButtonDown(0))
@@ -237,7 +237,7 @@ namespace Mix2App.Profile.Town
                 {
                     TutorialMessageDataSet(MessageTable003[i]);
                     TutorialMessageWindowDisp(true);
-                    yield return new WaitForSeconds(0.1f);
+                    yield return new WaitForSeconds(0.5f);
                     while (true)
                     {
                         if (Input.GetMouseButtonDown(0))
@@ -252,7 +252,7 @@ namespace Mix2App.Profile.Town
                 {
                     TutorialMessageDataSet(MessageTable003[4]);
                     TutorialMessageWindowDisp(true);
-                    yield return new WaitForSeconds(0.1f);
+                    yield return new WaitForSeconds(0.5f);
                     UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.ProposeButtonTrueStart);         // プロポーズボタンを有効化
                     while (true)
                     {

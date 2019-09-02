@@ -485,6 +485,7 @@ namespace Mix2App.Home
                 case 202:
                 default:
                     {
+                        // みーつパークを選択
                         BaseObj.transform.Find("tutorial/Window_down").gameObject.SetActive(true);
                         BaseObj.transform.Find("tutorial/Window_down/aplich_set/fukidasi/Text").GetComponent<Text>().text = MessageTable001[0];
                         BaseObj.transform.Find("main/panel1/main1_btn").GetComponent<Button>().enabled = true;
@@ -492,10 +493,17 @@ namespace Mix2App.Home
                         Vector3 _pos = BaseObj.transform.Find("main/panel1/main1_btn").position;
                         _pos.y = _pos.y + 5.3f;
                         BaseObj.transform.Find("tutorial/Window_down/main").position = _pos;
+
+                        _pos = BaseObj.transform.Find("main/panel1/main1_btn").position;
+                        _pos.y = _pos.y - 1.0f;
+                        BaseObj.transform.Find("tutorial/tutorial_object/cover1").position = _pos;
+                        BaseObj.transform.Find("tutorial/tutorial_object/cover1").gameObject.SetActive(true);
+
                         break;
                     }
                 case 201:
                     {
+                        // ナウたまをよぶを選択
                         BaseObj.transform.Find("tutorial/Window_down").gameObject.SetActive(true);
                         BaseObj.transform.Find("tutorial/Window_down/aplich_set/fukidasi/Text").GetComponent<Text>().text = MessageTable001[1];
                         BaseObj.transform.Find("main/panel2/menu_bg/menu1_btn").GetComponent<Button>().enabled = true;     // ナウたまをよぶ
@@ -528,12 +536,18 @@ namespace Mix2App.Home
 
                         Vector3 _pos;
 
+                        // プレゼントを選択
                         BaseObj.transform.Find("tutorial/Window_up").gameObject.SetActive(true);
                         _pos = BaseObj.transform.Find("main/panel1/main5_btn").position;
                         _pos.y = _pos.y + 4.3f;
                         BaseObj.transform.Find("tutorial/Window_up/main").position = _pos;
                         BaseObj.transform.Find("tutorial/Window_up/aplich_set/fukidasi/Text").GetComponent<Text>().text = MessageTable001[2];
-                        yield return new WaitForSeconds(0.1f);
+
+                        _pos = BaseObj.transform.Find("main/panel1/main5_btn").position;
+                        BaseObj.transform.Find("tutorial/tutorial_object/cover2").position = _pos;
+                        BaseObj.transform.Find("tutorial/tutorial_object/cover2").gameObject.SetActive(true);
+
+                        yield return new WaitForSeconds(0.5f);
 
                         while (true)
                         {
@@ -543,12 +557,14 @@ namespace Mix2App.Home
                             }
                             yield return null;
                         }
+                        BaseObj.transform.Find("tutorial/tutorial_object/cover2").gameObject.SetActive(false);
 
+                        // あそびかたを選択
                         _pos = BaseObj.transform.Find("main/panel2/tutorial_btn").position;
                         _pos.y = _pos.y + 3.8f;
                         BaseObj.transform.Find("tutorial/Window_up/main").position = _pos;
                         BaseObj.transform.Find("tutorial/Window_up/aplich_set/fukidasi/Text").GetComponent<Text>().text = MessageTable001[3];
-                        yield return new WaitForSeconds(0.1f);
+                        yield return new WaitForSeconds(0.5f);
 
                         while (true)
                         {

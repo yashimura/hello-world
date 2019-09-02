@@ -637,6 +637,9 @@ namespace Mix2App.MachiCon{
 				}
 			case	statusJobCount.machiconJobCount100:
 				{
+
+                    TutorialNormalAplichDisp(false);
+
 					if (EventCurtainPositionChange (-15.0f)) {									// カーテンクローズ
 						jobCount = statusJobCount.machiconJobCount110;
 						EventPhase.SetActive (true);
@@ -787,6 +790,9 @@ namespace Mix2App.MachiCon{
 						WaitTimeSecInit (2);
 
 						ManagerObject.instance.sound.playBgm (11);
+
+                        TutorialNormalAplichDisp(true);
+
 					}
 					break;
 				}
@@ -2097,8 +2103,17 @@ namespace Mix2App.MachiCon{
 			return false;
 		}
 
-		// 相談対象相手を算出する
-		private void TargetRandomSet(){
+        private void TutorialNormalAplichDisp(bool _flag)
+        {
+            if (mTutorialFlag)
+            {
+                // チュートリアル中の相談タイム中の実況キャラを消す
+                EventCurtain.transform.Find("Jikkyou").gameObject.SetActive(_flag);
+            }
+        }
+
+        // 相談対象相手を算出する
+        private void TargetRandomSet(){
 			switch (playerNumber) {
 			case	0:
 			case	1:
@@ -2120,7 +2135,15 @@ namespace Mix2App.MachiCon{
 				}
 			}
 
-			maskdatas [sceneNumber].askIndex = targetNumber;							// 相談相手ののメンバーindex(0～7)
+            if (mTutorialFlag && (sceneNumber == 1))
+            {
+                // ２回目の相談候補は必ず専用キャラが選択される
+                targetNumber = mpdata.tutorialCharaIndex;
+            }
+
+
+
+            maskdatas [sceneNumber].askIndex = targetNumber;							// 相談相手ののメンバーindex(0～7)
 			maskdatas [sceneNumber].askUid = mpdata.members [targetNumber].user.id;		// 相談相手のユーザーID
 			maskdatas [sceneNumber].result = 2;											// 相談返答 時間切れ:2
 		}
@@ -3589,7 +3612,7 @@ namespace Mix2App.MachiCon{
             {
                 TutorialMessageDataSet(MessageTable001[0]);
                 PrgCanvas.transform.Find("tutorial").gameObject.SetActive(true);
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.5f);
                 while (true)
                 {
                     if (Input.GetMouseButtonDown(0))
@@ -3602,7 +3625,7 @@ namespace Mix2App.MachiCon{
                 PrgCanvas.transform.Find("tutorial/Window_up/sub").gameObject.SetActive(true);
                 TutorialMessageDataSet(MessageTable001[1]);
                 PrgCanvas.transform.Find("tutorial").gameObject.SetActive(true);
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.5f);
                 EventSoudanYesNew.GetComponent<Button>().enabled = true;
                 EventSoudanNoNew.GetComponent<Button>().enabled = true;
             }
