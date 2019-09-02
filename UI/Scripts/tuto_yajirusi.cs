@@ -11,7 +11,7 @@ public class tuto_yajirusi : MonoBehaviour
     private float speed = 120f;
     private float fspeed = 4f;
     private float yajirusipow = 60f;
-    private float interval = 0.1f;
+    //private float interval = 0.1f;
 
     private Image image;
     private float time;

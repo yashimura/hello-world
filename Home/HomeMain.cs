@@ -567,8 +567,8 @@ namespace Mix2App.Home
                         // チュートリアル閲覧済フラグを立てるのはライブラリ側
                         // ユーザー種別に応じて判定してのでルートは気にしない
 
-                        //遊び方画面は不要
-                        //ManagerObject.instance.view.dialog("webview", new object[] { "home" }, null);
+                        //公式HPを表示
+                        ManagerObject.instance.view.dialog("webview", new object[] { "ohp" }, null);
 
                         break;
                     }
