@@ -7,11 +7,11 @@ using UnityEngine.UI;
 public class tuto_yajirusi : MonoBehaviour
 {
     public GameObject whoite;
+    public bool UpDownFlag = true;
     private Vector3 defaultPos;
     private float speed = 120f;
     private float fspeed = 4f;
     private float yajirusipow = 60f;
-    //private float interval = 0.1f;
 
     private Image image;
     private float time;
@@ -27,8 +27,10 @@ public class tuto_yajirusi : MonoBehaviour
     void Update()
     {
         //矢印上下運動
-        //rb.MovePosition(new Vector3(defaultPos.x, defaultPos.y + Mathf.PingPong(Time.time, 2), defaultPos.z));
-        this.gameObject.transform.localPosition = new Vector3(this.gameObject.transform.localPosition.x, defaultPos.y + Mathf.PingPong(Time.time * speed, yajirusipow), this.gameObject.transform.localPosition.z);
+        if (UpDownFlag)
+        {
+            this.gameObject.transform.localPosition = new Vector3(this.gameObject.transform.localPosition.x, defaultPos.y + Mathf.PingPong(Time.time * speed, yajirusipow), this.gameObject.transform.localPosition.z);
+        }
 
         //明滅
         image.color = GetAlphaColor(image.color);

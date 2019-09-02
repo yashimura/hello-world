@@ -139,7 +139,7 @@ namespace Mix2App.Profile {
                 TutorialMessageDataSet(MessageTable001[i]);
                 baseObj.transform.Find("tutorial/Window_up/main").transform.localPosition = YajirusiPosTable[i];
                 TutorialMessageWindowDisp(true);
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.5f);
                 while (true)
                 {
                     if (Input.GetMouseButtonDown(0))
