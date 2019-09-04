@@ -164,7 +164,7 @@ namespace Mix2App.Home
                 meetsBtns[1].SetActive(false);
             }
 
-            if ((mhidata.tutorialFlag == 0) && (ManagerObject.instance.player.utype != UserType.LINE))
+            if (!mhidata.tutorialFlag && (ManagerObject.instance.player.utype != UserType.LINE))
             {
                 // チュートリアル未閲覧なのでチュートリアル強制開催、ただし、LINEユーザーの場合開催しない
                 mTutorialFlag = true;
