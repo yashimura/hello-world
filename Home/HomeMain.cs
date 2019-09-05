@@ -35,7 +35,7 @@ namespace Mix2App.Home
 
         private bool mTutorialFlag;
         private int mTutorialStepID;
-        private List<AchieveData> mTutorialAchieveData;
+        private List<AchieveData> mTutorialAchieveData = null;
 
         private readonly string[] MessageTable001 = new string[]
         {
@@ -188,6 +188,18 @@ namespace Mix2App.Home
                 {
                     mstat = 400;
                 }
+            }
+
+            if((mTutorialStepID == 119) || (mTutorialStepID == 222))
+            {
+                // チュートリアル終了処理なのでここでアチーブメントがあるかを確認する
+                mTutorialLoopFlag = true;
+                // 終了処理のアチーブメントを取得する。
+                call = new GameCall(CallLabel.END_TUTORIAL, mTutorialStepID);
+                call.AddListener(mendtutorial);
+                ManagerObject.instance.connect.send(call);
+                while (mTutorialLoopFlag)
+                    yield return null;
             }
 
             ManagerObject.instance.sound.playBgm(1);
@@ -517,18 +529,14 @@ namespace Mix2App.Home
                 case 119:
                 case 222:
                     {
-                        mTutorialLoopFlag = true;
-                        // 終了処理のアチーブメントを取得する。
-                        GameCall call = new GameCall(CallLabel.END_TUTORIAL,mTutorialStepID);
-                        call.AddListener(mendtutorial);
-                        ManagerObject.instance.connect.send(call);
-                        while (mTutorialLoopFlag)
+                        // アチーブメントデータを取得して描画開始するまでここで待つ
+                        while (mTutorialAchieveData == null || !mready)
                             yield return null;
 
                         if (mTutorialAchieveData.Count != 0)
                         {
                             mTutorialLoopFlag = true;
-                            mstat = 402;
+                            mstat = 402;        // アチーブメント表示開始
                             // アチーブ表示中はここでループ
                             while (mTutorialLoopFlag)
                                 yield return null;
