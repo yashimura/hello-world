@@ -114,9 +114,7 @@ namespace Mix2App.Home
             mstat = 0;
 
             HomeInfoData? qdata=null;
-            GameCall call = new GameCall(
-                CallLabel.GET_HOME_INFO
-            );
+            GameCall call = new GameCall(CallLabel.GET_HOME_INFO, mTutorialStepID);
             call.AddListener((success, data) => 
                 { 
                     qdata = (HomeInfoData)data;
