@@ -253,10 +253,21 @@ namespace Mix2App.Setting
                 float kk1 = 1024f / 2048f;
                 float kk2 = (float)Screen.height / (float)Screen.width;
                 float kk3 = (kk2 < kk1) ? kk2 / kk1 : 1.0f;
+                float kk4 = (kk2 <= (1644f / 3840f)) ? 50.0f : 0.0f;
+                Vector3 _pos = new Vector3(-480.0f, 230.0f, 0.0f);
+                _pos.x = _pos.x + ((30.0f + kk4) * kk3);
+                _pos.y = _pos.y + 10.5f;
+                baseObj.transform.Find("tutorial/Window_down/main").localPosition = _pos;
+
+/*
+                float kk1 = 1024f / 2048f;
+                float kk2 = (float)Screen.height / (float)Screen.width;
+                float kk3 = (kk2 < kk1) ? kk2 / kk1 : 1.0f;
                 Vector3 _pos = baseObj.transform.Find("1_window_setting/LayoutPanel1/LayoutPanel2/bt_plof").position;
                 _pos.x = _pos.x + (3.6f * kk3);
                 _pos.y = _pos.y + 10.5f;
                 baseObj.transform.Find("tutorial/Window_down/main").position = _pos;
+*/
             }
             else
             {
