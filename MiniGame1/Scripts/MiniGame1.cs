@@ -43,7 +43,11 @@ namespace Mix2App.MiniGame1{
 
 		[SerializeField] private Sprite[] EventEndSprite = null;				// 終了時の演出スプライト
 
-		private object[]		mparam;
+        [SerializeField] private GameObject CameraObj = null;
+
+
+
+        private object[]		mparam;
 
 
 
@@ -122,9 +126,11 @@ namespace Mix2App.MiniGame1{
 			mparam=null;
 			muser1=null;
 			mready = false;
-		}
 
-		public void receive(params object[] parameter){
+            GameEventHandler.OnRemoveSceneEvent += AchieveClearDelete;
+        }
+
+        public void receive(params object[] parameter){
 			Debug.Log ("MiniGame1 receive");
 			mparam = parameter;
 
@@ -256,9 +262,20 @@ namespace Mix2App.MiniGame1{
 		}
 		void OnDestroy(){
 			Debug.Log ("MiniGame1 OnDestroy");
-		}
+            GameEventHandler.OnRemoveSceneEvent -= AchieveClearDelete;
+        }
 
-		void Update(){
+        private bool achieveDeleteFlag;
+        void AchieveClearDelete(string label)
+        {
+            if (label == SceneLabel.ACHIEVE_CLEAR)
+            {
+                achieveDeleteFlag = true;
+                ManagerObject.instance.view.delete(SceneLabel.ACHIEVE_CLEAR);
+            }
+        }
+
+        void Update(){
 			switch (jobCount) {
 			case statusJobCount.minigame1JobCount000:
 				{
@@ -1041,9 +1058,10 @@ namespace Mix2App.MiniGame1{
 			resultJobCount080,
 			resultJobCount090,
 			resultJobCount100,
-			resultJobCount110,
-		}
-		private float[] treasureRotationTable = new float[] {						// 落下した宝箱のZRotationアニメ用
+            resultJobCount110,
+            resultJobCount120,
+        }
+        private float[] treasureRotationTable = new float[] {						// 落下した宝箱のZRotationアニメ用
 			0.0f,
 			-0.256f,
 			-0.9f,
@@ -1187,40 +1205,95 @@ namespace Mix2App.MiniGame1{
 				{
 					if (ResultWaitTimeSubLoop ()) {															// 開いた宝箱を見せる
 						resultLoopCount = statusResult.resultJobCount090;
-					}
-					break;
+
+                            mResultData.achieves = new List<AchieveData>();
+                            AchieveData ad = new AchieveData();
+                            ad.aid = 1;
+                            ad.atitle = "てすとあちーぶ";
+                            ad.reward = new RewardData();
+                            ad.reward.kind = RewardKind.GOTCHI_PT;
+                            ad.reward.point = 100;
+                            ad.akind = 2;//1:デイリー２：累計
+                            ad.count = 3;//残り回数※達成しきい値や現在カウントではない
+                            mResultData.achieves.Add(ad);
+
+                            //達成アチーブがある場合は、アチーブ成功画面を呼び出す
+                            if (mResultData.achieves != null && mResultData.achieves.Count != 0)
+                            {
+                                achieveDeleteFlag = false;
+                                int CameraDepth = (int)(CameraObj.transform.GetComponent<Camera>().depth + 1);
+                                ManagerObject.instance.view.add(SceneLabel.ACHIEVE_CLEAR,
+                                        mResultData.achieves,
+                                        CameraDepth);
+                            }
+                    }
+                    break;
 				}
 			case	statusResult.resultJobCount090:
 				{
-					EventResult.SetActive (false);															// アイテム入手画面を開く
-					EventItemget.SetActive (true);
-					ManagerObject.instance.sound.playSe (23);
+                        if (achieveDeleteFlag)
+                        {
+                            EventResult.SetActive(false);                                                           // アイテム入手画面を開く
+                            EventItemget.SetActive(true);
+                            ManagerObject.instance.sound.playSe(23);
 
-					EventItemget.transform.Find ("getpoints_text").gameObject.SetActive (false);
-					EventItemget.transform.Find ("getitem_text").gameObject.SetActive (false);
+                            EventItemget.transform.Find("getpoints_text").gameObject.SetActive(false);
+                            EventItemget.transform.Find("getitem_text").gameObject.SetActive(false);
 
-					if (mResultData.reward.kind == RewardKind.ITEM) {
-						// アイテムが褒賞品
-						EventItemget.transform.Find ("getitem_text").gameObject.SetActive (true);
-					} else {
-						// ごっちポイントが褒賞品
-						EventItemget.transform.Find ("getpoints_text").gameObject.SetActive (true);
-					}
+                            if (mResultData.reward.kind == RewardKind.ITEM)
+                            {
+                                // アイテムが褒賞品
+                                EventItemget.transform.Find("getitem_text").gameObject.SetActive(true);
+                            }
+                            else
+                            {
+                                // ごっちポイントが褒賞品
+                                EventItemget.transform.Find("getpoints_text").gameObject.SetActive(true);
+                            }
 
-                    RewardBehaviour rbItem = EventItemget.transform.Find("RewardView").gameObject.GetComponent<RewardBehaviour>();
-                    rbItem.init(mResultData.reward);
+                            RewardBehaviour rbItem = EventItemget.transform.Find("RewardView").gameObject.GetComponent<RewardBehaviour>();
+                            rbItem.init(mResultData.reward);
 
-                    resultItemGetFlag = false;
-					resultLoopCount = statusResult.resultJobCount100;
-					break;
+                            resultItemGetFlag = false;
+                            resultLoopCount = statusResult.resultJobCount110;
+
+
+                        }
+                        break;
 				}
-			case	statusResult.resultJobCount100:
+            case    statusResult.resultJobCount100:
+                {
+                        resultLoopCount = statusResult.resultJobCount110;
+
+                        mResultData.achieves = new List<AchieveData>();
+                        AchieveData ad = new AchieveData();
+                        ad.aid = 1;
+                        ad.atitle = "てすとあちーぶ";
+                        ad.reward = new RewardData();
+                        ad.reward.kind = RewardKind.GOTCHI_PT;
+                        ad.reward.point = 100;
+                        ad.akind = 2;//1:デイリー２：累計
+                        ad.count = 3;//残り回数※達成しきい値や現在カウントではない
+                        mResultData.achieves.Add(ad);
+
+                        //達成アチーブがある場合は、アチーブ成功画面を呼び出す
+                        if (mResultData.achieves != null && mResultData.achieves.Count != 0)
+                        {
+                            int CameraDepth = (int)(CameraObj.transform.GetComponent<Camera>().depth + 1);
+                            ManagerObject.instance.view.add(SceneLabel.ACHIEVE_CLEAR,
+                                    mResultData.achieves,
+                                    CameraDepth);
+                        }
+
+                    break;
+                }
+			case	statusResult.resultJobCount110:
 				{
 					if (resultItemGetFlag) {
 						EventItemget.SetActive (false);														// アイテム入手画面を消す
 						EventResult.SetActive (true);														// 結果画面を表示する
 						EventResult.transform.Find ("Button_blue_modoru").gameObject.SetActive (true);		// 戻るボタンを表示する
-						resultLoopCount = statusResult.resultJobCount110;
+						resultLoopCount = statusResult.resultJobCount120;
 						if ((nowScore == 0) || (!mResultData.rewardFlag)) {
 						}
 						else{
@@ -1237,7 +1310,7 @@ namespace Mix2App.MiniGame1{
 					}
 					break;
 				}
-			case	statusResult.resultJobCount110:
+			case	statusResult.resultJobCount120:
 				{
 					break;
 				}

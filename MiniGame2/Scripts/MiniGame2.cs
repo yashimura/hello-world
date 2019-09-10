@@ -42,6 +42,8 @@ namespace Mix2App.MiniGame2{
 
         [SerializeField] private GameObject EventColaboShop = null;             // コラボショップタイトル画面
 
+        [SerializeField] private GameObject CameraObj = null;
+
 
 
         private object[]		mparam;
@@ -114,9 +116,11 @@ namespace Mix2App.MiniGame2{
 			NpcDispFlag [3] = false;
 
 			futagoFlag = false;
-		}
 
-		public void receive(params object[] parameter){
+            GameEventHandler.OnRemoveSceneEvent += AchieveClearDelete;
+        }
+
+        public void receive(params object[] parameter){
 			Debug.Log ("MiniGame2 receive");
 			mparam = parameter;
 			if (mparam==null) {
@@ -294,7 +298,18 @@ namespace Mix2App.MiniGame2{
 		void OnDestroy(){
 			Debug.Log ("MiniGame2 OnDestroy");
 			StopCoroutine ("TamagochiSortLoop");
-		}
+            GameEventHandler.OnRemoveSceneEvent -= AchieveClearDelete;
+        }
+
+        private bool achieveDeleteFlag;
+        void AchieveClearDelete(string label)
+        {
+            if (label == SceneLabel.ACHIEVE_CLEAR)
+            {
+                achieveDeleteFlag = true;
+                ManagerObject.instance.view.delete(SceneLabel.ACHIEVE_CLEAR);
+            }
+        }
 
 		void Update(){
 			switch (jobCount) {
@@ -1329,9 +1344,10 @@ namespace Mix2App.MiniGame2{
 			resultJobCount080,
 			resultJobCount090,
 			resultJobCount100,
-			resultJobCount110,
-		}
-		private float[] tamagoYJumpTable = new float[] {
+            resultJobCount110,
+            resultJobCount120,
+        }
+        private float[] tamagoYJumpTable = new float[] {
 			-6.0f,-5.0f,-5.0f,-3.8f,-3.8f,-3.8f,-2.4f,-2.4f,-2.4f,-2.4f,-1.2f,-1.2f,-1.2f,-1.2f,-1.2f,0.0f,0.0f,0.0f,
 			0.0f,0.0f,0.0f,1.2f,1.2f,1.2f,1.2f,1.2f,2.4f,2.4f,2.4f,2.4f,3.8f,3.8f,3.8f,5.0f,5.0f,6.0f,
 		};
@@ -1501,56 +1517,106 @@ namespace Mix2App.MiniGame2{
 				{
 					if (ResultWaitTimeSubLoop ()) {															// 開いた宝箱を見せる
 						resultLoopCount = statusResult.resultJobCount090;
-					}
-					break;
+
+                            mResultData.achieves = new List<AchieveData>();
+                            AchieveData ad = new AchieveData();
+                            ad.aid = 1;
+                            ad.atitle = "てすとあちーぶ";
+                            ad.reward = new RewardData();
+                            ad.reward.kind = RewardKind.GOTCHI_PT;
+                            ad.reward.point = 100;
+                            ad.akind = 2;//1:デイリー２：累計
+                            ad.count = 3;//残り回数※達成しきい値や現在カウントではない
+                            mResultData.achieves.Add(ad);
+
+                            achieveDeleteFlag = true;
+                            //達成アチーブがある場合は、アチーブ成功画面を呼び出す
+                            if (mResultData.achieves != null && mResultData.achieves.Count != 0)
+                            {
+                                achieveDeleteFlag = false;
+                                int CameraDepth = (int)(CameraObj.transform.GetComponent<Camera>().depth + 1);
+                                ManagerObject.instance.view.add(SceneLabel.ACHIEVE_CLEAR,
+                                        mResultData.achieves,
+                                        CameraDepth);
+                            }
+                    }
+                    break;
 				}
 			case	statusResult.resultJobCount090:
-				{
-					EventResult.SetActive (false);
-					// アイテム入手画面を開く
-					EventItemget.SetActive (true);
-					ManagerObject.instance.sound.playSe (23);
-
-					EventItemget.transform.Find ("getpoints_text").gameObject.SetActive (false);
-                    EventItemget.transform.Find("getitem_text").gameObject.SetActive(false);
-                    EventItemget.transform.Find("getcolabo_text").gameObject.SetActive(false);
-                    EventItemget.transform.Find("Button_red_takuhai").gameObject.SetActive(true);
-                    EventItemget.transform.Find("Button_blue_tojiru").gameObject.transform.localPosition = new Vector3(250, -330, 0);
-                        switch (mResultData.reward.kind)
+                {
+                        if (achieveDeleteFlag)
                         {
-                            case RewardKind.ITEM:
-                                {
-                                    // アイテムが褒賞品
-                                    EventItemget.transform.Find("getitem_text").gameObject.SetActive(true);
-                                    break;
-                                }
-                            case RewardKind.GOTCHI_PT:
-                                {
-                                    // ごっちポイントが褒賞品
-                                    EventItemget.transform.Find("getpoints_text").gameObject.SetActive(true);
-                                    break;
-                                }
-                            default:
-                                {
-                                    // イベントポイントが褒賞品
-                                    EventItemget.transform.Find("getcolabo_text").gameObject.SetActive(true);
-                                    EventItemget.transform.Find("Button_red_takuhai").gameObject.SetActive(false);
-                                    EventItemget.transform.Find("Button_blue_tojiru").gameObject.transform.localPosition = new Vector3(0, -330, 0);
+                            EventResult.SetActive(false);
+                            // アイテム入手画面を開く
+                            EventItemget.SetActive(true);
+                            ManagerObject.instance.sound.playSe(23);
 
-                                    break;
-                                }
+                            EventItemget.transform.Find("getpoints_text").gameObject.SetActive(false);
+                            EventItemget.transform.Find("getitem_text").gameObject.SetActive(false);
+                            EventItemget.transform.Find("getcolabo_text").gameObject.SetActive(false);
+                            EventItemget.transform.Find("Button_red_takuhai").gameObject.SetActive(true);
+                            EventItemget.transform.Find("Button_blue_tojiru").gameObject.transform.localPosition = new Vector3(250, -330, 0);
+                            switch (mResultData.reward.kind)
+                            {
+                                case RewardKind.ITEM:
+                                    {
+                                        // アイテムが褒賞品
+                                        EventItemget.transform.Find("getitem_text").gameObject.SetActive(true);
+                                        break;
+                                    }
+                                case RewardKind.GOTCHI_PT:
+                                    {
+                                        // ごっちポイントが褒賞品
+                                        EventItemget.transform.Find("getpoints_text").gameObject.SetActive(true);
+                                        break;
+                                    }
+                                default:
+                                    {
+                                        // イベントポイントが褒賞品
+                                        EventItemget.transform.Find("getcolabo_text").gameObject.SetActive(true);
+                                        EventItemget.transform.Find("Button_red_takuhai").gameObject.SetActive(false);
+                                        EventItemget.transform.Find("Button_blue_tojiru").gameObject.transform.localPosition = new Vector3(0, -330, 0);
+
+                                        break;
+                                    }
+                            }
+
+                            RewardBehaviour rbItem = EventItemget.transform.Find("RewardView").gameObject.GetComponent<RewardBehaviour>();
+                            rbItem.init(mResultData.reward);
+
+                            resultItemGetFlag = false;
+                            resultLoopCount = statusResult.resultJobCount110;
+
+                        }
+                        break;
+                }
+                case    statusResult.resultJobCount100:
+                {
+                        resultLoopCount = statusResult.resultJobCount110;
+
+                        mResultData.achieves = new List<AchieveData>();
+                        AchieveData ad = new AchieveData();
+                        ad.aid = 1;
+                        ad.atitle = "てすとあちーぶ";
+                        ad.reward = new RewardData();
+                        ad.reward.kind = RewardKind.GOTCHI_PT;
+                        ad.reward.point = 100;
+                        ad.akind = 2;//1:デイリー２：累計
+                        ad.count = 3;//残り回数※達成しきい値や現在カウントではない
+                        mResultData.achieves.Add(ad);
+
+                        //達成アチーブがある場合は、アチーブ成功画面を呼び出す
+                        if (mResultData.achieves != null && mResultData.achieves.Count != 0)
+                        {
+                            int CameraDepth = (int)(CameraObj.transform.GetComponent<Camera>().depth + 1);
+                            ManagerObject.instance.view.add(SceneLabel.ACHIEVE_CLEAR,
+                                    mResultData.achieves,
+                                    CameraDepth);
                         }
 
-
-
-                    RewardBehaviour rbItem = EventItemget.transform.Find("RewardView").gameObject.GetComponent<RewardBehaviour>();
-                    rbItem.init(mResultData.reward);
-
-                    resultItemGetFlag = false;
-					resultLoopCount = statusResult.resultJobCount100;
-					break;
-				}
-			case	statusResult.resultJobCount100:
+                    break;
+                }
+			case	statusResult.resultJobCount110:
 				{
 					if (resultItemGetFlag) {
 						EventItemget.SetActive (false);														// アイテム入手画面を消す
@@ -1571,13 +1637,13 @@ namespace Mix2App.MiniGame2{
 					}
 					break;
 				}
-			case	statusResult.resultJobCount110:
-				{
-					break;
-				}
-			}
+            case    statusResult.resultJobCount120:
+                {
+                    break;
+                }
+            }
 
-			if (resultTamagoYJumpCount != 0) {																// 落ちて来た宝箱に跳ね飛ばされるたまごっち達
+            if (resultTamagoYJumpCount != 0) {																// 落ちて来た宝箱に跳ね飛ばされるたまごっち達
 				resultTamagoYJumpCount--;
 				pos = EventResult.transform.Find ("chara").gameObject.transform.localPosition;
 				pos.x += 4.0f;
