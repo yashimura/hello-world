@@ -1633,7 +1633,7 @@ namespace Mix2App.MiniGame2{
 							}
 						}
 							
-						resultLoopCount = statusResult.resultJobCount110;
+						resultLoopCount = statusResult.resultJobCount120;
 					}
 					break;
 				}
