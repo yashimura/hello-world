@@ -1469,7 +1469,10 @@ namespace Mix2App.MiniGame2{
 						} else {
                                 if (mSceneLabel != "PapaMama")
                                 {
-                                    resultLoopCount = statusResult.resultJobCount090;
+                                    // コラボミニゲームなので宝箱処理をしないでアチーブチェックに飛ぶ
+                                    resultLoopWait = 1;
+                                    resultLoopCount = statusResult.resultJobCount080;
+//                                    resultLoopCount = statusResult.resultJobCount090;
                                 }
                                 else
                                 {
