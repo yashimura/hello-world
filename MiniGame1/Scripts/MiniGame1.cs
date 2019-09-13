@@ -1206,6 +1206,7 @@ namespace Mix2App.MiniGame1{
 					if (ResultWaitTimeSubLoop ()) {															// 開いた宝箱を見せる
 						resultLoopCount = statusResult.resultJobCount090;
 
+/*
                             mResultData.achieves = new List<AchieveData>();
                             AchieveData ad = new AchieveData();
                             ad.aid = 1;
@@ -1216,7 +1217,9 @@ namespace Mix2App.MiniGame1{
                             ad.akind = 2;//1:デイリー２：累計
                             ad.count = 3;//残り回数※達成しきい値や現在カウントではない
                             mResultData.achieves.Add(ad);
+*/
 
+                            achieveDeleteFlag = true;
                             //達成アチーブがある場合は、アチーブ成功画面を呼び出す
                             if (mResultData.achieves != null && mResultData.achieves.Count != 0)
                             {
@@ -1265,6 +1268,7 @@ namespace Mix2App.MiniGame1{
                 {
                         resultLoopCount = statusResult.resultJobCount110;
 
+/*
                         mResultData.achieves = new List<AchieveData>();
                         AchieveData ad = new AchieveData();
                         ad.aid = 1;
@@ -1275,6 +1279,7 @@ namespace Mix2App.MiniGame1{
                         ad.akind = 2;//1:デイリー２：累計
                         ad.count = 3;//残り回数※達成しきい値や現在カウントではない
                         mResultData.achieves.Add(ad);
+*/
 
                         //達成アチーブがある場合は、アチーブ成功画面を呼び出す
                         if (mResultData.achieves != null && mResultData.achieves.Count != 0)
