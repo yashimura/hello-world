@@ -34,6 +34,9 @@ namespace Mix2App.TownEvent
         [Tooltip("シーン名（TownEventの次に入るもの）（TownEvent_XYZなら_XYZを入力）")]
         [SerializeField] private string TownEventName = null;
 
+        [Tooltip("プレイヤーキャラの表示位置を登録する")]
+        [SerializeField] private Vector3 CharaTamagoXYZ = new Vector3(0, 0, 0);
+
         [Tooltip("効果音の入力データ(Time:次のSEがなるまでの時間、Number:鳴らすSE")]
         [SerializeField] private TownEventSETable[] TownEventSEData = null;
 
@@ -118,6 +121,11 @@ namespace Mix2App.TownEvent
 
 
             EventItemWindow.transform.Find("Button_blue_close").gameObject.GetComponent<Button>().onClick.AddListener(ButtonCloseClick);
+
+
+
+            // たまごっちの表示位置の登録
+            EventScene.transform.Find("Chara").transform.localPosition = CharaTamagoXYZ;
 
 
 
