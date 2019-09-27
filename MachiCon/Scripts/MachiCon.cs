@@ -116,6 +116,9 @@ namespace Mix2App.MachiCon{
 			machiconJobCount290,
 			machiconJobCount300,
 			machiconJobCount310,
+
+            machiconJobCount315,
+
 			machiconJobCount320,
 			machiconJobCount330,
 			machiconJobCount340,
@@ -220,9 +223,40 @@ namespace Mix2App.MachiCon{
             mTutorialFlag = false;
             mTutorialStepID = 0;
 
+            GameEventHandler.OnRemoveSceneEvent += AchieveClearDelete;
+
+            achievesMargeData = null;
+
+/*
+            achievesSample1 = new List<AchieveData>();
+            AchieveData ad1 = new AchieveData();
+            ad1.aid = 1;
+            ad1.atitle = "てすとあちーぶ1";
+            ad1.reward = new RewardData();
+            ad1.reward.kind = RewardKind.GOTCHI_PT;
+            ad1.reward.point = 100;
+            ad1.akind = 2;//1:デイリー２：累計
+            ad1.count = 3;//残り回数※達成しきい値や現在カウントではない
+            achievesSample1.Add(ad1);
+
+            achievesSample2 = new List<AchieveData>();
+            AchieveData ad2 = new AchieveData();
+            ad2.aid = 1;
+            ad2.atitle = "てすとあちーぶ2";
+            ad2.reward = new RewardData();
+            ad2.reward.kind = RewardKind.GOTCHI_PT;
+            ad2.reward.point = 100;
+            ad2.akind = 2;//1:デイリー２：累計
+            ad2.count = 3;//残り回数※達成しきい値や現在カウントではない
+            achievesSample2.Add(ad2);
+*/
         }
 
-		public void dreceive(string command,string[] parameter)
+        private List<AchieveData> achievesSample1 = null;
+        private List<AchieveData> achievesSample2 = null;
+        private List<AchieveData> achievesMargeData = null;
+
+        public void dreceive(string command,string[] parameter)
 		{
 			if (command==null) return;
 
@@ -449,9 +483,21 @@ namespace Mix2App.MachiCon{
 		void OnDestroy(){
 			_tamagochiWalkSEFlag = false;
 			Debug.Log ("machicon OnDestroy");
-		}
 
-		private bool _tamagochiWalkSEFlag;
+            GameEventHandler.OnRemoveSceneEvent -= AchieveClearDelete;
+        }
+
+        private bool achieveDeleteFlag;
+        void AchieveClearDelete(string label)
+        {
+            if (label == SceneLabel.ACHIEVE_CLEAR)
+            {
+                achieveDeleteFlag = true;
+                ManagerObject.instance.view.delete(SceneLabel.ACHIEVE_CLEAR);
+            }
+        }
+
+        private bool _tamagochiWalkSEFlag;
 		private bool _eventAppealSetActiveFlag;
 		private IEnumerator TamagochiWalkSEPlay(){
 			while (_tamagochiWalkSEFlag) {
@@ -937,11 +983,11 @@ namespace Mix2App.MachiCon{
 					EventEnd.transform.Find ("text").gameObject.GetComponent<Image> ().color = color;
 					break;
 				}
+#if false
 			case	statusJobCount.machiconJobCount310:
 				{
 					if (WaitTimeSubLoop ()) {
 						if (playerResultFlag) {
-//							if ((mpMember1.canMarried) && (mpMember2.canMarried)) {
 							if((mpMember1.user.utype == UserType.MIX2) && (mpMember2.user.utype == UserType.MIX2)){
 								jobCount = statusJobCount.machiconJobCount320;					// 自キャラがカップルで結婚イベントに行くので確認画面を表示
 							} else {
@@ -951,8 +997,74 @@ namespace Mix2App.MachiCon{
 							jobCount = statusJobCount.machiconJobCount360;						// 自キャラがカップル成立していないのでそのままシーンチェンジ
 						}
 					}
+
 					break;
-				}
+                }
+#endif
+                case statusJobCount.machiconJobCount310:
+                    {
+                        if (WaitTimeSubLoop())
+                        {
+                            jobCount = statusJobCount.machiconJobCount315;
+
+                            achievesMargeData = new List<AchieveData>();
+                            if (achievesSample1 != null && achievesSample1.Count != 0)
+                            {
+                                for (int i = 0; i < achievesSample1.Count; i++)
+                                {
+                                    achievesMargeData.Add(achievesSample1[i]);
+                                }
+                            }
+                            if (achievesSample2 != null && achievesSample2.Count != 0)
+                            {
+                                for (int i = 0; i < achievesSample2.Count; i++)
+                                {
+                                    achievesMargeData.Add(achievesSample2[i]);
+                                }
+                            }
+
+                            achieveDeleteFlag = true;
+                            if (achievesMargeData != null && achievesMargeData.Count != 0)
+                            {
+                                //達成アチーブがある場合は、アチーブ成功画面を呼び出す
+
+                                EventEnd.SetActive(false);
+
+                                achieveDeleteFlag = false;
+                                int CameraDepth = (int)(GameObject.Find("Main Camera").transform.GetComponent<Camera>().depth + 1);
+                                ManagerObject.instance.view.add(SceneLabel.ACHIEVE_CLEAR,
+                                        achievesMargeData,
+                                        CameraDepth);
+
+                            }
+                        }
+                        break;
+
+                    }
+                case statusJobCount.machiconJobCount315:
+                    {
+                        if (achieveDeleteFlag)
+                        {
+                            if (playerResultFlag)
+                            {
+                                if ((mpMember1.user.utype == UserType.MIX2) && (mpMember2.user.utype == UserType.MIX2))
+                                {
+                                    jobCount = statusJobCount.machiconJobCount320;                  // 自キャラがカップルで結婚イベントに行くので確認画面を表示
+                                }
+                                else
+                                {
+                                    jobCount = statusJobCount.machiconJobCount360;                  // デートイベントに行くのでそのままシーンチェンジ
+                                }
+                            }
+                            else
+                            {
+                                jobCount = statusJobCount.machiconJobCount360;                      // 自キャラがカップル成立していないのでそのままシーンチェンジ
+                            }
+                        }
+                        break;
+                    }
+
+
 			case	statusJobCount.machiconJobCount320:
 				{
 					eventKakuninFlag = false;
