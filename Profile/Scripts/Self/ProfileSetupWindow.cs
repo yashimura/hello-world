@@ -14,6 +14,7 @@ using Mix2App.Lib;
 using Mix2App.Lib.View;
 using Mix2App.Lib.Model;
 using Mix2App.Lib.Events;
+using System.Collections.Generic;
 
 namespace Mix2App.Profile {
     public class ProfileSetupWindow: UIWindow {
@@ -107,6 +108,20 @@ namespace Mix2App.Profile {
         void mupdateavatar(bool success,object data)
         {
             SetupAvatar(UserData.avatar);
+/*
+            List<AchieveData> ads = new List<AchieveData>();
+            AchieveData ad1 = new AchieveData();
+            ad1.aid = 1;
+            ad1.atitle = "てすとアバターあちーぶ1";
+            ad1.reward = new RewardData();
+            ad1.reward.kind = RewardKind.GOTCHI_PT;
+            ad1.reward.point = 100;
+            ad1.akind = 2;//1:デイリー２：累計
+            ad1.count = 3;//残り回数※達成しきい値や現在カウントではない
+            ads.Add(ad1);
+
+            UIFunction.ProfileAchieveAvaterDataSet(ads);
+*/
         }
 
         /// <summary>
@@ -139,8 +154,22 @@ namespace Mix2App.Profile {
         void mupdatebplace(bool success,object data)
         {
             SetupPrefecture(UserData.bplace);
+/*
+            List<AchieveData> ads = new List<AchieveData>();
+            AchieveData ad1 = new AchieveData();
+            ad1.aid = 1;
+            ad1.atitle = "てすとしゅっしんあちーぶ1";
+            ad1.reward = new RewardData();
+            ad1.reward.kind = RewardKind.GOTCHI_PT;
+            ad1.reward.point = 100;
+            ad1.akind = 2;//1:デイリー２：累計
+            ad1.count = 3;//残り回数※達成しきい値や現在カウントではない
+            ads.Add(ad1);
+
+            UIFunction.ProfileAchieveBplaceDataSet(ads);
+*/
         }
-        
+
         /// <summary>
         /// Get Current avatar.
         /// </summary>

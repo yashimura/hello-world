@@ -11,6 +11,7 @@ using Mix2App.UI;
 using Mix2App.Lib;
 using Mix2App.Lib.Events;
 using Mix2App.Lib.Model;
+using System.Collections.Generic;
 
 namespace Mix2App.Profile {
     /// <summary>
@@ -39,6 +40,9 @@ namespace Mix2App.Profile {
         [SerializeField] private GameObject BaseObj = null;
 
         private void SetupProfile() {
+            // プロフィールのアチーブ情報をクリアする
+            UIFunction.ProfileAchieveClear();
+
             ProfileSetupWindow wnd = UIManager.ShowModal(ProfileSetupWindowPrefab)
                 .SetupUserData(UserData);
 
@@ -138,6 +142,25 @@ namespace Mix2App.Profile {
                     UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("BackButton").GetComponent<Button>(), true);
                 }
             }
+
+            if (UIFunction.ProfileAchieveFlagGet())
+            {
+                UIFunction.ProfileAchieveFlagSet(false);
+
+                List<AchieveData> achievesMargeData = UIFunction.ProfileAchieveMargeDataGet();
+
+                if ((achievesMargeData != null) && (achievesMargeData.Count != 0))
+                {
+                    //達成アチーブがある場合は、アチーブ成功画面を呼び出す
+                    int CameraDepth = (int)(GameObject.Find("Main Camera").transform.GetComponent<Camera>().depth + 1);
+                    ManagerObject.instance.view.add(SceneLabel.ACHIEVE_CLEAR,
+                            achievesMargeData,
+                            CameraDepth);
+                }
+
+            }
+
+
         }
 
     }

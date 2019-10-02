@@ -183,5 +183,66 @@ namespace Mix2App.UI
         }
 
 
+
+        private static List<AchieveData> _AchievesMargeData = null;
+        private static List<AchieveData> _AchievesAvaterData = null;
+        private static List<AchieveData> _AchievesBplaceData = null;
+        private static bool _AchieveFlag = false;
+
+
+        public static bool ProfileAchieveFlagGet()
+        {
+            return _AchieveFlag;
+        }
+        public static void ProfileAchieveFlagSet(bool _flag)
+        {
+            _AchieveFlag = _flag;
+        }
+
+        public static void ProfileAchieveClear()
+        {
+            _AchievesAvaterData = null;
+            _AchievesBplaceData = null;
+            _AchieveFlag = false;
+        }
+
+        public static void ProfileAchieveAvaterDataSet(List<AchieveData> _data)
+        {
+            _AchievesAvaterData = _data;
+            _AchieveFlag = true;
+        }
+
+        public static void ProfileAchieveBplaceDataSet(List<AchieveData> _data)
+        {
+            _AchievesBplaceData = _data;
+            _AchieveFlag = true;
+        }
+
+        public static List<AchieveData> ProfileAchieveMargeDataGet()
+        {
+            _AchievesMargeData = new List<AchieveData>();
+
+            if (_AchievesBplaceData != null && _AchievesBplaceData.Count != 0)
+            {
+                for (int i = 0; i < _AchievesBplaceData.Count; i++)
+                {
+                    _AchievesMargeData.Add(_AchievesBplaceData[i]);
+                }
+            }
+            if (_AchievesAvaterData != null && _AchievesAvaterData.Count != 0)
+            {
+                for (int i = 0; i < _AchievesAvaterData.Count; i++)
+                {
+                    _AchievesMargeData.Add(_AchievesAvaterData[i]);
+                }
+            }
+
+            return _AchievesMargeData;
+        }
+
+
+
+
+
     }
 }

@@ -12,6 +12,7 @@ using Mix2App.Lib;
 using Mix2App.Lib.Events;
 using Mix2App.UI;
 using Mix2App.Lib.Model;
+using System.Collections.Generic;
 
 namespace Mix2App.Profile {
     /// <summary>
@@ -65,6 +66,8 @@ namespace Mix2App.Profile {
             mparam=null;
             mTutorialFlag = false;
             mTutorialStepID = 0;
+
+            GameEventHandler.OnRemoveSceneEvent += AchieveClearDelete;
         }
 
         /// <summary>
@@ -84,6 +87,16 @@ namespace Mix2App.Profile {
         void OnDestroy()
         {
             UIFunction.TutorialDataAllClear();
+
+            GameEventHandler.OnRemoveSceneEvent -= AchieveClearDelete;
+        }
+
+        void AchieveClearDelete(string label)
+        {
+            if (label == SceneLabel.ACHIEVE_CLEAR)
+            {
+                ManagerObject.instance.view.delete(SceneLabel.ACHIEVE_CLEAR);
+            }
         }
 
         IEnumerator Start()
@@ -130,6 +143,11 @@ namespace Mix2App.Profile {
             }
 
         }
+
+        void Update()
+        {
+        }
+
 
         IEnumerator TutorialIineSetumei()
         {
