@@ -228,17 +228,6 @@ namespace Mix2App.MachiCon{
             achievesMargeData = null;
 
 /*
-            achievesSample1 = new List<AchieveData>();
-            AchieveData ad1 = new AchieveData();
-            ad1.aid = 1;
-            ad1.atitle = "てすとあちーぶ1";
-            ad1.reward = new RewardData();
-            ad1.reward.kind = RewardKind.GOTCHI_PT;
-            ad1.reward.point = 100;
-            ad1.akind = 2;//1:デイリー２：累計
-            ad1.count = 3;//残り回数※達成しきい値や現在カウントではない
-            achievesSample1.Add(ad1);
-
             achievesSample2 = new List<AchieveData>();
             AchieveData ad2 = new AchieveData();
             ad2.aid = 1;
@@ -252,7 +241,6 @@ namespace Mix2App.MachiCon{
 */
         }
 
-        private List<AchieveData> achievesSample1 = null;
         private List<AchieveData> achievesSample2 = null;
         private List<AchieveData> achievesMargeData = null;
 
@@ -1008,11 +996,11 @@ namespace Mix2App.MachiCon{
                             jobCount = statusJobCount.machiconJobCount315;
 
                             achievesMargeData = new List<AchieveData>();
-                            if (achievesSample1 != null && achievesSample1.Count != 0)
+                            if (mpdata.achieves != null && mpdata.achieves.Count != 0)
                             {
-                                for (int i = 0; i < achievesSample1.Count; i++)
+                                for (int i = 0; i < mpdata.achieves.Count; i++)
                                 {
-                                    achievesMargeData.Add(achievesSample1[i]);
+                                    achievesMargeData.Add(mpdata.achieves[i]);
                                 }
                             }
                             if (achievesSample2 != null && achievesSample2.Count != 0)
