@@ -202,6 +202,11 @@ namespace Mix2App.TownEvent
             yield return null;
         }
 
+        /// <summary>
+        /// 宝箱のスプライトが表示状態かを調べてたまごっちの動きを設定する
+        /// </summary>
+        /// <param name="_objBase"></param>
+        /// <param name="_flag"></param>
         private void TreasureTamagoAnimeMove(GameObject _objBase, bool _flag)
         {
             if (_objBase.activeSelf)
@@ -235,6 +240,10 @@ namespace Mix2App.TownEvent
             }
         }
 
+        /// <summary>
+        /// SEをTownEventSEDataの情報を元に鳴らす。
+        /// </summary>
+        /// <returns></returns>
         IEnumerator mainSELoop()
         {
             for(int i = 0; i < TownEventSEData.Length; i++)
