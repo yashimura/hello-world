@@ -206,18 +206,30 @@ namespace Mix2App.UI
             _AchieveFlag = false;
         }
 
+        /// <summary>
+        /// プロフィールのアバター情報のアチーブメント保存
+        /// </summary>
+        /// <param name="_data"></param>
         public static void ProfileAchieveAvaterDataSet(List<AchieveData> _data)
         {
             _AchievesAvaterData = _data;
             _AchieveFlag = true;
         }
 
+        /// <summary>
+        /// プロフィールの出身地情報のアチーブメント保存
+        /// </summary>
+        /// <param name="_data"></param>
         public static void ProfileAchieveBplaceDataSet(List<AchieveData> _data)
         {
             _AchievesBplaceData = _data;
             _AchieveFlag = true;
         }
 
+        /// <summary>
+        /// プロフィールのアバター情報と出身地情報のアチーブメントを合成して返す
+        /// </summary>
+        /// <returns></returns>
         public static List<AchieveData> ProfileAchieveMargeDataGet()
         {
             _AchievesMargeData = new List<AchieveData>();

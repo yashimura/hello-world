@@ -90,6 +90,7 @@ namespace Mix2App.Setting
 
             if (mTutorialFlag)
             {
+                // チュートリアル処理をスタート
                 StartCoroutine(TutorialMain());
             }
         }
@@ -99,6 +100,7 @@ namespace Mix2App.Setting
             ManagerObject.instance.sound.playSe(17);
 
             if (mTutorialStepID>0)
+                // チュートリアルの時はシーンチェンジをこちらのモードで
                 ManagerObject.instance.view.change(SceneLabel.TOWN, null, mTutorialStepID + 1);
             else
                 ManagerObject.instance.view.back();
@@ -145,6 +147,7 @@ namespace Mix2App.Setting
                     }
                     else
                     {
+                        // チュートリアルの時はこちらのモードで
                         ManagerObject.instance.view.change(SceneLabel.PROFILE, ManagerObject.instance.player, mTutorialStepID + 1);
                     }
                     break;
@@ -226,6 +229,10 @@ namespace Mix2App.Setting
             views[vid-1].transform.SetAsLastSibling();
         }
 
+        /// <summary>
+        /// チュートリアル中のメイン処理
+        /// </summary>
+        /// <returns></returns>
         IEnumerator TutorialMain()
         {
             baseObj.transform.Find("1_window_setting/LayoutPanel1/LayoutPanel2/bt_plof").GetComponent<Button>().enabled = false;

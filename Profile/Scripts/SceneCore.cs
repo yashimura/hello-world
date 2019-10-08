@@ -49,10 +49,12 @@ namespace Mix2App.Profile {
         private void CloseAction() {
             if (!mTutorialFlag)
             {
+                // 通常のシーンチェンジ
                 ManagerObject.instance.view.back();
             }
             else
             {
+                // チュートリアルのシーンチェンジ
                 ManagerObject.instance.view.change(SceneLabel.SETTING, mTutorialStepID + 1);
             }
         }
@@ -148,7 +150,10 @@ namespace Mix2App.Profile {
         {
         }
 
-
+        /// <summary>
+        /// チュートリアルいいねの説明
+        /// </summary>
+        /// <returns></returns>
         IEnumerator TutorialIineSetumei()
         {
             yield return new WaitForSeconds(0.5f);

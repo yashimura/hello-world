@@ -116,6 +116,7 @@ namespace Mix2App.Profile {
 
             if (UIFunction.TutorialFlagGet())
             {
+                // チュートリアル中は、基本ボタンの制御を中止する。
                 UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("CLIENT/Button rect/SetupProfileButton").GetComponent<Button>(), false);
                 UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("CLIENT/Button rect/Buttons/FamilyTreeButton").GetComponent<Button>(), false);
                 UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("CLIENT/Button rect/Buttons/GrowthRecordButton").GetComponent<Button>(), false);

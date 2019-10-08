@@ -158,6 +158,8 @@ namespace Mix2App.Profile.Town
 
             if (mTutorialFlag)
             {
+                // チュートリアル中
+
                 switch (mTutorialStepID)
                 {
                     case 110:   // ゲストルートいいねの仕方
@@ -169,7 +171,7 @@ namespace Mix2App.Profile.Town
 
                             break;
                         }
-                    default:    // 113,214
+                    default:    // 113,214 プロポーズ
                         {
                             baseObj.transform.Find("tutorial/Window_up/main").transform.localPosition = new Vector3(830.0f, 80.0f, 0.0f);
 
@@ -198,6 +200,10 @@ namespace Mix2App.Profile.Town
             }
         }
 
+        /// <summary>
+        /// チュートリアルいいね
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator TutorialIine()
         {
             yield return new WaitForSeconds(0.5f);
@@ -209,6 +215,10 @@ namespace Mix2App.Profile.Town
             yield return null;
         }
 
+        /// <summary>
+        /// チュートリアルプロポーズ
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator TutorialPropose()
         {
             yield return new WaitForSeconds(0.5f);

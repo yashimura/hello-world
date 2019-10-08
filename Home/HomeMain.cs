@@ -228,7 +228,7 @@ namespace Mix2App.Home
             if (mstat == 121) mstat++;
         }
 
-        private void closenews(int result)
+         private void closenews(int result)
         {
             Debug.Log("save newsf:"+minfo);
             mcnews = minfo;
@@ -420,6 +420,10 @@ namespace Mix2App.Home
         }
 
         private int tutorialCounter;
+        /// <summary>
+        /// チュートリアル初期確認画面
+        /// </summary>
+        /// <returns></returns>
         IEnumerator TutorialLoopStart()
         {
             tutorialCounter = 0;
@@ -481,7 +485,10 @@ namespace Mix2App.Home
 
 
         private bool mTutorialLoopFlag = false;
-
+        /// <summary>
+        /// チュートリアルメイン処理
+        /// </summary>
+        /// <returns></returns>
         IEnumerator TutorialMainLoop()
         {
             ButtonClickValid(false);
@@ -600,6 +607,11 @@ namespace Mix2App.Home
             yield return null;
         }
 
+        /// <summary>
+        /// END_TUTORIALのコールバック関数
+        /// </summary>
+        /// <param name="success"></param>
+        /// <param name="data"></param>
         void mendtutorial(bool success, object data)
         {
             mTutorialLoopFlag = false;

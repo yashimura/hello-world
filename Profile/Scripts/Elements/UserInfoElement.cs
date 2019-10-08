@@ -293,7 +293,7 @@ namespace Mix2App.Profile {
                 {
                     UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.IineButtonTrueEnd);
 
-                    // ボタン制御を再開
+                    // いいねボタン制御を再開
                     UIFunction.ButtonClickModeChenage(IineObj.transform.Find("iine_button/Button_iine").gameObject.GetComponent<Button>(), true);
                 }
             }

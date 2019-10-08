@@ -399,10 +399,12 @@ namespace Mix2App.MachiCon{
                 ManagerObject.instance.view.dialog("alert", new object[] { "machicon", errno }, (ret) => {
                     if (!mTutorialFlag)
                     {
+                        // 通常時の画面遷移処理
                         ManagerObject.instance.view.change(SceneLabel.TOWN);
                     }
                     else
                     {
+                        // チュートリアル中の画面遷移処理
                         ManagerObject.instance.view.change(SceneLabel.TOWN,null,221);
                     }
                 });
@@ -426,10 +428,12 @@ namespace Mix2App.MachiCon{
                 ManagerObject.instance.view.dialog("alert",new object[] { "machicon", errno },(ret)=> {
                     if (!mTutorialFlag)
                     {
+                        // 通常時の画面遷移処理
                         ManagerObject.instance.view.change(SceneLabel.TOWN);
                     }
                     else
                     {
+                        // チュートリアル中の画面遷移処理
                         ManagerObject.instance.view.change(SceneLabel.TOWN, null, 221);
                     }
                 });
@@ -764,7 +768,7 @@ namespace Mix2App.MachiCon{
                             }
                             else
                             {
-                                StartCoroutine("AppealTimeTutorial");               					// キー入力待ち終了
+                                StartCoroutine("AppealTimeTutorial");               					// チュートリアル中は、時間制限なしでキー入力待ち終了
                             }
                         }
 
@@ -1120,6 +1124,7 @@ namespace Mix2App.MachiCon{
 							}
 							else
 							{
+                                // チュートリアル中の画面遷移処理
 								if (playerResultFlag)
 								{
 									Debug.Log("ユーザーの結婚フラグ：" + mpMember1.canMarried);
@@ -2203,6 +2208,10 @@ namespace Mix2App.MachiCon{
 			return false;
 		}
 
+        /// <summary>
+        /// チュートリアル中の相談タイム中の実況キャラを消す
+        /// </summary>
+        /// <param name="_flag"></param>
         private void TutorialNormalAplichDisp(bool _flag)
         {
             if (mTutorialFlag)
@@ -3703,6 +3712,10 @@ namespace Mix2App.MachiCon{
 			buttonFlag = true;
 		}
 
+        /// <summary>
+        /// チュートリアル中のアピールタイム処理
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator AppealTimeTutorial()
         {
             EventSoudanYesNew.GetComponent<Button>().enabled = false;

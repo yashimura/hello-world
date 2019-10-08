@@ -352,6 +352,7 @@ namespace Mix2App.Propose{
                 fProposeResult = true;
                 if (!mTutorialFlag)
                 {
+                    // プロポーズを送信して結果待ちをする
                     GameCall call = new GameCall(CallLabel.SEND_PROPOSE, mUser1, mBrother1, mUser2, mBrother2);
                     call.AddListener(SendPropose);
                     ManagerObject.instance.connect.send(call);

@@ -271,7 +271,7 @@ namespace Mix2App.Profile.Town {
                 {
                     UIFunction.TutorialCountSet(UIFunction.TUTORIAL_COUNTER.ProposeButtonTrueEnd);
 
-                    // ボタン制御を再開
+                    // プロポーズボタン制御を再開
                     UIFunction.ButtonClickModeChenage(BaseObj.transform.Find("CLIENT/Button rect/Buttons/ProposeButton").GetComponent<Button>(), true);
                 }
             }
