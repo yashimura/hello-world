@@ -1551,6 +1551,8 @@ namespace Mix2App.MiniGame2{
                 {
                         if (achieveDeleteFlag)
                         {
+                            // アチーブメント表示が終了したかどうか
+
                             EventResult.SetActive(false);
                             // アイテム入手画面を開く
                             EventItemget.SetActive(true);

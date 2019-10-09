@@ -1236,6 +1236,8 @@ namespace Mix2App.MiniGame1{
 				{
                         if (achieveDeleteFlag)
                         {
+                            // アチーブメント表示が終了したかどうか
+
                             EventResult.SetActive(false);                                                           // アイテム入手画面を開く
                             EventItemget.SetActive(true);
                             ManagerObject.instance.sound.playSe(23);

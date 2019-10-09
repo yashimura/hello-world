@@ -999,9 +999,11 @@ namespace Mix2App.MachiCon{
                         {
                             jobCount = statusJobCount.machiconJobCount315;
 
+                            // アチーブメントデータを合成する。
                             achievesMargeData = new List<AchieveData>();
                             if (mpdata.achieves != null && mpdata.achieves.Count != 0)
                             {
+                                // 参加アチーブメントデータがあった場合の処理
                                 for (int i = 0; i < mpdata.achieves.Count; i++)
                                 {
                                     achievesMargeData.Add(mpdata.achieves[i]);
@@ -1009,6 +1011,7 @@ namespace Mix2App.MachiCon{
                             }
                             if (achievesSample2 != null && achievesSample2.Count != 0)
                             {
+                                // 成否判定アチーブメントでーたがあった場合の処理
                                 for (int i = 0; i < achievesSample2.Count; i++)
                                 {
                                     achievesMargeData.Add(achievesSample2[i]);
@@ -1037,6 +1040,7 @@ namespace Mix2App.MachiCon{
                     {
                         if (achieveDeleteFlag)
                         {
+                            // アチーブメント表示が終了したかどうか
                             if (playerResultFlag)
                             {
                                 if ((mpMember1.user.utype == UserType.MIX2) && (mpMember2.user.utype == UserType.MIX2))

@@ -123,6 +123,7 @@ namespace Mix2App.Profile {
                 ad1.count = 3;//残り回数※達成しきい値や現在カウントではない
                 ads.Add(ad1);
 */
+                // アバター更新のアチーブメント情報を登録
                 UIFunction.ProfileAchieveAvaterDataSet(ads);
             }
         }
@@ -172,6 +173,7 @@ namespace Mix2App.Profile {
                 ad1.count = 3;//残り回数※達成しきい値や現在カウントではない
                 ads.Add(ad1);
 */
+                // 出身地更新のアチーブメント情報を登録
                 UIFunction.ProfileAchieveBplaceDataSet(ads);
             }
         }

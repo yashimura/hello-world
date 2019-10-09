@@ -148,6 +148,7 @@ namespace Mix2App.Profile {
             {
                 UIFunction.ProfileAchieveFlagSet(false);
 
+                // プロフィールのアバターアチーブと出身地アチーブのデータを合成して取得
                 List<AchieveData> achievesMargeData = UIFunction.ProfileAchieveMargeDataGet();
 
                 if ((achievesMargeData != null) && (achievesMargeData.Count != 0))

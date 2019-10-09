@@ -378,6 +378,7 @@ namespace Mix2App.Home
                 case 402:
                     mstat++;
                     {
+                        // チュートリアルアチーブメントをここで呼び出す
                         int CameraDepth = (int)(CameraObj.transform.GetComponent<Camera>().depth + 1);
                         ManagerObject.instance.view.add(SceneLabel.ACHIEVE_CLEAR,
                                 mTutorialAchieveData,
