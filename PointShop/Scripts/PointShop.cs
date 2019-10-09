@@ -78,7 +78,7 @@ namespace Mix2App.PointShop
             if (mparam == null)
             {
                 mparam = new object[] {
-                    3,                  // int ミニゲーム２のイベントID
+                    4,                  // int ミニゲーム２のイベントID
                 };
             }
 
