@@ -201,8 +201,8 @@ namespace Mix2App.UI
 
         public static void ProfileAchieveClear()
         {
-            _AchievesAvaterData = null;
-            _AchievesBplaceData = null;
+            _AchievesAvaterData = new List<AchieveData>();
+            _AchievesBplaceData = new List<AchieveData>();
             _AchieveFlag = false;
         }
 
@@ -212,8 +212,14 @@ namespace Mix2App.UI
         /// <param name="_data"></param>
         public static void ProfileAchieveAvaterDataSet(List<AchieveData> _data)
         {
-            _AchievesAvaterData = _data;
-            _AchieveFlag = true;
+            if(_data != null && _data.Count != 0)
+            {
+                for (int i = 0; i < _data.Count; i++)
+                {
+                    _AchievesAvaterData.Add(_data[i]);
+                }
+                _AchieveFlag = true;
+            }
         }
 
         /// <summary>
@@ -222,8 +228,14 @@ namespace Mix2App.UI
         /// <param name="_data"></param>
         public static void ProfileAchieveBplaceDataSet(List<AchieveData> _data)
         {
-            _AchievesBplaceData = _data;
-            _AchieveFlag = true;
+            if (_data != null && _data.Count != 0)
+            {
+                for (int i = 0; i < _data.Count; i++)
+                {
+                    _AchievesBplaceData.Add(_data[i]);
+                }
+                _AchieveFlag = true;
+            }
         }
 
         /// <summary>
