@@ -93,16 +93,17 @@ namespace Mix2App.Achieve
                     _mes = "クリア";
 
                     // 背景と仕切り線を偶数、奇数で変更する
-                    if ((i & 1) == 0)
-                    {
+                    // クリア項目の濃淡はナシにする 2019/10/18 suga
+                    //if ((i & 1) == 0)
+                    //{
                         _sp1 = prefabObj[i].transform.Find("clearList1").gameObject.GetComponent<Image>().sprite;
                         _sp2 = prefabObj[i].transform.Find("clearShikiri1").gameObject.GetComponent<Image>().sprite;
-                    }
-                    else
-                    {
-                        _sp1 = prefabObj[i].transform.Find("clearList2").gameObject.GetComponent<Image>().sprite;
-                        _sp2 = prefabObj[i].transform.Find("clearShikiri2").gameObject.GetComponent<Image>().sprite;
-                    }
+                    //}
+                    //else
+                    //{
+                    //    _sp1 = prefabObj[i].transform.Find("clearList2").gameObject.GetComponent<Image>().sprite;
+                    //    _sp2 = prefabObj[i].transform.Find("clearShikiri2").gameObject.GetComponent<Image>().sprite;
+                    //}
                     prefabObj[i].GetComponent<Image>().sprite = _sp1;
                     prefabObj[i].transform.Find("shikiri").gameObject.GetComponent<Image>().sprite = _sp2;
                 }
