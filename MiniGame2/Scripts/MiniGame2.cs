@@ -126,7 +126,7 @@ namespace Mix2App.MiniGame2{
 			if (mparam==null) {
                 mparam = new object[] {
                     "Town",
-                    4
+                    3
                 };
 			}
 
