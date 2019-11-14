@@ -488,7 +488,7 @@ namespace Mix2App.MiniGame2{
 
         private void ButtonHelpClick(){
 			ManagerObject.instance.sound.playSe (11);
-			ManagerObject.instance.view.dialog("webview",new object[]{"minigame2", mMinigameID},null);
+			ManagerObject.instance.view.dialog("webview",new object[]{ "help", mData.title },null);
 		}
 		private void ButtonHelpModoruClick(){
 			EventHelp.SetActive (false);
